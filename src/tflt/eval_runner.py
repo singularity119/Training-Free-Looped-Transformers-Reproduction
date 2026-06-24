@@ -72,6 +72,9 @@ def run_lm_eval(
     loop_config: Optional[LoopConfig],
 ) -> Any:
     try:
+        import torch
+        from transformers import AutoModelForCausalLM
+
         from lm_eval import evaluator
         from lm_eval.models.huggingface import HFLM
         from lm_eval.tasks import TaskManager
@@ -81,9 +84,17 @@ def run_lm_eval(
             "Install with: python -m pip install -e '.[eval]'"
         ) from exc
 
+    model = AutoModelForCausalLM.from_pretrained(
+        model_repo,
+        torch_dtype=_torch_dtype(torch, dtype),
+        trust_remote_code=True,
+    )
+    if torch.cuda.is_available():
+        model = model.to("cuda")
+
     lm = HFLM(
-        pretrained=model_repo,
-        dtype=dtype,
+        pretrained=model,
+        tokenizer=model_repo,
         trust_remote_code=True,
         batch_size=batch_size,
     )
@@ -125,6 +136,19 @@ def _underlying_hf_model(lm: Any) -> Any:
         if model is not None:
             return model
     raise TypeError("could not locate underlying Hugging Face model inside lm-eval HFLM")
+
+
+def _torch_dtype(torch_module: Any, dtype: str) -> Any:
+    mapping = {
+        "auto": "auto",
+        "float16": torch_module.float16,
+        "fp16": torch_module.float16,
+        "bfloat16": torch_module.bfloat16,
+        "bf16": torch_module.bfloat16,
+        "float32": torch_module.float32,
+        "fp32": torch_module.float32,
+    }
+    return mapping.get(str(dtype).lower(), dtype)
 
 
 def _write_model_revision(output_dir: Path, model: Any, repo_id: str) -> None:
