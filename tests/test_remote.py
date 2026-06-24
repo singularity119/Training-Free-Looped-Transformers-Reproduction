@@ -28,7 +28,7 @@ class RemoteCommandTest(unittest.TestCase):
             remote_src="/remote/project",
             hf_endpoint="https://hf-mirror.com",
             hf_home="/remote/cache/huggingface",
-            transformers_cache="/remote/cache/huggingface/transformers",
+            transformers_cache="/remote/cache/huggingface/hub",
             hf_datasets_cache="/remote/cache/huggingface/datasets",
         )
         self.assertIn("#SBATCH --partition=debug", script)
@@ -38,10 +38,12 @@ class RemoteCommandTest(unittest.TestCase):
         self.assertIn('cd "/remote/project"', script)
         self.assertIn('. "/remote/project/.venv/bin/activate"', script)
         self.assertIn('export HF_ENDPOINT="${HF_ENDPOINT:-https://hf-mirror.com}"', script)
+        self.assertIn('export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-/remote/cache/huggingface/hub}"', script)
         self.assertIn(
             'export HF_DATASETS_CACHE="${HF_DATASETS_CACHE:-/remote/cache/huggingface/datasets}"',
             script,
         )
+        self.assertIn('export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"', script)
 
 
 if __name__ == "__main__":

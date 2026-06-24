@@ -156,6 +156,7 @@ def _env_snapshot() -> dict:
         "HF_HOME",
         "TRANSFORMERS_CACHE",
         "HF_DATASETS_CACHE",
+        "HF_HUB_DISABLE_XET",
         "CUDA_VISIBLE_DEVICES",
         "PYTHONPATH",
     ]

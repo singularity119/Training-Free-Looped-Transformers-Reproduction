@@ -99,7 +99,7 @@ def render_slurm_script(
 ) -> str:
     body = shell_join(command)
     hf_home = hf_home or "{result_root}/hf_home".format(result_root=result_root)
-    transformers_cache = transformers_cache or "$HF_HOME/transformers"
+    transformers_cache = transformers_cache or "$HF_HOME/hub"
     hf_datasets_cache = hf_datasets_cache or "$HF_HOME/datasets"
     gres = gres or "gpu:{gpus}".format(gpus=gpus)
     remote_src = remote_src or "."
@@ -131,6 +131,7 @@ export HF_ENDPOINT="${{HF_ENDPOINT:-{hf_endpoint}}}"
 export HF_HOME="${{HF_HOME:-{hf_home}}}"
 export TRANSFORMERS_CACHE="${{TRANSFORMERS_CACHE:-{transformers_cache}}}"
 export HF_DATASETS_CACHE="${{HF_DATASETS_CACHE:-{hf_datasets_cache}}}"
+export HF_HUB_DISABLE_XET="${{HF_HUB_DISABLE_XET:-1}}"
 export RESULT_ROOT="{result_root}"
 
 {body}
@@ -192,6 +193,7 @@ def env_snapshot() -> Dict[str, str]:
         "HF_HOME",
         "TRANSFORMERS_CACHE",
         "HF_DATASETS_CACHE",
+        "HF_HUB_DISABLE_XET",
         "CUDA_VISIBLE_DEVICES",
         "PYTHONPATH",
     ]
