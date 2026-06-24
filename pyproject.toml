@@ -17,7 +17,7 @@ eval = [
   "lm-eval==0.4.11",
   "transformers>=4.51,<4.52",
   "accelerate>=1.0",
-  "torch",
+  "torch==2.3.1",
 ]
 dev = ["pytest>=8", "ruff>=0.6"]
 
