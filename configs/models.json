@@ -1,0 +1,46 @@
+{
+  "models": {
+    "qwen3-0.6b-base": {
+      "repo_id": "Qwen/Qwen3-0.6B-Base",
+      "family": "qwen3",
+      "kind": "dense",
+      "default_iteration_mode": "block",
+      "notes": "Phase 1 smoke model."
+    },
+    "qwen3-1.7b-base": {
+      "repo_id": "Qwen/Qwen3-1.7B-Base",
+      "family": "qwen3",
+      "kind": "dense",
+      "default_iteration_mode": "block",
+      "notes": "Phase 1/2 main small dense model."
+    },
+    "qwen3-4b-base": {
+      "repo_id": "Qwen/Qwen3-4B-Base",
+      "family": "qwen3",
+      "kind": "dense",
+      "default_iteration_mode": "block",
+      "notes": "Phase 3 dense headline baseline."
+    },
+    "qwen3-4b-instruct-2507": {
+      "repo_id": "Qwen/Qwen3-4B-Instruct-2507",
+      "family": "qwen3",
+      "kind": "dense",
+      "default_iteration_mode": "block",
+      "notes": "Current-checkpoint reproduction, not bit-exact paper reproduction."
+    },
+    "qwen1.5-moe-a2.7b-chat": {
+      "repo_id": "Qwen/Qwen1.5-MoE-A2.7B-Chat",
+      "family": "qwen1.5-moe",
+      "kind": "moe",
+      "default_iteration_mode": "layer",
+      "notes": "MoE extension; layer-mode is safer."
+    },
+    "qwen3-30b-a3b-instruct-2507": {
+      "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "family": "qwen3-moe",
+      "kind": "moe",
+      "default_iteration_mode": "layer",
+      "notes": "Large extension; use only after memory preflight."
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "phase": "phase0-smoke",
+  "models": ["qwen3-0.6b-base", "qwen3-1.7b-base"],
+  "tasks": ["sciq", "arc_easy"],
+  "limit": 10,
+  "loop": {
+    "window": [12, 15],
+    "k": 2,
+    "iteration_mode": "block",
+    "strategy": "damped_euler",
+    "cache_strategy": "last",
+    "decode_mode": "bypass"
+  }
+}

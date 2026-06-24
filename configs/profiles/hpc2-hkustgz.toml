@@ -1,0 +1,11 @@
+# Edit account, partition, and paths to match the active hpc2-hkustgz allocation.
+host = "hpc2-hkustgz"
+remote_src = "$SCRATCH/training_free_looped_transformer"
+result_root = "$SCRATCH/training_free_looped_transformer/runs"
+partition = "gpu"
+gpus = "1"
+cpus = "8"
+mem = "64G"
+time = "24:00:00"
+hf_home = "$SCRATCH/hf_home"
+transformers_cache = "$SCRATCH/hf_home/transformers"

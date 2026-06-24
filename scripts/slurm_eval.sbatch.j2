@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#SBATCH --job-name={{ job_name }}
+#SBATCH --partition={{ partition }}
+#SBATCH --gres=gpu:{{ gpus }}
+#SBATCH --cpus-per-task={{ cpus }}
+#SBATCH --mem={{ mem }}
+#SBATCH --time={{ time }}
+#SBATCH --output={{ result_root }}/control/%x-%j.out
+#SBATCH --error={{ result_root }}/control/%x-%j.err
+
+set -euo pipefail
+
+mkdir -p "{{ result_root }}/control"
+export HF_HOME="${HF_HOME:-{{ hf_home }}}"
+export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-$HF_HOME/transformers}"
+export RESULT_ROOT="{{ result_root }}"
+
+python -V | tee "$RESULT_ROOT/control/python_version.txt"
+nvidia-smi | tee "$RESULT_ROOT/control/nvidia_smi_before.txt"
+{{ command }}
+nvidia-smi | tee "$RESULT_ROOT/control/nvidia_smi_after.txt"
