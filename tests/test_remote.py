@@ -33,6 +33,7 @@ class RemoteCommandTest(unittest.TestCase):
         )
         self.assertIn("#SBATCH --partition=debug", script)
         self.assertIn("#SBATCH --gres=gpu:a40:1", script)
+        self.assertLess(script.index("source /etc/profile"), script.index("set -euo pipefail"))
         self.assertIn("module load anaconda3 cuda/12.4 uv", script)
         self.assertIn('cd "/remote/project"', script)
         self.assertIn('. "/remote/project/.venv/bin/activate"', script)

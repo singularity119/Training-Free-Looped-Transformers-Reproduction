@@ -113,13 +113,13 @@ def render_slurm_script(
 #SBATCH --output={result_root}/control/%x-%j.out
 #SBATCH --error={result_root}/control/%x-%j.err
 
+source /etc/profile >/dev/null 2>&1 || true
 set -euo pipefail
 
 mkdir -p "{result_root}/control"
 echo "$0" > "{result_root}/control/sbatch_script.txt"
 printf '%s\n' {quoted_command} > "{result_root}/control/command.txt"
 
-source /etc/profile >/dev/null 2>&1 || true
 module load anaconda3 cuda/12.4 uv
 cd "{remote_src}"
 . "{remote_src}/.venv/bin/activate"
