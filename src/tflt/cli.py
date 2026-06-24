@@ -44,7 +44,7 @@ def main(argv: Optional[list] = None) -> int:
     add_eval_args(p)
     p.add_argument("--backend", choices=["slurm", "ssh"], required=True)
     p.add_argument("--profile", default=None)
-    p.add_argument("--run-root", default="runs")
+    p.add_argument("--run-root", default=None)
     p.add_argument("--submit", action="store_true")
     p.set_defaults(func=cmd_launch)
 
@@ -106,14 +106,15 @@ def cmd_eval(args: argparse.Namespace) -> int:
 
 
 def cmd_launch(args: argparse.Namespace) -> int:
-    run_dir = make_run_dir(args.run_root)
+    profile = _load_profile(args.profile)
+    run_root = args.run_root or profile.get("result_root", "runs")
+    run_dir = make_run_dir(run_root)
     control_dir = run_dir / "control"
     output_dir = args.output_dir or str(run_dir / "eval")
     args.output_dir = output_dir
     spec = _eval_spec_from_args(args)
     command = build_lm_eval_command(spec)
     result_root = str(run_dir)
-    profile = _load_profile(args.profile)
 
     if args.backend == "slurm":
         script = render_slurm_script(
@@ -121,12 +122,16 @@ def cmd_launch(args: argparse.Namespace) -> int:
             job_name="tflt-%s" % spec.model.replace("/", "-"),
             result_root=result_root,
             partition=profile.get("partition", "gpu"),
+            gres=profile.get("gres"),
             gpus=int(profile.get("gpus", 1)),
             cpus=int(profile.get("cpus", 8)),
             mem=profile.get("mem", "64G"),
             time_limit=profile.get("time", "24:00:00"),
+            remote_src=profile.get("remote_src"),
+            hf_endpoint=profile.get("hf_endpoint", "https://hf-mirror.com"),
             hf_home=profile.get("hf_home"),
             transformers_cache=profile.get("transformers_cache"),
+            hf_datasets_cache=profile.get("hf_datasets_cache"),
         )
         script_path = control_dir / "job.sbatch"
         write_text(script_path, script, executable=True)

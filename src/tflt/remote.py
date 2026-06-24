@@ -35,6 +35,8 @@ def build_lm_eval_command(spec: EvalSpec) -> List[str]:
         spec.tasks,
         "--batch-size",
         spec.batch_size,
+        "--dtype",
+        spec.dtype,
         "--output-dir",
         spec.output_dir,
     ]
@@ -84,20 +86,27 @@ def render_slurm_script(
     job_name: str,
     result_root: str,
     partition: str = "gpu",
+    gres: Optional[str] = None,
     gpus: int = 1,
     cpus: int = 8,
     mem: str = "64G",
     time_limit: str = "24:00:00",
+    remote_src: Optional[str] = None,
+    hf_endpoint: str = "https://hf-mirror.com",
     hf_home: Optional[str] = None,
     transformers_cache: Optional[str] = None,
+    hf_datasets_cache: Optional[str] = None,
 ) -> str:
     body = shell_join(command)
     hf_home = hf_home or "{result_root}/hf_home".format(result_root=result_root)
     transformers_cache = transformers_cache or "$HF_HOME/transformers"
+    hf_datasets_cache = hf_datasets_cache or "$HF_HOME/datasets"
+    gres = gres or "gpu:{gpus}".format(gpus=gpus)
+    remote_src = remote_src or "."
     return """#!/usr/bin/env bash
 #SBATCH --job-name={job_name}
 #SBATCH --partition={partition}
-#SBATCH --gres=gpu:{gpus}
+#SBATCH --gres={gres}
 #SBATCH --cpus-per-task={cpus}
 #SBATCH --mem={mem}
 #SBATCH --time={time_limit}
@@ -108,11 +117,20 @@ set -euo pipefail
 
 mkdir -p "{result_root}/control"
 echo "$0" > "{result_root}/control/sbatch_script.txt"
+printf '%s\n' {quoted_command} > "{result_root}/control/command.txt"
+
+source /etc/profile >/dev/null 2>&1 || true
+module load anaconda3 cuda/12.4 uv
+cd "{remote_src}"
+. "{remote_src}/.venv/bin/activate"
+
 python -V | tee "{result_root}/control/python_version.txt"
 nvidia-smi | tee "{result_root}/control/nvidia_smi_before.txt"
 
+export HF_ENDPOINT="${{HF_ENDPOINT:-{hf_endpoint}}}"
 export HF_HOME="${{HF_HOME:-{hf_home}}}"
 export TRANSFORMERS_CACHE="${{TRANSFORMERS_CACHE:-{transformers_cache}}}"
+export HF_DATASETS_CACHE="${{HF_DATASETS_CACHE:-{hf_datasets_cache}}}"
 export RESULT_ROOT="{result_root}"
 
 {body}
@@ -121,14 +139,19 @@ nvidia-smi | tee "{result_root}/control/nvidia_smi_after.txt"
 """.format(
         job_name=job_name,
         partition=partition,
+        gres=gres,
         gpus=gpus,
         cpus=cpus,
         mem=mem,
         time_limit=time_limit,
         result_root=result_root,
+        remote_src=remote_src,
+        hf_endpoint=hf_endpoint,
         hf_home=hf_home,
         transformers_cache=transformers_cache,
+        hf_datasets_cache=hf_datasets_cache,
         body=body,
+        quoted_command=shlex.quote(body),
     )
 
 
@@ -164,7 +187,14 @@ def write_text(path: Path, text: str, executable: bool = False) -> None:
 
 
 def env_snapshot() -> Dict[str, str]:
-    keys = ["HF_HOME", "TRANSFORMERS_CACHE", "CUDA_VISIBLE_DEVICES", "PYTHONPATH"]
+    keys = [
+        "HF_ENDPOINT",
+        "HF_HOME",
+        "TRANSFORMERS_CACHE",
+        "HF_DATASETS_CACHE",
+        "CUDA_VISIBLE_DEVICES",
+        "PYTHONPATH",
+    ]
     return {key: os.environ[key] for key in keys if key in os.environ}
 
 

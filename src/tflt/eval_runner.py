@@ -151,7 +151,14 @@ def _module_version(name: str) -> Optional[str]:
 
 
 def _env_snapshot() -> dict:
-    keys = ["HF_HOME", "TRANSFORMERS_CACHE", "CUDA_VISIBLE_DEVICES", "PYTHONPATH"]
+    keys = [
+        "HF_ENDPOINT",
+        "HF_HOME",
+        "TRANSFORMERS_CACHE",
+        "HF_DATASETS_CACHE",
+        "CUDA_VISIBLE_DEVICES",
+        "PYTHONPATH",
+    ]
     return {key: os.environ[key] for key in keys if key in os.environ}
 
 

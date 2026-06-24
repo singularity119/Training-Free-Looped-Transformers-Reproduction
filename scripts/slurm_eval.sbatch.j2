@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name={{ job_name }}
 #SBATCH --partition={{ partition }}
-#SBATCH --gres=gpu:{{ gpus }}
+#SBATCH --gres={{ gres }}
 #SBATCH --cpus-per-task={{ cpus }}
 #SBATCH --mem={{ mem }}
 #SBATCH --time={{ time }}
@@ -11,8 +11,15 @@
 set -euo pipefail
 
 mkdir -p "{{ result_root }}/control"
+source /etc/profile >/dev/null 2>&1 || true
+module load anaconda3 cuda/12.4 uv
+cd "{{ remote_src }}"
+. "{{ remote_src }}/.venv/bin/activate"
+
+export HF_ENDPOINT="${HF_ENDPOINT:-{{ hf_endpoint }}}"
 export HF_HOME="${HF_HOME:-{{ hf_home }}}"
 export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-$HF_HOME/transformers}"
+export HF_DATASETS_CACHE="${HF_DATASETS_CACHE:-{{ hf_datasets_cache }}}"
 export RESULT_ROOT="{{ result_root }}"
 
 python -V | tee "$RESULT_ROOT/control/python_version.txt"
