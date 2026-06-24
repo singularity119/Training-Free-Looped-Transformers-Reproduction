@@ -182,7 +182,7 @@ def cmd_report(args: argparse.Namespace) -> int:
         print(str(output))
         return 0
     keys = sorted({key for row in rows for key in row.keys()})
-    lines = [",".join(keys)]
+    lines = [",".join(_csv_cell(key) for key in keys)]
     for row in rows:
         lines.append(",".join(_csv_cell(row.get(key, "")) for key in keys))
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
