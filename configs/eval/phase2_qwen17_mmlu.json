@@ -1,0 +1,57 @@
+{
+  "phase": "phase2-qwen17-mmlu",
+  "description": "Qwen3-1.7B Base MMLU 5-shot baseline vs loop reproduction on hpc2.",
+  "model": {
+    "alias": "qwen3-1.7b-base",
+    "repo_id": "Qwen/Qwen3-1.7B-Base"
+  },
+  "task": "mmlu",
+  "num_fewshot": 5,
+  "dtype": "float16",
+  "batch_size": "auto",
+  "run_root_template": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction/runs/phase2-qwen17-mmlu-<timestamp>",
+  "profile": "configs/profiles/hpc2-hkustgz.toml",
+  "remote": {
+    "host": "hpc2-hkustgz",
+    "remote_src": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction",
+    "hf_endpoint": "https://hf-mirror.com",
+    "hf_home": "/hpc2hdd/home/xhuang225/projects/.cache/huggingface",
+    "transformers_cache": "/hpc2hdd/home/xhuang225/projects/.cache/huggingface/hub",
+    "hf_datasets_cache": "/hpc2hdd/home/xhuang225/projects/.cache/huggingface/datasets"
+  },
+  "loop": {
+    "window": [12, 15],
+    "k": 2,
+    "iteration_mode": "block",
+    "strategy": "damped_euler",
+    "cache_strategy": "last",
+    "decode_mode": "bypass"
+  },
+  "stages": {
+    "stage_a_limit_validation": {
+      "limit": 5,
+      "partition": "debug",
+      "gres": "gpu:a40:1",
+      "cpus": 8,
+      "mem": "64G",
+      "time": "00:30:00",
+      "order": ["baseline", "loop"]
+    },
+    "stage_b_full_mmlu": {
+      "limit": null,
+      "primary_partition": "long_gpu",
+      "fallback_partition": "i64m1tga800u",
+      "gres": "gpu:a800:1",
+      "cpus": 8,
+      "mem": "128G",
+      "time": "12:00:00",
+      "order": ["baseline", "loop"],
+      "gate": "Run only after Stage A baseline and loop complete with ExitCode 0:0 and no traceback."
+    }
+  },
+  "reporting": {
+    "summary_csv": "summary.csv",
+    "report_md": "phase2_qwen17_mmlu_report.md",
+    "collect_policy": "Keep full results on hpc2; collect only small summaries if needed."
+  }
+}
