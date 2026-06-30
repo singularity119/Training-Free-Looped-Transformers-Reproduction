@@ -9,7 +9,7 @@
   "num_fewshot": 5,
   "dtype": "float16",
   "batch_size": "auto",
-  "run_root_template": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction/runs/phase2-qwen17-mmlu-<timestamp>",
+  "run_root_template": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/phase2-qwen17-mmlu-<timestamp>",
   "profile": "configs/profiles/hpc2-hkustgz.toml",
   "remote": {
     "host": "hpc2-hkustgz",

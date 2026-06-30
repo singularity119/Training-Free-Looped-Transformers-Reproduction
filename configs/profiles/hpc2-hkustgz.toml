@@ -1,7 +1,7 @@
 # hpc2-hkustgz debug profile for pipeline validation runs.
 host = "hpc2-hkustgz"
 remote_src = "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction"
-result_root = "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction/runs"
+result_root = "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs"
 partition = "debug"
 gres = "gpu:a40:1"
 cpus = "8"
