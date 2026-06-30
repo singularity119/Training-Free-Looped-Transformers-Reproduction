@@ -8,6 +8,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from tflt.audit import add_audit_args, cmd_audit_loop_effect
 from tflt.config import LoopConfig
 from tflt.models import load_model_registry, resolve_model
 from tflt.remote import (
@@ -58,6 +59,10 @@ def main(argv: Optional[list] = None) -> int:
     p.add_argument("--results", default="results")
     p.add_argument("--output", default="results/summary.csv")
     p.set_defaults(func=cmd_report)
+
+    p = sub.add_parser("audit-loop-effect", help="Audit whether a loop patch changes hidden states/logits.")
+    add_audit_args(p)
+    p.set_defaults(func=cmd_audit_loop_effect)
 
     args = parser.parse_args(argv)
     return int(args.func(args))

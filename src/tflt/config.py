@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Sequence, Tuple
+from typing import Any, Optional, Sequence, Tuple
 
 
 IterationMode = str
@@ -48,6 +48,7 @@ class LoopConfig:
     first_n: Optional[int] = None
     anderson_m: int = 5
     anderson_lambda: float = 1e-4
+    audit_collector: Any = None
 
     def __post_init__(self) -> None:
         a, b = self.window

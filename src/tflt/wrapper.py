@@ -76,7 +76,7 @@ def apply_loop_wrapper(model: Any, config: LoopConfig) -> LoopHandle:
         block_layers = [originals[idx] for idx in range(config.start, config.end + 1)]
         layers[config.start] = LoopBlockEntryWrapper(block_layers, config)
         for idx in range(config.start + 1, config.end + 1):
-            layers[idx] = LoopIdentityLayer()
+            layers[idx] = LoopIdentityLayer(config, idx)
     else:
         raise ValueError("unsupported iteration_mode: %s" % config.iteration_mode)
 
@@ -105,7 +105,16 @@ class LoopLayerWrapper(_ModuleBase):
         self.config = config
 
     def forward(self, hidden_states: Any, *args: Any, **kwargs: Any) -> Any:
-        if _should_bypass_decode(hidden_states, kwargs, self.config):
+        bypass = _should_bypass_decode(hidden_states, kwargs, self.config)
+        _audit(
+            self.config,
+            "wrapper_forward",
+            wrapper_type="layer",
+            bypass=bypass,
+            **_forward_audit_metadata(kwargs),
+        )
+        if bypass:
+            _audit(self.config, "bypass", wrapper_type="layer")
             return self.layer(hidden_states, *args, **kwargs)
 
         body_kwargs = _body_kwargs(kwargs, allow_cache_reads=_has_decode_cache(kwargs))
@@ -113,11 +122,17 @@ class LoopLayerWrapper(_ModuleBase):
         def operator(x: Any) -> Any:
             snap = snapshot_cache(body_kwargs)
             try:
-                return _hidden(self.layer(x, *args, **body_kwargs))
+                out = _hidden(self.layer(x, *args, **body_kwargs))
+                _audit(self.config, "body_call", wrapper_type="layer")
+                _audit_tensor_diff(self.config, "g_minus_x", x, out)
+                return out
             finally:
                 crop_cache(snap)
 
         looped = run_loop(operator, hidden_states, self.config)
+        _audit_tensor_diff(self.config, "looped_hidden_vs_input", hidden_states, looped)
+        if self.config.cache_strategy != "none":
+            _audit(self.config, "stash_pass", wrapper_type="layer", cache_strategy=self.config.cache_strategy)
         return _stash_or_return(self.layer, hidden_states, looped, args, kwargs, self.config)
 
 
@@ -128,7 +143,16 @@ class LoopBlockEntryWrapper(_ModuleBase):
         self.config = config
 
     def forward(self, hidden_states: Any, *args: Any, **kwargs: Any) -> Any:
-        if _should_bypass_decode(hidden_states, kwargs, self.config):
+        bypass = _should_bypass_decode(hidden_states, kwargs, self.config)
+        _audit(
+            self.config,
+            "wrapper_forward",
+            wrapper_type="block",
+            bypass=bypass,
+            **_forward_audit_metadata(kwargs),
+        )
+        if bypass:
+            _audit(self.config, "bypass", wrapper_type="block")
             return _run_layers(self.layers, hidden_states, args, kwargs)
 
         body_kwargs = _body_kwargs(kwargs, allow_cache_reads=_has_decode_cache(kwargs))
@@ -136,21 +160,33 @@ class LoopBlockEntryWrapper(_ModuleBase):
         def operator(x: Any) -> Any:
             snap = snapshot_cache(body_kwargs)
             try:
-                return _run_layers_hidden(self.layers, x, args, body_kwargs)
+                out = _run_layers_hidden(self.layers, x, args, body_kwargs)
+                _audit(self.config, "body_call", wrapper_type="block")
+                _audit_tensor_diff(self.config, "g_minus_x", x, out)
+                return out
             finally:
                 crop_cache(snap)
 
         looped = run_loop(operator, hidden_states, self.config)
+        _audit_tensor_diff(self.config, "looped_hidden_vs_input", hidden_states, looped)
         if self.config.cache_strategy == "none":
             return _as_layer_output(looped, kwargs)
 
         stash_input = hidden_states if self.config.cache_strategy == "first" else looped
+        _audit(self.config, "stash_pass", wrapper_type="block", cache_strategy=self.config.cache_strategy)
         stash_result = _run_layers(self.layers, stash_input, args, kwargs)
         return _replace_hidden(stash_result, looped)
 
 
 class LoopIdentityLayer(_ModuleBase):
+    def __init__(self, config: Optional[LoopConfig] = None, index: Optional[int] = None) -> None:
+        super().__init__()
+        self.config = config
+        self.index = index
+
     def forward(self, hidden_states: Any, *args: Any, **kwargs: Any) -> Any:
+        if self.config is not None:
+            _audit(self.config, "identity_forward", index=self.index, **_forward_audit_metadata(kwargs))
         return _as_layer_output(hidden_states, kwargs)
 
 
@@ -275,3 +311,50 @@ def _cache_position(kwargs: Dict[str, Any]) -> Optional[int]:
         return int(pos)
     except Exception:
         return None
+
+
+def _cache_seq_length(cache: Any) -> Optional[int]:
+    if cache is None:
+        return None
+    getter = getattr(cache, "get_seq_length", None)
+    if getter is not None:
+        for args in ((), (0,)):
+            try:
+                value = getter(*args)
+                if value is not None:
+                    return int(value)
+            except Exception:
+                continue
+    seen = getattr(cache, "seen_tokens", None)
+    if seen is not None:
+        try:
+            return int(seen)
+        except Exception:
+            return None
+    return None
+
+
+def _forward_audit_metadata(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    cache = _cache_arg(kwargs)
+    return {
+        "use_cache": bool(kwargs.get("use_cache", False)),
+        "past_key_value_non_null": kwargs.get("past_key_value") is not None,
+        "past_key_values_non_null": kwargs.get("past_key_values") is not None,
+        "has_decode_cache": _has_decode_cache(kwargs),
+        "cache_position": _cache_position(kwargs),
+        "cache_seq_length": _cache_seq_length(cache),
+    }
+
+
+def _audit(config: LoopConfig, event: str, **payload: Any) -> None:
+    collector = getattr(config, "audit_collector", None)
+    record = getattr(collector, "record", None)
+    if callable(record):
+        record(event, payload)
+
+
+def _audit_tensor_diff(config: LoopConfig, name: str, before: Any, after: Any) -> None:
+    collector = getattr(config, "audit_collector", None)
+    record = getattr(collector, "record_tensor_diff", None)
+    if callable(record):
+        record(name, before, after)
