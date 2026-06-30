@@ -1,0 +1,19 @@
+# TFLT hpc2 env report example
+timestamp_utc=2026-07-01T00:00:00Z
+host=mgmt-4
+repo=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction
+venv=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction/.venv-test
+lock=envs/hpc2/requirements-eval.lock.txt
+
+python=Python 3.11.9
+uv=uv 0.9.5
+torch=2.3.1+cu121
+torch_cuda=12.1
+torch_cuda_available=false
+transformers=4.51.3
+lm_eval=0.4.11
+
+HF_HOME=/hpc2hdd/home/xhuang225/shared/hf_home
+TRANSFORMERS_CACHE=/hpc2hdd/home/xhuang225/shared/hf_home/hub
+HF_DATASETS_CACHE=/hpc2hdd/home/xhuang225/shared/datasets
+UV_CACHE_DIR=/hpc2hdd/home/xhuang225/shared/uv
