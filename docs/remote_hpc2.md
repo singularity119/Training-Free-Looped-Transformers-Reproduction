@@ -15,12 +15,15 @@ Recommended source checkout:
 $SCRATCH/training_free_looped_transformer
 ```
 
-Recommended cache roots:
+Recommended hpc2 layout:
 
 ```bash
-export HF_HOME="$SCRATCH/hf_home"
-export TRANSFORMERS_CACHE="$HF_HOME/transformers"
-export RESULT_ROOT="$SCRATCH/training_free_looped_transformer/runs"
+export TFLT_HPC2_CACHE_ROOT=/hpc2hdd/home/xhuang225/shared
+export HF_HOME="$TFLT_HPC2_CACHE_ROOT/hf_home"
+export TRANSFORMERS_CACHE="$HF_HOME/hub"
+export HF_DATASETS_CACHE="$TFLT_HPC2_CACHE_ROOT/datasets"
+export UV_CACHE_DIR="$TFLT_HPC2_CACHE_ROOT/uv"
+export RESULT_ROOT=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs
 ```
 
 ## Environment
@@ -28,16 +31,14 @@ export RESULT_ROOT="$SCRATCH/training_free_looped_transformer/runs"
 On the remote side:
 
 ```bash
-python -m venv .venv
-. .venv/bin/activate
-python -m pip install -U pip
-python -m pip install -e ".[eval]"
+module load anaconda3 cuda/12.4 uv
+bash scripts/env/hpc2_bootstrap_env.sh --venv .venv-test --recreate
 ```
 
-The reproduction plan pins `lm-eval==0.4.11` and uses
-`transformers>=4.51,<4.52` for Qwen3 compatibility. This is an engineering
-reproduction setting and must be reported separately from any bit-exact paper
-claim.
+The frozen hpc2 spec is in `envs/hpc2/`: Python 3.11.9, torch 2.3.1+cu121,
+transformers 4.51.3, and lm_eval 0.4.11. Build a fresh versioned venv and
+validate it before switching the active `.venv` symlink. Do not upgrade an
+active environment in place while jobs may be using it.
 
 ## Preflight
 
@@ -66,8 +67,7 @@ tflt launch --backend slurm \
   --dry-run
 ```
 
-Inspect `runs/<timestamp>/control/job.sbatch` on the remote checkout before
-submitting.
+Inspect `<RESULT_ROOT>/<timestamp>/control/job.sbatch` before submitting.
 
 ## Plain SSH/Tmux Dry Run
 

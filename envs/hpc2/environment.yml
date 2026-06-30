@@ -1,0 +1,8 @@
+name: tflt-hpc2-base
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - uv==0.9.5

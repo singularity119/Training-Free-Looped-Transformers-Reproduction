@@ -24,11 +24,15 @@ python -m pip install -e ".[dev]"
 python -m pytest
 ```
 
-Remote eval environments should install the eval extras:
+Remote eval environments should be rebuilt from the hpc2 lock:
 
 ```bash
-python -m pip install -e ".[eval]"
+module load anaconda3 cuda/12.4 uv
+bash scripts/env/hpc2_bootstrap_env.sh --venv .venv-test --recreate
 ```
+
+See [envs/hpc2](envs/hpc2) for the locked eval environment, shared cache
+layout, freeze script, and optional wheelhouse workflow.
 
 ## Dry Runs
 

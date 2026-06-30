@@ -6,8 +6,11 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 .venv/
+.venv*/
 venv/
 env/
+!scripts/env/
+!scripts/env/*.sh
 
 # Local machine must keep only code. Runtime artifacts belong on remote/HPC.
 models/
@@ -23,6 +26,12 @@ logs/
 .cache/
 hf_cache/
 lm_eval_cache/
+
+# Generated environment reports and freeze snapshots.
+envs/hpc2/env_report.txt
+envs/hpc2/freeze/
+envs/hpc2/cuda-check-*.out
+envs/hpc2/cuda-check-*.err
 
 # Large generated artifacts.
 *.pt

@@ -181,6 +181,8 @@ def _env_snapshot() -> dict:
         "TRANSFORMERS_CACHE",
         "HF_DATASETS_CACHE",
         "HF_HUB_DISABLE_XET",
+        "UV_CACHE_DIR",
+        "VIRTUAL_ENV",
         "CUDA_VISIBLE_DEVICES",
         "PYTHONPATH",
     ]

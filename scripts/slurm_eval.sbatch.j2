@@ -8,10 +8,14 @@
 #SBATCH --output={{ result_root }}/control/%x-%j.out
 #SBATCH --error={{ result_root }}/control/%x-%j.err
 
-source /etc/profile >/dev/null 2>&1 || true
 set -euo pipefail
 
 mkdir -p "{{ result_root }}/control"
+if ! command -v module >/dev/null 2>&1 && [[ -r /etc/profile.d/modules.sh ]]; then
+  set +e
+  source /etc/profile.d/modules.sh >/dev/null 2>&1
+  set -e
+fi
 module load anaconda3 cuda/12.4 uv
 cd "{{ remote_src }}"
 . "{{ remote_src }}/.venv/bin/activate"
@@ -21,7 +25,9 @@ export HF_HOME="${HF_HOME:-{{ hf_home }}}"
 export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-$HF_HOME/hub}"
 export HF_DATASETS_CACHE="${HF_DATASETS_CACHE:-{{ hf_datasets_cache }}}"
 export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"
+export UV_CACHE_DIR="${UV_CACHE_DIR:-{{ uv_cache_dir | default('$HOME/.cache/uv') }}}"
 export RESULT_ROOT="{{ result_root }}"
+mkdir -p "$HF_HOME" "$TRANSFORMERS_CACHE" "$HF_DATASETS_CACHE" "$UV_CACHE_DIR"
 
 python -V | tee "$RESULT_ROOT/control/python_version.txt"
 nvidia-smi | tee "$RESULT_ROOT/control/nvidia_smi_before.txt"

@@ -30,10 +30,11 @@ class RemoteCommandTest(unittest.TestCase):
             hf_home="/remote/cache/huggingface",
             transformers_cache="/remote/cache/huggingface/hub",
             hf_datasets_cache="/remote/cache/huggingface/datasets",
+            uv_cache_dir="/remote/cache/uv",
         )
         self.assertIn("#SBATCH --partition=debug", script)
         self.assertIn("#SBATCH --gres=gpu:a40:1", script)
-        self.assertLess(script.index("source /etc/profile"), script.index("set -euo pipefail"))
+        self.assertIn("source /etc/profile.d/modules.sh", script)
         self.assertIn("module load anaconda3 cuda/12.4 uv", script)
         self.assertIn('cd "/remote/project"', script)
         self.assertIn('. "/remote/project/.venv/bin/activate"', script)
@@ -44,6 +45,8 @@ class RemoteCommandTest(unittest.TestCase):
             script,
         )
         self.assertIn('export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"', script)
+        self.assertIn('export UV_CACHE_DIR="${UV_CACHE_DIR:-/remote/cache/uv}"', script)
+        self.assertIn('mkdir -p "$HF_HOME" "$TRANSFORMERS_CACHE" "$HF_DATASETS_CACHE" "$UV_CACHE_DIR"', script)
 
 
 if __name__ == "__main__":

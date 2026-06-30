@@ -137,6 +137,7 @@ def cmd_launch(args: argparse.Namespace) -> int:
             hf_home=profile.get("hf_home"),
             transformers_cache=profile.get("transformers_cache"),
             hf_datasets_cache=profile.get("hf_datasets_cache"),
+            uv_cache_dir=profile.get("uv_cache_dir"),
         )
         script_path = control_dir / "job.sbatch"
         write_text(script_path, script, executable=True)

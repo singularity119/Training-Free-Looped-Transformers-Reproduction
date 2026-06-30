@@ -96,11 +96,13 @@ def render_slurm_script(
     hf_home: Optional[str] = None,
     transformers_cache: Optional[str] = None,
     hf_datasets_cache: Optional[str] = None,
+    uv_cache_dir: Optional[str] = None,
 ) -> str:
     body = shell_join(command)
     hf_home = hf_home or "{result_root}/hf_home".format(result_root=result_root)
     transformers_cache = transformers_cache or "$HF_HOME/hub"
     hf_datasets_cache = hf_datasets_cache or "$HF_HOME/datasets"
+    uv_cache_dir = uv_cache_dir or "$HOME/.cache/uv"
     gres = gres or "gpu:{gpus}".format(gpus=gpus)
     remote_src = remote_src or "."
     return """#!/usr/bin/env bash
@@ -113,13 +115,17 @@ def render_slurm_script(
 #SBATCH --output={result_root}/control/%x-%j.out
 #SBATCH --error={result_root}/control/%x-%j.err
 
-source /etc/profile >/dev/null 2>&1 || true
 set -euo pipefail
 
 mkdir -p "{result_root}/control"
 echo "$0" > "{result_root}/control/sbatch_script.txt"
 printf '%s\n' {quoted_command} > "{result_root}/control/command.txt"
 
+if ! command -v module >/dev/null 2>&1 && [[ -r /etc/profile.d/modules.sh ]]; then
+  set +e
+  source /etc/profile.d/modules.sh >/dev/null 2>&1
+  set -e
+fi
 module load anaconda3 cuda/12.4 uv
 cd "{remote_src}"
 . "{remote_src}/.venv/bin/activate"
@@ -132,7 +138,9 @@ export HF_HOME="${{HF_HOME:-{hf_home}}}"
 export TRANSFORMERS_CACHE="${{TRANSFORMERS_CACHE:-{transformers_cache}}}"
 export HF_DATASETS_CACHE="${{HF_DATASETS_CACHE:-{hf_datasets_cache}}}"
 export HF_HUB_DISABLE_XET="${{HF_HUB_DISABLE_XET:-1}}"
+export UV_CACHE_DIR="${{UV_CACHE_DIR:-{uv_cache_dir}}}"
 export RESULT_ROOT="{result_root}"
+mkdir -p "$HF_HOME" "$TRANSFORMERS_CACHE" "$HF_DATASETS_CACHE" "$UV_CACHE_DIR"
 
 {body}
 
@@ -151,6 +159,7 @@ nvidia-smi | tee "{result_root}/control/nvidia_smi_after.txt"
         hf_home=hf_home,
         transformers_cache=transformers_cache,
         hf_datasets_cache=hf_datasets_cache,
+        uv_cache_dir=uv_cache_dir,
         body=body,
         quoted_command=shlex.quote(body),
     )
@@ -194,6 +203,8 @@ def env_snapshot() -> Dict[str, str]:
         "TRANSFORMERS_CACHE",
         "HF_DATASETS_CACHE",
         "HF_HUB_DISABLE_XET",
+        "UV_CACHE_DIR",
+        "VIRTUAL_ENV",
         "CUDA_VISIBLE_DEVICES",
         "PYTHONPATH",
     ]
