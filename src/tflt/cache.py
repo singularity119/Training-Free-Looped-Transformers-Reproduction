@@ -41,7 +41,6 @@ def crop_cache(snapshot: Optional[CacheSnapshot]) -> None:
     if snapshot.seq_length is not None and hasattr(cache, "crop"):
         try:
             cache.crop(snapshot.seq_length)
-            return
         except Exception:
             pass
     _restore_list_lengths(getattr(cache, "key_cache", None), snapshot.key_lengths)
