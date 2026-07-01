@@ -13,6 +13,55 @@ class AddLayer:
         return (hidden_states + self.delta,)
 
 
+class ShapedValue:
+    def __init__(self, value, seq_len):
+        self.value = float(value)
+        self.seq_len = int(seq_len)
+        self.shape = (1, self.seq_len, 1)
+
+    def __add__(self, delta):
+        return ShapedValue(self.value + float(delta), self.seq_len)
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        return ShapedValue(self.value - float(other), self.seq_len)
+
+    def __mul__(self, other):
+        return ShapedValue(self.value * float(other), self.seq_len)
+
+    __rmul__ = __mul__
+
+    def __float__(self):
+        return self.value
+
+    def __eq__(self, other):
+        try:
+            return self.value == float(other)
+        except Exception:
+            return False
+
+
+class FakeCache:
+    def __init__(self, length):
+        self.length = int(length)
+
+    def get_seq_length(self, *args):
+        return self.length
+
+
+class FakeCachePosition:
+    def __init__(self, values):
+        self.values = list(values)
+        self.shape = (len(self.values),)
+
+    def max(self):
+        return max(self.values)
+
+    def numel(self):
+        return len(self.values)
+
+
 class DummyInner:
     def __init__(self):
         self.layers = [AddLayer(1.0), AddLayer(2.0), AddLayer(4.0)]
@@ -69,13 +118,80 @@ class AuditTest(unittest.TestCase):
         )
         handle = apply_loop_wrapper(model, cfg)
         try:
-            self.assertEqual(model.forward(0.0, past_key_value=object(), use_cache=True), 7.0)
+            self.assertEqual(model.forward(ShapedValue(0.0, 1), past_key_value=object(), use_cache=True), 7.0)
         finally:
             handle.restore()
         counts = collector.summary()["counts"]
         self.assertEqual(counts["block_wrapper_forward"], 1)
         self.assertEqual(counts["bypass_true"], 1)
         self.assertEqual(counts.get("operator_body_calls", 0), 0)
+        record = collector.summary()["forward_records"][0]
+        self.assertEqual(record["hidden_seq_length"], 1)
+        self.assertTrue(record["is_incremental_decode_step"])
+
+    def test_qwen3_prefill_like_cache_does_not_bypass(self):
+        model = DummyModel()
+        collector = AuditCollector()
+        cfg = LoopConfig(
+            "dummy",
+            (0, 1),
+            k=2,
+            iteration_mode="block",
+            strategy="damped_euler",
+            decode_mode="bypass",
+            audit_collector=collector,
+        )
+        handle = apply_loop_wrapper(model, cfg)
+        try:
+            model.forward(
+                ShapedValue(0.0, 8),
+                past_key_value=FakeCache(5),
+                use_cache=True,
+                cache_position=FakeCachePosition(range(8)),
+            )
+        finally:
+            handle.restore()
+        summary = collector.summary()
+        counts = summary["counts"]
+        self.assertEqual(counts["block_wrapper_forward"], 1)
+        self.assertEqual(counts["bypass_false"], 1)
+        self.assertEqual(counts["operator_body_calls"], 2)
+        record = summary["forward_records"][0]
+        self.assertEqual(record["hidden_seq_length"], 8)
+        self.assertEqual(record["cache_position_length"], 8)
+        self.assertFalse(record["is_incremental_decode_step"])
+
+    def test_true_decode_like_cache_bypasses(self):
+        model = DummyModel()
+        collector = AuditCollector()
+        cfg = LoopConfig(
+            "dummy",
+            (0, 1),
+            k=2,
+            iteration_mode="block",
+            strategy="damped_euler",
+            decode_mode="bypass",
+            audit_collector=collector,
+        )
+        handle = apply_loop_wrapper(model, cfg)
+        try:
+            model.forward(
+                ShapedValue(0.0, 1),
+                past_key_value=FakeCache(5),
+                use_cache=True,
+                cache_position=FakeCachePosition([5]),
+            )
+        finally:
+            handle.restore()
+        summary = collector.summary()
+        counts = summary["counts"]
+        self.assertEqual(counts["block_wrapper_forward"], 1)
+        self.assertEqual(counts["bypass_true"], 1)
+        self.assertEqual(counts.get("operator_body_calls", 0), 0)
+        record = summary["forward_records"][0]
+        self.assertEqual(record["hidden_seq_length"], 1)
+        self.assertEqual(record["cache_position_length"], 1)
+        self.assertTrue(record["is_incremental_decode_step"])
 
     def test_restore_recovers_dummy_output(self):
         model = DummyModel()

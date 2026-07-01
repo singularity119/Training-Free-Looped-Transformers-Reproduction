@@ -105,19 +105,20 @@ class LoopLayerWrapper(_ModuleBase):
         self.config = config
 
     def forward(self, hidden_states: Any, *args: Any, **kwargs: Any) -> Any:
-        bypass = _should_bypass_decode(hidden_states, kwargs, self.config)
+        is_incremental_decode = _is_incremental_decode_step(hidden_states, kwargs)
+        bypass = _should_bypass_decode(hidden_states, kwargs, self.config, is_incremental_decode)
         _audit(
             self.config,
             "wrapper_forward",
             wrapper_type="layer",
             bypass=bypass,
-            **_forward_audit_metadata(kwargs),
+            **_forward_audit_metadata(hidden_states, kwargs),
         )
         if bypass:
             _audit(self.config, "bypass", wrapper_type="layer")
             return self.layer(hidden_states, *args, **kwargs)
 
-        body_kwargs = _body_kwargs(kwargs, allow_cache_reads=_has_decode_cache(kwargs))
+        body_kwargs = _body_kwargs(kwargs, allow_cache_reads=is_incremental_decode)
 
         def operator(x: Any) -> Any:
             snap = snapshot_cache(body_kwargs)
@@ -143,19 +144,20 @@ class LoopBlockEntryWrapper(_ModuleBase):
         self.config = config
 
     def forward(self, hidden_states: Any, *args: Any, **kwargs: Any) -> Any:
-        bypass = _should_bypass_decode(hidden_states, kwargs, self.config)
+        is_incremental_decode = _is_incremental_decode_step(hidden_states, kwargs)
+        bypass = _should_bypass_decode(hidden_states, kwargs, self.config, is_incremental_decode)
         _audit(
             self.config,
             "wrapper_forward",
             wrapper_type="block",
             bypass=bypass,
-            **_forward_audit_metadata(kwargs),
+            **_forward_audit_metadata(hidden_states, kwargs),
         )
         if bypass:
             _audit(self.config, "bypass", wrapper_type="block")
             return _run_layers(self.layers, hidden_states, args, kwargs)
 
-        body_kwargs = _body_kwargs(kwargs, allow_cache_reads=_has_decode_cache(kwargs))
+        body_kwargs = _body_kwargs(kwargs, allow_cache_reads=is_incremental_decode)
 
         def operator(x: Any) -> Any:
             snap = snapshot_cache(body_kwargs)
@@ -186,7 +188,12 @@ class LoopIdentityLayer(_ModuleBase):
 
     def forward(self, hidden_states: Any, *args: Any, **kwargs: Any) -> Any:
         if self.config is not None:
-            _audit(self.config, "identity_forward", index=self.index, **_forward_audit_metadata(kwargs))
+            _audit(
+                self.config,
+                "identity_forward",
+                index=self.index,
+                **_forward_audit_metadata(hidden_states, kwargs),
+            )
         return _as_layer_output(hidden_states, kwargs)
 
 
@@ -279,23 +286,82 @@ def _cache_arg(kwargs: Dict[str, Any]) -> Any:
     return cache_arg(kwargs)
 
 
-def _should_bypass_decode(hidden_states: Any, kwargs: Dict[str, Any], config: LoopConfig) -> bool:
+def _should_bypass_decode(
+    hidden_states: Any,
+    kwargs: Dict[str, Any],
+    config: LoopConfig,
+    is_incremental_decode: Optional[bool] = None,
+) -> bool:
+    if is_incremental_decode is None:
+        is_incremental_decode = _is_incremental_decode_step(hidden_states, kwargs)
     if config.decode_mode == "full":
         return False
     if config.decode_mode == "bypass":
-        return _has_decode_cache(kwargs)
+        return is_incremental_decode
     if config.decode_mode == "first_n":
         pos = _cache_position(kwargs)
-        return pos is not None and config.first_n is not None and pos >= config.first_n
+        return bool(is_incremental_decode and pos is not None and config.first_n is not None and pos >= config.first_n)
     return False
 
 
-def _has_decode_cache(kwargs: Dict[str, Any]) -> bool:
+def _is_incremental_decode_step(hidden_states: Any, kwargs: Dict[str, Any]) -> bool:
+    hidden_seq_length = _hidden_seq_length(hidden_states)
+    cache_position_length = _cache_position_length(kwargs)
+    if hidden_seq_length != 1:
+        return False
+    if cache_position_length is not None and cache_position_length > 1:
+        return False
     cache = _cache_arg(kwargs)
-    if cache is not None:
+    if _cache_has_history(cache):
         return True
     pos = _cache_position(kwargs)
     return pos is not None and pos > 0
+
+
+def _cache_has_history(cache: Any) -> bool:
+    if cache is None:
+        return False
+    seq_length = _cache_seq_length(cache)
+    if seq_length is None:
+        return True
+    return seq_length > 0
+
+
+def _hidden_seq_length(hidden_states: Any) -> Optional[int]:
+    shape = getattr(hidden_states, "shape", None)
+    if shape is None:
+        return None
+    try:
+        if len(shape) >= 2:
+            return int(shape[-2])
+    except Exception:
+        return None
+    return None
+
+
+def _cache_position_length(kwargs: Dict[str, Any]) -> Optional[int]:
+    pos = kwargs.get("cache_position")
+    if pos is None:
+        return None
+    numel = getattr(pos, "numel", None)
+    if callable(numel):
+        try:
+            return int(numel())
+        except Exception:
+            pass
+    shape = getattr(pos, "shape", None)
+    if shape is not None:
+        try:
+            length = 1
+            for dim in shape:
+                length *= int(dim)
+            return length
+        except Exception:
+            pass
+    try:
+        return len(pos)
+    except Exception:
+        return 1
 
 
 def _cache_position(kwargs: Dict[str, Any]) -> Optional[int]:
@@ -334,14 +400,17 @@ def _cache_seq_length(cache: Any) -> Optional[int]:
     return None
 
 
-def _forward_audit_metadata(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+def _forward_audit_metadata(hidden_states: Any, kwargs: Dict[str, Any]) -> Dict[str, Any]:
     cache = _cache_arg(kwargs)
     return {
         "use_cache": bool(kwargs.get("use_cache", False)),
         "past_key_value_non_null": kwargs.get("past_key_value") is not None,
         "past_key_values_non_null": kwargs.get("past_key_values") is not None,
-        "has_decode_cache": _has_decode_cache(kwargs),
+        "has_decode_cache": _cache_has_history(cache),
         "cache_position": _cache_position(kwargs),
+        "hidden_seq_length": _hidden_seq_length(hidden_states),
+        "cache_position_length": _cache_position_length(kwargs),
+        "is_incremental_decode_step": _is_incremental_decode_step(hidden_states, kwargs),
         "cache_seq_length": _cache_seq_length(cache),
     }
 
