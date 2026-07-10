@@ -1,14 +1,208 @@
-import unittest
 import json
 import tempfile
+import unittest
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+from unittest.mock import patch
 
 from tflt.cli import main
+from tflt.loopscope.schema import PROBE_SCHEMA_VERSION, manifest_sha256
+
+
+def _probe_report(window=False):
+    summary = {"count": 2, "mean": 0.5, "median": 0.5, "p90": 0.5}
+    report = {
+        "schema_version": PROBE_SCHEMA_VERSION,
+        "git": {"root": "/repo", "branch": "loopscope", "commit": "abc", "dirty": False},
+        "model": {
+            "alias": "m",
+            "repo_id": "org/m",
+            "revision": "r",
+            "layer_count": 28 if window else 1,
+        },
+        "tokenizer": {
+            "revision": "r",
+            "choice_token_ids": {} if window else {"A": {}, "B": {}},
+        },
+        "runtime": {
+            "device": "cpu",
+            "dtype": "float32",
+            "versions": {
+                "python": "3.11",
+                "torch": "2.3.1",
+                "transformers": "4.51.3",
+                "lm_eval": "0.4.11",
+                "tflt": "source-tree",
+            },
+        },
+        "probe_pool": {
+            "source": "fixture",
+            "split": "dev",
+            "count": 2,
+            "seed": 1,
+            "manifest_sha256": "a" * 64,
+            "source_manifest_sha256": "b" * 64,
+            "selected_subset_sha256": "a" * 64,
+            "source_manifest_count": 2,
+            "sample_ids": ["x", "y"],
+            "records": [
+                {"id": "x", "prompt_sha256": "e" * 64},
+                {"id": "y", "prompt_sha256": "f" * 64},
+            ],
+        },
+        "position_rule": "last_non_padding",
+        "warnings": [],
+    }
+    pool = report["probe_pool"]
+    selected = {
+        "schema_version": "loopscope.probe-pool-selection.v1",
+        "source": pool["source"],
+        "split": pool["split"],
+        "count": pool["count"],
+        "seed": pool["seed"],
+        "sample_ids": pool["sample_ids"],
+        "records": pool["records"],
+        "source_manifest_sha256": pool["source_manifest_sha256"],
+    }
+    pool["manifest_sha256"] = manifest_sha256(selected)
+    pool["selected_subset_sha256"] = pool["manifest_sha256"]
+    if window:
+        examples = [
+            {"sample_id": sample_id, "valid": True, "errors": []}
+            for sample_id in ("x", "y")
+        ]
+        report["layer_metrics"] = []
+        report["window_grid"] = {
+            "manifest_sha256": "c" * 64,
+            "layer_count": 28,
+            "candidate_windows": ["12:15"],
+        }
+        report["window_metrics"] = [
+            {
+                "window": "12:15",
+                "valid": True,
+                "sample_count": 2,
+                "valid_sample_count": 2,
+                "answer_position": {"r": summary, "q": summary},
+                "all_non_padding_tokens": {"r": summary, "q": summary},
+                "examples": examples,
+                "errors": [],
+            }
+        ]
+    else:
+        report["layer_metrics"] = [
+            {
+                "layer_index": 0,
+                "choice_entropy": summary,
+                "kl_to_final": summary,
+                "top1_to_final_agreement": summary,
+                "effective_rank": 1.5,
+                "effective_rank_sampling": {
+                    "representation_space": "final_norm raw-logit-lens space",
+                    "count": 2,
+                    "sample_ids": ["x", "y"],
+                },
+            }
+        ]
+        report["window_metrics"] = []
+        report["examples"] = [
+            {"id": sample_id, "layer_metrics": [{"layer_index": 0}]}
+            for sample_id in ("x", "y")
+        ]
+    return report
 
 
 class CliTest(unittest.TestCase):
+    def test_probe_layers_dispatch_writes_serializable_command_args(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "layer-probe"
+            with patch("tflt.loopscope.probe.run_layer_probe", return_value=_probe_report()):
+                code = main(
+                    [
+                        "probe-layers",
+                        "--model",
+                        "m",
+                        "--input-jsonl",
+                        "unused.jsonl",
+                        "--input-manifest",
+                        "unused.manifest.json",
+                        "--output-dir",
+                        str(output),
+                    ]
+                )
+            self.assertEqual(code, 0)
+            command_args = json.loads((output / "command_args.json").read_text())
+            self.assertNotIn("func", command_args)
+            self.assertTrue((output / "probe_report.json").exists())
+
+    def test_probe_window_dispatch_writes_serializable_command_args(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "window-probe"
+            with patch(
+                "tflt.loopscope.window_probe.run_window_probe",
+                return_value=_probe_report(window=True),
+            ):
+                code = main(
+                    [
+                        "probe-window",
+                        "--model",
+                        "m",
+                        "--input-jsonl",
+                        "unused.jsonl",
+                        "--input-manifest",
+                        "unused.manifest.json",
+                        "--window-grid",
+                        "unused-grid.json",
+                        "--output-dir",
+                        str(output),
+                        "--window",
+                        "12:15",
+                    ]
+                )
+            self.assertEqual(code, 0)
+            command_args = json.loads((output / "command_args.json").read_text())
+            self.assertNotIn("func", command_args)
+            self.assertTrue((output / "probe_report.json").exists())
+
+    def test_probe_failure_preserves_command_and_error_artifacts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "failed-probe"
+            with patch(
+                "tflt.loopscope.probe.run_layer_probe",
+                side_effect=RuntimeError("fixture failure"),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "fixture failure"):
+                    main(
+                        [
+                            "probe-layers",
+                            "--model",
+                            "m",
+                            "--input-jsonl",
+                            "unused.jsonl",
+                            "--input-manifest",
+                            "unused.manifest.json",
+                            "--output-dir",
+                            str(output),
+                        ]
+                    )
+            self.assertTrue((output / "command_args.json").exists())
+            failure = json.loads((output / "failure.json").read_text())
+            self.assertEqual(failure["message"], "fixture failure")
+
+    def test_loopscope_help_commands_do_not_import_model_stack(self):
+        commands = (
+            "probe-layers",
+            "probe-window",
+            "make-window-grid",
+        )
+        for command in commands:
+            out = StringIO()
+            with self.assertRaises(SystemExit) as caught, redirect_stdout(out):
+                main([command, "--help"])
+            self.assertEqual(caught.exception.code, 0)
+            self.assertIn("usage:", out.getvalue())
+
     def test_eval_dry_run(self):
         out = StringIO()
         with redirect_stdout(out):

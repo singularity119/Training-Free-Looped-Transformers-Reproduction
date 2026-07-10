@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import random
+from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Sequence, Tuple
 
 from tflt.loopscope.schema import (
@@ -11,10 +12,43 @@ from tflt.loopscope.schema import (
     SchemaError,
     attach_manifest_sha256,
     verify_manifest_sha256,
+    write_new_json,
 )
 
 
 Window = Tuple[int, int]
+
+
+def add_make_window_grid_args(parser: Any) -> None:
+    parser.add_argument("--num-hidden-layers", type=int, required=True)
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--width", type=int, default=4)
+    parser.add_argument("--min-center-fraction", type=float, default=0.20)
+    parser.add_argument("--max-center-fraction", type=float, default=0.85)
+    parser.add_argument("--candidate-count", type=int, default=9)
+    parser.add_argument("--anchor", default="12:15")
+    parser.add_argument("--fixed-depth-fraction", type=float, default=0.525)
+    parser.add_argument("--random-count", type=int, default=5)
+    parser.add_argument("--random-seed", type=int, default=20260710)
+
+
+def cmd_make_window_grid(args: Any) -> int:
+    manifest = generate_window_grid(
+        num_hidden_layers=args.num_hidden_layers,
+        width=args.width,
+        min_center_fraction=args.min_center_fraction,
+        max_center_fraction=args.max_center_fraction,
+        candidate_count=args.candidate_count,
+        anchor=parse_window(args.anchor),
+        fixed_depth_fraction=args.fixed_depth_fraction,
+        random_count=args.random_count,
+        random_seed=args.random_seed,
+    )
+    output = Path(args.output)
+    write_new_json(output, manifest)
+    print(str(output))
+    print(manifest["manifest_sha256"])
+    return 0
 
 
 def parse_window(text: str) -> Window:
@@ -99,6 +133,7 @@ def generate_window_grid(
             "min_center_fraction": float(min_center_fraction),
             "max_center_fraction": float(max_center_fraction),
             "candidate_count_requested": int(candidate_count),
+            "candidate_count_actual": len(windows),
             "rounding": "half_up_start_then_boundary_clip",
             "fixed_depth_fraction": float(fixed_depth_fraction),
             "random_count": int(random_count),
@@ -144,6 +179,29 @@ def validate_window_grid(payload: Mapping[str, Any]) -> None:
     fixed_window = parse_window(str(payload.get("anchors", {}).get("fixed_depth", "")))
     if anchor not in seen or fixed_window not in seen:
         raise SchemaError("required anchor/fixed-depth window is missing")
+    if int(generation.get("candidate_count_actual", -1)) != len(windows):
+        raise SchemaError("candidate_count_actual disagrees with the exact window list")
+    comparison = payload.get("comparison_windows")
+    if not isinstance(comparison, Mapping):
+        raise SchemaError("comparison_windows must be an object")
+    if parse_window(str(comparison.get("fixed_depth", ""))) != fixed_window:
+        raise SchemaError("comparison fixed-depth window disagrees with anchors")
+    random_windows = comparison.get("random_in_band")
+    if not isinstance(random_windows, list):
+        raise SchemaError("random_in_band must be a list")
+    expected_random_count = int(generation.get("random_count", -1))
+    if len(random_windows) != expected_random_count or len(set(random_windows)) != len(
+        random_windows
+    ):
+        raise SchemaError("random_in_band count/uniqueness is inconsistent")
+    min_center = float(generation.get("min_center_fraction")) * layer_count
+    max_center = float(generation.get("max_center_fraction")) * layer_count
+    for text in random_windows:
+        window = parse_window(str(text))
+        _validate_window(window, layer_count=layer_count, width=width)
+        center = (window[0] + window[1]) / 2.0
+        if not min_center <= center <= max_center:
+            raise SchemaError("random-in-band window falls outside the frozen band")
 
 
 def candidate_windows(payload: Mapping[str, Any]) -> List[Window]:

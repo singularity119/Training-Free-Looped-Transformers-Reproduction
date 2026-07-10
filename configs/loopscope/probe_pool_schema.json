@@ -7,10 +7,19 @@
     "id": {"type": "string", "minLength": 1},
     "text": {"type": "string", "minLength": 1},
     "source": {"type": "string", "minLength": 1},
-    "split": {"type": "string", "not": {"pattern": "(?i)test"}},
+    "split": {"type": "string", "not": {"pattern": "[Tt][Ee][Ss][Tt]"}},
     "subject": {"type": "string", "minLength": 1},
     "answer_position": {"type": "integer", "minimum": 0},
     "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "not": {
+    "anyOf": [
+      {"required": ["answer"]},
+      {"required": ["label"]},
+      {"required": ["target"]},
+      {"required": ["gold"]},
+      {"required": ["gold_label"]}
+    ]
   },
   "additionalProperties": true,
   "description": "Gold labels are intentionally excluded from LoopScope probe records."

@@ -1,7 +1,7 @@
 import unittest
 
 from tflt.loopscope.grid import candidate_windows, generate_window_grid, validate_window_grid
-from tflt.loopscope.schema import SchemaError
+from tflt.loopscope.schema import SchemaError, attach_manifest_sha256
 
 
 class LoopScopeGridTest(unittest.TestCase):
@@ -21,6 +21,15 @@ class LoopScopeGridTest(unittest.TestCase):
         manifest = generate_window_grid(28)
         validate_window_grid(manifest)
         manifest["windows"][0]["start"] += 1
+        with self.assertRaises(SchemaError):
+            validate_window_grid(manifest)
+
+    def test_random_comparison_count_and_uniqueness_are_validated(self):
+        manifest = generate_window_grid(28)
+        manifest["comparison_windows"]["random_in_band"][1] = manifest[
+            "comparison_windows"
+        ]["random_in_band"][0]
+        attach_manifest_sha256(manifest)
         with self.assertRaises(SchemaError):
             validate_window_grid(manifest)
 
