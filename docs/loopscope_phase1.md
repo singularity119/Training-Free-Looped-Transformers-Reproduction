@@ -83,7 +83,9 @@ bash -n scripts/loopscope/submit_qwen17_phase1.sh
 
 ## 构建无标签校准池
 
-校准输入必须由正式评测所用的同一 lm-eval MMLU renderer 预渲染，严格冻结 `lm-eval==0.4.11`、5-shot、fewshot split=`dev`、`chat_template=false`、`multiturn=false`。结构化 `question/choices` 零样本自动渲染路径已禁用。
+校准输入必须由正式评测所用的同一 lm-eval MMLU renderer 预渲染，严格冻结 `lm-eval==0.4.11`、target split=`validation`、5-shot、fewshot split=`dev`、`chat_template=false`、`multiturn=false`。结构化 `question/choices` 零样本自动渲染路径已禁用。
+
+第一阶段只把 57 个 subject 的 `validation`（共 1531 条）作为非 test 校准候选；`dev`（共 285 条）只提供每个 subject 的 5-shot demonstrations；`test` 只允许在规则冻结后的正式收益评估中使用。`auxiliary_train` 只存在于聚合数据配置，不属于逐 subject lm-eval task split，因此禁止作为第一阶段 renderer target，也不得映射或静默分配到 subject。
 
 renderer manifest v2 除自哈希外，必须记录实际安装包版本、被调用源码文件及逐文件 SHA、task YAML/config SHA、精确 dataset commit、raw/processed split fingerprint、完整 source projection SHA 和 render contract SHA。每条目标记录必须记录 `task_name`、目标 split/index/doc SHA、逐条 render SHA，以及 5 个有序唯一、同 subject 的 demo provenance（ID/index、dev split、doc/render/gold SHA）。目标 gold 不得进入投影或 probe pool 字段；5 个 demo answer 必须由真实 renderer 写入 prompt，并以 `uses_target_gold_labels=false`、`fewshot_answers_present=true` 区分两种语义。
 
@@ -94,7 +96,7 @@ PYTHONPATH=src python scripts/loopscope/export_mmlu_renderer.py \
   --output-jsonl /path/to/new/lm_eval_mmlu_projection.jsonl \
   --manifest /path/to/new/lm_eval_mmlu_renderer_manifest.json \
   --dataset-revision <exact-lowercase-dataset-commit> \
-  --target-split auxiliary_train \
+  --target-split validation \
   --fewshot-split dev \
   --seed 20260710
 ```
@@ -110,7 +112,7 @@ python scripts/loopscope/build_mmlu_probe_pool.py \
   --manifest /path/to/new/probe_pool_manifest.json \
   --renderer-manifest /path/to/lm_eval_mmlu_renderer_manifest.json \
   --source 'cais/mmlu@<exact-revision>' \
-  --split auxiliary_train \
+  --split validation \
   --count 512 \
   --seed 20260710 \
   --dry-run
@@ -121,7 +123,7 @@ python scripts/loopscope/build_mmlu_probe_pool.py \
   --manifest /path/to/new/probe_pool_manifest.json \
   --renderer-manifest /path/to/lm_eval_mmlu_renderer_manifest.json \
   --source 'cais/mmlu@<exact-revision>' \
-  --split auxiliary_train \
+  --split validation \
   --count 512 \
   --seed 20260710
 ```

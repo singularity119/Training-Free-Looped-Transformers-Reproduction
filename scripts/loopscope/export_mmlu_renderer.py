@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Optional, Sequence
 
 from tflt.loopscope.mmlu_renderer import (
+    PHASE1_TARGET_SPLIT,
     RendererVerificationError,
     create_renderer_bundle,
 )
@@ -25,7 +26,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--output-jsonl", required=True)
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--dataset-revision", required=True)
-    parser.add_argument("--target-split", default="auxiliary_train")
+    parser.add_argument("--target-split", default=PHASE1_TARGET_SPLIT)
     parser.add_argument("--fewshot-split", default="dev")
     parser.add_argument("--seed", type=int, default=20260710)
     parser.add_argument("--task-group", default="mmlu")

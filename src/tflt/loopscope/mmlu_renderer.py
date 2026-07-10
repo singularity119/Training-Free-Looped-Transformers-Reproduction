@@ -21,6 +21,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 
 
 LM_EVAL_VERSION = "0.4.11"
+PHASE1_TARGET_SPLIT = "validation"
 RENDERER_SCHEMA_VERSION = "loopscope.mmlu-renderer-manifest.v2"
 PROJECTION_RECORD_VERSION = "loopscope.mmlu-renderer-projection-record.v2"
 RENDER_CONTRACT_VERSION = "loopscope.mmlu-5shot-render.v2"
@@ -72,7 +73,7 @@ def projection_jsonl_bytes(records: Iterable[Mapping[str, Any]]) -> bytes:
 
 def create_renderer_bundle(
     dataset_revision: str,
-    target_split: str = "auxiliary_train",
+    target_split: str = PHASE1_TARGET_SPLIT,
     fewshot_split: str = "dev",
     seed: int = 20260710,
     task_group: str = "mmlu",
@@ -83,8 +84,10 @@ def create_renderer_bundle(
     """Render and self-hash one exact source projection plus its manifest."""
 
     revision = _validate_exact_revision(dataset_revision)
-    if target_split.lower().find("test") >= 0:
-        raise RendererVerificationError("target_split must be non-test")
+    if target_split != PHASE1_TARGET_SPLIT:
+        raise RendererVerificationError(
+            "phase one freezes target_split=%s" % PHASE1_TARGET_SPLIT
+        )
     if fewshot_split != "dev":
         raise RendererVerificationError("phase one freezes fewshot_split=dev")
     if max_targets_per_task is not None and int(max_targets_per_task) < 1:
@@ -203,6 +206,7 @@ def validate_renderer_manifest_payload(payload: Mapping[str, Any]) -> None:
         "task_group": "mmlu",
         "num_fewshot": 5,
         "fewshot_split": "dev",
+        "target_split": PHASE1_TARGET_SPLIT,
         "chat_template": False,
         "multiturn": False,
     }

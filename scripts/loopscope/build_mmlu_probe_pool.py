@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any, DefaultDict, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 from tflt.loopscope.mmlu_renderer import (
+    PHASE1_TARGET_SPLIT,
     PROJECTION_RECORD_VERSION,
     RendererVerificationError,
     validate_renderer_manifest_payload,
@@ -73,7 +74,12 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help="New manifest path (default: <output-jsonl>.manifest.json).",
     )
     parser.add_argument("--source", required=True, help="Dataset name/revision description.")
-    parser.add_argument("--split", required=True, help="Provably non-test source split.")
+    parser.add_argument(
+        "--split",
+        required=True,
+        choices=(PHASE1_TARGET_SPLIT,),
+        help="Frozen per-subject calibration source split.",
+    )
     parser.add_argument(
         "--renderer-manifest",
         required=True,
@@ -122,6 +128,10 @@ def main(
     if not str(args.source).strip():
         raise PoolBuildError("--source must be non-empty and include dataset provenance")
     _reject_test_split(args.split, "--split")
+    if args.split != PHASE1_TARGET_SPLIT:
+        raise PoolBuildError(
+            "--split must equal the frozen %s target split" % PHASE1_TARGET_SPLIT
+        )
     if args.source != renderer_manifest["dataset"]["source"]:
         raise PoolBuildError("--source must equal the verified renderer dataset source")
     if args.split != renderer_manifest["target_split"]:

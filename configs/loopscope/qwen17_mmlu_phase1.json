@@ -40,6 +40,7 @@
     "num_fewshot": 5,
     "prompt_mode": "lm_eval_verified_projection_v2",
     "lm_eval_version": "0.4.11",
+    "target_split": "validation",
     "fewshot_split": "dev",
     "chat_template": false,
     "multiturn": false,

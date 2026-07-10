@@ -19,6 +19,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
+from tflt.loopscope.mmlu_renderer import PHASE1_TARGET_SPLIT
+
 
 BASE_COMMIT = "4f59bd93eca4da3cbf458a93508f91c5b23912bc"
 EXPECTED_ORIGIN = "git@github.com:singularity119/Training-Free-Looped-Transformers-Reproduction.git"
@@ -1413,6 +1415,7 @@ def _validate_phase_config(config: Mapping[str, Any]) -> None:
         ("probe_pool", "num_fewshot"): 5,
         ("probe_pool", "prompt_mode"): "lm_eval_verified_projection_v2",
         ("probe_pool", "lm_eval_version"): "0.4.11",
+        ("probe_pool", "target_split"): PHASE1_TARGET_SPLIT,
         ("probe_pool", "fewshot_split"): "dev",
         ("probe_pool", "chat_template"): False,
         ("probe_pool", "multiturn"): False,
@@ -1534,6 +1537,10 @@ def _validate_pool(pool_path: Path, manifest: Mapping[str, Any]) -> bytes:
         raise PreparationError("five-shot prompts must retain demonstration answers")
     if manifest.get("task_group") != "mmlu" or manifest.get("num_fewshot") != 5:
         raise PreparationError("probe-pool manifest must freeze MMLU five-shot rendering")
+    if manifest.get("split") != PHASE1_TARGET_SPLIT:
+        raise PreparationError(
+            "probe-pool manifest split must be %s" % PHASE1_TARGET_SPLIT
+        )
     if "test" in str(manifest.get("split", "")).lower():
         raise PreparationError("test split is forbidden for LoopScope probes")
     if int(manifest.get("seed", -1)) != 20260710:

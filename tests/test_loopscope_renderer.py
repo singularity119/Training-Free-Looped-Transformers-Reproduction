@@ -90,6 +90,27 @@ class _HybridTaskConfig(Mapping):
 
 
 class LoopScopeRendererTest(unittest.TestCase):
+    def test_phase_one_renderer_only_accepts_validation_targets(self):
+        bundle = create_renderer_bundle(
+            dataset_revision=FAKE_DATASET_REVISION,
+            target_split="validation",
+            task_names=["mmlu_math"],
+            max_targets_per_task=1,
+            backend=FakeRendererBackend(1),
+        )
+        self.assertEqual(bundle["manifest"]["target_split"], "validation")
+        for split in ("auxiliary_train", "dev", "test"):
+            with self.subTest(split=split), self.assertRaisesRegex(
+                RendererVerificationError, "target_split=validation"
+            ):
+                create_renderer_bundle(
+                    dataset_revision=FAKE_DATASET_REVISION,
+                    target_split=split,
+                    task_names=["mmlu_math"],
+                    max_targets_per_task=1,
+                    backend=FakeRendererBackend(1),
+                )
+
     def test_config_value_prefers_populated_hybrid_attribute(self):
         config = _HybridTaskConfig(
             attribute_value="cais/mmlu",
@@ -251,6 +272,17 @@ class LoopScopeRendererTest(unittest.TestCase):
 
     def test_export_cli_has_no_bypass_and_is_write_once(self):
         exporter = _load_export_script()
+        defaults = exporter.parse_args(
+            [
+                "--output-jsonl",
+                "projection.jsonl",
+                "--manifest",
+                "renderer.json",
+                "--dataset-revision",
+                FAKE_DATASET_REVISION,
+            ]
+        )
+        self.assertEqual(defaults.target_split, "validation")
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             projection = root / "projection.jsonl"

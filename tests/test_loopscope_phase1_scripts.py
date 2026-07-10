@@ -26,6 +26,7 @@ def _load_script(name):
 
 
 build = _load_script("build_mmlu_probe_pool.py")
+exporter = _load_script("export_mmlu_renderer.py")
 prepare = _load_script("prepare_qwen17_phase1.py")
 
 
@@ -65,7 +66,7 @@ def _write_full_freeze_fixture(root):
             "--manifest", str(pool_manifest_path),
             "--renderer-manifest", str(renderer_path),
             "--source", bundle["manifest"]["dataset"]["source"],
-            "--split", "auxiliary_train",
+            "--split", "validation",
             "--count", "6",
         ],
         renderer_verifier=lambda projection, evidence: verify_export_bundle(
@@ -278,7 +279,7 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
         pool_manifest = {
             "count": 1,
             "seed": 20260710,
-            "split": "auxiliary_train",
+            "split": "validation",
             "manifest_sha256": "a" * 64,
             "render_contract_subset_sha256": "b" * 64,
             "renderer": {"render_contract_sha256": "c" * 64},
@@ -405,6 +406,98 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
         with self.assertRaises(prepare.PreparationError):
             prepare._validate_phase_config(config)
 
+    def test_phase_config_freezes_validation_calibration_targets(self):
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "configs/loopscope/qwen17_mmlu_phase1.json"
+        )
+        config = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(config["probe_pool"].get("target_split"), "validation")
+        for value in (None, "auxiliary_train", "dev", "test"):
+            with self.subTest(value=value):
+                mutated = json.loads(json.dumps(config))
+                if value is None:
+                    mutated["probe_pool"].pop("target_split")
+                else:
+                    mutated["probe_pool"]["target_split"] = value
+                with self.assertRaisesRegex(
+                    prepare.PreparationError, "probe_pool.target_split"
+                ):
+                    prepare._validate_phase_config(mutated)
+
+    def test_exporter_and_builder_cli_freeze_validation_target_split(self):
+        export_args = exporter.parse_args(
+            [
+                "--output-jsonl",
+                "projection.jsonl",
+                "--manifest",
+                "renderer.json",
+                "--dataset-revision",
+                FAKE_DATASET_REVISION,
+            ]
+        )
+        self.assertEqual(export_args.target_split, "validation")
+        builder_args = [
+            "--input-jsonl", "projection.jsonl",
+            "--output-jsonl", "pool.jsonl",
+            "--renderer-manifest", "renderer.json",
+            "--source", "cais/mmlu@" + FAKE_DATASET_REVISION,
+            "--split", "validation",
+        ]
+        self.assertEqual(build.parse_args(builder_args).split, "validation")
+        split_index = builder_args.index("--split") + 1
+        for split in ("", "auxiliary_train", "dev", "test"):
+            with self.subTest(split=split):
+                invalid = list(builder_args)
+                invalid[split_index] = split
+                with self.assertRaises(SystemExit):
+                    build.parse_args(invalid)
+
+    def test_prepare_pool_rejects_every_nonvalidation_manifest_split(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            bundle = create_renderer_bundle(
+                dataset_revision=FAKE_DATASET_REVISION,
+                target_split="validation",
+                task_names=["mmlu_math"],
+                max_targets_per_task=4,
+                backend=FakeRendererBackend(4),
+            )
+            renderer = root / "renderer.json"
+            renderer.write_text(json.dumps(bundle["manifest"]), encoding="utf-8")
+            source = root / "source.jsonl"
+            source.write_bytes(bundle["projection_bytes"])
+            pool = root / "pool.jsonl"
+            manifest_path = root / "pool-manifest.json"
+            self.assertEqual(
+                build.main(
+                    [
+                        "--input-jsonl", str(source),
+                        "--output-jsonl", str(pool),
+                        "--manifest", str(manifest_path),
+                        "--renderer-manifest", str(renderer),
+                        "--source", bundle["manifest"]["dataset"]["source"],
+                        "--split", "validation",
+                        "--count", "4",
+                    ],
+                    renderer_verifier=lambda projection, evidence: verify_export_bundle(
+                        projection, evidence, backend=FakeRendererBackend(4)
+                    ),
+                ),
+                0,
+            )
+            valid = json.loads(manifest_path.read_text(encoding="utf-8"))
+            prepare._validate_pool(pool, valid)
+            for split in ("auxiliary_train", "dev", "test"):
+                with self.subTest(split=split):
+                    invalid = json.loads(json.dumps(valid))
+                    invalid["split"] = split
+                    invalid["manifest_sha256"] = build.manifest_sha256(invalid)
+                    with self.assertRaisesRegex(
+                        prepare.PreparationError, "split.*validation|validation.*split"
+                    ):
+                        prepare._validate_pool(pool, invalid)
+
     def test_builder_requires_lm_eval_five_shot_contract_and_prepare_accepts_it(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -422,7 +515,7 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
                     "--manifest", str(manifest),
                     "--renderer-manifest", str(renderer),
                     "--source", bundle["manifest"]["dataset"]["source"],
-                    "--split", "auxiliary_train",
+                    "--split", "validation",
                     "--count", "4",
                 ],
                 renderer_verifier=lambda projection, evidence: verify_export_bundle(
@@ -453,7 +546,7 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
             build._load_source_records(
                 raw,
                 bundle["manifest"]["dataset"]["source"],
-                "auxiliary_train",
+                "validation",
                 renderer,
             )
 
@@ -642,7 +735,7 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
                     "--manifest", str(pool_manifest_path),
                     "--renderer-manifest", str(renderer),
                     "--source", bundle["manifest"]["dataset"]["source"],
-                    "--split", "auxiliary_train",
+                    "--split", "validation",
                     "--count", "6",
                 ],
                 renderer_verifier=lambda projection, evidence: verify_export_bundle(
