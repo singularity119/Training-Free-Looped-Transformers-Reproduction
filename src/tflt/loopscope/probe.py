@@ -30,7 +30,10 @@ from tflt.loopscope.schema import (
     verify_manifest_sha256,
     write_new_json,
 )
-from tflt.loopscope.revisions import strict_revision_closure
+from tflt.loopscope.revisions import (
+    load_tokenizer_with_resolved_commit,
+    strict_revision_closure,
+)
 from tflt.models import resolve_model
 
 
@@ -88,7 +91,9 @@ def run_layer_probe(args: Any) -> Dict[str, Any]:
     load_kwargs: Dict[str, Any] = {"trust_remote_code": True}
     if args.revision:
         load_kwargs["revision"] = args.revision
-    tokenizer = AutoTokenizer.from_pretrained(repo_id, **load_kwargs)
+    tokenizer, resolved_tokenizer_revision = load_tokenizer_with_resolved_commit(
+        AutoTokenizer, repo_id, load_kwargs
+    )
     choice_metadata, choice_ids, token_warnings = choice_tokenization(
         tokenizer, parse_choice_labels(args.choice_labels)
     )
@@ -100,7 +105,7 @@ def run_layer_probe(args: Any) -> Dict[str, Any]:
         **load_kwargs,
     )
     revision_closure = (
-        strict_revision_closure(model, tokenizer, args.revision)
+        strict_revision_closure(model, resolved_tokenizer_revision, args.revision)
         if args.revision
         else None
     )

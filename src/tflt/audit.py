@@ -12,7 +12,10 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from tflt.config import LoopConfig
 from tflt.models import resolve_model
-from tflt.loopscope.revisions import strict_revision_closure
+from tflt.loopscope.revisions import (
+    load_tokenizer_with_resolved_commit,
+    strict_revision_closure,
+)
 from tflt.wrapper import apply_loop_wrapper, _find_layer_owner
 
 
@@ -132,14 +135,16 @@ def run_loop_effect_audit(args: Any) -> Dict[str, Any]:
     load_kwargs = {"trust_remote_code": True}
     if args.revision:
         load_kwargs["revision"] = args.revision
-    tokenizer = AutoTokenizer.from_pretrained(repo_id, **load_kwargs)
+    tokenizer, resolved_tokenizer_revision = load_tokenizer_with_resolved_commit(
+        AutoTokenizer, repo_id, load_kwargs
+    )
     model = AutoModelForCausalLM.from_pretrained(
         repo_id,
         torch_dtype=dtype,
         **load_kwargs,
     )
     revision_closure = (
-        strict_revision_closure(model, tokenizer, args.revision)
+        strict_revision_closure(model, resolved_tokenizer_revision, args.revision)
         if args.revision
         else None
     )

@@ -12,6 +12,7 @@ from tflt.config import LoopConfig
 from tflt.models import resolve_model
 from tflt.wrapper import apply_loop_wrapper
 from tflt.loopscope.revisions import (
+    load_tokenizer_with_resolved_commit,
     resolved_model_commit,
     resolved_tokenizer_commit,
     strict_revision_closure,
@@ -95,7 +96,9 @@ def run_lm_eval(
     load_kwargs = {"trust_remote_code": True}
     if revision:
         load_kwargs["revision"] = revision
-    tokenizer = AutoTokenizer.from_pretrained(model_repo, **load_kwargs)
+    tokenizer, resolved_tokenizer_revision = load_tokenizer_with_resolved_commit(
+        AutoTokenizer, model_repo, load_kwargs
+    )
     model = AutoModelForCausalLM.from_pretrained(
         model_repo,
         torch_dtype=_torch_dtype(torch, dtype),
@@ -113,7 +116,14 @@ def run_lm_eval(
     target = _underlying_hf_model(lm)
     if loop_config is not None:
         apply_loop_wrapper(target, loop_config)
-    _write_model_revision(output_dir, target, tokenizer, model_repo, revision)
+    _write_model_revision(
+        output_dir,
+        target,
+        tokenizer,
+        model_repo,
+        revision,
+        resolved_tokenizer_revision=resolved_tokenizer_revision,
+    )
 
     task_manager = TaskManager()
     return evaluator.simple_evaluate(
@@ -169,10 +179,11 @@ def _write_model_revision(
     tokenizer: Any,
     repo_id: str,
     manifest_revision: Optional[str] = None,
+    resolved_tokenizer_revision: Optional[str] = None,
 ) -> None:
     cfg = getattr(model, "config", None)
     closure = (
-        strict_revision_closure(model, tokenizer, manifest_revision)
+        strict_revision_closure(model, resolved_tokenizer_revision, manifest_revision)
         if manifest_revision
         else None
     )
