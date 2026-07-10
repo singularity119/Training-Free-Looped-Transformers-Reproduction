@@ -1,0 +1,22 @@
+{
+  "schema_version": "loopscope.criterion.v0",
+  "primary_signal": "r_times_one_minus_q",
+  "signals": {
+    "entropy_drop": {"higher_is_better": true},
+    "entropy_flatness": {"higher_is_better": true, "transform": "negative_population_std"},
+    "kl_to_final_drop": {"higher_is_better": true},
+    "activity_r": {"higher_is_better": true},
+    "negative_contraction_q": {"higher_is_better": true, "transform": "negative_q"},
+    "r_times_one_minus_q": {"higher_is_better": true, "transform": "r * max(0, 1-q)"},
+    "effective_rank_delta": {"higher_is_better": null, "auxiliary_only": true}
+  },
+  "effective_rank_gate": {
+    "enabled": false,
+    "reason": "Auxiliary diagnostic only in phase one; no threshold is tuned on MMLU test."
+  },
+  "bootstrap": {
+    "replicates": 5,
+    "seed": 20260710,
+    "stable_if_same_or_adjacent_at_least": 4
+  }
+}

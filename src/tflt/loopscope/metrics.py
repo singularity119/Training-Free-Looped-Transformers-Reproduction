@@ -1,0 +1,146 @@
+"""Pure numerical primitives used by LoopScope probes and selectors."""
+
+from __future__ import annotations
+
+import math
+from statistics import mean, median, pstdev
+from typing import Dict, Iterable, List, Sequence
+
+
+class MetricError(ValueError):
+    """Raised instead of silently replacing invalid measurements with zero."""
+
+
+def normalize_distribution(values: Iterable[float]) -> List[float]:
+    items = [_finite(value, "distribution value") for value in values]
+    if not items:
+        raise MetricError("distribution must not be empty")
+    if any(value < 0.0 for value in items):
+        raise MetricError("distribution values must be non-negative")
+    total = sum(items)
+    if total <= 0.0:
+        raise MetricError("distribution mass must be positive")
+    return [value / total for value in items]
+
+
+def softmax(logits: Iterable[float]) -> List[float]:
+    values = [_finite(value, "logit") for value in logits]
+    if not values:
+        raise MetricError("logits must not be empty")
+    peak = max(values)
+    weights = [math.exp(value - peak) for value in values]
+    return normalize_distribution(weights)
+
+
+def choice_entropy(probabilities: Iterable[float], eps: float = 1e-12) -> float:
+    probs = normalize_distribution(probabilities)
+    return -sum(value * math.log(max(value, eps)) for value in probs)
+
+
+def kl_to_reference(
+    probabilities: Iterable[float], reference: Iterable[float], eps: float = 1e-12
+) -> float:
+    left = normalize_distribution(probabilities)
+    right = normalize_distribution(reference)
+    if len(left) != len(right):
+        raise MetricError("KL distributions must have equal length")
+    return sum(p * math.log(max(p, eps) / max(q, eps)) for p, q in zip(left, right))
+
+
+def top1_agreement(probabilities: Sequence[float], reference: Sequence[float]) -> float:
+    left = normalize_distribution(probabilities)
+    right = normalize_distribution(reference)
+    if len(left) != len(right):
+        raise MetricError("top-1 distributions must have equal length")
+    return 1.0 if _argmax(left) == _argmax(right) else 0.0
+
+
+def relative_activity(
+    residual_norm: float, state_norm: float, eps: float = 1e-12
+) -> float:
+    residual = _positive_norm(residual_norm, "first residual norm", eps)
+    state = _positive_norm(state_norm, "state norm", eps)
+    return residual / state
+
+
+def contraction_ratio(
+    second_residual_norm: float, first_residual_norm: float, eps: float = 1e-12
+) -> float:
+    second = _positive_norm(second_residual_norm, "second residual norm", eps)
+    first = _positive_norm(first_residual_norm, "first residual norm", eps)
+    return second / first
+
+
+def activity_contraction_score(activity: float, contraction: float) -> float:
+    r_value = _finite(activity, "activity")
+    q_value = _finite(contraction, "contraction")
+    if r_value < 0.0 or q_value < 0.0:
+        raise MetricError("activity and contraction must be non-negative")
+    return r_value * max(0.0, 1.0 - q_value)
+
+
+def effective_rank_from_singular_values(singular_values: Iterable[float]) -> float:
+    """Entropy effective rank using normalized, nonzero singular values."""
+
+    values = [_finite(value, "singular value") for value in singular_values]
+    if any(value < 0.0 for value in values):
+        raise MetricError("singular values must be non-negative")
+    positive = [value for value in values if value > 0.0]
+    if not positive:
+        raise MetricError("effective rank is undefined for a zero matrix")
+    probs = normalize_distribution(positive)
+    return math.exp(choice_entropy(probs))
+
+
+def summarize(values: Iterable[float]) -> Dict[str, float]:
+    items = [_finite(value, "summary value") for value in values]
+    if not items:
+        raise MetricError("cannot summarize an empty measurement set")
+    return {
+        "count": float(len(items)),
+        "mean": mean(items),
+        "median": median(items),
+        "p90": quantile(items, 0.9),
+    }
+
+
+def population_std(values: Iterable[float]) -> float:
+    items = [_finite(value, "standard-deviation value") for value in values]
+    if not items:
+        raise MetricError("cannot compute standard deviation of an empty set")
+    return pstdev(items)
+
+
+def quantile(values: Iterable[float], probability: float) -> float:
+    items = sorted(_finite(value, "quantile value") for value in values)
+    if not items:
+        raise MetricError("cannot compute a quantile of an empty set")
+    if not 0.0 <= probability <= 1.0:
+        raise MetricError("quantile probability must be in [0, 1]")
+    if len(items) == 1:
+        return items[0]
+    position = probability * (len(items) - 1)
+    low = int(math.floor(position))
+    high = int(math.ceil(position))
+    if low == high:
+        return items[low]
+    fraction = position - low
+    return items[low] * (1.0 - fraction) + items[high] * fraction
+
+
+def _argmax(values: Sequence[float]) -> int:
+    return max(range(len(values)), key=lambda index: values[index])
+
+
+def _positive_norm(value: float, name: str, eps: float) -> float:
+    item = _finite(value, name)
+    if item <= eps:
+        raise MetricError("%s must be greater than eps=%g, got %g" % (name, eps, item))
+    return item
+
+
+def _finite(value: float, name: str) -> float:
+    item = float(value)
+    if not math.isfinite(item):
+        raise MetricError("%s must be finite, got %r" % (name, value))
+    return item

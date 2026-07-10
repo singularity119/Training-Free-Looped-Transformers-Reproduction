@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "loopscope.window-grid.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "layer_count",
+    "generation",
+    "anchors",
+    "windows",
+    "comparison_windows",
+    "manifest_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "loopscope.window-grid.v1"},
+    "layer_count": {"type": "integer", "minimum": 1},
+    "generation": {"type": "object"},
+    "anchors": {"type": "object"},
+    "windows": {"type": "array", "minItems": 1, "uniqueItems": true},
+    "comparison_windows": {"type": "object"},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

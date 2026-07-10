@@ -1,0 +1,39 @@
+{
+  "schema_version": "loopscope.phase1-config.v1",
+  "model": {
+    "alias": "qwen3-1.7b-base",
+    "repo_id": "Qwen/Qwen3-1.7B-Base"
+  },
+  "evaluation": {
+    "task": "mmlu",
+    "num_fewshot": 5,
+    "dtype": "float16",
+    "batch_size": "auto"
+  },
+  "loop": {
+    "k": 2,
+    "iteration_mode": "block",
+    "strategy": "damped_euler",
+    "alpha": 1.0,
+    "beta": 0.0,
+    "cache_strategy": "last",
+    "decode_mode": "bypass",
+    "window_width": 4
+  },
+  "window_grid": {
+    "min_center_fraction": 0.2,
+    "max_center_fraction": 0.85,
+    "candidate_count": 9,
+    "required_anchor": "12:15",
+    "fixed_depth_fraction": 0.525,
+    "random_in_band_count": 5,
+    "random_seed": 20260710
+  },
+  "probe_pool": {
+    "recommended_count": 512,
+    "seed": 20260710,
+    "forbid_test_split": true,
+    "uses_gold_labels": false
+  },
+  "run_root_template": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-<timestamp>"
+}
