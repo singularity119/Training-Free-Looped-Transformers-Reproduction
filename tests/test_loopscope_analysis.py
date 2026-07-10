@@ -641,7 +641,13 @@ def _write_full_cli_fixture(root):
         "candidate_windows": [item["window"] for item in grid["windows"]],
         "gate_e_probe_revision_report_sha256": revision_report["manifest_sha256"],
         "full_probe_evidence": {
+            "run_manifest_sha256": manifest["manifest_sha256"],
+            "window_grid_manifest_sha256": grid["manifest_sha256"],
+            "criterion_sha256": score["criterion_sha256"],
+            "probe_pool_manifest_path": str(pool_manifest_path.resolve()),
+            "probe_pool_path": str(pool_path.resolve()),
             "count": source_pool_manifest["count"],
+            "sample_ids": source_pool_manifest["sample_ids"],
             "source_manifest_sha256": source_pool_manifest["manifest_sha256"],
             "selected_subset_sha256": probe_pool["selected_subset_sha256"],
             "render_contract_subset_sha256": source_pool_manifest[
@@ -662,6 +668,16 @@ def _write_full_cli_fixture(root):
                     "canonical_sha256": manifest_sha256(
                         json.loads(path.read_text(encoding="utf-8"))
                     ),
+                    "full_pool_count": source_pool_manifest["count"],
+                    "sample_ids": source_pool_manifest["sample_ids"],
+                    "sample_ids_sha256": hashlib.sha256(
+                        canonical_json_bytes(source_pool_manifest["sample_ids"])
+                    ).hexdigest(),
+                    "source_manifest_sha256": source_pool_manifest["manifest_sha256"],
+                    "selected_subset_sha256": probe_pool["selected_subset_sha256"],
+                    "render_contract_subset_sha256": source_pool_manifest[
+                        "render_contract_subset_sha256"
+                    ],
                     "probe_pool_manifest_sha256": probe_pool["manifest_sha256"],
                     "revision_closure": {
                         "schema_version": "loopscope.revision-closure.v1",

@@ -1,11 +1,14 @@
 import importlib.util
+import hashlib
 import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import Mock
 
 from tflt.loopscope.grid import generate_window_grid
 from tflt.loopscope.mmlu_renderer import create_renderer_bundle, verify_export_bundle
+from tflt.loopscope.probe import load_probe_records, probe_pool_metadata
 try:
     from loopscope_fixtures import FAKE_DATASET_REVISION, FakeRendererBackend
 except ModuleNotFoundError:
@@ -39,7 +42,227 @@ def _source_record(index, subject="math"):
     return dict(_renderer_bundle(max(index + 1, 1))["records"][index])
 
 
+def _write_full_freeze_fixture(root):
+    run_root = root / "loopscope-qwen17-mmlu-phase1-fixture"
+    manifests = run_root / "manifests"
+    provenance = run_root / "control" / "provenance"
+    manifests.mkdir(parents=True)
+    provenance.mkdir(parents=True)
+
+    bundle = _renderer_bundle(6)
+    renderer_path = manifests / "renderer.json"
+    renderer_path.write_text(json.dumps(bundle["manifest"]), encoding="utf-8")
+    source_path = manifests / "source.jsonl"
+    source_path.write_bytes(bundle["projection_bytes"])
+    pool_path = manifests / "probe_pool.jsonl"
+    pool_manifest_path = manifests / "probe_pool_manifest.json"
+    build.main(
+        [
+            "--input-jsonl", str(source_path),
+            "--output-jsonl", str(pool_path),
+            "--manifest", str(pool_manifest_path),
+            "--renderer-manifest", str(renderer_path),
+            "--source", bundle["manifest"]["dataset"]["source"],
+            "--split", "auxiliary_train",
+            "--count", "6",
+        ],
+        renderer_verifier=lambda projection, evidence: verify_export_bundle(
+            projection, evidence, backend=FakeRendererBackend(6)
+        ),
+    )
+    pool_manifest = json.loads(pool_manifest_path.read_text(encoding="utf-8"))
+    records = load_probe_records(pool_path)
+    pool_metadata, warnings = probe_pool_metadata(records, str(pool_manifest_path))
+    if warnings:
+        raise AssertionError("fixture unexpectedly emitted probe warnings: %r" % warnings)
+
+    repo_root = Path(__file__).resolve().parents[1]
+    config = json.loads(
+        (repo_root / "configs/loopscope/qwen17_mmlu_phase1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    criterion = json.loads(
+        (repo_root / "configs/loopscope/criterion_v0.json").read_text(encoding="utf-8")
+    )
+    criterion_path = manifests / "criterion_v0.json"
+    criterion_path.write_text(json.dumps(criterion), encoding="utf-8")
+    grid = generate_window_grid(28)
+    grid_path = manifests / "window_grid.json"
+    grid_path.write_text(json.dumps(grid), encoding="utf-8")
+    jobs = prepare._build_jobs(
+        run_root,
+        prepare.DEFAULT_REMOTE_REPO,
+        prepare.DEFAULT_REMOTE_REPO / ".venv-loopscope-cu121-20260710",
+        config,
+        grid,
+        criterion_path,
+    )
+
+    commit = prepare.MODEL_SNAPSHOT_COMMIT
+    closure = {
+        "schema_version": "loopscope.revision-closure.v1",
+        "manifest_commit": commit,
+        "model_commit": commit,
+        "tokenizer_commit": commit,
+        "match": True,
+    }
+    probe_paths = {}
+    for job in jobs["gate-e-probe"]:
+        path = Path(job["revision_artifact"])
+        path.parent.mkdir(parents=True)
+        path.write_text(
+            json.dumps(
+                {
+                    "model": {"revision": commit},
+                    "tokenizer": {"revision": commit},
+                    "revision_closure": closure,
+                    "probe_pool": pool_metadata,
+                }
+            ),
+            encoding="utf-8",
+        )
+        probe_paths[job["job_id"]] = path
+
+    score_job = jobs["gate-e-score"][0]
+    score_path = Path(score_job["output_dir"]) / "window_scores.json"
+    score_path.parent.mkdir(parents=True)
+    score = {
+        "schema_version": "loopscope.selection.v1",
+        "criterion_sha256": prepare.manifest_sha256(criterion),
+        "window_grid": {
+            "manifest_sha256": grid["manifest_sha256"],
+            "candidate_windows": [str(item["window"]) for item in grid["windows"]],
+        },
+        "inputs": {
+            "paths": {
+                "layer_probe": str(probe_paths["probe-layers-full"].resolve()),
+                "window_probes": [str(probe_paths["probe-windows-full"].resolve())],
+            },
+            "layer_probe_manifest_sha256": pool_metadata["manifest_sha256"],
+            "window_probe_manifest_sha256": [pool_metadata["manifest_sha256"]],
+        },
+        "probe_provenance": {
+            "model": {
+                "alias": "qwen3-1.7b-base",
+                "repo_id": "Qwen/Qwen3-1.7B-Base",
+                "revision": commit,
+            },
+            "tokenizer_revision": commit,
+            "revision_closure": closure,
+            "probe_pool": pool_metadata,
+        },
+    }
+    score["manifest_sha256"] = prepare.manifest_sha256(score)
+    score_path.write_text(json.dumps(score), encoding="utf-8")
+
+    manifest = {
+        "schema_version": prepare.RUN_SCHEMA_VERSION,
+        "run_root": str(run_root.resolve()),
+        "frozen_recipe": {"revision": commit},
+        "revision_policy": {"cli_pins_revision": True, "manifest_commit": commit},
+        "inputs": {
+            "window_grid": {
+                "snapshot_path": str(grid_path.resolve()),
+                "manifest_sha256": grid["manifest_sha256"],
+            },
+            "criterion": {
+                "snapshot_path": str(criterion_path.resolve()),
+                "file_sha256": hashlib.sha256(criterion_path.read_bytes()).hexdigest(),
+                "criterion_sha256": prepare.manifest_sha256(criterion),
+            },
+            "probe_pool": {
+                "snapshot_path": str(pool_path.resolve()),
+                "manifest_snapshot_path": str(pool_manifest_path.resolve()),
+                "pool_sha256": hashlib.sha256(pool_path.read_bytes()).hexdigest(),
+                "manifest_sha256": pool_manifest["manifest_sha256"],
+                "count": pool_manifest["count"],
+                "render_contract_sha256": pool_manifest["renderer"][
+                    "render_contract_sha256"
+                ],
+                "render_contract_subset_sha256": pool_manifest[
+                    "render_contract_subset_sha256"
+                ],
+            },
+        },
+        "stages": {stage: {"jobs": stage_jobs} for stage, stage_jobs in jobs.items()},
+    }
+    manifest["manifest_sha256"] = prepare.manifest_sha256(manifest)
+    manifest_path = run_root / "control" / "phase1_run_manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    expected_jobs = prepare._revision_jobs_for_stage(manifest, "gate-e-probe")
+    revision_report = {
+        "schema_version": prepare.REVISION_REPORT_SCHEMA_VERSION,
+        "run_manifest_sha256": manifest["manifest_sha256"],
+        "stage": "gate-e-probe",
+        "manifest_commit": commit,
+        "reference_policy": "model, tokenizer, and manifest commits must all exactly match",
+        "expected_jobs": [prepare._revision_job_contract(job) for job in expected_jobs],
+        "observations": [
+            {
+                "job_id": job["job_id"],
+                "stage": job["stage"],
+                "artifact": job["revision_artifact"],
+                "model_commit": commit,
+                "tokenizer_commit": commit,
+                "manifest_commit": commit,
+                "match": True,
+            }
+            for job in expected_jobs
+        ],
+        "unique_revisions": [commit],
+        "match": True,
+    }
+    revision_report["manifest_sha256"] = prepare.manifest_sha256(revision_report)
+    (provenance / "gate-e-probe-model-revisions.json").write_text(
+        json.dumps(revision_report), encoding="utf-8"
+    )
+    prepare.freeze_score(run_root.resolve())
+    return run_root.resolve(), probe_paths
+
+
 class LoopScopePhaseOneScriptTest(unittest.TestCase):
+    def _assert_post_freeze_mutation_blocks_submission(self, job_id):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_root, probe_paths = _write_full_freeze_fixture(Path(tmp))
+            prepare.validate_full_submission_freeze(run_root)
+            with probe_paths[job_id].open("a", encoding="utf-8") as handle:
+                handle.write("\n")
+            attempt = run_root / "control" / "submissions" / "gate-e-full-attempt.json"
+            attempt.parent.mkdir()
+            sbatch = Mock()
+
+            def guarded_submit():
+                prepare.validate_full_submission_freeze(run_root)
+                attempt.write_text("attempt", encoding="utf-8")
+                sbatch()
+
+            with self.assertRaisesRegex(
+                prepare.PreparationError, "full-probe evidence mismatch"
+            ):
+                guarded_submit()
+            self.assertFalse(attempt.exists())
+            sbatch.assert_not_called()
+
+    def test_gate_e_full_rejects_post_freeze_layer_probe_mutation_before_attempt_or_sbatch(self):
+        self._assert_post_freeze_mutation_blocks_submission("probe-layers-full")
+
+    def test_gate_e_full_rejects_post_freeze_window_probe_mutation_before_attempt_or_sbatch(self):
+        self._assert_post_freeze_mutation_blocks_submission("probe-windows-full")
+
+    def test_submit_shell_calls_freeze_helper_before_attempt_and_sbatch(self):
+        script = (
+            Path(__file__).resolve().parents[1]
+            / "scripts/loopscope/submit_qwen17_phase1.sh"
+        ).read_text(encoding="utf-8")
+        helper_index = script.index("validate-full-freeze --run-root")
+        attempt_index = script.index('"$attempt" "$stage"')
+        sbatch_index = script.index('sbatch --parsable "$runner"')
+        self.assertLess(helper_index, attempt_index)
+        self.assertLess(helper_index, sbatch_index)
+        self.assertNotIn('freeze.get("full_probe_evidence")', script)
+
     def test_phase_config_requires_exact_model_revision(self):
         config = json.loads(
             (Path(__file__).resolve().parents[1] / "configs/loopscope/qwen17_mmlu_phase1.json")

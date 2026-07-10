@@ -1586,16 +1586,30 @@ def _validate_full_probe_pool_provenance(
             "path": str(path.resolve()),
             "file_sha256": _file_sha256(path),
             "canonical_sha256": manifest_sha256(report),
+            "full_pool_count": full_count,
+            "sample_ids": sample_ids,
+            "sample_ids_sha256": sha256(canonical_json_bytes(sample_ids)).hexdigest(),
+            "source_manifest_sha256": source_hash,
+            "selected_subset_sha256": selected_hash,
+            "render_contract_subset_sha256": full_render_hash,
             "probe_pool_manifest_sha256": report_pool["manifest_sha256"],
             "revision_closure": dict(revision_closure),
         }
     return {
+        "run_manifest_sha256": run_manifest.get("manifest_sha256"),
+        "window_grid_manifest_sha256": run_manifest["inputs"]["window_grid"][
+            "manifest_sha256"
+        ],
+        "criterion_sha256": run_manifest["inputs"]["criterion"]["criterion_sha256"],
+        "probe_pool_manifest_path": str(manifest_path.resolve()),
+        "probe_pool_path": str(pool_path.resolve()),
         "manifest_path": str(manifest_path.resolve()),
         "manifest_sha256": source_hash,
         "manifest_file_sha256": _file_sha256(manifest_path),
         "pool_path": str(pool_path.resolve()),
         "pool_file_sha256": pool_file_hash,
         "count": full_count,
+        "sample_ids": sample_ids,
         "source_manifest_sha256": source_hash,
         "selected_subset_sha256": selected_hash,
         "render_contract_subset_sha256": full_render_hash,
@@ -1625,6 +1639,12 @@ def _validate_frozen_full_probe_evidence(
         "render_contract_subset_sha256",
         "sample_ids_sha256",
         "revision_binding",
+        "run_manifest_sha256",
+        "window_grid_manifest_sha256",
+        "criterion_sha256",
+        "probe_pool_manifest_path",
+        "probe_pool_path",
+        "sample_ids",
     ):
         if key not in frozen:
             raise AnalysisError("Gate E score freeze full-probe evidence is missing %s" % key)
@@ -1651,6 +1671,12 @@ def _validate_frozen_full_probe_evidence(
             "canonical_sha256",
             "probe_pool_manifest_sha256",
             "revision_closure",
+            "full_pool_count",
+            "sample_ids",
+            "sample_ids_sha256",
+            "source_manifest_sha256",
+            "selected_subset_sha256",
+            "render_contract_subset_sha256",
         ):
             if key not in frozen_report:
                 raise AnalysisError(

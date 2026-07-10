@@ -87,6 +87,11 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help="Validate and freeze the label-free score artifact before full MMLU.",
     )
     freeze.add_argument("--run-root", required=True)
+    validate_full = subparsers.add_parser(
+        "validate-full-freeze",
+        help="Recompute all frozen full-probe evidence before Gate E submission.",
+    )
+    validate_full.add_argument("--run-root", required=True)
     return parser.parse_args(argv)
 
 
@@ -98,6 +103,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return verify_revisions(Path(args.run_root).expanduser().resolve(), args.stage)
     if args.command == "freeze-score":
         return freeze_score(Path(args.run_root).expanduser().resolve())
+    if args.command == "validate-full-freeze":
+        evidence = validate_full_submission_freeze(
+            Path(args.run_root).expanduser().resolve()
+        )
+        print(json.dumps(evidence, ensure_ascii=False, sort_keys=True))
+        return 0
     raise AssertionError("unreachable command")
 
 
@@ -946,16 +957,18 @@ def freeze_score(run_root: Path) -> int:
     validate_revision_report_payload(revision_report, manifest, "gate-e-probe")
 
     score_job = manifest["stages"]["gate-e-score"]["jobs"][0]
-    score_path = Path(str(score_job["output_dir"])) / "window_scores.json"
+    score_path = (Path(str(score_job["output_dir"])) / "window_scores.json").resolve()
     score = _read_json(score_path)
     _verify_manifest_hash(score, "window score report")
-    criterion_path = Path(manifest["inputs"]["criterion"]["snapshot_path"])
+    criterion_path = Path(manifest["inputs"]["criterion"]["snapshot_path"]).resolve()
     criterion = _read_json(criterion_path)
     if _file_sha256(criterion_path) != manifest["inputs"]["criterion"]["file_sha256"]:
         raise PreparationError("criterion snapshot file SHA256 changed")
     criterion_hash = manifest_sha256(criterion)
     expected_criterion = manifest["inputs"]["criterion"]["criterion_sha256"]
-    grid = _read_json(Path(manifest["inputs"]["window_grid"]["snapshot_path"]))
+    grid = _read_json(
+        Path(manifest["inputs"]["window_grid"]["snapshot_path"]).resolve()
+    )
     _verify_manifest_hash(grid, "window grid snapshot")
     grid_hash = manifest["inputs"]["window_grid"]["manifest_sha256"]
     if criterion_hash != expected_criterion or score.get("criterion_sha256") != criterion_hash:
@@ -991,18 +1004,88 @@ def freeze_score(run_root: Path) -> int:
     return 0
 
 
+def validate_full_submission_freeze(run_root: Path) -> Dict[str, Any]:
+    """Read-only Gate E guard; raise before any submission side effect on mismatch."""
+
+    manifest_path = run_root / "control" / "phase1_run_manifest.json"
+    manifest = _read_json(manifest_path)
+    if manifest.get("schema_version") != RUN_SCHEMA_VERSION:
+        raise PreparationError("unsupported phase-one run manifest")
+    _verify_manifest_hash(manifest, "run manifest")
+    if Path(str(manifest.get("run_root", ""))).resolve() != run_root:
+        raise PreparationError("run manifest path does not match --run-root")
+    manifest_commit = _manifest_model_commit(manifest)
+
+    score_job = manifest["stages"]["gate-e-score"]["jobs"][0]
+    score_path = (Path(str(score_job["output_dir"])) / "window_scores.json").resolve()
+    score = _read_json(score_path)
+    _verify_manifest_hash(score, "window score report")
+
+    freeze_path = run_root / "control" / "provenance" / "gate-e-score-freeze.json"
+    freeze = _read_json(freeze_path)
+    current_evidence = validate_score_freeze_payload(freeze, manifest, score)
+    if freeze.get("score_report_path") != str(score_path):
+        raise PreparationError("score freeze path is not absolute or canonical")
+    if freeze.get("score_report_sha256") != _file_sha256(score_path):
+        raise PreparationError("window score report file SHA256 changed after freeze")
+
+    criterion_path = Path(manifest["inputs"]["criterion"]["snapshot_path"]).resolve()
+    criterion = _read_json(criterion_path)
+    criterion_hash = manifest_sha256(criterion)
+    if freeze.get("criterion_path") != str(criterion_path):
+        raise PreparationError("score freeze criterion path is not absolute or canonical")
+    if freeze.get("criterion_file_sha256") != _file_sha256(criterion_path):
+        raise PreparationError("criterion file SHA256 changed after freeze")
+    if criterion_hash != freeze.get("criterion_sha256") or criterion_hash != manifest[
+        "inputs"
+    ]["criterion"].get("criterion_sha256"):
+        raise PreparationError("criterion canonical hash differs from freeze/run manifest")
+
+    grid_path = Path(manifest["inputs"]["window_grid"]["snapshot_path"]).resolve()
+    grid = _read_json(grid_path)
+    _verify_manifest_hash(grid, "window grid snapshot")
+    grid_hash = grid["manifest_sha256"]
+    if grid_hash != freeze.get("window_grid_manifest_sha256") or grid_hash != manifest[
+        "inputs"
+    ]["window_grid"].get("manifest_sha256"):
+        raise PreparationError("window-grid hash differs from freeze/run manifest")
+    candidates = [str(item["window"]) for item in grid.get("windows", [])]
+    if freeze.get("candidate_windows") != candidates:
+        raise PreparationError("score freeze candidates differ from current frozen grid")
+
+    revision_path = (
+        run_root / "control" / "provenance" / "gate-e-probe-model-revisions.json"
+    )
+    revision_report = _read_json(revision_path)
+    revision_commit = validate_revision_report_payload(
+        revision_report, manifest, "gate-e-probe"
+    )
+    if revision_commit != manifest_commit:
+        raise PreparationError("Gate E probe revision report differs from run manifest")
+    if freeze.get("gate_e_probe_revision_report_sha256") != revision_report.get(
+        "manifest_sha256"
+    ):
+        raise PreparationError("score freeze revision-report hash mismatch")
+
+    if freeze.get("full_probe_evidence") != current_evidence:
+        raise PreparationError("post-freeze full-probe evidence mismatch")
+    return current_evidence
+
+
 def validate_score_freeze_payload(
     freeze: Mapping[str, Any],
     run_manifest: Mapping[str, Any],
     score_report: Mapping[str, Any],
-) -> None:
+) -> Dict[str, Any]:
     if freeze.get("schema_version") != "loopscope.score-freeze.v1":
         raise PreparationError("unsupported score-freeze schema")
     _verify_manifest_hash(freeze, "score freeze")
     if freeze.get("run_manifest_sha256") != run_manifest.get("manifest_sha256"):
         raise PreparationError("score freeze is bound to another run manifest")
     score_job = run_manifest["stages"]["gate-e-score"]["jobs"][0]
-    expected_path = str(Path(str(score_job["output_dir"])) / "window_scores.json")
+    expected_path = str(
+        (Path(str(score_job["output_dir"])) / "window_scores.json").resolve()
+    )
     if freeze.get("score_job_id") != score_job["job_id"] or freeze.get(
         "score_report_path"
     ) != expected_path:
@@ -1020,6 +1103,7 @@ def validate_score_freeze_payload(
     expected_evidence = _validate_full_pool_score_inputs(run_manifest, score_report)
     if freeze.get("full_probe_evidence") != expected_evidence:
         raise PreparationError("score freeze full-probe evidence mismatch")
+    return expected_evidence
 
 
 def _validate_full_pool_score_inputs(
@@ -1070,16 +1154,27 @@ def _validate_full_pool_score_inputs(
 
     jobs = {job["job_id"]: job for job in run_manifest["stages"]["gate-e-probe"]["jobs"]}
     expected_paths = {
-        "layer": str(Path(jobs["probe-layers-full"]["output_dir"]) / "probe_report.json"),
-        "window": str(Path(jobs["probe-windows-full"]["output_dir"]) / "probe_report.json"),
+        "layer": Path(jobs["probe-layers-full"]["output_dir"]) / "probe_report.json",
+        "window": Path(jobs["probe-windows-full"]["output_dir"]) / "probe_report.json",
     }
+    for name, path in expected_paths.items():
+        if not path.is_absolute():
+            raise PreparationError("%s full-probe path must be absolute" % name)
+        expected_paths[name] = path.resolve()
     score_paths = _nested_value(score_report, ["inputs", "paths"])
-    if score_paths.get("layer_probe") != expected_paths["layer"]:
+    raw_layer_path = Path(str(score_paths.get("layer_probe", "")))
+    if not raw_layer_path.is_absolute() or raw_layer_path.resolve() != expected_paths["layer"]:
         raise PreparationError("score layer-probe path is not the frozen full-probe job output")
-    if score_paths.get("window_probes") != [expected_paths["window"]]:
+    raw_window_paths = score_paths.get("window_probes")
+    if (
+        not isinstance(raw_window_paths, list)
+        or len(raw_window_paths) != 1
+        or not Path(str(raw_window_paths[0])).is_absolute()
+        or Path(str(raw_window_paths[0])).resolve() != expected_paths["window"]
+    ):
         raise PreparationError("score window-probe path is not the frozen full-probe job output")
 
-    reports = {name: _read_json(Path(path)) for name, path in expected_paths.items()}
+    reports = {name: _read_json(path) for name, path in expected_paths.items()}
     evidence: Dict[str, Any] = {}
     for name, report in reports.items():
         report_canonical_hash = manifest_sha256(report)
@@ -1120,11 +1215,19 @@ def _validate_full_pool_score_inputs(
             raise PreparationError("%s model revision differs from run manifest" % name)
         if _nested_value(report, ["tokenizer", "revision"]) != manifest_commit:
             raise PreparationError("%s tokenizer revision differs from run manifest" % name)
-        report_path = Path(expected_paths[name])
+        report_path = expected_paths[name]
         evidence[name] = {
-            "path": str(report_path),
+            "path": str(report_path.resolve()),
             "file_sha256": _file_sha256(report_path),
             "canonical_sha256": report_canonical_hash,
+            "full_pool_count": expected_count,
+            "sample_ids": sample_ids,
+            "sample_ids_sha256": hashlib.sha256(
+                canonical_json_bytes(sample_ids)
+            ).hexdigest(),
+            "source_manifest_sha256": expected_source_hash,
+            "selected_subset_sha256": expected_selected_hash,
+            "render_contract_subset_sha256": expected_render_hash,
             "probe_pool_manifest_sha256": expected_selected_hash,
             "revision_closure": dict(revision_closure),
         }
@@ -1172,7 +1275,15 @@ def _validate_full_pool_score_inputs(
         raise PreparationError("score window probe manifest SHA256 mismatch")
 
     return {
+        "run_manifest_sha256": run_manifest.get("manifest_sha256"),
+        "window_grid_manifest_sha256": run_manifest["inputs"]["window_grid"][
+            "manifest_sha256"
+        ],
+        "criterion_sha256": run_manifest["inputs"]["criterion"]["criterion_sha256"],
+        "probe_pool_manifest_path": str(pool_manifest_path.resolve()),
+        "probe_pool_path": str(pool_path.resolve()),
         "count": expected_count,
+        "sample_ids": sample_ids,
         "source_manifest_sha256": expected_source_hash,
         "selected_subset_sha256": expected_selected_hash,
         "render_contract_subset_sha256": expected_render_hash,

@@ -285,69 +285,12 @@ def validate_revision_report(report_stage):
         raise SystemExit("model/tokenizer/manifest revisions differ")
     return report
 
-gate_e_probe_report = None
 if stage == "gate-d-limit":
     validate_revision_report("gate-c")
 if stage in ("gate-e-probe", "gate-e-score", "gate-e-full"):
     validate_revision_report("gate-d-limit")
 if stage in ("gate-e-score", "gate-e-full"):
-    gate_e_probe_report = validate_revision_report("gate-e-probe")
-
-if stage == "gate-e-full":
-    freeze_path = run_root / "control" / "provenance" / "gate-e-score-freeze.json"
-    freeze = load(freeze_path) if freeze_path.is_file() else None
-    if not freeze or freeze.get("schema_version") != "loopscope.score-freeze.v1":
-        raise SystemExit("immutable gate-e score freeze is missing")
-    if freeze.get("manifest_sha256") != manifest_hash(freeze):
-        raise SystemExit("score-freeze canonical hash mismatch")
-    if freeze.get("run_manifest_sha256") != manifest["manifest_sha256"]:
-        raise SystemExit("score freeze is bound to another run")
-    score_job = manifest["stages"]["gate-e-score"]["jobs"][0]
-    score_path = pathlib.Path(score_job["output_dir"]) / "window_scores.json"
-    if freeze.get("score_job_id") != score_job["job_id"] or freeze.get(
-        "score_report_path"
-    ) != str(score_path):
-        raise SystemExit("score freeze job/path mismatch")
-    score = load(score_path) if score_path.is_file() else None
-    if not score or score.get("manifest_sha256") != manifest_hash(score):
-        raise SystemExit("window score report canonical hash mismatch")
-    if hashlib.sha256(score_path.read_bytes()).hexdigest() != freeze.get(
-        "score_report_sha256"
-    ):
-        raise SystemExit("window score report file SHA256 changed after freeze")
-    if score.get("manifest_sha256") != freeze.get("score_report_manifest_sha256"):
-        raise SystemExit("score report manifest SHA256 differs from freeze")
-    if freeze.get("criterion_sha256") != manifest["inputs"]["criterion"][
-        "criterion_sha256"
-    ] or score.get("criterion_sha256") != freeze.get("criterion_sha256"):
-        raise SystemExit("frozen criterion SHA256 mismatch")
-    criterion_path = pathlib.Path(manifest["inputs"]["criterion"]["snapshot_path"])
-    criterion = load(criterion_path) if criterion_path.is_file() else None
-    if not criterion or manifest_hash(criterion) != freeze.get("criterion_sha256"):
-        raise SystemExit("frozen criterion content changed")
-    if hashlib.sha256(criterion_path.read_bytes()).hexdigest() != freeze.get(
-        "criterion_file_sha256"
-    ):
-        raise SystemExit("frozen criterion file SHA256 changed")
-    if freeze.get("window_grid_manifest_sha256") != manifest["inputs"]["window_grid"][
-        "manifest_sha256"
-    ] or score.get("window_grid", {}).get("manifest_sha256") != freeze.get(
-        "window_grid_manifest_sha256"
-    ):
-        raise SystemExit("frozen window-grid SHA256 mismatch")
-    grid_path = pathlib.Path(manifest["inputs"]["window_grid"]["snapshot_path"])
-    grid = load(grid_path) if grid_path.is_file() else None
-    if not grid or grid.get("manifest_sha256") != manifest_hash(grid):
-        raise SystemExit("frozen window-grid canonical hash mismatch")
-    candidate_windows = [str(item["window"]) for item in grid.get("windows", [])]
-    if freeze.get("candidate_windows") != candidate_windows or score.get(
-        "window_grid", {}
-    ).get("candidate_windows") != candidate_windows:
-        raise SystemExit("score freeze candidates differ from the frozen grid")
-    if freeze.get("gate_e_probe_revision_report_sha256") != gate_e_probe_report.get(
-        "manifest_sha256"
-    ):
-        raise SystemExit("score freeze is not bound to verified full probes")
+    validate_revision_report("gate-e-probe")
 
 if stage == "gate-d-limit" and stage_info.get("limit") != 5:
     raise SystemExit("Gate D must remain a limit=5 engineering smoke")
@@ -387,6 +330,15 @@ fi
 if [[ -n "$(git -C "$repo_root" status --porcelain)" ]]; then
   echo "Remote checkout is dirty; refusing submission" >&2
   exit 2
+fi
+
+if [[ "$stage" == "gate-e-full" ]]; then
+  freeze_helper="$repo_root/scripts/loopscope/prepare_qwen17_phase1.py"
+  if [[ ! -f "$freeze_helper" ]]; then
+    echo "Gate E full freeze helper is missing: $freeze_helper" >&2
+    exit 2
+  fi
+  "$python_bin" "$freeze_helper" validate-full-freeze --run-root "$run_root" >/dev/null
 fi
 
 echo "stage=$stage"

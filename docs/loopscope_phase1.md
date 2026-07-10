@@ -196,7 +196,15 @@ bash scripts/loopscope/submit_qwen17_phase1.sh \
 2. Gate D PASS 后运行 `gate-e-probe`：完整校准池的一次 `probe-layers` 和覆盖全部 frozen candidate 的 `probe-window`；
 3. 完整 probe revision 一致后运行 `gate-e-score`：用冻结 criterion 离线 `score-windows`；
 4. 执行 `prepare_qwen17_phase1.py freeze-score`，冻结并核验 score report 自哈希/文件 SHA、criterion SHA、grid SHA 和 full-probe revision report SHA；
-5. 只有上述 freeze 完整有效，才运行 `gate-e-full`。
+5. `gate-e-full` 提交脚本在创建 attempt 文件和调用 `sbatch` 前，必须调用 `validate-full-freeze` 重新计算两份 full probe 的文件/canonical hash、绝对路径、完整 pool IDs/hash、render contract、grid、criterion 和三方 revision 绑定；任一变化立即失败。
+6. 只有上述 pre-submit 复核完整通过，才运行 `gate-e-full`。
+
+可独立执行同一只读 helper 做预检：
+
+```bash
+python scripts/loopscope/prepare_qwen17_phase1.py validate-full-freeze \
+  --run-root <new-run-root>
+```
 
 Gate C 的四样本/sentinel 不能替代完整校准池 probe。脚本只调用一次 `sbatch`，不自动重试；attempt、receipt、claim 或 output 已存在时拒绝重复提交。
 
