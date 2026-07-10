@@ -22,7 +22,6 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 BASE_COMMIT = "4f59bd93eca4da3cbf458a93508f91c5b23912bc"
 EXPECTED_ORIGIN = "git@github.com:singularity119/Training-Free-Looped-Transformers-Reproduction.git"
-PLANNING_THREAD_ID = "019f4b5a-79ac-78c1-9196-c7fd733cf04d"
 RUN_PREFIX = "loopscope-qwen17-mmlu-phase1-"
 DEFAULT_RUN_BASE = Path(
     "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs"
@@ -30,14 +29,47 @@ DEFAULT_RUN_BASE = Path(
 DEFAULT_REMOTE_REPO = Path(
     "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope"
 )
-DEFAULT_VENV_NAME = ".venv-loopscope-cu121-20260710"
 RUN_SCHEMA_VERSION = "loopscope.phase1-run.v1"
 MODEL_SNAPSHOT_COMMIT = "ea980cb0a6c2ae4b936e82123acc929f1cec04c1"
 REVISION_REPORT_SCHEMA_VERSION = "loopscope.model-tokenizer-revision-check.v2"
+CANONICAL_UUID_RE = re.compile(
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+)
 
 
 class PreparationError(ValueError):
     """Raised before submission when a run would violate the frozen contract."""
+
+
+def _require_canonical_thread_id(value: Any, field: str) -> str:
+    if not isinstance(value, str) or not CANONICAL_UUID_RE.fullmatch(value):
+        raise PreparationError(
+            "%s must be a canonical lowercase UUID" % field
+        )
+    return value
+
+
+def _planning_thread_id_arg(value: str) -> str:
+    try:
+        return _require_canonical_thread_id(value, "--planning-thread-id")
+    except PreparationError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from exc
+
+
+def validate_approval_contract(
+    manifest: Mapping[str, Any], approval: Mapping[str, Any]
+) -> str:
+    planning_thread_id = _require_canonical_thread_id(
+        manifest.get("planning_thread_id"), "run manifest planning_thread_id"
+    )
+    approval_thread_id = _require_canonical_thread_id(
+        approval.get("planning_thread_id"), "approval planning_thread_id"
+    )
+    if approval_thread_id != planning_thread_id:
+        raise PreparationError(
+            "approval planning_thread_id does not exactly match the prepared run manifest"
+        )
+    return planning_thread_id
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -48,7 +80,17 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         "prepare", help="Create one new timestamped run root and immutable job manifests."
     )
     prepare.add_argument("--repo-root", default=str(DEFAULT_REMOTE_REPO))
-    prepare.add_argument("--venv", default=None, help="Versioned venv path (default under repo).")
+    prepare.add_argument(
+        "--planning-thread-id",
+        required=True,
+        type=_planning_thread_id_arg,
+        help="Canonical lowercase UUID of the planning/audit thread authorizing this run.",
+    )
+    prepare.add_argument(
+        "--venv",
+        required=True,
+        help="Versioned venv path inside the dedicated LoopScope checkout.",
+    )
     prepare.add_argument("--config", default="configs/loopscope/qwen17_mmlu_phase1.json")
     prepare.add_argument("--criterion", default="configs/loopscope/criterion_v0.json")
     prepare.add_argument("--window-grid", required=True)
@@ -92,6 +134,12 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help="Recompute all frozen full-probe evidence before Gate E submission.",
     )
     validate_full.add_argument("--run-root", required=True)
+    validate_approval = subparsers.add_parser(
+        "validate-approval-contract",
+        help="Require an approval to match the planning thread frozen in a run manifest.",
+    )
+    validate_approval.add_argument("--manifest", required=True)
+    validate_approval.add_argument("--approval-file", required=True)
     return parser.parse_args(argv)
 
 
@@ -109,16 +157,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
         print(json.dumps(evidence, ensure_ascii=False, sort_keys=True))
         return 0
+    if args.command == "validate-approval-contract":
+        planning_thread_id = validate_approval_contract(
+            _read_json(Path(args.manifest).expanduser().resolve()),
+            _read_json(Path(args.approval_file).expanduser().resolve()),
+        )
+        print(planning_thread_id)
+        return 0
     raise AssertionError("unreachable command")
 
 
 def prepare_run(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo_root).expanduser().resolve()
-    venv = (
-        Path(args.venv).expanduser().resolve()
-        if args.venv
-        else repo_root / DEFAULT_VENV_NAME
+    planning_thread_id = _require_canonical_thread_id(
+        args.planning_thread_id, "--planning-thread-id"
     )
+    venv = Path(args.venv).expanduser().resolve()
     run_root = _requested_run_root(args)
     run_base = Path(args.run_base).expanduser().resolve()
     _validate_hpc2_paths(repo_root, run_base, run_root, venv)
@@ -160,7 +214,7 @@ def prepare_run(args: argparse.Namespace) -> int:
     manifest: Dict[str, Any] = {
         "schema_version": RUN_SCHEMA_VERSION,
         "created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "planning_thread_id": PLANNING_THREAD_ID,
+        "planning_thread_id": planning_thread_id,
         "run_root": str(run_root),
         "git": git,
         "venv": str(venv),

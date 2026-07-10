@@ -109,6 +109,16 @@ if [[ ! -f "$manifest" || ! -f "$runner" ]]; then
   echo "Prepared manifest/runner is missing for $stage" >&2
   exit 2
 fi
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+contract_helper="$script_dir/prepare_qwen17_phase1.py"
+if [[ ! -f "$contract_helper" ]]; then
+  echo "Approval-contract helper is missing: $contract_helper" >&2
+  exit 2
+fi
+"$python_bin" "$contract_helper" validate-approval-contract \
+  --manifest "$manifest" --approval-file "$approval_file" >/dev/null
+
 if [[ -e "$attempt" || -e "$receipt" ]]; then
   echo "Refusing duplicate submission; a prior attempt/receipt already exists for $stage" >&2
   exit 73
@@ -125,7 +135,6 @@ manifest_path = pathlib.Path(sys.argv[1]).resolve()
 approval_path = pathlib.Path(sys.argv[2]).resolve()
 stage = sys.argv[3]
 run_root = pathlib.Path(sys.argv[4]).resolve()
-planning_thread = "019f4b5a-79ac-78c1-9196-c7fd733cf04d"
 required_gate = {
     "gate-c": "A",
     "gate-d-limit": "C",
@@ -153,6 +162,12 @@ def manifest_hash(value):
 
 manifest = load(manifest_path)
 approval = load(approval_path)
+planning_thread = manifest.get("planning_thread_id")
+if not isinstance(planning_thread, str) or not re.fullmatch(
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+    planning_thread,
+):
+    raise SystemExit("run manifest planning_thread_id is not a canonical lowercase UUID")
 if manifest.get("schema_version") != "loopscope.phase1-run.v1":
     raise SystemExit("unsupported phase-one run manifest")
 if manifest.get("manifest_sha256") != manifest_hash(manifest):
@@ -184,7 +199,7 @@ if venv.parent != expected_repo or not re.fullmatch(
 ):
     raise SystemExit("run manifest venv is not versioned inside the dedicated clone")
 if approval.get("planning_thread_id") != planning_thread:
-    raise SystemExit("approval is not from the designated planning thread")
+    raise SystemExit("approval planning_thread_id does not exactly match the run manifest")
 if str(approval.get("gate", "")).upper() != required_gate:
     raise SystemExit("%s requires Gate %s PASS" % (stage, required_gate))
 if approval.get("decision") != "PASS":

@@ -39,6 +39,8 @@ HPC2：/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopsc
 
 不得在原复现 checkout 中 fetch、切分支、安装环境或运行 LoopScope。不得覆盖、移动、删除或复用已有 run、output、cache、模型及日志。
 
+`configs/profiles/hpc2-hkustgz.toml` 的 `remote_src` 指向原始复现 checkout，只保留给复现流水线作历史配置；LoopScope **禁止** 使用该 profile 进行同步、安装、运行或提交。LoopScope 必须显式使用上面的专用 checkout。
+
 ## Window 边界与有效秩冻结语义
 
 对于含 N 个 decoder layer 的模型，`probe-layers` 输出 N+1 个边界状态 `B_0..B_N`。`B_j` 表示已经执行前 j 个 decoder layer 后的状态，因此两端均包含的 window `[a,b]` 统一使用入口 `B_a` 与出口 `B_(b+1)`。entropy、KL-to-final 和有效秩必须使用同一对边界；`a=0` 直接使用 `B_0`，不允许负索引。工件使用 `boundary_index`、`after_layer` 和 `before_layer` 显式记录映射，不再用 layer output 下标代替 window 边界。
@@ -47,10 +49,11 @@ HPC2：/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopsc
 
 ## Gate 顺序
 
-1. **Gate A（本地代码门）**：完成代码、单元测试、compile 和 CLI smoke 后必须停止，把 branch、commit、dirty、diff 与测试结果交给规划线程 `019f4b5a-79ac-78c1-9196-c7fd733cf04d`。未得到明确 `PASS`，不得推送功能代码、SSH 或进入 HPC2。
-2. **Gate B/C（远端环境与仪器门）**：Gate A PASS 后，才建立 HPC2 新 clone、独立 versioned venv，完成 CPU/import smoke、四样本 probe、锚点 loop-effect audit 和三个 sentinel window probe。完成后再次停止审计。
-3. **Gate D（工程 smoke 门）**：Gate C PASS 后，运行 baseline 和所有候选 window 的 `--limit 5`。`limit=5` 只验证工程链路、样本对齐和 schema，**不得按小样本准确率排序、选择最佳 window 或形成科学结论**。完成后停止审计。
-4. **Gate E（完整信号与正式网格门）**：Gate D 明确 PASS 后仍须依次完成完整校准池 probe、revision 一致性、离线 score 与 score freeze；只有这些工件全部通过才允许提交 full MMLU window grid。
+1. **Gate A（本地代码门）**：完成代码、单元测试、compile 和 CLI smoke 后必须停止，把 branch、commit、dirty、diff 与测试结果交给规划线程 `019f4c7b-e5eb-77f2-b007-59d004896550`。未得到明确 `PASS`，不得推送功能代码、SSH 或进入 HPC2。
+2. **Gate B（远端环境门）**：Gate A PASS 后，才允许同步 Git、建立或核对 HPC2 专用 clone、创建独立 versioned venv，并完成 CPU/import/unit/compile/CLI help smoke。Gate B 不运行 GPU probe、MMLU eval 或 Slurm 实验；完成后停止审计。
+3. **Gate C（GPU 仪器门）**：Gate B 明确 PASS 后，才运行四样本 probe、锚点 loop-effect audit 和三个 sentinel window probe。完成后再次停止审计。
+4. **Gate D（工程 smoke 门）**：Gate C PASS 后，运行 baseline 和所有候选 window 的 `--limit 5`。`limit=5` 只验证工程链路、样本对齐和 schema，**不得按小样本准确率排序、选择最佳 window 或形成科学结论**。完成后停止审计。
+5. **Gate E（完整信号与正式网格门）**：Gate D 明确 PASS 后仍须依次完成完整校准池 probe、revision 一致性、离线 score 与 score freeze；只有这些工件全部通过才允许提交 full MMLU window grid。
 
 `prepare_qwen17_phase1.py` 会预先生成后续阶段的不可变命令，但生成不等于授权；`submit_qwen17_phase1.sh` 仍要求上一 Gate 的结构化 PASS 文件。
 
@@ -147,7 +150,8 @@ Gate A PASS、HPC2 新 clone 和独立环境通过后，在干净的 `loopscope`
 ```bash
 python scripts/loopscope/prepare_qwen17_phase1.py prepare \
   --repo-root /hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope \
-  --venv /hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260710 \
+  --planning-thread-id 019f4c7b-e5eb-77f2-b007-59d004896550 \
+  --venv '/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-YYYYMMDD[-vN]' \
   --window-grid /path/to/new/window_grid.json \
   --probe-pool-jsonl /path/to/new/probe_pool.jsonl \
   --probe-pool-manifest /path/to/new/probe_pool_manifest.json \
@@ -171,7 +175,7 @@ Gate A PASS 文件示例：
 
 ```json
 {
-  "planning_thread_id": "019f4b5a-79ac-78c1-9196-c7fd733cf04d",
+  "planning_thread_id": "019f4c7b-e5eb-77f2-b007-59d004896550",
   "gate": "A",
   "decision": "PASS",
   "approved_commit": "<Gate A commit>"

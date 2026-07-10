@@ -1,10 +1,12 @@
 import importlib.util
 import hashlib
+import io
 import json
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from tflt.loopscope.grid import generate_window_grid
 from tflt.loopscope.mmlu_renderer import create_renderer_bundle, verify_export_bundle
@@ -223,6 +225,134 @@ def _write_full_freeze_fixture(root):
 
 
 class LoopScopePhaseOneScriptTest(unittest.TestCase):
+    PLANNING_THREAD_ID = "019f4c7b-e5eb-77f2-b007-59d004896550"
+
+    def _prepare_cli_args(self):
+        return [
+            "prepare",
+            "--planning-thread-id", self.PLANNING_THREAD_ID,
+            "--venv", str(
+                prepare.DEFAULT_REMOTE_REPO / ".venv-loopscope-cu121-20260711"
+            ),
+            "--window-grid", "/tmp/window_grid.json",
+            "--probe-pool-jsonl", "/tmp/probe_pool.jsonl",
+            "--probe-pool-manifest", "/tmp/probe_pool_manifest.json",
+            "--timestamp", "20260711-120000",
+            "--dry-run",
+        ]
+
+    def test_prepare_requires_planning_thread_id(self):
+        argv = self._prepare_cli_args()
+        index = argv.index("--planning-thread-id")
+        del argv[index:index + 2]
+        with self.assertRaises(SystemExit):
+            prepare.parse_args(argv)
+
+    def test_prepare_rejects_noncanonical_planning_thread_id(self):
+        argv = self._prepare_cli_args()
+        argv[argv.index("--planning-thread-id") + 1] = self.PLANNING_THREAD_ID.upper()
+        with self.assertRaises(SystemExit):
+            prepare.parse_args(argv)
+
+    def test_prepare_requires_explicit_venv(self):
+        argv = self._prepare_cli_args()
+        index = argv.index("--venv")
+        del argv[index:index + 2]
+        with self.assertRaises(SystemExit):
+            prepare.parse_args(argv)
+
+    def test_prepare_preserves_exact_planning_thread_id_in_manifest(self):
+        args = prepare.parse_args(self._prepare_cli_args())
+        repo_root = Path(__file__).resolve().parents[1]
+        config = json.loads(
+            (repo_root / "configs/loopscope/qwen17_mmlu_phase1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        criterion = json.loads(
+            (repo_root / "configs/loopscope/criterion_v0.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        grid = generate_window_grid(28)
+        pool_manifest = {
+            "count": 1,
+            "seed": 20260710,
+            "split": "auxiliary_train",
+            "manifest_sha256": "a" * 64,
+            "render_contract_subset_sha256": "b" * 64,
+            "renderer": {"render_contract_sha256": "c" * 64},
+        }
+
+        def read_json(path):
+            name = Path(path).name
+            if name == "qwen17_mmlu_phase1.json":
+                return config
+            if name == "criterion_v0.json":
+                return criterion
+            if name == "window_grid.json":
+                return grid
+            if name == "probe_pool_manifest.json":
+                return pool_manifest
+            raise AssertionError("unexpected JSON path: %s" % path)
+
+        jobs = {
+            stage: []
+            for stage in (
+                "gate-c", "gate-d-limit", "gate-e-probe", "gate-e-score", "gate-e-full"
+            )
+        }
+        output = io.StringIO()
+        with patch.object(prepare, "_git_provenance", return_value={
+            "root": str(prepare.DEFAULT_REMOTE_REPO),
+            "branch": "loopscope",
+            "commit": "d" * 40,
+            "dirty": False,
+        }), patch.object(
+            prepare,
+            "_resolve_repo_path",
+            side_effect=lambda root, requested: root / requested,
+        ), patch.object(prepare, "_read_json", side_effect=read_json), patch.object(
+            prepare, "_validate_pool", return_value=b"{}\n"
+        ), patch.object(prepare, "_file_sha256", return_value="e" * 64), patch.object(
+            prepare, "_build_jobs", return_value=jobs
+        ), redirect_stdout(output):
+            self.assertEqual(prepare.prepare_run(args), 0)
+        manifest = json.loads(output.getvalue())
+        self.assertEqual(manifest["planning_thread_id"], self.PLANNING_THREAD_ID)
+
+    def test_approval_contract_accepts_exact_thread_match(self):
+        manifest = {"planning_thread_id": self.PLANNING_THREAD_ID}
+        approval = {"planning_thread_id": self.PLANNING_THREAD_ID}
+        self.assertEqual(
+            prepare.validate_approval_contract(manifest, approval),
+            self.PLANNING_THREAD_ID,
+        )
+
+    def test_approval_contract_rejects_mismatch(self):
+        manifest = {"planning_thread_id": self.PLANNING_THREAD_ID}
+        approval = {"planning_thread_id": "019f4d58-42a4-73b2-9b5d-6c64ac68f43b"}
+        with self.assertRaisesRegex(prepare.PreparationError, "exactly match"):
+            prepare.validate_approval_contract(manifest, approval)
+
+    def test_approval_contract_rejects_missing_manifest_thread(self):
+        with self.assertRaisesRegex(prepare.PreparationError, "canonical lowercase UUID"):
+            prepare.validate_approval_contract(
+                {}, {"planning_thread_id": self.PLANNING_THREAD_ID}
+            )
+
+    def test_historical_planning_thread_id_is_absent_from_source_docs_and_tests(self):
+        historical = "019f4b5a" + "-79ac-78c1-9196-c7fd733cf04d"
+        repo_root = Path(__file__).resolve().parents[1]
+        for root_name in ("src", "scripts", "docs", "tests"):
+            for path in (repo_root / root_name).rglob("*"):
+                if path.is_file() and path.suffix in {".py", ".sh", ".md", ".toml", ".json"}:
+                    self.assertNotIn(
+                        historical,
+                        path.read_text(encoding="utf-8"),
+                        str(path),
+                    )
+
     def _assert_post_freeze_mutation_blocks_submission(self, job_id):
         with tempfile.TemporaryDirectory() as tmp:
             run_root, probe_paths = _write_full_freeze_fixture(Path(tmp))
@@ -257,8 +387,11 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
             / "scripts/loopscope/submit_qwen17_phase1.sh"
         ).read_text(encoding="utf-8")
         helper_index = script.index("validate-full-freeze --run-root")
+        contract_index = script.index("validate-approval-contract")
         attempt_index = script.index('"$attempt" "$stage"')
         sbatch_index = script.index('sbatch --parsable "$runner"')
+        self.assertLess(contract_index, attempt_index)
+        self.assertLess(contract_index, sbatch_index)
         self.assertLess(helper_index, attempt_index)
         self.assertLess(helper_index, sbatch_index)
         self.assertNotIn('freeze.get("full_probe_evidence")', script)
