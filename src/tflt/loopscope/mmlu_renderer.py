@@ -374,6 +374,7 @@ class LmEvalMMLURendererBackend:
                 task = next(iter(tasks.values()))
             else:
                 task = tasks[task_name]
+            task_yaml = self._registered_task_yaml(manager, task_name, package_root)
             config = getattr(task, "config", None)
             dataset_path = str(self._config_value(config, "dataset_path") or "").strip()
             dataset_name = self._config_value(config, "dataset_name")
@@ -414,7 +415,9 @@ class LmEvalMMLURendererBackend:
                     "processed_fewshot_fingerprint": processed_fingerprints["fewshot"],
                 }
             )
-            task_config, task_paths = self._task_config_evidence(task, task_name, package_root)
+            task_config, task_paths = self._task_config_evidence(
+                task, task_name, package_root, task_yaml
+            )
             task_configs.append(task_config)
             for path in task_paths:
                 relative = str(path.resolve().relative_to(package_root))
@@ -526,10 +529,62 @@ class LmEvalMMLURendererBackend:
             docs = process_docs(docs)
         return docs
 
+    @staticmethod
+    def _registered_task_yaml(
+        manager: Any, task_name: str, package_root: Path
+    ) -> Path:
+        registry = getattr(manager, "task_index", None)
+        if not isinstance(registry, Mapping):
+            raise RendererVerificationError("TaskManager task_index must be a mapping")
+        if task_name not in registry:
+            raise RendererVerificationError(
+                "TaskManager task_index is missing %s" % task_name
+            )
+        entry = registry[task_name]
+        if not isinstance(entry, Mapping):
+            raise RendererVerificationError("task registry entry must be an object")
+        if entry.get("type") != "task":
+            raise RendererVerificationError(
+                "task registry entry for %s must have type=task" % task_name
+            )
+        raw_path = entry.get("yaml_path")
+        if raw_path in (None, "", -1):
+            raise RendererVerificationError(
+                "task registry entry for %s lacks yaml_path" % task_name
+            )
+        try:
+            yaml_path = Path(raw_path).expanduser()
+        except TypeError as exc:
+            raise RendererVerificationError("task registry yaml_path is invalid") from exc
+        package_root = Path(package_root).resolve()
+        tasks_root = (package_root / "tasks").resolve()
+        if not yaml_path.is_absolute():
+            yaml_path = package_root / yaml_path
+        yaml_path = yaml_path.resolve()
+        if yaml_path.suffix != ".yaml":
+            raise RendererVerificationError("task registry yaml_path must end in .yaml")
+        if yaml_path.stem != task_name:
+            raise RendererVerificationError(
+                "task registry YAML stem must equal %s" % task_name
+            )
+        if tasks_root not in yaml_path.parents:
+            raise RendererVerificationError(
+                "task registry YAML must remain inside lm_eval/tasks"
+            )
+        if not yaml_path.is_file():
+            raise RendererVerificationError("task registry YAML does not exist")
+        return yaml_path
+
     def _task_config_evidence(
-        self, task: Any, task_name: str, package_root: Path
+        self, task: Any, task_name: str, package_root: Path, task_yaml: Path
     ) -> Any:
+        package_root = Path(package_root).resolve()
         config = getattr(task, "config", None)
+        configured_task_name = self._config_value(config, "task")
+        if configured_task_name not in (None, "") and configured_task_name != task_name:
+            raise RendererVerificationError(
+                "loaded task config task name differs from %s" % task_name
+            )
         projection = {
             "task_name": task_name,
             "dataset_path": str(self._config_value(config, "dataset_path") or ""),
@@ -560,18 +615,11 @@ class LmEvalMMLURendererBackend:
                 resolved = Path(path).resolve()
                 if package_root == resolved or package_root in resolved.parents:
                     paths.add(resolved)
-        yaml_matches = sorted(package_root.rglob(task_name + ".yaml"))
-        if len(yaml_matches) != 1:
-            raise RendererVerificationError(
-                "expected one installed task YAML for %s, found %d"
-                % (task_name, len(yaml_matches))
-            )
-        paths.add(yaml_matches[0].resolve())
+        task_yaml = Path(task_yaml).resolve()
+        paths.add(task_yaml)
         projection["config_sha256"] = _sha256_object(projection)
-        projection["config_file"] = str(yaml_matches[0].resolve().relative_to(package_root))
-        projection["config_file_sha256"] = hashlib.sha256(
-            yaml_matches[0].read_bytes()
-        ).hexdigest()
+        projection["config_file"] = str(task_yaml.relative_to(package_root))
+        projection["config_file_sha256"] = hashlib.sha256(task_yaml.read_bytes()).hexdigest()
         return projection, paths
 
     @staticmethod

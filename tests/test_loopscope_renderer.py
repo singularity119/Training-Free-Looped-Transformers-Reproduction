@@ -89,7 +89,153 @@ class _HybridTaskConfig(Mapping):
         return default
 
 
+class _FakeTaskManager:
+    def __init__(self, task_index):
+        self.task_index = task_index
+
+
+class _FakeTask:
+    def __init__(self, task_name):
+        self.config = type(
+            "FakeTaskConfig",
+            (),
+            {
+                "task": task_name,
+                "dataset_path": "cais/mmlu",
+                "dataset_name": task_name[len("mmlu_") :],
+                "fewshot_split": "dev",
+                "doc_to_text": "Question\nAnswer:",
+                "doc_to_target": "answer",
+                "fewshot_delimiter": "\n\n",
+                "target_delimiter": " ",
+                "process_docs": None,
+            },
+        )()
+
+    def fewshot_context(self):
+        raise AssertionError("not called")
+
+
 class LoopScopeRendererTest(unittest.TestCase):
+    def test_registry_yaml_selects_loaded_task_among_duplicate_basenames(self):
+        task_name = "mmlu_abstract_algebra"
+        with tempfile.TemporaryDirectory() as tmp:
+            package_root = Path(tmp) / "lm_eval"
+            registered = (
+                package_root / "tasks" / "mmlu" / "default" / (task_name + ".yaml")
+            )
+            registered.parent.mkdir(parents=True)
+            registered.write_text("task: mmlu_abstract_algebra\n", encoding="utf-8")
+            for family in ("generative", "continuation"):
+                decoy = package_root / "tasks" / "mmlu" / family / (task_name + ".yaml")
+                decoy.parent.mkdir(parents=True)
+                decoy.write_text("task: decoy\n", encoding="utf-8")
+            manager = _FakeTaskManager(
+                {
+                    task_name: {
+                        "type": "task",
+                        "yaml_path": str(registered),
+                    }
+                }
+            )
+            resolved = LmEvalMMLURendererBackend._registered_task_yaml(
+                manager, task_name, package_root
+            )
+            self.assertEqual(resolved, registered.resolve())
+            projection, paths = LmEvalMMLURendererBackend()._task_config_evidence(
+                _FakeTask(task_name), task_name, package_root, resolved
+            )
+        self.assertEqual(
+            projection["config_file"],
+            "tasks/mmlu/default/mmlu_abstract_algebra.yaml",
+        )
+        self.assertEqual(
+            projection["config_file_sha256"],
+            hashlib.sha256(b"task: mmlu_abstract_algebra\n").hexdigest(),
+        )
+        self.assertIn(registered.resolve(), paths)
+
+    def test_registry_yaml_fail_closed_contract(self):
+        task_name = "mmlu_abstract_algebra"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            package_root = root / "lm_eval"
+            tasks_root = package_root / "tasks" / "mmlu" / "default"
+            tasks_root.mkdir(parents=True)
+            valid = tasks_root / (task_name + ".yaml")
+            valid.write_text("task: mmlu_abstract_algebra\n", encoding="utf-8")
+            wrong_stem = tasks_root / "mmlu_anatomy.yaml"
+            wrong_stem.write_text("task: mmlu_anatomy\n", encoding="utf-8")
+            non_yaml = tasks_root / (task_name + ".json")
+            non_yaml.write_text("{}\n", encoding="utf-8")
+            outside_tasks = package_root / "other" / (task_name + ".yaml")
+            outside_tasks.parent.mkdir(parents=True)
+            outside_tasks.write_text("task: escaped\n", encoding="utf-8")
+            escaped = root / (task_name + ".yaml")
+            escaped.write_text("task: escaped\n", encoding="utf-8")
+            cases = {
+                "registry-not-mapping": _FakeTaskManager([]),
+                "task-missing": _FakeTaskManager({}),
+                "entry-not-mapping": _FakeTaskManager({task_name: []}),
+                "wrong-entry-type": _FakeTaskManager(
+                    {task_name: {"type": "group", "yaml_path": str(valid)}}
+                ),
+                "yaml-path-missing": _FakeTaskManager(
+                    {task_name: {"type": "task"}}
+                ),
+                "yaml-path-sentinel": _FakeTaskManager(
+                    {task_name: {"type": "task", "yaml_path": -1}}
+                ),
+                "not-yaml": _FakeTaskManager(
+                    {task_name: {"type": "task", "yaml_path": str(non_yaml)}}
+                ),
+                "file-missing": _FakeTaskManager(
+                    {
+                        task_name: {
+                            "type": "task",
+                            "yaml_path": str(
+                                package_root
+                                / "tasks"
+                                / "mmlu"
+                                / "missing"
+                                / (task_name + ".yaml")
+                            ),
+                        }
+                    }
+                ),
+                "outside-package": _FakeTaskManager(
+                    {task_name: {"type": "task", "yaml_path": str(escaped)}}
+                ),
+                "outside-tasks": _FakeTaskManager(
+                    {task_name: {"type": "task", "yaml_path": str(outside_tasks)}}
+                ),
+                "wrong-stem": _FakeTaskManager(
+                    {task_name: {"type": "task", "yaml_path": str(wrong_stem)}}
+                ),
+            }
+            for label, manager in cases.items():
+                with self.subTest(label=label), self.assertRaises(
+                    RendererVerificationError
+                ):
+                    LmEvalMMLURendererBackend._registered_task_yaml(
+                        manager, task_name, package_root
+                    )
+
+    def test_task_config_evidence_rejects_mismatched_loaded_task_name(self):
+        task_name = "mmlu_abstract_algebra"
+        with tempfile.TemporaryDirectory() as tmp:
+            package_root = Path(tmp) / "lm_eval"
+            registered = (
+                package_root / "tasks" / "mmlu" / "default" / (task_name + ".yaml")
+            )
+            registered.parent.mkdir(parents=True)
+            registered.write_text("task: mmlu_abstract_algebra\n", encoding="utf-8")
+            task = _FakeTask("mmlu_anatomy")
+            with self.assertRaisesRegex(RendererVerificationError, "task name"):
+                LmEvalMMLURendererBackend()._task_config_evidence(
+                    task, task_name, package_root, registered
+                )
+
     def test_phase_one_renderer_only_accepts_validation_targets(self):
         bundle = create_renderer_bundle(
             dataset_revision=FAKE_DATASET_REVISION,
