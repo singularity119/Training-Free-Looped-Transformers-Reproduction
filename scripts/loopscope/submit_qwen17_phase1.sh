@@ -111,12 +111,25 @@ if [[ ! -f "$manifest" || ! -f "$runner" ]]; then
 fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+wrapper_repo_root="$(cd "$script_dir/../.." && pwd -P)"
+wrapper_src="$wrapper_repo_root/src"
 contract_helper="$script_dir/prepare_qwen17_phase1.py"
 if [[ ! -f "$contract_helper" ]]; then
   echo "Approval-contract helper is missing: $contract_helper" >&2
   exit 2
 fi
-"$python_bin" "$contract_helper" validate-approval-contract \
+if [[ ! -f "$wrapper_src/tflt/__init__.py" ]]; then
+  echo "Repository-local tflt source is missing: $wrapper_src/tflt/__init__.py" >&2
+  exit 2
+fi
+
+run_prepare_helper() {
+  local helper="$1"
+  shift
+  PYTHONPATH="$wrapper_src" "$python_bin" "$helper" "$@"
+}
+
+run_prepare_helper "$contract_helper" validate-approval-contract \
   --manifest "$manifest" --approval-file "$approval_file" >/dev/null
 
 if [[ -e "$attempt" || -e "$receipt" ]]; then
@@ -328,6 +341,10 @@ approval_sha256="$(printf '%s\n' "$validation_output" | sed -n '4p')"
 job_count="$(printf '%s\n' "$validation_output" | sed -n '5p')"
 
 repo_root="$(cd "$repo_root" && pwd -P)"
+if [[ "$repo_root" != "$wrapper_repo_root" ]]; then
+  echo "Run manifest repository differs from the submit wrapper checkout" >&2
+  exit 2
+fi
 git_root="$(git -C "$repo_root" rev-parse --show-toplevel)"
 git_root="$(cd "$git_root" && pwd -P)"
 if [[ "$git_root" != "$repo_root" ]]; then
@@ -353,7 +370,7 @@ if [[ "$stage" == "gate-e-full" ]]; then
     echo "Gate E full freeze helper is missing: $freeze_helper" >&2
     exit 2
   fi
-  "$python_bin" "$freeze_helper" validate-full-freeze --run-root "$run_root" >/dev/null
+  run_prepare_helper "$freeze_helper" validate-full-freeze --run-root "$run_root" >/dev/null
 fi
 
 echo "stage=$stage"

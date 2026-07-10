@@ -2,6 +2,8 @@ import importlib.util
 import hashlib
 import io
 import json
+import os
+import subprocess
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -396,6 +398,74 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
         self.assertLess(helper_index, attempt_index)
         self.assertLess(helper_index, sbatch_index)
         self.assertNotIn('freeze.get("full_probe_evidence")', script)
+
+    def test_submit_shell_starts_prepare_helper_from_repository_src(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        script = repo_root / "scripts/loopscope/submit_qwen17_phase1.sh"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run_root = root / "run"
+            manifest = run_root / "control/phase1_run_manifest.json"
+            runner = run_root / "jobs/gate-c/runner.sbatch"
+            approval = root / "approval.json"
+            manifest.parent.mkdir(parents=True)
+            runner.parent.mkdir(parents=True)
+            manifest.write_text(
+                json.dumps({"planning_thread_id": self.PLANNING_THREAD_ID}),
+                encoding="utf-8",
+            )
+            runner.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+            approval.write_text(
+                json.dumps({"planning_thread_id": self.PLANNING_THREAD_ID}),
+                encoding="utf-8",
+            )
+            env = dict(os.environ)
+            env.pop("PYTHONPATH", None)
+            env["PYTHONDONTWRITEBYTECODE"] = "1"
+            env["PYTHONVERBOSE"] = "1"
+            completed = subprocess.run(
+                [
+                    "bash",
+                    str(script),
+                    "--run-root",
+                    str(run_root),
+                    "--stage",
+                    "gate-c",
+                    "--approval-file",
+                    str(approval),
+                    "--dry-run",
+                ],
+                cwd=root,
+                env=env,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertNotIn("ModuleNotFoundError: No module named 'tflt'", completed.stderr)
+        self.assertIn(str(repo_root / "src/tflt/__init__.py"), completed.stderr)
+
+    def test_submit_shell_uses_one_repository_local_rule_for_prepare_helpers(self):
+        script = (
+            Path(__file__).resolve().parents[1]
+            / "scripts/loopscope/submit_qwen17_phase1.sh"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            'PYTHONPATH="$wrapper_src" "$python_bin" "$helper" "$@"',
+            script,
+        )
+        self.assertIn(
+            'run_prepare_helper "$contract_helper" validate-approval-contract',
+            script,
+        )
+        self.assertIn(
+            'run_prepare_helper "$freeze_helper" validate-full-freeze',
+            script,
+        )
+        self.assertIn('[[ ! -f "$wrapper_src/tflt/__init__.py" ]]', script)
+        self.assertIn('[[ "$repo_root" != "$wrapper_repo_root" ]]', script)
+        self.assertNotIn('"$python_bin" "$contract_helper"', script)
+        self.assertNotIn('"$python_bin" "$freeze_helper"', script)
 
     def test_phase_config_requires_exact_model_revision(self):
         config = json.loads(
