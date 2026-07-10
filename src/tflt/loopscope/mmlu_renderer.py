@@ -500,9 +500,18 @@ class LmEvalMMLURendererBackend:
 
     @staticmethod
     def _config_value(config: Any, name: str) -> Any:
+        if config is None:
+            return None
+        missing = object()
+        attribute_value = getattr(config, name, missing)
+        # lm-eval TaskConfig is a Mapping whose populated fields live on attributes.
+        if attribute_value is not missing and attribute_value is not None:
+            return attribute_value
         if isinstance(config, Mapping):
-            return config.get(name)
-        return getattr(config, name, None)
+            mapped_value = config.get(name)
+            if mapped_value is not None:
+                return mapped_value
+        return None if attribute_value is missing else attribute_value
 
     def _processed_docs(self, task: Any, split: str) -> Any:
         if split not in task.dataset:

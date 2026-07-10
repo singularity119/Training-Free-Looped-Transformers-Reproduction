@@ -3,9 +3,11 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from collections.abc import Mapping
 from pathlib import Path
 
 from tflt.loopscope.mmlu_renderer import (
+    LmEvalMMLURendererBackend,
     RENDERER_SCHEMA_VERSION,
     RendererVerificationError,
     canonical_json_bytes,
@@ -61,7 +63,83 @@ def _rehash_projection(manifest, records):
     return projection_bytes
 
 
+class _HybridTaskConfig(Mapping):
+    """Minimal lm-eval 0.4.11 TaskConfig shape for dependency-light tests."""
+
+    def __init__(self, attribute_value=None, mapping_value=None, has_attribute=True):
+        if has_attribute:
+            self.dataset_path = attribute_value
+        self._mapping_value = mapping_value
+
+    def __getitem__(self, key):
+        if key == "dataset_path" and self._mapping_value is not None:
+            return self._mapping_value
+        raise KeyError(key)
+
+    def __iter__(self):
+        if self._mapping_value is not None:
+            yield "dataset_path"
+
+    def __len__(self):
+        return int(self._mapping_value is not None)
+
+    def get(self, key, default=None):
+        if key == "dataset_path":
+            return self._mapping_value
+        return default
+
+
 class LoopScopeRendererTest(unittest.TestCase):
+    def test_config_value_prefers_populated_hybrid_attribute(self):
+        config = _HybridTaskConfig(
+            attribute_value="cais/mmlu",
+            mapping_value=None,
+        )
+        self.assertEqual(
+            LmEvalMMLURendererBackend._config_value(config, "dataset_path"),
+            "cais/mmlu",
+        )
+
+    def test_config_value_preserves_mapping_and_attribute_only_objects(self):
+        self.assertEqual(
+            LmEvalMMLURendererBackend._config_value(
+                {"dataset_path": "mapping-only"}, "dataset_path"
+            ),
+            "mapping-only",
+        )
+
+        class AttributeOnly:
+            dataset_path = "attribute-only"
+
+        self.assertEqual(
+            LmEvalMMLURendererBackend._config_value(
+                AttributeOnly(), "dataset_path"
+            ),
+            "attribute-only",
+        )
+
+    def test_config_value_uses_explicit_none_precedence(self):
+        cases = [
+            (_HybridTaskConfig("attribute", "mapping"), "attribute"),
+            (_HybridTaskConfig(None, "mapping"), "mapping"),
+            (_HybridTaskConfig(mapping_value="mapping", has_attribute=False), "mapping"),
+            (_HybridTaskConfig("", "mapping"), ""),
+            (_HybridTaskConfig(False, "mapping"), False),
+            (_HybridTaskConfig(0, "mapping"), 0),
+            (_HybridTaskConfig(None, "", has_attribute=False), ""),
+        ]
+        for config, expected in cases:
+            with self.subTest(expected=expected):
+                self.assertEqual(
+                    LmEvalMMLURendererBackend._config_value(
+                        config, "dataset_path"
+                    ),
+                    expected,
+                )
+        self.assertIsNone(
+            LmEvalMMLURendererBackend._config_value(None, "dataset_path")
+        )
+
     def test_export_and_independent_rerender_close_all_provenance(self):
         bundle = _bundle(3)
         manifest = bundle["manifest"]
