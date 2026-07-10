@@ -2,13 +2,89 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "loopscope.probe-pool-record.v1",
   "type": "object",
-  "required": ["id", "text", "source", "split", "subject"],
+  "required": [
+    "id",
+    "text",
+    "source",
+    "split",
+    "subject",
+    "task_group",
+    "task_name",
+    "target_doc_id",
+    "num_fewshot",
+    "uses_target_gold_labels",
+    "fewshot_answers_present",
+    "renderer",
+    "fewshot_sample_ids",
+    "demonstrations",
+    "prompt_sha256"
+  ],
   "properties": {
     "id": {"type": "string", "minLength": 1},
     "text": {"type": "string", "minLength": 1},
     "source": {"type": "string", "minLength": 1},
     "split": {"type": "string", "not": {"pattern": "[Tt][Ee][Ss][Tt]"}},
     "subject": {"type": "string", "minLength": 1},
+    "task_group": {"const": "mmlu"},
+    "task_name": {"type": "string", "minLength": 1},
+    "target_doc_id": {"type": "string", "minLength": 1},
+    "num_fewshot": {"const": 5},
+    "uses_target_gold_labels": {"const": false},
+    "fewshot_answers_present": {"const": true},
+    "renderer": {
+      "type": "object",
+      "required": [
+        "renderer_entrypoint",
+        "lm_eval_version",
+        "renderer_source_sha256",
+        "template_sha256",
+        "render_contract_sha256",
+        "render_sha256",
+        "renderer_manifest_sha256"
+      ],
+      "properties": {
+        "renderer_entrypoint": {"type": "string", "minLength": 1},
+        "lm_eval_version": {"const": "0.4.11"},
+        "renderer_source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "template_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "render_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "render_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "renderer_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "fewshot_sample_ids": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "demonstrations": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "source",
+          "split",
+          "subject",
+          "doc_sha256",
+          "rendered_sha256"
+        ],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "split": {"const": "dev"},
+          "subject": {"type": "string", "minLength": 1},
+          "doc_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "rendered_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
     "answer_position": {"type": "integer", "minimum": 0},
     "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
   },
@@ -22,5 +98,5 @@
     ]
   },
   "additionalProperties": true,
-  "description": "Gold labels are intentionally excluded from LoopScope probe records."
+  "description": "Target gold labels are excluded; fixed five-shot demonstration answers are present only inside the renderer-proven prompt text."
 }

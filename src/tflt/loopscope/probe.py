@@ -21,6 +21,7 @@ from tflt.loopscope.metrics import (
 from tflt.loopscope.schema import (
     PROBE_SCHEMA_VERSION,
     attach_manifest_sha256,
+    canonical_json_bytes,
     ensure_new_directory,
     probe_summary,
     validate_probe_report,
@@ -239,7 +240,6 @@ def load_probe_records(path: Path, max_examples: Optional[int] = None) -> List[D
         raise ProbeInputError("--max-examples must be positive")
     records = []
     seen_ids = set()
-    forbidden_gold_keys = {"answer", "label", "target", "gold", "gold_label"}
     with path.open("r", encoding="utf-8") as handle:
         for line_number, line in enumerate(handle, start=1):
             if not line.strip():
@@ -250,7 +250,11 @@ def load_probe_records(path: Path, max_examples: Optional[int] = None) -> List[D
                 raise ProbeInputError("invalid JSONL at line %d" % line_number) from exc
             if not isinstance(item, dict):
                 raise ProbeInputError("probe record line %d must be an object" % line_number)
-            required = ("id", "text", "source", "split", "subject")
+            required = (
+                "id", "text", "source", "split", "subject", "task_group", "task_name",
+                "target_doc_id", "num_fewshot", "renderer", "fewshot_sample_ids",
+                "demonstrations", "uses_target_gold_labels", "fewshot_answers_present",
+            )
             missing = [key for key in required if not item.get(key)]
             if missing:
                 raise ProbeInputError(
@@ -258,7 +262,7 @@ def load_probe_records(path: Path, max_examples: Optional[int] = None) -> List[D
                 )
             if "test" in str(item["split"]).lower():
                 raise ProbeInputError("test split is forbidden for LoopScope probes")
-            leaked = sorted(forbidden_gold_keys.intersection(item))
+            leaked = _forbidden_gold_paths(item)
             if leaked:
                 raise ProbeInputError("probe record contains forbidden gold fields: %s" % leaked)
             record_id = str(item["id"])
@@ -273,11 +277,21 @@ def load_probe_records(path: Path, max_examples: Optional[int] = None) -> List[D
             record["id"] = record_id
             record["text"] = text
             record["prompt_sha256"] = prompt_hash
+            _rendering_contract_entry(record)
             records.append(record)
             if max_examples is not None and len(records) >= max_examples:
                 break
     if not records:
         raise ProbeInputError("probe input contains no records")
+    fixed_by_subject: Dict[str, Any] = {}
+    for record in records:
+        contract = tuple(
+            tuple(str(demo[key]) for key in sorted(demo))
+            for demo in record["demonstrations"]
+        )
+        previous = fixed_by_subject.setdefault(str(record["subject"]), contract)
+        if previous != contract:
+            raise ProbeInputError("five-shot provenance changes within one subject")
     return records
 
 
@@ -290,6 +304,7 @@ def probe_pool_metadata(
     source_manifest_hash = None
     source_manifest_count = None
     seed = None
+    source_render_contract_hash = None
     if manifest_path:
         supplied = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
         _validate_source_pool_manifest(supplied)
@@ -311,6 +326,13 @@ def probe_pool_metadata(
         source_manifest_hash = supplied["manifest_sha256"]
         source_manifest_count = int(supplied["count"])
         seed = supplied.get("seed")
+        selected_rendering = [_rendering_contract_entry(item) for item in records]
+        supplied_rendering = list(supplied["rendering_records"])
+        if supplied_rendering[: len(selected_rendering)] != selected_rendering:
+            raise ProbeInputError(
+                "selected records do not match the supplied rendering-contract prefix"
+            )
+        source_render_contract_hash = supplied["render_contract_subset_sha256"]
     else:
         warnings.append(
             "No external pool manifest supplied; manifest hash was derived from input records."
@@ -318,6 +340,10 @@ def probe_pool_metadata(
     selected_records = [
         {"id": item["id"], "prompt_sha256": item["prompt_sha256"]} for item in records
     ]
+    selected_rendering = [_rendering_contract_entry(item) for item in records]
+    selected_render_contract_hash = hashlib.sha256(
+        canonical_json_bytes(selected_rendering)
+    ).hexdigest()
     selected_manifest: Dict[str, Any] = {
         "schema_version": "loopscope.probe-pool-selection.v1",
         "source": ",".join(sources),
@@ -326,6 +352,14 @@ def probe_pool_metadata(
         "seed": seed,
         "sample_ids": [item["id"] for item in records],
         "records": selected_records,
+        "task_group": "mmlu",
+        "num_fewshot": 5,
+        "uses_target_gold_labels": False,
+        "fewshot_answers_present": True,
+        "renderer": dict(records[0]["renderer"]),
+        "render_contract_sha256": records[0]["renderer"]["render_contract_sha256"],
+        "rendering_records": selected_rendering,
+        "render_contract_subset_sha256": selected_render_contract_hash,
         "source_manifest_sha256": source_manifest_hash,
     }
     attach_manifest_sha256(selected_manifest)
@@ -342,6 +376,15 @@ def probe_pool_metadata(
             "source_manifest_count": source_manifest_count,
             "sample_ids": [item["id"] for item in records],
             "records": selected_records,
+            "task_group": "mmlu",
+            "num_fewshot": 5,
+            "uses_target_gold_labels": False,
+            "fewshot_answers_present": True,
+            "renderer": dict(records[0]["renderer"]),
+            "render_contract_sha256": records[0]["renderer"]["render_contract_sha256"],
+            "rendering_records": selected_rendering,
+            "source_render_contract_subset_sha256": source_render_contract_hash,
+            "selected_render_contract_subset_sha256": selected_render_contract_hash,
         },
         warnings,
     )
@@ -356,6 +399,13 @@ def _validate_source_pool_manifest(payload: Mapping[str, Any]) -> None:
         "seed",
         "sample_ids",
         "records",
+        "task_group",
+        "num_fewshot",
+        "uses_target_gold_labels",
+        "fewshot_answers_present",
+        "renderer",
+        "rendering_records",
+        "render_contract_subset_sha256",
         "manifest_sha256",
     }
     missing = sorted(required.difference(payload))
@@ -367,6 +417,12 @@ def _validate_source_pool_manifest(payload: Mapping[str, Any]) -> None:
         raise ProbeInputError("test split is forbidden in a pool manifest")
     if not str(payload["source"]).strip() or not str(payload["split"]).strip():
         raise ProbeInputError("pool manifest source and split must be non-empty")
+    if payload["task_group"] != "mmlu" or payload["num_fewshot"] != 5:
+        raise ProbeInputError("pool manifest must freeze task_group=mmlu and num_fewshot=5")
+    if payload["uses_target_gold_labels"] is not False:
+        raise ProbeInputError("pool manifest must exclude target gold labels")
+    if payload["fewshot_answers_present"] is not True:
+        raise ProbeInputError("five-shot demonstration answers must be present in prompts")
     try:
         int(payload["seed"])
     except Exception as exc:
@@ -386,6 +442,103 @@ def _validate_source_pool_manifest(payload: Mapping[str, Any]) -> None:
             raise ProbeInputError("pool manifest contains an invalid prompt_sha256")
     if [str(value) for value in payload["sample_ids"]] != record_ids:
         raise ProbeInputError("pool manifest sample_ids do not match records order")
+    if not isinstance(payload["rendering_records"], list) or len(payload["rendering_records"]) != count:
+        raise ProbeInputError("pool manifest rendering_records count is inconsistent")
+    expected_render_hash = hashlib.sha256(
+        canonical_json_bytes(payload["rendering_records"])
+    ).hexdigest()
+    if payload["render_contract_subset_sha256"] != expected_render_hash:
+        raise ProbeInputError("pool manifest rendering-contract subset hash mismatch")
+    renderer = payload.get("renderer")
+    if not isinstance(renderer, Mapping) or renderer.get("lm_eval_version") != "0.4.11":
+        raise ProbeInputError("pool manifest renderer must use lm-eval 0.4.11")
+    for key in (
+        "renderer_source_sha256", "template_sha256", "render_contract_sha256"
+    ):
+        _validate_digest(renderer.get(key), "pool manifest renderer.%s" % key)
+
+
+def _rendering_contract_entry(item: Mapping[str, Any]) -> Dict[str, Any]:
+    if item.get("task_group") != "mmlu" or item.get("num_fewshot") != 5:
+        raise ProbeInputError("probe record is not bound to MMLU five-shot rendering")
+    if item.get("uses_target_gold_labels") is not False:
+        raise ProbeInputError("probe record may contain target gold labels")
+    if item.get("fewshot_answers_present") is not True:
+        raise ProbeInputError("probe record lacks five-shot demonstration answers")
+    renderer = item.get("renderer")
+    if not isinstance(renderer, Mapping) or renderer.get("lm_eval_version") != "0.4.11":
+        raise ProbeInputError("probe record renderer must use lm-eval 0.4.11")
+    renderer_required = (
+        "renderer_entrypoint", "renderer_source_sha256", "template_sha256",
+        "render_contract_sha256", "render_sha256", "renderer_manifest_sha256",
+    )
+    if any(not str(renderer.get(key, "")).strip() for key in renderer_required):
+        raise ProbeInputError("probe record renderer provenance is incomplete")
+    if str(renderer["render_sha256"]) != str(item["prompt_sha256"]):
+        raise ProbeInputError("probe record render hash differs from prompt hash")
+    for key in renderer_required[1:]:
+        _validate_digest(renderer[key], "probe record renderer.%s" % key)
+    demos = item.get("demonstrations")
+    ids = item.get("fewshot_sample_ids")
+    if not isinstance(demos, list) or len(demos) != 5 or not isinstance(ids, list):
+        raise ProbeInputError("probe record requires exactly five demonstrations")
+    normalized = []
+    for demo in demos:
+        required = ("id", "source", "split", "subject", "doc_sha256", "rendered_sha256")
+        if not isinstance(demo, Mapping) or any(not str(demo.get(key, "")).strip() for key in required):
+            raise ProbeInputError("demonstration provenance is incomplete")
+        if demo["split"] != "dev" or str(demo["subject"]) != str(item["subject"]):
+            raise ProbeInputError("demonstration split/subject mismatch")
+        normalized.append({key: str(demo[key]) for key in required})
+    demo_ids = [demo["id"] for demo in normalized]
+    if demo_ids != [str(value) for value in ids] or len(set(demo_ids)) != 5:
+        raise ProbeInputError("five-shot IDs must be ordered and unique")
+    if str(item.get("target_doc_id", "")) in demo_ids:
+        raise ProbeInputError("target doc appears among demonstrations")
+    return {
+        "id": str(item["id"]),
+        "target": {
+            "source": str(item["source"]),
+            "split": str(item["split"]),
+            "subject": str(item["subject"]),
+        },
+        "task_group": "mmlu",
+        "task_name": str(item["task_name"]),
+        "target_doc_id": str(item["target_doc_id"]),
+        "num_fewshot": 5,
+        "uses_target_gold_labels": False,
+        "fewshot_answers_present": True,
+        "renderer": dict(renderer),
+        "fewshot_sample_ids": demo_ids,
+        "demonstrations": normalized,
+        "prompt_sha256": str(item["prompt_sha256"]),
+    }
+
+
+def _validate_digest(value: Any, context: str) -> None:
+    digest = str(value or "")
+    if len(digest) != 64 or any(char not in "0123456789abcdef" for char in digest):
+        raise ProbeInputError("%s must be a lowercase SHA256" % context)
+
+
+def _forbidden_gold_paths(value: Any, path: Tuple[str, ...] = ()) -> List[str]:
+    forbidden = {
+        "answer", "answers", "answer_idx", "answer_index", "answer_key", "answerkey",
+        "correct", "correct_answer", "correct_choice", "correct_index", "gold",
+        "gold_answer", "gold_label", "label", "labels", "target",
+    }
+    found: List[str] = []
+    if isinstance(value, Mapping):
+        for key, item in value.items():
+            normalized = str(key).strip().lower().replace("-", "_")
+            current = path + (str(key),)
+            if normalized in forbidden:
+                found.append(".".join(current))
+            found.extend(_forbidden_gold_paths(item, current))
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            found.extend(_forbidden_gold_paths(item, path + (str(index),)))
+    return sorted(set(found))
 
 
 def parse_choice_labels(text: str) -> List[str]:

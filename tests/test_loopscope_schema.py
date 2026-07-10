@@ -13,6 +13,10 @@ from tflt.loopscope.schema import (
     validate_probe_report,
     verify_manifest_sha256,
 )
+try:
+    from loopscope_fixtures import finalize_probe_pool
+except ModuleNotFoundError:
+    from tests.loopscope_fixtures import finalize_probe_pool
 
 
 def _report():
@@ -70,19 +74,7 @@ def _report():
         ],
         "warnings": [],
     }
-    pool = report["probe_pool"]
-    selected = {
-        "schema_version": "loopscope.probe-pool-selection.v1",
-        "source": pool["source"],
-        "split": pool["split"],
-        "count": pool["count"],
-        "seed": pool["seed"],
-        "sample_ids": pool["sample_ids"],
-        "records": pool["records"],
-        "source_manifest_sha256": pool["source_manifest_sha256"],
-    }
-    pool["manifest_sha256"] = manifest_sha256(selected)
-    pool["selected_subset_sha256"] = pool["manifest_sha256"]
+    finalize_probe_pool(report["probe_pool"])
     return report
 
 

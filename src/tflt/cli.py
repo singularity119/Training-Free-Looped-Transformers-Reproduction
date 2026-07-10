@@ -10,8 +10,10 @@ from typing import Any, Dict, Optional
 
 from tflt.audit import add_audit_args, cmd_audit_loop_effect
 from tflt.config import LoopConfig
+from tflt.loopscope.analysis import add_analyze_window_grid_args, cmd_analyze_window_grid
 from tflt.loopscope.grid import add_make_window_grid_args, cmd_make_window_grid
 from tflt.loopscope.probe import add_probe_layers_args, cmd_probe_layers
+from tflt.loopscope.selection import add_score_windows_args, cmd_score_windows
 from tflt.loopscope.window_probe import add_probe_window_args, cmd_probe_window
 from tflt.models import load_model_registry, resolve_model
 from tflt.remote import (
@@ -78,6 +80,17 @@ def main(argv: Optional[list] = None) -> int:
     p = sub.add_parser("make-window-grid", help="Freeze a deterministic width-4 candidate grid.")
     add_make_window_grid_args(p)
     p.set_defaults(func=cmd_make_window_grid)
+
+    p = sub.add_parser("score-windows", help="Rank frozen windows from label-free probe signals.")
+    add_score_windows_args(p)
+    p.set_defaults(func=cmd_score_windows)
+
+    p = sub.add_parser(
+        "analyze-window-grid",
+        help="Compare frozen signal rankings with paired evaluation results.",
+    )
+    add_analyze_window_grid_args(p)
+    p.set_defaults(func=cmd_analyze_window_grid)
 
     args = parser.parse_args(argv)
     return int(args.func(args))

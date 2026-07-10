@@ -33,7 +33,17 @@
     "recommended_count": 512,
     "seed": 20260710,
     "forbid_test_split": true,
-    "uses_gold_labels": false
+    "uses_target_gold_labels": false,
+    "fewshot_answers_present": true,
+    "task_group": "mmlu",
+    "num_fewshot": 5,
+    "prompt_mode": "lm_eval_prerendered",
+    "lm_eval_version": "0.4.11",
+    "fewshot_split": "dev",
+    "chat_template": false,
+    "multiturn": false,
+    "require_renderer_manifest": true,
+    "fixed_fewshot_ids_per_subject": true
   },
   "run_root_template": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-<timestamp>"
 }

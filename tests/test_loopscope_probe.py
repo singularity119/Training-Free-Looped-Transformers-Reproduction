@@ -14,6 +14,10 @@ from tflt.loopscope.probe import (
 )
 from tflt.loopscope.schema import attach_manifest_sha256
 from tflt.loopscope.window_probe import WindowProbeCollector, build_window_sample_metrics
+try:
+    from loopscope_fixtures import contract_record, source_pool_manifest
+except ModuleNotFoundError:
+    from tests.loopscope_fixtures import contract_record, source_pool_manifest
 
 
 class FakeTokenizer:
@@ -26,34 +30,13 @@ class FakeTokenizer:
 
 class LoopScopeProbeTest(unittest.TestCase):
     def _pool_records(self):
-        records = []
-        for record_id, text in (("x", "Question X\nAnswer:"), ("y", "Question Y\nAnswer:")):
-            records.append(
-                {
-                    "id": record_id,
-                    "text": text,
-                    "source": "mmlu",
-                    "split": "dev",
-                    "subject": "math",
-                    "prompt_sha256": hashlib.sha256(text.encode()).hexdigest(),
-                }
-            )
-        return records
+        return [
+            contract_record(record_id, text, source="mmlu")
+            for record_id, text in (("x", "Question X\nAnswer:"), ("y", "Question Y\nAnswer:"))
+        ]
 
     def _pool_manifest(self, records):
-        manifest = {
-            "schema_version": "loopscope.probe-pool-manifest.v1",
-            "source": "mmlu",
-            "split": "dev",
-            "count": len(records),
-            "seed": 7,
-            "sample_ids": [item["id"] for item in records],
-            "records": [
-                {"id": item["id"], "prompt_sha256": item["prompt_sha256"]}
-                for item in records
-            ],
-        }
-        return attach_manifest_sha256(manifest)
+        return source_pool_manifest(records)
 
     def test_choice_tokenization_reports_all_ids_and_never_truncates(self):
         with self.assertRaises(ProbeInputError) as caught:

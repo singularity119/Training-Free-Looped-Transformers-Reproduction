@@ -8,6 +8,10 @@ from unittest.mock import patch
 
 from tflt.cli import main
 from tflt.loopscope.schema import PROBE_SCHEMA_VERSION, manifest_sha256
+try:
+    from loopscope_fixtures import finalize_probe_pool
+except ModuleNotFoundError:
+    from tests.loopscope_fixtures import finalize_probe_pool
 
 
 def _probe_report(window=False):
@@ -54,19 +58,7 @@ def _probe_report(window=False):
         "position_rule": "last_non_padding",
         "warnings": [],
     }
-    pool = report["probe_pool"]
-    selected = {
-        "schema_version": "loopscope.probe-pool-selection.v1",
-        "source": pool["source"],
-        "split": pool["split"],
-        "count": pool["count"],
-        "seed": pool["seed"],
-        "sample_ids": pool["sample_ids"],
-        "records": pool["records"],
-        "source_manifest_sha256": pool["source_manifest_sha256"],
-    }
-    pool["manifest_sha256"] = manifest_sha256(selected)
-    pool["selected_subset_sha256"] = pool["manifest_sha256"]
+    finalize_probe_pool(report["probe_pool"])
     if window:
         examples = [
             {"sample_id": sample_id, "valid": True, "errors": []}
@@ -195,6 +187,8 @@ class CliTest(unittest.TestCase):
             "probe-layers",
             "probe-window",
             "make-window-grid",
+            "score-windows",
+            "analyze-window-grid",
         )
         for command in commands:
             out = StringIO()

@@ -10,7 +10,9 @@ environments, eval logs, and result tables should live on the lab server or
 
 - Package: `tflt`
 - CLI: `tflt inspect-model`, `tflt smoke`, `tflt eval`, `tflt launch`,
-  `tflt collect`, `tflt report`
+  `tflt collect`, `tflt report`, and the gated `tflt probe-layers`,
+  `tflt probe-window`, `tflt make-window-grid`, `tflt score-windows`,
+  `tflt analyze-window-grid` LoopScope commands
 - Default first-stage models: Qwen3 dense checkpoints
 - Remote backends: Slurm and plain SSH
 - Local tests: pure Python, no torch or transformers required
@@ -50,3 +52,6 @@ tflt launch --backend slurm --profile configs/profiles/hpc2-hkustgz.toml \
 ```
 
 See [docs/remote_hpc2.md](docs/remote_hpc2.md) for the remote workflow.
+
+LoopScope Qwen3-1.7B 第一阶段的门控、无标签校准池与不可覆盖运行流程见
+[docs/loopscope_phase1.md](docs/loopscope_phase1.md)。

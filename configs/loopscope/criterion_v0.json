@@ -1,6 +1,11 @@
 {
   "schema_version": "loopscope.criterion.v0",
   "primary_signal": "r_times_one_minus_q",
+  "tie_policy": {
+    "ranking_ties": "retain_all",
+    "display_tiebreak": "frozen_candidate_order",
+    "phase_gate_regret": "worst_case"
+  },
   "signals": {
     "entropy_drop": {"higher_is_better": true},
     "entropy_flatness": {"higher_is_better": true, "transform": "negative_population_std"},

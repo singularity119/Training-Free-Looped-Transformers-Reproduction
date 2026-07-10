@@ -178,6 +178,15 @@ def _validate_probe_provenance(payload: Mapping[str, Any]) -> None:
             "source_manifest_count",
             "sample_ids",
             "records",
+            "task_group",
+            "num_fewshot",
+            "uses_target_gold_labels",
+            "fewshot_answers_present",
+            "renderer",
+            "render_contract_sha256",
+            "rendering_records",
+            "source_render_contract_subset_sha256",
+            "selected_render_contract_subset_sha256",
         ),
         "probe_pool",
     )
@@ -215,7 +224,20 @@ def _validate_probe_provenance(payload: Mapping[str, Any]) -> None:
         raise SchemaError("probe_pool.seed must be an integer")
     if "test" in str(pool["split"]).lower():
         raise SchemaError("probe_pool.split must not contain test")
-    for key in ("manifest_sha256", "source_manifest_sha256", "selected_subset_sha256"):
+    if pool["task_group"] != "mmlu" or pool["num_fewshot"] != 5:
+        raise SchemaError("probe_pool must use MMLU five-shot rendering")
+    if pool["uses_target_gold_labels"] is not False:
+        raise SchemaError("probe_pool must exclude target gold labels")
+    if pool["fewshot_answers_present"] is not True:
+        raise SchemaError("probe_pool must retain five-shot answers")
+    for key in (
+        "manifest_sha256",
+        "source_manifest_sha256",
+        "selected_subset_sha256",
+        "source_render_contract_subset_sha256",
+        "selected_render_contract_subset_sha256",
+        "render_contract_sha256",
+    ):
         _validate_sha256(pool[key], "probe_pool.%s" % key)
     if pool["manifest_sha256"] != pool["selected_subset_sha256"]:
         raise SchemaError("probe_pool manifest_sha256 must identify the selected subset")
@@ -236,6 +258,12 @@ def _validate_probe_provenance(payload: Mapping[str, Any]) -> None:
         _validate_sha256(item["prompt_sha256"], "probe_pool.records.prompt_sha256")
     if record_ids != [str(item) for item in sample_ids]:
         raise SchemaError("probe_pool records must match sample_ids order")
+    rendering_records = pool["rendering_records"]
+    if not isinstance(rendering_records, list) or len(rendering_records) != count:
+        raise SchemaError("probe_pool.rendering_records length must equal count")
+    render_hash = hashlib.sha256(canonical_json_bytes(rendering_records)).hexdigest()
+    if render_hash != pool["selected_render_contract_subset_sha256"]:
+        raise SchemaError("probe_pool rendering-contract subset hash mismatch")
     selected_manifest = {
         "schema_version": "loopscope.probe-pool-selection.v1",
         "source": pool["source"],
@@ -244,6 +272,16 @@ def _validate_probe_provenance(payload: Mapping[str, Any]) -> None:
         "seed": pool["seed"],
         "sample_ids": sample_ids,
         "records": records,
+        "task_group": "mmlu",
+        "num_fewshot": 5,
+        "uses_target_gold_labels": False,
+        "fewshot_answers_present": True,
+        "renderer": pool["renderer"],
+        "render_contract_sha256": pool["render_contract_sha256"],
+        "rendering_records": rendering_records,
+        "render_contract_subset_sha256": pool[
+            "selected_render_contract_subset_sha256"
+        ],
         "source_manifest_sha256": pool["source_manifest_sha256"],
     }
     if manifest_sha256(selected_manifest) != pool["selected_subset_sha256"]:
