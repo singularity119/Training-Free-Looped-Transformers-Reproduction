@@ -707,19 +707,22 @@ class LmEvalMMLURendererBackend:
         source: str,
         subject: str,
     ) -> List[Dict[str, Any]]:
-        by_hash = {
-            _sha256_object(dict(fewshot_docs[index])): index
-            for index in range(len(fewshot_docs))
-        }
+        by_hash: Dict[str, List[int]] = {}
+        for index in range(len(fewshot_docs)):
+            doc_hash = _sha256_object(dict(fewshot_docs[index]))
+            by_hash.setdefault(doc_hash, []).append(index)
         result = []
         for demo in demos:
             normalized = dict(demo)
             doc_hash = _sha256_object(normalized)
-            if doc_hash not in by_hash:
+            matching_indices = by_hash.get(doc_hash)
+            if not matching_indices:
                 raise RendererVerificationError("selected demo is absent from frozen dev split")
             rendered = str(task.doc_to_text(normalized)) + str(task.doc_to_target(normalized))
             gold = str(task.doc_to_target(normalized))
-            demo_index = by_hash[doc_hash]
+            # Some frozen dev splits contain byte-identical rows.  Consume their
+            # source indices by occurrence so each selected row keeps a distinct ID.
+            demo_index = matching_indices.pop(0)
             result.append(
                 {
                     "id": "%s:dev:%d" % (subject, demo_index),

@@ -307,6 +307,34 @@ class LoopScopeRendererTest(unittest.TestCase):
             LmEvalMMLURendererBackend._config_value(None, "dataset_path")
         )
 
+    def test_duplicate_dev_rows_receive_distinct_provenance_ids(self):
+        class DemoTask:
+            @staticmethod
+            def doc_to_text(doc):
+                return doc["question"]
+
+            @staticmethod
+            def doc_to_target(doc):
+                return str(doc["answer"])
+
+        duplicate = {"question": "same", "answer": 0}
+        fewshot_docs = [
+            duplicate,
+            {"question": "one", "answer": 1},
+            {"question": "two", "answer": 2},
+            dict(duplicate),
+            {"question": "four", "answer": 3},
+        ]
+        demos = LmEvalMMLURendererBackend._demo_evidence(
+            DemoTask(),
+            [dict(doc) for doc in fewshot_docs],
+            fewshot_docs,
+            "cais/mmlu@revision",
+            "college_physics",
+        )
+        self.assertEqual([demo["doc_index"] for demo in demos], [0, 1, 2, 3, 4])
+        self.assertEqual(len({demo["id"] for demo in demos}), 5)
+
     def test_export_and_independent_rerender_close_all_provenance(self):
         bundle = _bundle(3)
         manifest = bundle["manifest"]
