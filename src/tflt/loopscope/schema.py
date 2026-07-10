@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping, MutableMapping, Sequence
 
 
-PROBE_SCHEMA_VERSION = "loopscope.probe.v1"
+PROBE_SCHEMA_VERSION = "loopscope.probe.v2"
 WINDOW_GRID_SCHEMA_VERSION = "loopscope.window-grid.v1"
 SELECTION_SCHEMA_VERSION = "loopscope.selection.v1"
 ANALYSIS_SCHEMA_VERSION = "loopscope.analysis.v1"
@@ -92,7 +92,7 @@ def validate_probe_report(payload: Mapping[str, Any]) -> None:
         "runtime",
         "probe_pool",
         "position_rule",
-        "layer_metrics",
+        "boundary_metrics",
         "window_metrics",
         "warnings",
     }
@@ -104,17 +104,19 @@ def validate_probe_report(payload: Mapping[str, Any]) -> None:
     for key in ("git", "model", "tokenizer", "runtime", "probe_pool"):
         if not isinstance(payload[key], Mapping):
             raise SchemaError("probe report %s must be an object" % key)
-    for key in ("layer_metrics", "window_metrics", "warnings"):
+    for key in ("boundary_metrics", "window_metrics", "warnings"):
         if not isinstance(payload[key], list):
             raise SchemaError("probe report %s must be a list" % key)
     _reject_non_finite(payload)
     _validate_probe_provenance(payload)
-    layer_metrics = payload["layer_metrics"]
+    boundary_metrics = payload["boundary_metrics"]
     window_metrics = payload["window_metrics"]
-    if bool(layer_metrics) == bool(window_metrics):
-        raise SchemaError("probe report must contain exactly one of layer_metrics/window_metrics")
-    if layer_metrics:
-        _validate_layer_probe(payload)
+    if bool(boundary_metrics) == bool(window_metrics):
+        raise SchemaError(
+            "probe report must contain exactly one of boundary_metrics/window_metrics"
+        )
+    if boundary_metrics:
+        _validate_boundary_probe(payload)
     else:
         _validate_window_probe(payload)
 
@@ -135,7 +137,7 @@ def probe_summary(payload: Mapping[str, Any]) -> Dict[str, Any]:
         "model_revision": str(model.get("revision") or ""),
         "layer_count": int(model.get("layer_count", 0) or 0),
         "probe_count": int(probe_pool.get("count", 0) or 0),
-        "layer_metric_count": len(payload["layer_metrics"]),
+        "boundary_metric_count": len(payload["boundary_metrics"]),
         "window_metric_count": len(windows),
         "valid_window_count": valid_windows,
         "warning_count": len(payload["warnings"]),
@@ -288,33 +290,60 @@ def _validate_probe_provenance(payload: Mapping[str, Any]) -> None:
         raise SchemaError("probe_pool selected-subset hash does not match its records")
 
 
-def _validate_layer_probe(payload: Mapping[str, Any]) -> None:
+def _validate_boundary_probe(payload: Mapping[str, Any]) -> None:
     layer_count = int(payload["model"]["layer_count"])
     pool_count = int(payload["probe_pool"]["count"])
-    metrics = payload["layer_metrics"]
-    indexes = [int(item.get("layer_index", -1)) for item in metrics if isinstance(item, Mapping)]
-    if len(metrics) != layer_count or indexes != list(range(layer_count)):
-        raise SchemaError("layer_metrics must contain each layer index exactly once in order")
+    contract = payload.get("boundary_contract")
+    if not isinstance(contract, Mapping):
+        raise SchemaError("boundary probe requires boundary_contract")
+    require_keys(
+        contract,
+        ("version", "definition", "boundary_count", "window_entry", "window_exit"),
+        "boundary_contract",
+    )
+    if contract["version"] != "loopscope.boundary.v1":
+        raise SchemaError("unsupported boundary_contract.version")
+    if int(contract["boundary_count"]) != layer_count + 1:
+        raise SchemaError("boundary_contract.boundary_count must equal layer_count + 1")
+    if contract["window_entry"] != "B_a" or contract["window_exit"] != "B_(b+1)":
+        raise SchemaError("boundary contract must score inclusive [a,b] as B_a to B_(b+1)")
+    metrics = payload["boundary_metrics"]
+    indexes = [
+        int(item.get("boundary_index", -1)) for item in metrics if isinstance(item, Mapping)
+    ]
+    if len(metrics) != layer_count + 1 or indexes != list(range(layer_count + 1)):
+        raise SchemaError("boundary_metrics must contain B_0..B_N exactly once in order")
     choice_ids = payload["tokenizer"]["choice_token_ids"]
     if not isinstance(choice_ids, Mapping) or len(choice_ids) < 2:
-        raise SchemaError("layer probe requires at least two choice-token entries")
-    for layer_index, item in enumerate(metrics):
+        raise SchemaError("boundary probe requires at least two choice-token entries")
+    for boundary_index, item in enumerate(metrics):
         if not isinstance(item, Mapping):
-            raise SchemaError("layer_metrics entries must be objects")
+            raise SchemaError("boundary_metrics entries must be objects")
         require_keys(
             item,
             (
-                "layer_index",
+                "boundary_index",
+                "after_layer",
+                "before_layer",
                 "choice_entropy",
                 "kl_to_final",
                 "top1_to_final_agreement",
                 "effective_rank",
                 "effective_rank_sampling",
             ),
-            "layer_metrics[%d]" % layer_index,
+            "boundary_metrics[%d]" % boundary_index,
         )
+        expected_after = boundary_index - 1 if boundary_index > 0 else None
+        expected_before = boundary_index if boundary_index < layer_count else None
+        if item["after_layer"] != expected_after or item["before_layer"] != expected_before:
+            raise SchemaError(
+                "boundary_metrics[%d] after_layer/before_layer mapping is inconsistent"
+                % boundary_index
+            )
         for key in ("choice_entropy", "kl_to_final", "top1_to_final_agreement"):
-            _validate_summary(item[key], pool_count, "layer_metrics[%d].%s" % (layer_index, key))
+            _validate_summary(
+                item[key], pool_count, "boundary_metrics[%d].%s" % (boundary_index, key)
+            )
         if float(item["effective_rank"]) <= 0.0:
             raise SchemaError("effective_rank must be positive")
         sampling = item["effective_rank_sampling"]
@@ -322,21 +351,42 @@ def _validate_layer_probe(payload: Mapping[str, Any]) -> None:
             raise SchemaError("effective_rank_sampling must be an object")
         require_keys(
             sampling,
-            ("representation_space", "count", "sample_ids"),
+            (
+                "representation_space",
+                "estimator",
+                "estimator_version",
+                "spectrum",
+                "unit_normalized",
+                "centered_across_vectors",
+                "count",
+                "sample_ids",
+            ),
             "effective_rank_sampling",
         )
+        if (
+            sampling["estimator"] != "gram_spectrum_shannon_effective_rank"
+            or sampling["estimator_version"] != "1"
+            or sampling["spectrum"] != "squared_singular_values"
+            or sampling["unit_normalized"] is not True
+            or sampling["centered_across_vectors"] is not True
+        ):
+            raise SchemaError("effective_rank_sampling estimator contract mismatch")
         sampled = int(sampling["count"])
         if sampled < 2 or sampled > pool_count or len(sampling["sample_ids"]) != sampled:
             raise SchemaError("effective_rank_sampling count/sample_ids are inconsistent")
     examples = payload.get("examples")
-    _validate_example_ids(examples, payload["probe_pool"]["sample_ids"], "layer examples")
+    _validate_example_ids(
+        examples, payload["probe_pool"]["sample_ids"], "boundary examples"
+    )
     for example in examples:
-        sample_layers = example.get("layer_metrics")
-        if not isinstance(sample_layers, list):
-            raise SchemaError("layer example is missing layer_metrics")
-        sample_indexes = [int(item.get("layer_index", -1)) for item in sample_layers]
-        if sample_indexes != list(range(layer_count)):
-            raise SchemaError("layer example metrics do not cover all layers in order")
+        sample_boundaries = example.get("boundary_metrics")
+        if not isinstance(sample_boundaries, list):
+            raise SchemaError("boundary example is missing boundary_metrics")
+        sample_indexes = [
+            int(item.get("boundary_index", -1)) for item in sample_boundaries
+        ]
+        if sample_indexes != list(range(layer_count + 1)):
+            raise SchemaError("boundary example metrics do not cover B_0..B_N in order")
 
 
 def _validate_window_probe(payload: Mapping[str, Any]) -> None:

@@ -64,7 +64,7 @@ def _probe_report(window=False):
             {"sample_id": sample_id, "valid": True, "errors": []}
             for sample_id in ("x", "y")
         ]
-        report["layer_metrics"] = []
+        report["boundary_metrics"] = []
         report["window_grid"] = {
             "manifest_sha256": "c" * 64,
             "layer_count": 28,
@@ -83,23 +83,43 @@ def _probe_report(window=False):
             }
         ]
     else:
-        report["layer_metrics"] = [
+        report["boundary_contract"] = {
+            "version": "loopscope.boundary.v1",
+            "definition": "B_j is the state after decoder layers 0 through j-1",
+            "boundary_count": 2,
+            "window_entry": "B_a",
+            "window_exit": "B_(b+1)",
+        }
+        report["boundary_metrics"] = [
             {
-                "layer_index": 0,
+                "boundary_index": boundary_index,
+                "after_layer": boundary_index - 1 if boundary_index else None,
+                "before_layer": boundary_index if boundary_index < 1 else None,
                 "choice_entropy": summary,
                 "kl_to_final": summary,
                 "top1_to_final_agreement": summary,
                 "effective_rank": 1.5,
                 "effective_rank_sampling": {
                     "representation_space": "final_norm raw-logit-lens space",
+                    "estimator": "gram_spectrum_shannon_effective_rank",
+                    "estimator_version": "1",
+                    "spectrum": "squared_singular_values",
+                    "unit_normalized": True,
+                    "centered_across_vectors": True,
                     "count": 2,
                     "sample_ids": ["x", "y"],
                 },
             }
+            for boundary_index in range(2)
         ]
         report["window_metrics"] = []
         report["examples"] = [
-            {"id": sample_id, "layer_metrics": [{"layer_index": 0}]}
+            {
+                "id": sample_id,
+                "boundary_metrics": [
+                    {"boundary_index": boundary_index} for boundary_index in range(2)
+                ],
+            }
             for sample_id in ("x", "y")
         ]
     return report

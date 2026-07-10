@@ -86,7 +86,7 @@ def add_score_windows_args(parser: Any) -> None:
     parser.add_argument("--window-probe", action="append", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--criterion")
-    parser.add_argument("--layer-stat", choices=("mean", "median"), default="mean")
+    parser.add_argument("--boundary-stat", choices=("mean", "median"), default="mean")
     parser.add_argument("--window-stat", choices=("mean", "median"), default="median")
 
 
@@ -106,7 +106,7 @@ def cmd_score_windows(args: Any) -> int:
         layer_report=layer_report,
         window_reports=[item[1] for item in window_paths_and_reports],
         criterion=criterion,
-        layer_stat=args.layer_stat,
+        boundary_stat=args.boundary_stat,
         window_stat=args.window_stat,
         input_paths={
             "layer_probe": str(layer_path),
@@ -128,13 +128,13 @@ def score_windows(
     layer_report: Mapping[str, Any],
     window_reports: Sequence[Mapping[str, Any]],
     criterion: Optional[Mapping[str, Any]] = None,
-    layer_stat: str = "mean",
+    boundary_stat: str = "mean",
     window_stat: str = "median",
     input_paths: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Score every valid candidate without collapsing the signals into one rank.
 
-    Layer-curve scores use the requested aggregate from ``layer_metrics``.
+    Boundary-curve scores use the requested aggregate from ``boundary_metrics``.
     Activity/contraction use the requested aggregate at the answer position.
     Per-example score components are retained so the later analysis command can
     perform a calibration-pool bootstrap without touching gold labels.
@@ -146,15 +146,15 @@ def score_windows(
     for report in window_reports:
         validate_probe_report(report)
     _validate_probe_alignment(layer_report, window_reports)
-    if layer_stat not in ("mean", "median"):
-        raise SelectionError("layer_stat must be mean or median")
+    if boundary_stat not in ("mean", "median"):
+        raise SelectionError("boundary_stat must be mean or median")
     if window_stat not in ("mean", "median"):
         raise SelectionError("window_stat must be mean or median")
 
     frozen_criterion = copy.deepcopy(dict(criterion or DEFAULT_CRITERION))
     _validate_criterion(frozen_criterion)
-    layers = _index_layers(layer_report.get("layer_metrics", []))
-    layer_examples = _index_layer_examples(layer_report.get("examples", []))
+    boundaries = _index_boundaries(layer_report.get("boundary_metrics", []))
+    boundary_examples = _index_boundary_examples(layer_report.get("examples", []))
     windows = _index_window_metrics(window_reports)
     expected_windows = {
         format_window(parse_window(str(window)))
@@ -178,23 +178,36 @@ def score_windows(
                 % (window_key, metric.get("errors", []))
             )
         start, end = parse_window(window_key)
-        missing_layers = [index for index in range(start, end + 1) if index not in layers]
-        if missing_layers:
+        entry_boundary = start
+        exit_boundary = end + 1
+        missing_boundaries = [
+            index
+            for index in range(entry_boundary, exit_boundary + 1)
+            if index not in boundaries
+        ]
+        if missing_boundaries:
             raise SelectionError(
-                "window %s is missing layer metrics for %s" % (window_key, missing_layers)
+                "window %s is missing boundary metrics for %s"
+                % (window_key, missing_boundaries)
             )
 
         entropy_curve = [
-            _summary_number(layers[index].get("choice_entropy"), layer_stat, "choice_entropy")
-            for index in range(start, end + 1)
+            _summary_number(
+                boundaries[index].get("choice_entropy"),
+                boundary_stat,
+                "choice_entropy",
+            )
+            for index in range(entry_boundary, exit_boundary + 1)
         ]
         kl_curve = [
-            _summary_number(layers[index].get("kl_to_final"), layer_stat, "kl_to_final")
-            for index in range(start, end + 1)
+            _summary_number(
+                boundaries[index].get("kl_to_final"), boundary_stat, "kl_to_final"
+            )
+            for index in range(entry_boundary, exit_boundary + 1)
         ]
         effective_rank_curve = [
-            _finite_number(layers[index].get("effective_rank"), "effective_rank")
-            for index in range(start, end + 1)
+            _finite_number(boundaries[index].get("effective_rank"), "effective_rank")
+            for index in range(entry_boundary, exit_boundary + 1)
         ]
         activity = _window_summary_number(metric, "r", window_stat)
         contraction = _window_summary_number(metric, "q", window_stat)
@@ -213,7 +226,7 @@ def score_windows(
         sample_scores = _candidate_sample_scores(
             start=start,
             end=end,
-            layer_examples=layer_examples,
+            boundary_examples=boundary_examples,
             window_metric=metric,
         )
         if not sample_scores:
@@ -233,12 +246,16 @@ def score_windows(
                     "phase": _effective_rank_phase(effective_rank_delta),
                     "gate": _effective_rank_gate(frozen_criterion, effective_rank_delta),
                     "curve": effective_rank_curve,
+                    "entry_boundary": entry_boundary,
+                    "exit_boundary": exit_boundary,
                 },
                 "evidence": {
-                    "layer_stat": layer_stat,
+                    "boundary_stat": boundary_stat,
                     "window_stat": window_stat,
-                    "entropy_curve": entropy_curve,
-                    "kl_to_final_curve": kl_curve,
+                    "entry_boundary": entry_boundary,
+                    "exit_boundary": exit_boundary,
+                    "entropy_boundary_curve": entropy_curve,
+                    "kl_to_final_boundary_curve": kl_curve,
                     "activity_r": activity,
                     "contraction_q": contraction,
                 },
@@ -276,6 +293,7 @@ def score_windows(
             "candidate_windows": list(grid["candidate_windows"]),
         },
         "probe_provenance": {
+            "boundary_contract": dict(layer_report["boundary_contract"]),
             "git": {
                 key: layer_report["git"].get(key)
                 for key in ("branch", "commit", "dirty")
@@ -310,7 +328,7 @@ def score_windows(
                 )
             },
         },
-        "aggregation": {"layer_stat": layer_stat, "window_stat": window_stat},
+        "aggregation": {"boundary_stat": boundary_stat, "window_stat": window_stat},
         "inputs": {
             "paths": dict(input_paths or {}),
             "layer_probe_manifest_sha256": _manifest_hash(layer_report),
@@ -319,13 +337,17 @@ def score_windows(
             ],
         },
         "signal_definitions": {
-            "entropy_drop": "entropy(start) - entropy(end)",
-            "entropy_flatness": "negative population std of entropy inside the window",
-            "kl_to_final_drop": "KL-to-final(start) - KL-to-final(end)",
+            "entropy_drop": "entropy(B_a) - entropy(B_(b+1))",
+            "entropy_flatness": (
+                "negative population std of entropy on boundaries B_a..B_(b+1)"
+            ),
+            "kl_to_final_drop": "KL-to-final(B_a) - KL-to-final(B_(b+1))",
             "activity_r": "answer-position first-step relative activity r",
             "negative_contraction_q": "negative answer-position contraction q",
             "r_times_one_minus_q": "r * max(0, 1-q)",
-            "effective_rank_delta": "auxiliary effective-rank(end) - effective-rank(start)",
+            "effective_rank_delta": (
+                "auxiliary effective-rank(B_(b+1)) - effective-rank(B_a)"
+            ),
         },
         "primary_signal": primary_signal,
         "primary_top_windows": selections[primary_signal]["top_windows"],
@@ -406,23 +428,28 @@ def render_score_summary(report: Mapping[str, Any]) -> str:
 def _candidate_sample_scores(
     start: int,
     end: int,
-    layer_examples: Mapping[str, Mapping[int, Mapping[str, Any]]],
+    boundary_examples: Mapping[str, Mapping[int, Mapping[str, Any]]],
     window_metric: Mapping[str, Any],
 ) -> List[Dict[str, Any]]:
     window_examples = _index_window_examples(window_metric.get("examples", []))
-    sample_ids = sorted(set(layer_examples).union(window_examples))
+    sample_ids = sorted(set(boundary_examples).union(window_examples))
     rows = []
     for sample_id in sample_ids:
         scores: Dict[str, float] = {}
-        layer_by_index = layer_examples.get(sample_id)
-        if layer_by_index and all(index in layer_by_index for index in range(start, end + 1)):
+        boundary_by_index = boundary_examples.get(sample_id)
+        boundary_range = range(start, end + 2)
+        if boundary_by_index and all(index in boundary_by_index for index in boundary_range):
             entropy_curve = [
-                _finite_number(layer_by_index[index].get("choice_entropy"), "choice_entropy")
-                for index in range(start, end + 1)
+                _finite_number(
+                    boundary_by_index[index].get("choice_entropy"), "choice_entropy"
+                )
+                for index in range(start, end + 2)
             ]
             kl_curve = [
-                _finite_number(layer_by_index[index].get("kl_to_final"), "kl_to_final")
-                for index in range(start, end + 1)
+                _finite_number(
+                    boundary_by_index[index].get("kl_to_final"), "kl_to_final"
+                )
+                for index in range(start, end + 2)
             ]
             scores.update(
                 {
@@ -453,16 +480,16 @@ def _candidate_sample_scores(
     return rows
 
 
-def _index_layers(items: Any) -> Dict[int, Mapping[str, Any]]:
+def _index_boundaries(items: Any) -> Dict[int, Mapping[str, Any]]:
     if not isinstance(items, list) or not items:
-        raise SelectionError("layer probe contains no layer_metrics")
+        raise SelectionError("boundary probe contains no boundary_metrics")
     result: Dict[int, Mapping[str, Any]] = {}
     for item in items:
-        if not isinstance(item, Mapping) or "layer_index" not in item:
-            raise SelectionError("each layer metric must contain layer_index")
-        index = int(item["layer_index"])
+        if not isinstance(item, Mapping) or "boundary_index" not in item:
+            raise SelectionError("each boundary metric must contain boundary_index")
+        index = int(item["boundary_index"])
         if index in result:
-            raise SelectionError("duplicate layer_index: %d" % index)
+            raise SelectionError("duplicate boundary_index: %d" % index)
         result[index] = item
     return result
 
@@ -536,7 +563,7 @@ def _validate_probe_alignment(
             raise SelectionError("window probe reports disagree on frozen window grid")
 
 
-def _index_layer_examples(items: Any) -> Dict[str, Dict[int, Mapping[str, Any]]]:
+def _index_boundary_examples(items: Any) -> Dict[str, Dict[int, Mapping[str, Any]]]:
     result: Dict[str, Dict[int, Mapping[str, Any]]] = {}
     if items is None:
         return result
@@ -549,13 +576,15 @@ def _index_layer_examples(items: Any) -> Dict[str, Dict[int, Mapping[str, Any]]]
         if sample_id in result:
             raise SelectionError("duplicate layer probe example id: %s" % sample_id)
         by_index: Dict[int, Mapping[str, Any]] = {}
-        for metric in item.get("layer_metrics", []):
-            if not isinstance(metric, Mapping) or "layer_index" not in metric:
-                raise SelectionError("example layer metric must contain layer_index")
-            index = int(metric["layer_index"])
+        for metric in item.get("boundary_metrics", []):
+            if not isinstance(metric, Mapping) or "boundary_index" not in metric:
+                raise SelectionError(
+                    "example boundary metric must contain boundary_index"
+                )
+            index = int(metric["boundary_index"])
             if index in by_index:
                 raise SelectionError(
-                    "duplicate layer %d in example %s" % (index, sample_id)
+                    "duplicate boundary %d in example %s" % (index, sample_id)
                 )
             by_index[index] = metric
         result[sample_id] = by_index

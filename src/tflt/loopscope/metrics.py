@@ -7,6 +7,10 @@ from statistics import mean, median, pstdev
 from typing import Dict, Iterable, List, Sequence
 
 
+EFFECTIVE_RANK_ESTIMATOR = "gram_spectrum_shannon_effective_rank"
+EFFECTIVE_RANK_ESTIMATOR_VERSION = "1"
+
+
 class MetricError(ValueError):
     """Raised instead of silently replacing invalid measurements with zero."""
 
@@ -80,15 +84,21 @@ def activity_contraction_score(activity: float, contraction: float) -> float:
 
 
 def effective_rank_from_singular_values(singular_values: Iterable[float]) -> float:
-    """Entropy effective rank using normalized, nonzero singular values."""
+    """Entropy effective rank of the Gram spectrum induced by singular values.
+
+    If ``s_i`` are singular values of the centered representation matrix, the
+    eigenvalues of its unscaled Gram/covariance spectrum are proportional to
+    ``s_i**2``.  Scale cancels during normalization, so this function uses
+    ``p_i = s_i**2 / sum_j(s_j**2)`` before exponentiating Shannon entropy.
+    """
 
     values = [_finite(value, "singular value") for value in singular_values]
     if any(value < 0.0 for value in values):
         raise MetricError("singular values must be non-negative")
-    positive = [value for value in values if value > 0.0]
-    if not positive:
+    squared_spectrum = [value * value for value in values if value > 0.0]
+    if not squared_spectrum:
         raise MetricError("effective rank is undefined for a zero matrix")
-    probs = normalize_distribution(positive)
+    probs = normalize_distribution(squared_spectrum)
     return math.exp(choice_entropy(probs))
 
 

@@ -467,7 +467,7 @@ def _build_jobs(
                 "--window-probe", str(full_window_output / "probe_report.json"),
                 "--output-dir", str(score_output),
                 "--criterion", str(criterion_path),
-                "--layer-stat", "mean",
+                "--boundary-stat", "mean",
                 "--window-stat", "median",
             ],
         )

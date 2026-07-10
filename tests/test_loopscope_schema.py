@@ -53,24 +53,44 @@ def _report():
             ],
         },
         "position_rule": "last_non_padding",
-        "layer_metrics": [
+        "boundary_contract": {
+            "version": "loopscope.boundary.v1",
+            "definition": "B_j is the state after decoder layers 0 through j-1",
+            "boundary_count": 2,
+            "window_entry": "B_a",
+            "window_exit": "B_(b+1)",
+        },
+        "boundary_metrics": [
             {
-                "layer_index": 0,
+                "boundary_index": boundary_index,
+                "after_layer": boundary_index - 1 if boundary_index else None,
+                "before_layer": boundary_index if boundary_index < 1 else None,
                 "choice_entropy": summary,
                 "kl_to_final": summary,
                 "top1_to_final_agreement": summary,
                 "effective_rank": 1.5,
                 "effective_rank_sampling": {
                     "representation_space": "final_norm raw-logit-lens space",
+                    "estimator": "gram_spectrum_shannon_effective_rank",
+                    "estimator_version": "1",
+                    "spectrum": "squared_singular_values",
+                    "unit_normalized": True,
+                    "centered_across_vectors": True,
                     "count": 2,
                     "sample_ids": ["x", "y"],
                 },
             }
+            for boundary_index in range(2)
         ],
         "window_metrics": [],
         "examples": [
-            {"id": "x", "layer_metrics": [{"layer_index": 0}]},
-            {"id": "y", "layer_metrics": [{"layer_index": 0}]},
+            {
+                "id": sample_id,
+                "boundary_metrics": [
+                    {"boundary_index": boundary_index} for boundary_index in range(2)
+                ],
+            }
+            for sample_id in ("x", "y")
         ],
         "warnings": [],
     }
@@ -88,7 +108,7 @@ class LoopScopeSchemaTest(unittest.TestCase):
 
     def test_non_finite_report_is_rejected(self):
         report = _report()
-        report["layer_metrics"][0]["choice_entropy"]["mean"] = math.nan
+        report["boundary_metrics"][0]["choice_entropy"]["mean"] = math.nan
         with self.assertRaises(SchemaError):
             validate_probe_report(report)
 
@@ -98,10 +118,10 @@ class LoopScopeSchemaTest(unittest.TestCase):
         with self.assertRaises(SchemaError):
             validate_probe_report(report)
 
-    def test_duplicate_or_missing_layer_is_rejected(self):
+    def test_duplicate_or_missing_boundary_is_rejected(self):
         report = _report()
         report["model"]["layer_count"] = 2
-        report["layer_metrics"].append(dict(report["layer_metrics"][0]))
+        report["boundary_metrics"].append(dict(report["boundary_metrics"][0]))
         with self.assertRaises(SchemaError):
             validate_probe_report(report)
 

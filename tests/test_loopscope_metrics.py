@@ -39,6 +39,12 @@ class LoopScopeMetricsTest(unittest.TestCase):
         self.assertEqual(stats["median"], 2.5)
         self.assertAlmostEqual(stats["p90"], 3.7)
 
+    def test_effective_rank_uses_squared_singular_values(self):
+        self.assertAlmostEqual(
+            effective_rank_from_singular_values([2.0, 1.0]),
+            1.6493848884661177,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

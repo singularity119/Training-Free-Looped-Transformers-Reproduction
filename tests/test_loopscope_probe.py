@@ -7,6 +7,7 @@ from pathlib import Path
 from tflt.loopscope.probe import (
     ProbeInputError,
     choice_tokenization,
+    decoder_boundary_states,
     lens_space_hidden,
     load_probe_records,
     parse_choice_labels,
@@ -104,16 +105,26 @@ class LoopScopeProbeTest(unittest.TestCase):
         self.assertEqual(metadata["manifest_sha256"], metadata["selected_subset_sha256"])
         self.assertNotEqual(metadata["manifest_sha256"], metadata["source_manifest_sha256"])
 
-    def test_lens_space_norms_every_layer_exactly_once(self):
+    def test_boundary_states_and_lens_space_are_explicit(self):
         calls = []
 
         def final_norm(value):
             calls.append(value)
             return "norm(%s)" % value
 
-        self.assertEqual(lens_space_hidden(final_norm, "h0", 0, 2), "norm(h0)")
-        self.assertEqual(lens_space_hidden(final_norm, "h1-final-normed", 1, 2), "h1-final-normed")
-        self.assertEqual(calls, ["h0"])
+        self.assertEqual(
+            decoder_boundary_states(("B0", "B1", "B2"), 2),
+            ("B0", "B1", "B2"),
+        )
+        with self.assertRaisesRegex(RuntimeError, "boundary-state"):
+            decoder_boundary_states(("B1", "B2"), 2)
+        self.assertEqual(lens_space_hidden(final_norm, "B0", 0, 2), "norm(B0)")
+        self.assertEqual(lens_space_hidden(final_norm, "B1", 1, 2), "norm(B1)")
+        self.assertEqual(
+            lens_space_hidden(final_norm, "B2-final-normed", 2, 2),
+            "B2-final-normed",
+        )
+        self.assertEqual(calls, ["B0", "B1"])
 
     def test_window_metrics_use_answer_and_all_valid_tokens(self):
         result = build_window_sample_metrics(

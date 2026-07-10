@@ -180,7 +180,7 @@ def run_window_probe(args: Any) -> Dict[str, Any]:
             "layer_count": grid_payload["layer_count"],
             "candidate_windows": [item["window"] for item in grid_payload["windows"]],
         },
-        "layer_metrics": [],
+        "boundary_metrics": [],
         "window_metrics": window_metrics,
         "warnings": list(pool_warnings),
     }

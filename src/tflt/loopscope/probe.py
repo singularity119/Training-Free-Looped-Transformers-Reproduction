@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Any, DefaultDict, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 from tflt.loopscope.metrics import (
+    EFFECTIVE_RANK_ESTIMATOR,
+    EFFECTIVE_RANK_ESTIMATOR_VERSION,
     choice_entropy,
     effective_rank_from_singular_values,
     kl_to_reference,
@@ -133,19 +135,19 @@ def run_layer_probe(args: Any) -> Dict[str, Any]:
                 return_dict=True,
             )
             hidden_states = tuple(outputs.hidden_states or ())
-            layer_states = decoder_layer_states(hidden_states, layer_count)
+            boundary_states = decoder_boundary_states(hidden_states, layer_count)
             final_choice_logits = outputs.logits[0, answer_position, choice_ids].float()
             final_distribution = torch.softmax(final_choice_logits, dim=-1).cpu().tolist()
-            example_layers = []
-            for layer_index, hidden in enumerate(layer_states):
+            example_boundaries = []
+            for boundary_index, hidden in enumerate(boundary_states):
                 answer_hidden = hidden[:, answer_position : answer_position + 1, :]
                 lens_hidden = lens_space_hidden(
                     final_norm,
                     answer_hidden,
-                    layer_index,
+                    boundary_index,
                     layer_count,
                 )
-                if layer_index == layer_count - 1:
+                if boundary_index == layer_count:
                     choice_logits = outputs.logits[0, answer_position, choice_ids].float()
                 else:
                     choice_logits = lm_head(lens_hidden)[0, 0, choice_ids].float()
@@ -153,23 +155,27 @@ def run_layer_probe(args: Any) -> Dict[str, Any]:
                 entropy = choice_entropy(distribution)
                 kl_value = kl_to_reference(distribution, final_distribution)
                 agreement = top1_agreement(distribution, final_distribution)
-                aggregate[layer_index]["choice_entropy"].append(entropy)
-                aggregate[layer_index]["kl_to_final"].append(kl_value)
-                aggregate[layer_index]["top1_to_final_agreement"].append(agreement)
-                example_layers.append(
+                aggregate[boundary_index]["choice_entropy"].append(entropy)
+                aggregate[boundary_index]["kl_to_final"].append(kl_value)
+                aggregate[boundary_index]["top1_to_final_agreement"].append(agreement)
+                example_boundaries.append(
                     {
-                        "layer_index": layer_index,
+                        "boundary_index": boundary_index,
+                        "after_layer": boundary_index - 1 if boundary_index > 0 else None,
+                        "before_layer": boundary_index if boundary_index < layer_count else None,
                         "choice_distribution": dict(zip(choice_metadata.keys(), distribution)),
                         "choice_entropy": entropy,
                         "kl_to_final": kl_value,
                         "top1_to_final_agreement": agreement,
                     }
                 )
-                has_erank_capacity = len(erank_vectors[layer_index]) < args.erank_max_vectors
+                has_erank_capacity = (
+                    len(erank_vectors[boundary_index]) < args.erank_max_vectors
+                )
                 if not answer_is_special and has_erank_capacity:
                     vector = lens_hidden[0, 0].detach().float().cpu()
-                    erank_vectors[layer_index].append(vector)
-                    erank_sample_ids[layer_index].append(record["id"])
+                    erank_vectors[boundary_index].append(vector)
+                    erank_sample_ids[boundary_index].append(record["id"])
                 del choice_logits, lens_hidden
                 del answer_hidden
 
@@ -184,34 +190,39 @@ def run_layer_probe(args: Any) -> Dict[str, Any]:
                 "answer_token_id": answer_token_id,
                 "answer_token_is_special": answer_is_special,
                 "final_choice_distribution": dict(zip(choice_metadata.keys(), final_distribution)),
-                "layer_metrics": example_layers,
+                "boundary_metrics": example_boundaries,
             }
         )
-        del outputs, hidden_states, layer_states, hidden, final_choice_logits, inputs, encoded
+        del outputs, hidden_states, boundary_states, hidden, final_choice_logits, inputs, encoded
         if device == "cuda":
             torch.cuda.empty_cache()
 
-    layer_metrics = []
-    for layer_index in range(layer_count):
-        effective_rank = compute_effective_rank(torch, erank_vectors[layer_index])
-        layer_metrics.append(
+    boundary_metrics = []
+    for boundary_index in range(layer_count + 1):
+        effective_rank = compute_effective_rank(torch, erank_vectors[boundary_index])
+        boundary_metrics.append(
             {
-                "layer_index": layer_index,
-                "choice_entropy": summarize(aggregate[layer_index]["choice_entropy"]),
-                "kl_to_final": summarize(aggregate[layer_index]["kl_to_final"]),
+                "boundary_index": boundary_index,
+                "after_layer": boundary_index - 1 if boundary_index > 0 else None,
+                "before_layer": boundary_index if boundary_index < layer_count else None,
+                "choice_entropy": summarize(aggregate[boundary_index]["choice_entropy"]),
+                "kl_to_final": summarize(aggregate[boundary_index]["kl_to_final"]),
                 "top1_to_final_agreement": summarize(
-                    aggregate[layer_index]["top1_to_final_agreement"]
+                    aggregate[boundary_index]["top1_to_final_agreement"]
                 ),
                 "effective_rank": effective_rank,
                 "effective_rank_sampling": {
                     "object": "answer-position hidden vectors across probe examples",
                     "representation_space": "final_norm raw-logit-lens space",
+                    "estimator": EFFECTIVE_RANK_ESTIMATOR,
+                    "estimator_version": EFFECTIVE_RANK_ESTIMATOR_VERSION,
+                    "spectrum": "squared_singular_values",
                     "special_answer_positions_excluded": excluded_special,
                     "unit_normalized": True,
                     "centered_across_vectors": True,
                     "max_vectors": args.erank_max_vectors,
-                    "count": len(erank_vectors[layer_index]),
-                    "sample_ids": erank_sample_ids[layer_index],
+                    "count": len(erank_vectors[boundary_index]),
+                    "sample_ids": erank_sample_ids[boundary_index],
                 },
             }
         )
@@ -228,7 +239,14 @@ def run_layer_probe(args: Any) -> Dict[str, Any]:
         "runtime": runtime_metadata(torch, device, args.dtype),
         "probe_pool": pool_metadata,
         "position_rule": "explicit answer_position or last non-padding token",
-        "layer_metrics": layer_metrics,
+        "boundary_contract": {
+            "version": "loopscope.boundary.v1",
+            "definition": "B_j is the state after decoder layers 0 through j-1",
+            "boundary_count": layer_count + 1,
+            "window_entry": "B_a",
+            "window_exit": "B_(b+1)",
+        },
+        "boundary_metrics": boundary_metrics,
         "window_metrics": [],
         "examples": examples,
         "warnings": warnings,
@@ -595,28 +613,33 @@ def resolve_answer_position(attention_mask: Any, record: Mapping[str, Any]) -> i
     return position
 
 
-def decoder_layer_states(hidden_states: Sequence[Any], layer_count: int) -> Tuple[Any, ...]:
+def decoder_boundary_states(hidden_states: Sequence[Any], layer_count: int) -> Tuple[Any, ...]:
+    """Return the explicit ``B_0..B_N`` boundary-state sequence.
+
+    A shorter N-state tuple is ambiguous because it cannot represent both the
+    input to layer 0 and the output of layer N-1.  Phase-one scoring therefore
+    fails closed instead of silently shifting the window entrance by one layer.
+    """
+
     if len(hidden_states) == layer_count + 1:
-        return tuple(hidden_states[1:])
-    if len(hidden_states) == layer_count:
         return tuple(hidden_states)
     raise RuntimeError(
-        "expected %d or %d hidden-state tensors, got %d"
-        % (layer_count, layer_count + 1, len(hidden_states))
+        "expected %d boundary-state tensors B_0..B_%d, got %d"
+        % (layer_count + 1, layer_count, len(hidden_states))
     )
 
 
 def lens_space_hidden(
     final_norm: Any,
     answer_hidden: Any,
-    layer_index: int,
+    boundary_index: int,
     layer_count: int,
 ) -> Any:
-    """Put all answer vectors in final-norm lens space exactly once."""
+    """Put every boundary answer vector in final-norm lens space exactly once."""
 
-    if layer_index < 0 or layer_index >= layer_count:
-        raise ValueError("layer_index is outside the decoder layer range")
-    if layer_index == layer_count - 1:
+    if boundary_index < 0 or boundary_index > layer_count:
+        raise ValueError("boundary_index is outside B_0..B_N")
+    if boundary_index == layer_count:
         return answer_hidden
     return final_norm(answer_hidden)
 

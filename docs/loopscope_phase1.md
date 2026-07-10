@@ -38,6 +38,12 @@ HPC2：/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopsc
 
 不得在原复现 checkout 中 fetch、切分支、安装环境或运行 LoopScope。不得覆盖、移动、删除或复用已有 run、output、cache、模型及日志。
 
+## Window 边界与有效秩冻结语义
+
+对于含 N 个 decoder layer 的模型，`probe-layers` 输出 N+1 个边界状态 `B_0..B_N`。`B_j` 表示已经执行前 j 个 decoder layer 后的状态，因此两端均包含的 window `[a,b]` 统一使用入口 `B_a` 与出口 `B_(b+1)`。entropy、KL-to-final 和有效秩必须使用同一对边界；`a=0` 直接使用 `B_0`，不允许负索引。工件使用 `boundary_index`、`after_layer` 和 `before_layer` 显式记录映射，不再用 layer output 下标代替 window 边界。
+
+有效秩固定为 `gram_spectrum_shannon_effective_rank` v1：先对跨校准样本的 answer-position hidden vector 做单位归一化与中心化，再取奇异值 `s_i`，用 `p_i=s_i^2/sum_j(s_j^2)` 计算 `exp(-sum_i p_i log p_i)`。原始奇异值直接归一化的定义禁止用于第一阶段工件。
+
 ## Gate 顺序
 
 1. **Gate A（本地代码门）**：完成代码、单元测试、compile 和 CLI smoke 后必须停止，把 branch、commit、dirty、diff 与测试结果交给规划线程 `019f4b5a-79ac-78c1-9196-c7fd733cf04d`。未得到明确 `PASS`，不得推送功能代码、SSH 或进入 HPC2。

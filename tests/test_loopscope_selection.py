@@ -20,7 +20,7 @@ from tflt.loopscope.selection import (
 )
 
 
-def _probe_envelope(layer_metrics=None, window_metrics=None, examples=None):
+def _probe_envelope(boundary_metrics=None, window_metrics=None, examples=None):
     sample_ids = ["s1", "s2"]
     digest = "a" * 64
     windows = list(window_metrics or [])
@@ -95,7 +95,7 @@ def _probe_envelope(layer_metrics=None, window_metrics=None, examples=None):
             "selected_render_contract_subset_sha256": render_subset_hash,
         },
         "position_rule": "last_non_padding",
-        "layer_metrics": list(layer_metrics or []),
+        "boundary_metrics": list(boundary_metrics or []),
         "window_metrics": windows,
         "window_grid": {
             "manifest_sha256": "c" * 64,
@@ -126,6 +126,14 @@ def _probe_envelope(layer_metrics=None, window_metrics=None, examples=None):
     }
     pool["manifest_sha256"] = manifest_sha256(selected)
     pool["selected_subset_sha256"] = pool["manifest_sha256"]
+    if report["boundary_metrics"]:
+        report["boundary_contract"] = {
+            "version": "loopscope.boundary.v1",
+            "definition": "B_j is the state after decoder layers 0 through j-1",
+            "boundary_count": 5,
+            "window_entry": "B_a",
+            "window_exit": "B_(b+1)",
+        }
     return report
 
 
@@ -134,40 +142,47 @@ def _summary(value):
 
 
 def _layer_report():
-    entropy = [1.0, 0.5, 0.9, 0.85]
-    kl = [0.8, 0.2, 0.7, 0.65]
-    erank = [2.0, 1.8, 2.1, 2.3]
-    layers = [
+    entropy = [1.2, 1.0, 0.5, 0.9, 0.85]
+    kl = [1.0, 0.8, 0.2, 0.7, 0.65]
+    erank = [2.2, 2.0, 1.8, 2.1, 2.3]
+    boundaries = [
         {
-            "layer_index": index,
+            "boundary_index": index,
+            "after_layer": index - 1 if index else None,
+            "before_layer": index if index < 4 else None,
             "choice_entropy": _summary(entropy[index]),
             "kl_to_final": _summary(kl[index]),
             "top1_to_final_agreement": _summary(1.0),
             "effective_rank": erank[index],
             "effective_rank_sampling": {
                 "representation_space": "answer-position hidden vectors",
+                "estimator": "gram_spectrum_shannon_effective_rank",
+                "estimator_version": "1",
+                "spectrum": "squared_singular_values",
+                "unit_normalized": True,
+                "centered_across_vectors": True,
                 "count": 2,
                 "sample_ids": ["s1", "s2"],
             },
         }
-        for index in range(4)
+        for index in range(5)
     ]
     examples = []
     for sample_id, offset in (("s1", 0.0), ("s2", 0.02)):
         examples.append(
             {
                 "id": sample_id,
-                "layer_metrics": [
+                "boundary_metrics": [
                     {
-                        "layer_index": index,
+                        "boundary_index": index,
                         "choice_entropy": entropy[index] + offset,
                         "kl_to_final": kl[index] + offset,
                     }
-                    for index in range(4)
+                    for index in range(5)
                 ],
             }
         )
-    return _probe_envelope(layer_metrics=layers, examples=examples)
+    return _probe_envelope(boundary_metrics=boundaries, examples=examples)
 
 
 def _window_report():
@@ -232,6 +247,12 @@ class LoopScopeSelectionTest(unittest.TestCase):
         self.assertEqual(report["rankings"]["r_times_one_minus_q"][0]["window"], "0:1")
 
         by_window = {item["window"]: item for item in report["candidates"]}
+        self.assertAlmostEqual(by_window["0:1"]["scores"]["entropy_drop"], 0.7)
+        self.assertEqual(by_window["0:1"]["evidence"]["entry_boundary"], 0)
+        self.assertEqual(by_window["0:1"]["evidence"]["exit_boundary"], 2)
+        self.assertAlmostEqual(by_window["2:3"]["scores"]["entropy_drop"], -0.35)
+        self.assertEqual(by_window["2:3"]["evidence"]["entry_boundary"], 2)
+        self.assertEqual(by_window["2:3"]["evidence"]["exit_boundary"], 4)
         self.assertAlmostEqual(by_window["0:1"]["scores"]["negative_contraction_q"], -0.5)
         self.assertAlmostEqual(by_window["0:1"]["scores"]["r_times_one_minus_q"], 0.2)
         self.assertEqual(
@@ -245,6 +266,24 @@ class LoopScopeSelectionTest(unittest.TestCase):
         )
         self.assertEqual(len(by_window["0:1"]["sample_scores"]), 2)
         self.assertNotIn("label", json.dumps(report["candidates"]))
+
+    def test_window_scores_use_explicit_entry_and_exit_boundaries(self):
+        report = score_windows(_layer_report(), [_window_report()])
+        by_window = {item["window"]: item for item in report["candidates"]}
+        early = by_window["0:1"]
+        self.assertEqual(
+            (early["evidence"]["entry_boundary"], early["evidence"]["exit_boundary"]),
+            (0, 2),
+        )
+        self.assertAlmostEqual(early["scores"]["entropy_drop"], 1.2 - 0.5)
+        late = by_window["2:3"]
+        self.assertEqual(
+            (late["evidence"]["entry_boundary"], late["evidence"]["exit_boundary"]),
+            (2, 4),
+        )
+        # The audited counterexample is B_2=0.5 and B_4=0.85: -0.35,
+        # not the old layer-output slice 0.9-0.85=+0.05.
+        self.assertAlmostEqual(late["scores"]["entropy_drop"], -0.35)
 
     def test_rank_ties_are_explicit_and_average_ranked(self):
         candidates = [
@@ -293,7 +332,7 @@ class LoopScopeSelectionTest(unittest.TestCase):
                 window_probe=[str(window_path)],
                 output_dir=str(output_path),
                 criterion=None,
-                layer_stat="mean",
+                boundary_stat="mean",
                 window_stat="median",
             )
             self.assertEqual(cmd_score_windows(args), 0)
