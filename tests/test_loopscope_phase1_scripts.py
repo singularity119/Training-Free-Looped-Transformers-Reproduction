@@ -550,6 +550,29 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
                 renderer,
             )
 
+    def test_builder_preserves_unicode_next_line_inside_json_strings(self):
+        bundle = _renderer_bundle(1)
+        item = _source_record(0)
+        item["text"] = item["text"].replace("Answer:", "next\u0085line\nAnswer:", 1)
+        item["render_sha256"] = hashlib.sha256(
+            item["text"].encode("utf-8")
+        ).hexdigest()
+        body = {
+            key: value for key, value in item.items() if key != "projection_record_sha256"
+        }
+        item["projection_record_sha256"] = hashlib.sha256(
+            build.canonical_json_bytes(body)
+        ).hexdigest()
+        raw = build.canonical_json_bytes(item) + b"\n"
+        records = build._load_source_records(
+            raw,
+            bundle["manifest"]["dataset"]["source"],
+            "validation",
+            bundle["manifest"],
+        )
+        self.assertEqual(len(records), 1)
+        self.assertIn("\u0085", records[0]["text"])
+
     def test_exact_hpc2_paths_are_not_configurable(self):
         run = prepare.DEFAULT_RUN_BASE / (
             "loopscope-qwen17-mmlu-phase1-20260710-120000"

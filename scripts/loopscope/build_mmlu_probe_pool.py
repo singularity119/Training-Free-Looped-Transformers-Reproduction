@@ -262,7 +262,9 @@ def _load_source_records(
     except UnicodeDecodeError as exc:
         raise PoolBuildError("input JSONL must be UTF-8") from exc
 
-    for line_number, line in enumerate(text.splitlines(), start=1):
+    # JSONL records are delimited by LF bytes.  str.splitlines() also splits on
+    # valid in-string Unicode separators such as U+0085 present in frozen MMLU.
+    for line_number, line in enumerate(text.split("\n"), start=1):
         if not line.strip():
             continue
         try:
