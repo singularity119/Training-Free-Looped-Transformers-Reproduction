@@ -15,7 +15,7 @@ from tflt.loopscope.metrics import (
     EFFECTIVE_RANK_ESTIMATOR,
     EFFECTIVE_RANK_ESTIMATOR_VERSION,
     choice_entropy,
-    effective_rank_from_singular_values,
+    effective_rank_measurement_from_singular_values,
     kl_to_reference,
     summarize,
     top1_agreement,
@@ -221,7 +221,7 @@ def run_layer_probe(args: Any) -> Dict[str, Any]:
                 "top1_to_final_agreement": summarize(
                     aggregate[boundary_index]["top1_to_final_agreement"]
                 ),
-                "effective_rank": effective_rank,
+                "effective_rank": effective_rank["effective_rank"],
                 "effective_rank_sampling": {
                     "object": "answer-position hidden vectors across probe examples",
                     "representation_space": "final_norm raw-logit-lens space",
@@ -231,6 +231,12 @@ def run_layer_probe(args: Any) -> Dict[str, Any]:
                     "special_answer_positions_excluded": excluded_special,
                     "unit_normalized": True,
                     "centered_across_vectors": True,
+                    "zero_centered_spectrum": effective_rank[
+                        "zero_centered_spectrum"
+                    ],
+                    "centered_spectrum_mass": effective_rank[
+                        "centered_spectrum_mass"
+                    ],
                     "max_vectors": args.erank_max_vectors,
                     "count": len(erank_vectors[boundary_index]),
                     "sample_ids": erank_sample_ids[boundary_index],
@@ -713,7 +719,7 @@ def find_final_norm(model: Any) -> Any:
     raise TypeError("could not locate a Qwen/Llama-style final normalization module")
 
 
-def compute_effective_rank(torch_module: Any, vectors: Sequence[Any]) -> float:
+def compute_effective_rank(torch_module: Any, vectors: Sequence[Any]) -> Dict[str, Any]:
     if len(vectors) < 2:
         raise ProbeInputError("effective rank requires at least two non-special answer vectors")
     matrix = torch_module.stack(list(vectors), dim=0).float()
@@ -723,7 +729,7 @@ def compute_effective_rank(torch_module: Any, vectors: Sequence[Any]) -> float:
     normalized = matrix / norms.unsqueeze(-1)
     centered = normalized - normalized.mean(dim=0, keepdim=True)
     singular_values = torch_module.linalg.svdvals(centered).detach().cpu().tolist()
-    return effective_rank_from_singular_values(singular_values)
+    return effective_rank_measurement_from_singular_values(singular_values)
 
 
 def select_device(torch_module: Any, requested: str) -> str:

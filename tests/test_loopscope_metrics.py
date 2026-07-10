@@ -6,6 +6,7 @@ from tflt.loopscope.metrics import (
     activity_contraction_score,
     choice_entropy,
     contraction_ratio,
+    effective_rank_measurement_from_singular_values,
     effective_rank_from_singular_values,
     kl_to_reference,
     relative_activity,
@@ -44,6 +45,33 @@ class LoopScopeMetricsTest(unittest.TestCase):
             effective_rank_from_singular_values([2.0, 1.0]),
             1.6493848884661177,
         )
+
+    def test_effective_rank_zero_spectrum_is_explicit_zero(self):
+        self.assertEqual(effective_rank_from_singular_values([0.0, 0.0]), 0.0)
+        self.assertEqual(
+            effective_rank_measurement_from_singular_values([0.0, 0.0]),
+            {
+                "effective_rank": 0.0,
+                "zero_centered_spectrum": True,
+                "centered_spectrum_mass": 0.0,
+            },
+        )
+
+    def test_effective_rank_positive_spectrum_has_no_zero_threshold(self):
+        measurement = effective_rank_measurement_from_singular_values([2.0, 1.0])
+        self.assertAlmostEqual(measurement["effective_rank"], 1.6493848884661177)
+        self.assertEqual(measurement["centered_spectrum_mass"], 5.0)
+        self.assertIs(measurement["zero_centered_spectrum"], False)
+
+        tiny = effective_rank_measurement_from_singular_values([1e-150])
+        self.assertEqual(tiny["effective_rank"], 1.0)
+        self.assertGreater(tiny["centered_spectrum_mass"], 0.0)
+        self.assertIs(tiny["zero_centered_spectrum"], False)
+
+    def test_effective_rank_rejects_invalid_singular_values(self):
+        for values in ([-1.0], [math.nan], [math.inf], [1e308]):
+            with self.subTest(values=values), self.assertRaises(MetricError):
+                effective_rank_measurement_from_singular_values(values)
 
 
 if __name__ == "__main__":

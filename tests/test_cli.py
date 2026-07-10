@@ -102,10 +102,12 @@ def _probe_report(window=False):
                 "effective_rank_sampling": {
                     "representation_space": "final_norm raw-logit-lens space",
                     "estimator": "gram_spectrum_shannon_effective_rank",
-                    "estimator_version": "1",
+                    "estimator_version": "2",
                     "spectrum": "squared_singular_values",
                     "unit_normalized": True,
                     "centered_across_vectors": True,
+                    "zero_centered_spectrum": False,
+                    "centered_spectrum_mass": 2.0,
                     "count": 2,
                     "sample_ids": ["x", "y"],
                 },

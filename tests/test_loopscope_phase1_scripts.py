@@ -476,6 +476,66 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
         with self.assertRaises(prepare.PreparationError):
             prepare._validate_phase_config(config)
 
+    def test_phase_config_freezes_effective_rank_v2_zero_policy(self):
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "configs/loopscope/qwen17_mmlu_phase1.json")
+            .read_text(encoding="utf-8")
+        )
+        contract = config["signal_contract"]["effective_rank"]
+        self.assertEqual(contract["estimator_version"], "2")
+        self.assertEqual(
+            contract["centered_spectrum_mass"], "sum_squared_singular_values"
+        )
+        self.assertEqual(
+            contract["zero_centered_spectrum"],
+            {
+                "condition": "centered_spectrum_mass == 0.0",
+                "effective_rank": 0.0,
+                "flag": True,
+                "epsilon_regularization": False,
+                "near_zero_threshold": False,
+            },
+        )
+        prepare._validate_phase_config(config)
+        paths = (
+            ("probe_schema_version",),
+            ("effective_rank", "estimator_version"),
+            ("effective_rank", "centered_spectrum_mass"),
+            ("effective_rank", "zero_centered_spectrum", "condition"),
+            ("effective_rank", "zero_centered_spectrum", "effective_rank"),
+            ("effective_rank", "zero_centered_spectrum", "flag"),
+            ("effective_rank", "zero_centered_spectrum", "epsilon_regularization"),
+            ("effective_rank", "zero_centered_spectrum", "near_zero_threshold"),
+        )
+        for path in paths:
+            with self.subTest(path=path):
+                mutated = json.loads(json.dumps(config))
+                target = mutated["signal_contract"]
+                for key in path[:-1]:
+                    target = target[key]
+                target[path[-1]] = "changed"
+                with self.assertRaises(prepare.PreparationError):
+                    prepare._validate_phase_config(mutated)
+
+    def test_criterion_keeps_effective_rank_auxiliary_and_gate_disabled(self):
+        path = Path(__file__).resolve().parents[1] / "configs/loopscope/criterion_v0.json"
+        criterion = json.loads(path.read_text(encoding="utf-8"))
+        prepare._validate_criterion(criterion)
+        mutations = (
+            (("signals", "effective_rank_delta", "auxiliary_only"), False),
+            (("signals", "effective_rank_delta", "higher_is_better"), True),
+            (("effective_rank_gate", "enabled"), True),
+        )
+        for keys, value in mutations:
+            with self.subTest(keys=keys):
+                mutated = json.loads(json.dumps(criterion))
+                target = mutated
+                for key in keys[:-1]:
+                    target = target[key]
+                target[keys[-1]] = value
+                with self.assertRaises(prepare.PreparationError):
+                    prepare._validate_criterion(mutated)
+
     def test_phase_config_freezes_validation_calibration_targets(self):
         path = (
             Path(__file__).resolve().parents[1]

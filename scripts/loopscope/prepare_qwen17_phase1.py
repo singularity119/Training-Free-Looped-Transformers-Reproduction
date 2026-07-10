@@ -1427,6 +1427,55 @@ def _validate_phase_config(config: Mapping[str, Any]) -> None:
         ("probe_pool", "require_dataset_fingerprints"): True,
         ("probe_pool", "require_independent_rerender"): True,
         ("probe_pool", "fixed_fewshot_ids_per_subject"): True,
+        ("signal_contract", "probe_schema_version"): "loopscope.probe.v3",
+        ("signal_contract", "boundary_version"): "loopscope.boundary.v1",
+        ("signal_contract", "boundary_definition"): (
+            "B_j is the state after decoder layers 0 through j-1"
+        ),
+        ("signal_contract", "inclusive_window_entry"): "B_a",
+        ("signal_contract", "inclusive_window_exit"): "B_(b+1)",
+        ("signal_contract", "effective_rank", "estimator"): (
+            "gram_spectrum_shannon_effective_rank"
+        ),
+        ("signal_contract", "effective_rank", "estimator_version"): "2",
+        ("signal_contract", "effective_rank", "spectrum"): (
+            "squared_singular_values"
+        ),
+        ("signal_contract", "effective_rank", "unit_normalized"): True,
+        ("signal_contract", "effective_rank", "centered_across_vectors"): True,
+        ("signal_contract", "effective_rank", "centered_spectrum_mass"): (
+            "sum_squared_singular_values"
+        ),
+        (
+            "signal_contract",
+            "effective_rank",
+            "zero_centered_spectrum",
+            "condition",
+        ): "centered_spectrum_mass == 0.0",
+        (
+            "signal_contract",
+            "effective_rank",
+            "zero_centered_spectrum",
+            "effective_rank",
+        ): 0.0,
+        (
+            "signal_contract",
+            "effective_rank",
+            "zero_centered_spectrum",
+            "flag",
+        ): True,
+        (
+            "signal_contract",
+            "effective_rank",
+            "zero_centered_spectrum",
+            "epsilon_regularization",
+        ): False,
+        (
+            "signal_contract",
+            "effective_rank",
+            "zero_centered_spectrum",
+            "near_zero_threshold",
+        ): False,
     }
     for path, value in expected.items():
         actual = _nested_value(config, list(path))
@@ -1462,6 +1511,15 @@ def _validate_criterion(criterion: Mapping[str, Any]) -> None:
         raise PreparationError("criterion primary_signal is absent from signals")
     if _nested_value(criterion, ["bootstrap", "seed"]) != 20260710:
         raise PreparationError("criterion bootstrap seed must remain 20260710")
+    effective_rank = signals.get("effective_rank_delta")
+    if not isinstance(effective_rank, Mapping) or effective_rank != {
+        "higher_is_better": None,
+        "auxiliary_only": True,
+    }:
+        raise PreparationError("effective_rank_delta must remain auxiliary-only")
+    gate = criterion.get("effective_rank_gate")
+    if not isinstance(gate, Mapping) or gate.get("enabled") is not False:
+        raise PreparationError("effective_rank_gate must remain disabled")
 
 
 def _validate_grid(grid: Mapping[str, Any], config: Mapping[str, Any]) -> None:

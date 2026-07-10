@@ -45,7 +45,7 @@ HPC2：/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopsc
 
 对于含 N 个 decoder layer 的模型，`probe-layers` 输出 N+1 个边界状态 `B_0..B_N`。`B_j` 表示已经执行前 j 个 decoder layer 后的状态，因此两端均包含的 window `[a,b]` 统一使用入口 `B_a` 与出口 `B_(b+1)`。entropy、KL-to-final 和有效秩必须使用同一对边界；`a=0` 直接使用 `B_0`，不允许负索引。工件使用 `boundary_index`、`after_layer` 和 `before_layer` 显式记录映射，不再用 layer output 下标代替 window 边界。
 
-有效秩固定为 `gram_spectrum_shannon_effective_rank` v1：先对跨校准样本的 answer-position hidden vector 做单位归一化与中心化，再取奇异值 `s_i`，用 `p_i=s_i^2/sum_j(s_j^2)` 计算 `exp(-sum_i p_i log p_i)`。原始奇异值直接归一化的定义禁止用于第一阶段工件。
+有效秩固定为 `gram_spectrum_shannon_effective_rank` v2，工件 schema 固定为 `loopscope.probe.v3`：先逐向量拒绝零输入并做单位归一化，再跨校准样本中心化 answer-position hidden matrix，取奇异值 `s_i` 并记录 `centered_spectrum_mass=sum_i(s_i^2)`。当且仅当该质量精确为 `0.0` 时，报告 `effective_rank=0.0`、`zero_centered_spectrum=true` 和 `centered_spectrum_mass=0.0`，表示跨样本变化的有效维数为零；禁止 epsilon 分母、近零阈值、`1.0`、null、NaN 或无显式 flag 的零值。质量为有限正值时，必须报告 `zero_centered_spectrum=false`，并严格使用 `p_i=s_i^2/sum_j(s_j^2)` 计算 `exp(-sum_i p_i log p_i)`。原始奇异值直接归一化的定义禁止用于第一阶段工件。有效秩始终仅作辅助诊断；`criterion_v0` 的 effective-rank gate 保持关闭，不得进入主排序或选窗。
 
 ## Gate 顺序
 

@@ -72,10 +72,12 @@ def _report():
                 "effective_rank_sampling": {
                     "representation_space": "final_norm raw-logit-lens space",
                     "estimator": "gram_spectrum_shannon_effective_rank",
-                    "estimator_version": "1",
+                    "estimator_version": "2",
                     "spectrum": "squared_singular_values",
                     "unit_normalized": True,
                     "centered_across_vectors": True,
+                    "zero_centered_spectrum": False,
+                    "centered_spectrum_mass": 2.0,
                     "count": 2,
                     "sample_ids": ["x", "y"],
                 },
@@ -122,6 +124,57 @@ class LoopScopeSchemaTest(unittest.TestCase):
         report = _report()
         report["model"]["layer_count"] = 2
         report["boundary_metrics"].append(dict(report["boundary_metrics"][0]))
+        with self.assertRaises(SchemaError):
+            validate_probe_report(report)
+
+    def test_probe_schema_accepts_explicit_zero_centered_spectrum(self):
+        report = _report()
+        for metric in report["boundary_metrics"]:
+            metric["effective_rank_sampling"].update(
+                {
+                    "estimator_version": "2",
+                    "zero_centered_spectrum": False,
+                    "centered_spectrum_mass": 2.0,
+                }
+            )
+        report["boundary_metrics"][0]["effective_rank"] = 0.0
+        report["boundary_metrics"][0]["effective_rank_sampling"].update(
+            {
+                "zero_centered_spectrum": True,
+                "centered_spectrum_mass": 0.0,
+            }
+        )
+        validate_probe_report(report)
+
+    def test_probe_schema_rejects_inconsistent_effective_rank_contract(self):
+        mutations = (
+            (0.0, False, 0.0),
+            (0.0, True, 1.0),
+            (1.0, True, 1.0),
+            (1.0, False, 0.0),
+            (-1.0, False, 1.0),
+            (math.nan, False, 1.0),
+            (1.0, False, math.inf),
+        )
+        for value, flag, mass in mutations:
+            with self.subTest(value=value, flag=flag, mass=mass):
+                report = _report()
+                metric = report["boundary_metrics"][0]
+                metric["effective_rank"] = value
+                metric["effective_rank_sampling"]["zero_centered_spectrum"] = flag
+                metric["effective_rank_sampling"]["centered_spectrum_mass"] = mass
+                with self.assertRaises(SchemaError):
+                    validate_probe_report(report)
+
+    def test_probe_schema_rejects_v2_and_estimator_v1(self):
+        report = _report()
+        report["schema_version"] = "loopscope.probe.v2"
+        with self.assertRaises(SchemaError):
+            validate_probe_report(report)
+        report = _report()
+        report["boundary_metrics"][0]["effective_rank_sampling"][
+            "estimator_version"
+        ] = "1"
         with self.assertRaises(SchemaError):
             validate_probe_report(report)
 

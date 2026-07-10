@@ -162,10 +162,12 @@ def _layer_report():
             "effective_rank_sampling": {
                 "representation_space": "answer-position hidden vectors",
                 "estimator": "gram_spectrum_shannon_effective_rank",
-                "estimator_version": "1",
+                "estimator_version": "2",
                 "spectrum": "squared_singular_values",
                 "unit_normalized": True,
                 "centered_across_vectors": True,
+                "zero_centered_spectrum": False,
+                "centered_spectrum_mass": 2.0,
                 "count": 2,
                 "sample_ids": ["s1", "s2"],
             },
@@ -271,6 +273,31 @@ class LoopScopeSelectionTest(unittest.TestCase):
         )
         self.assertEqual(len(by_window["0:1"]["sample_scores"]), 2)
         self.assertNotIn("label", json.dumps(report["candidates"]))
+
+    def test_zero_effective_rank_remains_auxiliary_only(self):
+        layer_report = _layer_report()
+        for metric in layer_report["boundary_metrics"]:
+            metric["effective_rank_sampling"].update(
+                {
+                    "estimator_version": "2",
+                    "zero_centered_spectrum": False,
+                    "centered_spectrum_mass": 2.0,
+                }
+            )
+        layer_report["boundary_metrics"][0]["effective_rank"] = 0.0
+        layer_report["boundary_metrics"][0]["effective_rank_sampling"].update(
+            {
+                "zero_centered_spectrum": True,
+                "centered_spectrum_mass": 0.0,
+            }
+        )
+        report = score_windows(layer_report, [_window_report()])
+        self.assertEqual(set(report["rankings"]), set(PRIMARY_SIGNALS))
+        self.assertEqual(
+            report["candidates"][0]["auxiliary_effective_rank"]["curve"][0],
+            0.0,
+        )
+        self.assertNotIn("effective_rank_delta", report["rankings"])
 
     def test_window_scores_use_explicit_entry_and_exit_boundaries(self):
         report = score_windows(_layer_report(), [_window_report()])

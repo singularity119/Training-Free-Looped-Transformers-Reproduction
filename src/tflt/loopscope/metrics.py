@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import math
 from statistics import mean, median, pstdev
-from typing import Dict, Iterable, List, Sequence
+from typing import Any, Dict, Iterable, List, Sequence
 
 
 EFFECTIVE_RANK_ESTIMATOR = "gram_spectrum_shannon_effective_rank"
-EFFECTIVE_RANK_ESTIMATOR_VERSION = "1"
+EFFECTIVE_RANK_ESTIMATOR_VERSION = "2"
 
 
 class MetricError(ValueError):
@@ -92,14 +92,48 @@ def effective_rank_from_singular_values(singular_values: Iterable[float]) -> flo
     ``p_i = s_i**2 / sum_j(s_j**2)`` before exponentiating Shannon entropy.
     """
 
+    return effective_rank_measurement_from_singular_values(singular_values)[
+        "effective_rank"
+    ]
+
+
+def effective_rank_measurement_from_singular_values(
+    singular_values: Iterable[float],
+) -> Dict[str, Any]:
+    """Measure effective rank and explicitly identify an exactly zero spectrum.
+
+    Roy--Vetterli effective rank assumes positive spectral mass. Version 2
+    extends only the exactly-zero centered spectrum: it reports zero varying
+    dimensions and records the exceptional case without epsilon regularization
+    or a near-zero threshold.
+    """
+
     values = [_finite(value, "singular value") for value in singular_values]
     if any(value < 0.0 for value in values):
         raise MetricError("singular values must be non-negative")
-    squared_spectrum = [value * value for value in values if value > 0.0]
-    if not squared_spectrum:
-        raise MetricError("effective rank is undefined for a zero matrix")
-    probs = normalize_distribution(squared_spectrum)
-    return math.exp(choice_entropy(probs))
+    squared_spectrum = [
+        _finite(value * value, "squared singular value") for value in values
+    ]
+    centered_spectrum_mass = _finite(
+        math.fsum(squared_spectrum), "centered spectrum mass"
+    )
+    if centered_spectrum_mass == 0.0:
+        return {
+            "effective_rank": 0.0,
+            "zero_centered_spectrum": True,
+            "centered_spectrum_mass": 0.0,
+        }
+    probabilities = [value / centered_spectrum_mass for value in squared_spectrum]
+    entropy = -math.fsum(
+        probability * math.log(probability)
+        for probability in probabilities
+        if probability > 0.0
+    )
+    return {
+        "effective_rank": _finite(math.exp(entropy), "effective rank"),
+        "zero_centered_spectrum": False,
+        "centered_spectrum_mass": centered_spectrum_mass,
+    }
 
 
 def summarize(values: Iterable[float]) -> Dict[str, float]:

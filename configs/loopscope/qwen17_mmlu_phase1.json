@@ -52,16 +52,25 @@
     "fixed_fewshot_ids_per_subject": true
   },
   "signal_contract": {
+    "probe_schema_version": "loopscope.probe.v3",
     "boundary_version": "loopscope.boundary.v1",
     "boundary_definition": "B_j is the state after decoder layers 0 through j-1",
     "inclusive_window_entry": "B_a",
     "inclusive_window_exit": "B_(b+1)",
     "effective_rank": {
       "estimator": "gram_spectrum_shannon_effective_rank",
-      "estimator_version": "1",
+      "estimator_version": "2",
       "spectrum": "squared_singular_values",
       "unit_normalized": true,
-      "centered_across_vectors": true
+      "centered_across_vectors": true,
+      "centered_spectrum_mass": "sum_squared_singular_values",
+      "zero_centered_spectrum": {
+        "condition": "centered_spectrum_mass == 0.0",
+        "effective_rank": 0.0,
+        "flag": true,
+        "epsilon_regularization": false,
+        "near_zero_threshold": false
+      }
     }
   },
   "run_root_template": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-<timestamp>"

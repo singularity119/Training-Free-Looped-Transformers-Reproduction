@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping, MutableMapping, Sequence
 
 
-PROBE_SCHEMA_VERSION = "loopscope.probe.v2"
+PROBE_SCHEMA_VERSION = "loopscope.probe.v3"
 WINDOW_GRID_SCHEMA_VERSION = "loopscope.window-grid.v1"
 SELECTION_SCHEMA_VERSION = "loopscope.selection.v1"
 ANALYSIS_SCHEMA_VERSION = "loopscope.analysis.v1"
@@ -390,8 +390,9 @@ def _validate_boundary_probe(payload: Mapping[str, Any]) -> None:
             _validate_summary(
                 item[key], pool_count, "boundary_metrics[%d].%s" % (boundary_index, key)
             )
-        if float(item["effective_rank"]) <= 0.0:
-            raise SchemaError("effective_rank must be positive")
+        effective_rank = _finite_nonnegative_number(
+            item["effective_rank"], "effective_rank"
+        )
         sampling = item["effective_rank_sampling"]
         if not isinstance(sampling, Mapping):
             raise SchemaError("effective_rank_sampling must be an object")
@@ -404,6 +405,8 @@ def _validate_boundary_probe(payload: Mapping[str, Any]) -> None:
                 "spectrum",
                 "unit_normalized",
                 "centered_across_vectors",
+                "zero_centered_spectrum",
+                "centered_spectrum_mass",
                 "count",
                 "sample_ids",
             ),
@@ -411,12 +414,28 @@ def _validate_boundary_probe(payload: Mapping[str, Any]) -> None:
         )
         if (
             sampling["estimator"] != "gram_spectrum_shannon_effective_rank"
-            or sampling["estimator_version"] != "1"
+            or sampling["estimator_version"] != "2"
             or sampling["spectrum"] != "squared_singular_values"
             or sampling["unit_normalized"] is not True
             or sampling["centered_across_vectors"] is not True
         ):
             raise SchemaError("effective_rank_sampling estimator contract mismatch")
+        zero_centered_spectrum = sampling["zero_centered_spectrum"]
+        if type(zero_centered_spectrum) is not bool:
+            raise SchemaError(
+                "effective_rank_sampling.zero_centered_spectrum must be boolean"
+            )
+        centered_spectrum_mass = _finite_nonnegative_number(
+            sampling["centered_spectrum_mass"],
+            "effective_rank_sampling.centered_spectrum_mass",
+        )
+        if effective_rank == 0.0:
+            if zero_centered_spectrum is not True or centered_spectrum_mass != 0.0:
+                raise SchemaError("zero effective_rank requires true flag and zero mass")
+        elif zero_centered_spectrum is not False or centered_spectrum_mass <= 0.0:
+            raise SchemaError(
+                "positive effective_rank requires false flag and positive mass"
+            )
         sampled = int(sampling["count"])
         if sampled < 2 or sampled > pool_count or len(sampling["sample_ids"]) != sampled:
             raise SchemaError("effective_rank_sampling count/sample_ids are inconsistent")
@@ -518,6 +537,15 @@ def _validate_summary(value: Any, expected_count: Any, context: str) -> None:
     count = int(value["count"])
     if count < 1 or (expected_count is not None and count != int(expected_count)):
         raise SchemaError("%s count is inconsistent" % context)
+
+
+def _finite_nonnegative_number(value: Any, context: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise SchemaError("%s must be a finite non-negative number" % context)
+    number = float(value)
+    if not math.isfinite(number) or number < 0.0:
+        raise SchemaError("%s must be a finite non-negative number" % context)
+    return number
 
 
 def _validate_sha256(value: Any, context: str) -> None:

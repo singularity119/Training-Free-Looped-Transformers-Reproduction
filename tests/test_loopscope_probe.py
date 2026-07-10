@@ -7,6 +7,7 @@ from pathlib import Path
 from tflt.loopscope.probe import (
     ProbeInputError,
     choice_tokenization,
+    compute_effective_rank,
     decoder_boundary_states,
     lens_space_hidden,
     load_probe_records,
@@ -45,6 +46,22 @@ class LoopScopeProbeTest(unittest.TestCase):
         details = caught.exception.details
         self.assertEqual(details["choice_token_ids"]["B"]["token_ids"], [20, 21])
         self.assertFalse(details["choice_token_ids"]["B"]["is_single_token"])
+
+    def test_identical_nonzero_vectors_have_explicit_zero_centered_spectrum(self):
+        import torch
+
+        vector = torch.tensor([3.0, 4.0])
+        measurement = compute_effective_rank(torch, [vector] * 4)
+        self.assertEqual(
+            measurement,
+            {
+                "effective_rank": 0.0,
+                "zero_centered_spectrum": True,
+                "centered_spectrum_mass": 0.0,
+            },
+        )
+        with self.assertRaisesRegex(ProbeInputError, "zero-norm"):
+            compute_effective_rank(torch, [torch.zeros(2), torch.ones(2)])
 
     def test_probe_records_reject_test_split_and_gold(self):
         with tempfile.TemporaryDirectory() as tmp:
