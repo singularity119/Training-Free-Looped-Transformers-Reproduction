@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Build a deterministic MMLU calibration pool without target gold labels.
 
-The input must be a non-test JSONL projection of exact, pre-rendered lm-eval
-MMLU five-shot request contexts.  A self-hashed renderer manifest and fixed
-demonstration provenance are mandatory; local question/choice rendering is
-deliberately unsupported.
+The input must be the source projection emitted by ``export_mmlu_renderer.py``.
+Before sampling, this builder independently reloads lm-eval and the exact
+dataset revision, re-renders the entire projection, and recomputes source,
+template, dataset and prompt hashes.  Local question/choice rendering and
+self-asserted manifests are deliberately unsupported.
 """
 
 from __future__ import annotations
@@ -18,11 +19,17 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
+from tflt.loopscope.mmlu_renderer import (
+    PROJECTION_RECORD_VERSION,
+    RendererVerificationError,
+    validate_renderer_manifest_payload,
+    verify_export_bundle,
+)
+
 
 DEFAULT_SEED = 20260710
 SCHEMA_VERSION = "loopscope.probe-pool-manifest.v1"
-RENDERER_SCHEMA_VERSION = "loopscope.mmlu-renderer-manifest.v1"
-PROMPT_TEMPLATE_NAME = "lm_eval_mmlu_5shot_prerendered_v1"
+PROMPT_TEMPLATE_NAME = "lm_eval_mmlu_5shot_verified_projection_v2"
 FORBIDDEN_GOLD_KEYS = {
     "answer",
     "answers",
@@ -70,7 +77,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--renderer-manifest",
         required=True,
-        help="Self-hashed manifest emitted by the matching lm-eval MMLU renderer.",
+        help="Verified v2 manifest emitted by export_mmlu_renderer.py.",
     )
     parser.add_argument("--count", type=int, default=512)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
@@ -83,7 +90,10 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def main(argv: Optional[Sequence[str]] = None) -> int:
+def main(
+    argv: Optional[Sequence[str]] = None,
+    renderer_verifier: Optional[Any] = None,
+) -> int:
     args = parse_args(argv)
     input_path = Path(args.input_jsonl).expanduser().resolve()
     output_path = Path(args.output_jsonl).expanduser().resolve()
@@ -96,6 +106,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     _validate_destinations(input_path, output_path, manifest_path, args.dry_run)
     renderer_manifest = _load_renderer_manifest(renderer_path)
+    verifier = renderer_verifier or verify_export_bundle
+    try:
+        verified_manifest = verifier(input_path, renderer_path)
+    except RendererVerificationError as exc:
+        raise PoolBuildError("renderer authenticity verification failed: %s" % exc) from exc
+    if verified_manifest != renderer_manifest:
+        raise PoolBuildError("renderer verifier returned evidence for a different manifest")
     if args.prompt_template != PROMPT_TEMPLATE_NAME:
         raise PoolBuildError(
             "phase one only accepts the frozen %s contract" % PROMPT_TEMPLATE_NAME
@@ -105,6 +122,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if not str(args.source).strip():
         raise PoolBuildError("--source must be non-empty and include dataset provenance")
     _reject_test_split(args.split, "--split")
+    if args.source != renderer_manifest["dataset"]["source"]:
+        raise PoolBuildError("--source must equal the verified renderer dataset source")
+    if args.split != renderer_manifest["target_split"]:
+        raise PoolBuildError("--split must equal the verified renderer target split")
 
     raw_bytes = input_path.read_bytes()
     source_records = _load_source_records(
@@ -219,14 +240,13 @@ def _load_source_records(
     source: str,
     split: str,
     renderer_manifest: Mapping[str, Any],
-) -> List[Dict[str, str]]:
-    records: List[Dict[str, str]] = []
+) -> List[Dict[str, Any]]:
+    records: List[Dict[str, Any]] = []
     seen_ids = set()
     seen_prompts = set()
     fixed_demonstrations: Dict[str, Tuple[Tuple[str, ...], ...]] = {}
     fixed_task_names: Dict[str, str] = {}
     renderer = renderer_manifest["renderer"]
-    renderer_hash = str(renderer_manifest["manifest_sha256"])
     try:
         text = raw_bytes.decode("utf-8")
     except UnicodeDecodeError as exc:
@@ -242,6 +262,17 @@ def _load_source_records(
         if not isinstance(item, Mapping):
             raise PoolBuildError("input line %d must be a JSON object" % line_number)
 
+        if item.get("schema_version") != PROJECTION_RECORD_VERSION:
+            raise PoolBuildError(
+                "input line %d is not an authenticated renderer projection record"
+                % line_number
+            )
+        expected_record_hash = item.get("projection_record_sha256")
+        record_body = {
+            key: value for key, value in item.items() if key != "projection_record_sha256"
+        }
+        if expected_record_hash != hashlib.sha256(canonical_json_bytes(record_body)).hexdigest():
+            raise PoolBuildError("projection record SHA256 mismatch at input line %d" % line_number)
         leaked = _forbidden_gold_paths(item)
         if leaked:
             raise PoolBuildError(
@@ -284,10 +315,6 @@ def _load_source_records(
             raise PoolBuildError(
                 "input line %d must certify fewshot_answers_present=true" % line_number
             )
-        if item.get("renderer_manifest_sha256") != renderer_hash:
-            raise PoolBuildError(
-                "input line %d is not bound to the supplied renderer manifest" % line_number
-            )
         if item.get("template_sha256") != renderer["template_sha256"]:
             raise PoolBuildError(
                 "input line %d template hash differs from the renderer manifest" % line_number
@@ -295,6 +322,22 @@ def _load_source_records(
         if item.get("render_contract_sha256") != renderer["render_contract_sha256"]:
             raise PoolBuildError(
                 "input line %d render contract hash differs from the renderer manifest"
+                % line_number
+            )
+        if item.get("dataset_revision") != renderer["dataset_revision"]:
+            raise PoolBuildError(
+                "input line %d dataset revision differs from renderer evidence" % line_number
+            )
+        if item.get("dataset_fingerprint_sha256") != renderer[
+            "dataset_fingerprint_sha256"
+        ]:
+            raise PoolBuildError(
+                "input line %d dataset fingerprint differs from renderer evidence"
+                % line_number
+            )
+        if item.get("renderer_source_sha256") != renderer["renderer_source_sha256"]:
+            raise PoolBuildError(
+                "input line %d renderer source hash differs from verified evidence"
                 % line_number
             )
         demonstrations = _validate_demonstrations(item, subject, line_number)
@@ -348,6 +391,9 @@ def _load_source_records(
                 "task_group": "mmlu",
                 "task_name": task_name,
                 "target_doc_id": target_doc_id,
+                "target_doc_index": int(item["target_doc_index"]),
+                "target_doc_sha256": str(item["target_doc_sha256"]),
+                "dataset_fingerprint": str(item["dataset_fingerprint"]),
                 "num_fewshot": 5,
                 "uses_target_gold_labels": False,
                 "fewshot_answers_present": True,
@@ -389,36 +435,10 @@ def _load_renderer_manifest(path: Path) -> Dict[str, Any]:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise PoolBuildError("renderer manifest is not valid JSON: %s" % path) from exc
-    if not isinstance(payload, dict) or payload.get("schema_version") != RENDERER_SCHEMA_VERSION:
-        raise PoolBuildError("unsupported renderer manifest schema")
-    if payload.get("manifest_sha256") != manifest_sha256(payload):
-        raise PoolBuildError("renderer manifest SHA256 mismatch")
-    required_top = {
-        "task_group": "mmlu",
-        "num_fewshot": 5,
-        "fewshot_split": "dev",
-        "chat_template": False,
-        "multiturn": False,
-    }
-    for key, expected in required_top.items():
-        if payload.get(key) != expected:
-            raise PoolBuildError(
-                "renderer manifest must freeze %s=%r" % (key, expected)
-            )
-    renderer = payload.get("renderer")
-    if not isinstance(renderer, Mapping):
-        raise PoolBuildError("renderer manifest needs a renderer object")
-    entrypoint = str(renderer.get("renderer_entrypoint", "")).strip()
-    if not entrypoint or "lm_eval" not in entrypoint.lower():
-        raise PoolBuildError("renderer_entrypoint must identify lm-eval-harness")
-    if renderer.get("lm_eval_version") != "0.4.11":
-        raise PoolBuildError("phase one freezes lm_eval_version=0.4.11")
-    for key in (
-        "renderer_source_sha256",
-        "template_sha256",
-        "render_contract_sha256",
-    ):
-        _require_sha256(renderer.get(key), "renderer %s" % key)
+    try:
+        validate_renderer_manifest_payload(payload)
+    except RendererVerificationError as exc:
+        raise PoolBuildError(str(exc)) from exc
     return payload
 
 
@@ -443,11 +463,13 @@ def _validate_demonstrations(
             )
         required = (
             "id",
+            "doc_index",
             "source",
             "split",
             "subject",
             "doc_sha256",
             "rendered_sha256",
+            "gold_sha256",
         )
         if any(not str(demo.get(key, "")).strip() for key in required):
             raise PoolBuildError(
@@ -469,7 +491,13 @@ def _validate_demonstrations(
         seen.add(demo_id)
         _require_sha256(demo["doc_sha256"], "demonstration doc_sha256")
         _require_sha256(demo["rendered_sha256"], "demonstration rendered_sha256")
-        normalized.append({key: str(demo[key]) for key in required})
+        _require_sha256(demo["gold_sha256"], "demonstration gold_sha256")
+        normalized.append(
+            {
+                key: int(demo[key]) if key == "doc_index" else str(demo[key])
+                for key in required
+            }
+        )
     return normalized
 
 
@@ -481,6 +509,11 @@ def _renderer_record(renderer_manifest: Mapping[str, Any], render_hash: str) -> 
         "renderer_source_sha256": str(renderer["renderer_source_sha256"]),
         "template_sha256": str(renderer["template_sha256"]),
         "render_contract_sha256": str(renderer["render_contract_sha256"]),
+        "source_files_sha256": str(renderer["source_files_sha256"]),
+        "task_configs_sha256": str(renderer["task_configs_sha256"]),
+        "dataset_revision": str(renderer["dataset_revision"]),
+        "dataset_fingerprint_sha256": str(renderer["dataset_fingerprint_sha256"]),
+        "source_projection_sha256": str(renderer["source_projection_sha256"]),
         "render_sha256": render_hash,
         "renderer_manifest_sha256": str(renderer_manifest["manifest_sha256"]),
     }
@@ -498,6 +531,9 @@ def _rendering_manifest_entry(item: Mapping[str, Any]) -> Dict[str, Any]:
         "task_group": item["task_group"],
         "task_name": item["task_name"],
         "target_doc_id": item["target_doc_id"],
+        "target_doc_index": item["target_doc_index"],
+        "target_doc_sha256": item["target_doc_sha256"],
+        "dataset_fingerprint": item["dataset_fingerprint"],
         "num_fewshot": item["num_fewshot"],
         "uses_target_gold_labels": item["uses_target_gold_labels"],
         "fewshot_answers_present": item["fewshot_answers_present"],

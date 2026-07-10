@@ -232,6 +232,31 @@ def _validate_probe_provenance(payload: Mapping[str, Any]) -> None:
         raise SchemaError("probe_pool must exclude target gold labels")
     if pool["fewshot_answers_present"] is not True:
         raise SchemaError("probe_pool must retain five-shot answers")
+    renderer = pool["renderer"]
+    if not isinstance(renderer, Mapping) or renderer.get("lm_eval_version") != "0.4.11":
+        raise SchemaError("probe_pool.renderer must identify lm-eval 0.4.11")
+    renderer_hash_fields = (
+        "renderer_source_sha256",
+        "source_files_sha256",
+        "template_sha256",
+        "task_configs_sha256",
+        "render_contract_sha256",
+        "dataset_fingerprint_sha256",
+        "source_projection_sha256",
+        "render_sha256",
+        "renderer_manifest_sha256",
+    )
+    for key in renderer_hash_fields:
+        _validate_sha256(renderer.get(key), "probe_pool.renderer.%s" % key)
+    revision = str(renderer.get("dataset_revision") or "")
+    if len(revision) < 40 or any(char not in "0123456789abcdef" for char in revision):
+        raise SchemaError("probe_pool.renderer.dataset_revision must be an exact commit")
+    if renderer["renderer_source_sha256"] != renderer["source_files_sha256"]:
+        raise SchemaError("probe_pool renderer source-file hashes disagree")
+    if renderer["template_sha256"] != renderer["task_configs_sha256"]:
+        raise SchemaError("probe_pool renderer task-template hashes disagree")
+    if pool["render_contract_sha256"] != renderer["render_contract_sha256"]:
+        raise SchemaError("probe_pool render contract disagrees with renderer evidence")
     for key in (
         "manifest_sha256",
         "source_manifest_sha256",

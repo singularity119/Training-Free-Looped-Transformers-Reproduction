@@ -70,6 +70,7 @@ PYTHONPATH=src python3 -m tflt.cli make-window-grid --help
 PYTHONPATH=src python3 -m tflt.cli score-windows --help
 PYTHONPATH=src python3 -m tflt.cli analyze-window-grid --help
 python3 scripts/loopscope/build_mmlu_probe_pool.py --help
+PYTHONPATH=src python3 scripts/loopscope/export_mmlu_renderer.py --help
 python3 scripts/loopscope/prepare_qwen17_phase1.py --help
 bash -n scripts/loopscope/submit_qwen17_phase1.sh
 ```
@@ -80,30 +81,42 @@ bash -n scripts/loopscope/submit_qwen17_phase1.sh
 
 校准输入必须由正式评测所用的同一 lm-eval MMLU renderer 预渲染，严格冻结 `lm-eval==0.4.11`、5-shot、fewshot split=`dev`、`chat_template=false`、`multiturn=false`。结构化 `question/choices` 零样本自动渲染路径已禁用。
 
-renderer manifest 必须自哈希，并记录 renderer entrypoint、renderer 源码 SHA、模板 SHA 和 render contract SHA。每条目标记录必须记录 `task_name`、`target_doc_id`、逐条 render SHA，以及 5 个有序唯一、同 subject 的 demo provenance（ID、dev split、doc SHA、rendered SHA）。目标 gold 不得进入字段；5 个 demo answer 必须已经包含在预渲染 prompt 中，并以 `uses_target_gold_labels=false`、`fewshot_answers_present=true` 区分两种语义。
+renderer manifest v2 除自哈希外，必须记录实际安装包版本、被调用源码文件及逐文件 SHA、task YAML/config SHA、精确 dataset commit、raw/processed split fingerprint、完整 source projection SHA 和 render contract SHA。每条目标记录必须记录 `task_name`、目标 split/index/doc SHA、逐条 render SHA，以及 5 个有序唯一、同 subject 的 demo provenance（ID/index、dev split、doc/render/gold SHA）。目标 gold 不得进入投影或 probe pool 字段；5 个 demo answer 必须由真实 renderer 写入 prompt，并以 `uses_target_gold_labels=false`、`fewshot_answers_present=true` 区分两种语义。
 
-若没有上述 renderer manifest，或无法证明 prompt 与正式 lm-eval MMLU 5-shot 对齐，立即停止；不得用手写模板、零样本 prompt 或 MMLU test 替代。
+先由 exporter 从精确数据集 revision 生成 projection；builder 随后必须重新加载同一 `lm-eval==0.4.11` 与数据集、逐条重渲染并逐字节比较。仅填写格式正确的 64 位哈希、手写 manifest 或手写 prompt 都会失败。生产 CLI 不提供 `trust`/`skip verify` 开关。
+
+```bash
+PYTHONPATH=src python scripts/loopscope/export_mmlu_renderer.py \
+  --output-jsonl /path/to/new/lm_eval_mmlu_projection.jsonl \
+  --manifest /path/to/new/lm_eval_mmlu_renderer_manifest.json \
+  --dataset-revision <exact-lowercase-dataset-commit> \
+  --target-split auxiliary_train \
+  --fewshot-split dev \
+  --seed 20260710
+```
+
+若 exporter 无法定位实际 task YAML/source、无法取得 dataset fingerprint、实际 prompt 不以目标 `Answer:` 结束，或 5 个 dev demonstrations 不能固定，立即停止；不得用手写模板、零样本 prompt 或 MMLU test 替代。
 
 先检查，再在一个从未使用过的目标路径写入：
 
 ```bash
 python scripts/loopscope/build_mmlu_probe_pool.py \
-  --input-jsonl /path/to/label-free-mmlu-auxiliary.jsonl \
+  --input-jsonl /path/to/new/lm_eval_mmlu_projection.jsonl \
   --output-jsonl /path/to/new/probe_pool.jsonl \
   --manifest /path/to/new/probe_pool_manifest.json \
   --renderer-manifest /path/to/lm_eval_mmlu_renderer_manifest.json \
-  --source 'cais/mmlu@<revision>' \
+  --source 'cais/mmlu@<exact-revision>' \
   --split auxiliary_train \
   --count 512 \
   --seed 20260710 \
   --dry-run
 
 python scripts/loopscope/build_mmlu_probe_pool.py \
-  --input-jsonl /path/to/label-free-mmlu-auxiliary.jsonl \
+  --input-jsonl /path/to/new/lm_eval_mmlu_projection.jsonl \
   --output-jsonl /path/to/new/probe_pool.jsonl \
   --manifest /path/to/new/probe_pool_manifest.json \
   --renderer-manifest /path/to/lm_eval_mmlu_renderer_manifest.json \
-  --source 'cais/mmlu@<revision>' \
+  --source 'cais/mmlu@<exact-revision>' \
   --split auxiliary_train \
   --count 512 \
   --seed 20260710

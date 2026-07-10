@@ -1123,12 +1123,18 @@ def _validate_phase_config(config: Mapping[str, Any]) -> None:
         ("probe_pool", "fewshot_answers_present"): True,
         ("probe_pool", "task_group"): "mmlu",
         ("probe_pool", "num_fewshot"): 5,
-        ("probe_pool", "prompt_mode"): "lm_eval_prerendered",
+        ("probe_pool", "prompt_mode"): "lm_eval_verified_projection_v2",
         ("probe_pool", "lm_eval_version"): "0.4.11",
         ("probe_pool", "fewshot_split"): "dev",
         ("probe_pool", "chat_template"): False,
         ("probe_pool", "multiturn"): False,
         ("probe_pool", "require_renderer_manifest"): True,
+        ("probe_pool", "renderer_manifest_schema"): (
+            "loopscope.mmlu-renderer-manifest.v2"
+        ),
+        ("probe_pool", "require_exact_dataset_revision"): True,
+        ("probe_pool", "require_dataset_fingerprints"): True,
+        ("probe_pool", "require_independent_rerender"): True,
         ("probe_pool", "fixed_fewshot_ids_per_subject"): True,
     }
     for path, value in expected.items():
@@ -1239,10 +1245,23 @@ def _validate_pool(pool_path: Path, manifest: Mapping[str, Any]) -> bytes:
         raise PreparationError("probe pool must use lm-eval 0.4.11")
     for key in (
         "renderer_source_sha256",
+        "source_files_sha256",
         "template_sha256",
+        "task_configs_sha256",
         "render_contract_sha256",
+        "dataset_fingerprint_sha256",
+        "source_projection_sha256",
     ):
         _require_sha256(renderer.get(key), "probe-pool renderer.%s" % key)
+    dataset_revision = str(renderer.get("dataset_revision") or "")
+    if len(dataset_revision) < 40:
+        raise PreparationError("probe-pool renderer dataset revision is not exact")
+    input_sha = _require_sha256(
+        _nested_value(manifest, ["input", "sha256"]),
+        "renderer source projection file SHA256",
+    )
+    if input_sha != renderer["source_projection_sha256"]:
+        raise PreparationError("probe-pool input is not the verified source projection")
     renderer_manifest_hash = _nested_value(
         manifest, ["renderer_manifest", "manifest_sha256"]
     )
@@ -1287,6 +1306,9 @@ def _validate_pool(pool_path: Path, manifest: Mapping[str, Any]) -> bytes:
             "task_group",
             "task_name",
             "target_doc_id",
+            "target_doc_index",
+            "target_doc_sha256",
+            "dataset_fingerprint",
             "num_fewshot",
             "renderer",
             "fewshot_sample_ids",
@@ -1319,6 +1341,8 @@ def _validate_pool(pool_path: Path, manifest: Mapping[str, Any]) -> bytes:
         prompt_hash = hashlib.sha256(str(item["text"]).encode("utf-8")).hexdigest()
         if str(item["prompt_sha256"]) != prompt_hash:
             raise PreparationError("probe-pool prompt hash mismatch for %s" % record_id)
+        _require_sha256(item["target_doc_sha256"], "target doc SHA256")
+        _require_sha256(item["dataset_fingerprint"], "target dataset fingerprint")
         item_renderer = item.get("renderer")
         if not isinstance(item_renderer, Mapping):
             raise PreparationError("probe-pool renderer metadata is malformed")
@@ -1328,6 +1352,13 @@ def _validate_pool(pool_path: Path, manifest: Mapping[str, Any]) -> bytes:
             "renderer_source_sha256": renderer["renderer_source_sha256"],
             "template_sha256": renderer["template_sha256"],
             "render_contract_sha256": renderer["render_contract_sha256"],
+            "source_files_sha256": renderer["source_files_sha256"],
+            "task_configs_sha256": renderer["task_configs_sha256"],
+            "dataset_revision": renderer["dataset_revision"],
+            "dataset_fingerprint_sha256": renderer[
+                "dataset_fingerprint_sha256"
+            ],
+            "source_projection_sha256": renderer["source_projection_sha256"],
             "render_sha256": prompt_hash,
             "renderer_manifest_sha256": renderer_manifest_hash,
         }
@@ -1342,7 +1373,14 @@ def _validate_pool(pool_path: Path, manifest: Mapping[str, Any]) -> bytes:
             if not isinstance(demo, Mapping):
                 raise PreparationError("probe-pool demonstration must be an object")
             demo_required = (
-                "id", "source", "split", "subject", "doc_sha256", "rendered_sha256"
+                "id",
+                "doc_index",
+                "source",
+                "split",
+                "subject",
+                "doc_sha256",
+                "rendered_sha256",
+                "gold_sha256",
             )
             if any(not str(demo.get(key, "")).strip() for key in demo_required):
                 raise PreparationError("probe-pool demonstration provenance is incomplete")
@@ -1350,7 +1388,11 @@ def _validate_pool(pool_path: Path, manifest: Mapping[str, Any]) -> bytes:
                 raise PreparationError("probe-pool demonstration split/subject mismatch")
             _require_sha256(demo["doc_sha256"], "demonstration doc SHA256")
             _require_sha256(demo["rendered_sha256"], "demonstration render SHA256")
-            normalized = {key: str(demo[key]) for key in demo_required}
+            _require_sha256(demo["gold_sha256"], "demonstration gold SHA256")
+            normalized = {
+                key: int(demo[key]) if key == "doc_index" else str(demo[key])
+                for key in demo_required
+            }
             normalized_demos.append(normalized)
             demo_ids.append(normalized["id"])
         if len(set(demo_ids)) != 5 or demo_ids != list(item["fewshot_sample_ids"]):
@@ -1374,6 +1416,9 @@ def _validate_pool(pool_path: Path, manifest: Mapping[str, Any]) -> bytes:
                 "task_group": "mmlu",
                 "task_name": str(item["task_name"]),
                 "target_doc_id": str(item["target_doc_id"]),
+                "target_doc_index": int(item["target_doc_index"]),
+                "target_doc_sha256": str(item["target_doc_sha256"]),
+                "dataset_fingerprint": str(item["dataset_fingerprint"]),
                 "num_fewshot": 5,
                 "uses_target_gold_labels": False,
                 "fewshot_answers_present": True,

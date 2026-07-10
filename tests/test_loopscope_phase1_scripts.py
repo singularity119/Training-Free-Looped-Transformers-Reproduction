@@ -5,6 +5,11 @@ import unittest
 from pathlib import Path
 
 from tflt.loopscope.grid import generate_window_grid
+from tflt.loopscope.mmlu_renderer import create_renderer_bundle, verify_export_bundle
+try:
+    from loopscope_fixtures import FAKE_DATASET_REVISION, FakeRendererBackend
+except ModuleNotFoundError:
+    from tests.loopscope_fixtures import FAKE_DATASET_REVISION, FakeRendererBackend
 
 
 def _load_script(name):
@@ -19,74 +24,30 @@ build = _load_script("build_mmlu_probe_pool.py")
 prepare = _load_script("prepare_qwen17_phase1.py")
 
 
-def _renderer_manifest():
-    payload = {
-        "schema_version": "loopscope.mmlu-renderer-manifest.v1",
-        "task_group": "mmlu",
-        "num_fewshot": 5,
-        "fewshot_split": "dev",
-        "chat_template": False,
-        "multiturn": False,
-        "renderer": {
-            "renderer_entrypoint": "lm_eval.tasks.mmlu.utils:process_docs",
-            "lm_eval_version": "0.4.11",
-            "renderer_source_sha256": "1" * 64,
-            "template_sha256": "2" * 64,
-            "render_contract_sha256": "3" * 64,
-        },
-    }
-    payload["manifest_sha256"] = build.manifest_sha256(payload)
-    return payload
+def _renderer_bundle(count=8):
+    return create_renderer_bundle(
+        dataset_revision=FAKE_DATASET_REVISION,
+        task_names=["mmlu_math"],
+        max_targets_per_task=count,
+        backend=FakeRendererBackend(count),
+    )
 
 
 def _source_record(index, subject="math"):
-    text = "".join(
-        "Demo %d\nA. a\nB. b\nC. c\nD. d\nAnswer: A\n\n" % value
-        for value in range(5)
-    ) + "Target %d\nA. a\nB. b\nC. c\nD. d\nAnswer:" % index
-    render_hash = build.hashlib.sha256(text.encode("utf-8")).hexdigest()
-    demos = [
-        {
-            "id": "%s-dev-%d" % (subject, value),
-            "source": "mmlu@fixed",
-            "split": "dev",
-            "subject": subject,
-            "doc_sha256": ("%x" % (value + 1)) * 64,
-            "rendered_sha256": ("%x" % (value + 6)) * 64,
-        }
-        for value in range(5)
-    ]
-    return {
-        "id": "target-%d" % index,
-        "target_doc_id": "%s-target-%d" % (subject, index),
-        "task_group": "mmlu",
-        "task_name": "mmlu_%s" % subject,
-        "num_fewshot": 5,
-        "source": "mmlu@fixed",
-        "split": "auxiliary_train",
-        "subject": subject,
-        "text": text,
-        "render_sha256": render_hash,
-        "template_sha256": "2" * 64,
-        "render_contract_sha256": "3" * 64,
-        "renderer_manifest_sha256": _renderer_manifest()["manifest_sha256"],
-        "uses_target_gold_labels": False,
-        "fewshot_answers_present": True,
-        "demonstrations": demos,
-    }
+    if subject != "math":
+        raise ValueError("fixture backend only exposes math")
+    return dict(_renderer_bundle(max(index + 1, 1))["records"][index])
 
 
 class LoopScopePhaseOneScriptTest(unittest.TestCase):
     def test_builder_requires_lm_eval_five_shot_contract_and_prepare_accepts_it(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            bundle = _renderer_bundle(4)
             renderer = root / "renderer.json"
-            renderer.write_text(json.dumps(_renderer_manifest()), encoding="utf-8")
+            renderer.write_text(json.dumps(bundle["manifest"]), encoding="utf-8")
             source = root / "source.jsonl"
-            source.write_text(
-                "".join(json.dumps(_source_record(index)) + "\n" for index in range(4)),
-                encoding="utf-8",
-            )
+            source.write_bytes(bundle["projection_bytes"])
             pool = root / "pool.jsonl"
             manifest = root / "pool-manifest.json"
             code = build.main(
@@ -95,10 +56,13 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
                     "--output-jsonl", str(pool),
                     "--manifest", str(manifest),
                     "--renderer-manifest", str(renderer),
-                    "--source", "mmlu@fixed",
+                    "--source", bundle["manifest"]["dataset"]["source"],
                     "--split", "auxiliary_train",
                     "--count", "4",
-                ]
+                ],
+                renderer_verifier=lambda projection, evidence: verify_export_bundle(
+                    projection, evidence, backend=FakeRendererBackend(4)
+                ),
             )
             self.assertEqual(code, 0)
             payload = json.loads(manifest.read_text(encoding="utf-8"))
@@ -109,12 +73,24 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
             prepare._validate_pool(pool, payload)
 
     def test_builder_rejects_structured_zero_shot_path(self):
-        renderer = _renderer_manifest()
+        bundle = _renderer_bundle(1)
+        renderer = bundle["manifest"]
         item = _source_record(0)
         item["question"] = "forbidden"
+        body = {
+            key: value for key, value in item.items() if key != "projection_record_sha256"
+        }
+        item["projection_record_sha256"] = build.hashlib.sha256(
+            build.canonical_json_bytes(body)
+        ).hexdigest()
         raw = (json.dumps(item) + "\n").encode("utf-8")
         with self.assertRaises(build.PoolBuildError):
-            build._load_source_records(raw, "mmlu@fixed", "auxiliary_train", renderer)
+            build._load_source_records(
+                raw,
+                bundle["manifest"]["dataset"]["source"],
+                "auxiliary_train",
+                renderer,
+            )
 
     def test_exact_hpc2_paths_are_not_configurable(self):
         run = prepare.DEFAULT_RUN_BASE / (
@@ -212,13 +188,11 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
     def test_score_freeze_rejects_four_sample_prefix_of_larger_frozen_pool(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            bundle = _renderer_bundle(6)
             renderer = root / "renderer.json"
-            renderer.write_text(json.dumps(_renderer_manifest()), encoding="utf-8")
+            renderer.write_text(json.dumps(bundle["manifest"]), encoding="utf-8")
             source = root / "source.jsonl"
-            source.write_text(
-                "".join(json.dumps(_source_record(index)) + "\n" for index in range(6)),
-                encoding="utf-8",
-            )
+            source.write_bytes(bundle["projection_bytes"])
             pool = root / "probe_pool.jsonl"
             pool_manifest_path = root / "probe_pool_manifest.json"
             build.main(
@@ -227,10 +201,13 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
                     "--output-jsonl", str(pool),
                     "--manifest", str(pool_manifest_path),
                     "--renderer-manifest", str(renderer),
-                    "--source", "mmlu@fixed",
+                    "--source", bundle["manifest"]["dataset"]["source"],
                     "--split", "auxiliary_train",
                     "--count", "6",
-                ]
+                ],
+                renderer_verifier=lambda projection, evidence: verify_export_bundle(
+                    projection, evidence, backend=FakeRendererBackend(6)
+                ),
             )
             pool_manifest = json.loads(pool_manifest_path.read_text(encoding="utf-8"))
             layer_output = root / "gate-e-probe" / "probe-layers-full"

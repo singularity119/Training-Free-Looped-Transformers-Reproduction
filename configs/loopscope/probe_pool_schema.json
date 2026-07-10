@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "loopscope.probe-pool-record.v1",
+  "$id": "loopscope.probe-pool-record.v2",
   "type": "object",
   "required": [
     "id",
@@ -11,6 +11,9 @@
     "task_group",
     "task_name",
     "target_doc_id",
+    "target_doc_index",
+    "target_doc_sha256",
+    "dataset_fingerprint",
     "num_fewshot",
     "uses_target_gold_labels",
     "fewshot_answers_present",
@@ -28,6 +31,9 @@
     "task_group": {"const": "mmlu"},
     "task_name": {"type": "string", "minLength": 1},
     "target_doc_id": {"type": "string", "minLength": 1},
+    "target_doc_index": {"type": "integer", "minimum": 0},
+    "target_doc_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dataset_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "num_fewshot": {"const": 5},
     "uses_target_gold_labels": {"const": false},
     "fewshot_answers_present": {"const": true},
@@ -37,8 +43,13 @@
         "renderer_entrypoint",
         "lm_eval_version",
         "renderer_source_sha256",
+        "source_files_sha256",
         "template_sha256",
+        "task_configs_sha256",
         "render_contract_sha256",
+        "dataset_revision",
+        "dataset_fingerprint_sha256",
+        "source_projection_sha256",
         "render_sha256",
         "renderer_manifest_sha256"
       ],
@@ -46,8 +57,13 @@
         "renderer_entrypoint": {"type": "string", "minLength": 1},
         "lm_eval_version": {"const": "0.4.11"},
         "renderer_source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "source_files_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "template_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "task_configs_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "render_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "dataset_revision": {"type": "string", "pattern": "^[0-9a-f]{40,64}$"},
+        "dataset_fingerprint_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "source_projection_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "render_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "renderer_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
       },
@@ -68,19 +84,23 @@
         "type": "object",
         "required": [
           "id",
+          "doc_index",
           "source",
           "split",
           "subject",
           "doc_sha256",
-          "rendered_sha256"
+          "rendered_sha256",
+          "gold_sha256"
         ],
         "properties": {
           "id": {"type": "string", "minLength": 1},
+          "doc_index": {"type": "integer", "minimum": 0},
           "source": {"type": "string", "minLength": 1},
           "split": {"const": "dev"},
           "subject": {"type": "string", "minLength": 1},
           "doc_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-          "rendered_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          "rendered_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "gold_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
         },
         "additionalProperties": false
       }
@@ -98,5 +118,5 @@
     ]
   },
   "additionalProperties": true,
-  "description": "Target gold labels are excluded; fixed five-shot demonstration answers are present only inside the renderer-proven prompt text."
+  "description": "Target gold labels are excluded; fixed five-shot demonstration content, rendering and gold-answer hashes are bound to the verified lm-eval prompt."
 }

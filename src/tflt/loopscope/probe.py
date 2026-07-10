@@ -270,10 +270,15 @@ def load_probe_records(path: Path, max_examples: Optional[int] = None) -> List[D
                 raise ProbeInputError("probe record line %d must be an object" % line_number)
             required = (
                 "id", "text", "source", "split", "subject", "task_group", "task_name",
-                "target_doc_id", "num_fewshot", "renderer", "fewshot_sample_ids",
+                "target_doc_id", "target_doc_index", "target_doc_sha256",
+                "dataset_fingerprint", "num_fewshot", "renderer", "fewshot_sample_ids",
                 "demonstrations", "uses_target_gold_labels", "fewshot_answers_present",
             )
-            missing = [key for key in required if not item.get(key)]
+            missing = [
+                key
+                for key in required
+                if key not in item or item[key] is None or item[key] == ""
+            ]
             if missing:
                 raise ProbeInputError(
                     "probe record line %d missing fields: %s" % (line_number, ", ".join(missing))
@@ -295,6 +300,8 @@ def load_probe_records(path: Path, max_examples: Optional[int] = None) -> List[D
             record["id"] = record_id
             record["text"] = text
             record["prompt_sha256"] = prompt_hash
+            for key in ("target_doc_sha256", "dataset_fingerprint"):
+                _validate_digest(record[key], "probe record %s" % key)
             _rendering_contract_entry(record)
             records.append(record)
             if max_examples is not None and len(records) >= max_examples:
@@ -471,9 +478,17 @@ def _validate_source_pool_manifest(payload: Mapping[str, Any]) -> None:
     if not isinstance(renderer, Mapping) or renderer.get("lm_eval_version") != "0.4.11":
         raise ProbeInputError("pool manifest renderer must use lm-eval 0.4.11")
     for key in (
-        "renderer_source_sha256", "template_sha256", "render_contract_sha256"
+        "renderer_source_sha256",
+        "source_files_sha256",
+        "template_sha256",
+        "task_configs_sha256",
+        "render_contract_sha256",
+        "dataset_fingerprint_sha256",
+        "source_projection_sha256",
     ):
         _validate_digest(renderer.get(key), "pool manifest renderer.%s" % key)
+    if not str(renderer.get("dataset_revision") or ""):
+        raise ProbeInputError("pool manifest renderer dataset_revision is missing")
 
 
 def _rendering_contract_entry(item: Mapping[str, Any]) -> Dict[str, Any]:
@@ -488,26 +503,41 @@ def _rendering_contract_entry(item: Mapping[str, Any]) -> Dict[str, Any]:
         raise ProbeInputError("probe record renderer must use lm-eval 0.4.11")
     renderer_required = (
         "renderer_entrypoint", "renderer_source_sha256", "template_sha256",
-        "render_contract_sha256", "render_sha256", "renderer_manifest_sha256",
+        "render_contract_sha256", "source_files_sha256", "task_configs_sha256",
+        "dataset_revision", "dataset_fingerprint_sha256",
+        "source_projection_sha256", "render_sha256", "renderer_manifest_sha256",
     )
     if any(not str(renderer.get(key, "")).strip() for key in renderer_required):
         raise ProbeInputError("probe record renderer provenance is incomplete")
     if str(renderer["render_sha256"]) != str(item["prompt_sha256"]):
         raise ProbeInputError("probe record render hash differs from prompt hash")
     for key in renderer_required[1:]:
-        _validate_digest(renderer[key], "probe record renderer.%s" % key)
+        if key != "dataset_revision":
+            _validate_digest(renderer[key], "probe record renderer.%s" % key)
+    if not str(renderer["dataset_revision"]):
+        raise ProbeInputError("probe record renderer dataset_revision is empty")
     demos = item.get("demonstrations")
     ids = item.get("fewshot_sample_ids")
     if not isinstance(demos, list) or len(demos) != 5 or not isinstance(ids, list):
         raise ProbeInputError("probe record requires exactly five demonstrations")
     normalized = []
     for demo in demos:
-        required = ("id", "source", "split", "subject", "doc_sha256", "rendered_sha256")
+        required = (
+            "id", "doc_index", "source", "split", "subject", "doc_sha256",
+            "rendered_sha256", "gold_sha256",
+        )
         if not isinstance(demo, Mapping) or any(not str(demo.get(key, "")).strip() for key in required):
             raise ProbeInputError("demonstration provenance is incomplete")
         if demo["split"] != "dev" or str(demo["subject"]) != str(item["subject"]):
             raise ProbeInputError("demonstration split/subject mismatch")
-        normalized.append({key: str(demo[key]) for key in required})
+        for key in ("doc_sha256", "rendered_sha256", "gold_sha256"):
+            _validate_digest(demo[key], "demonstration %s" % key)
+        normalized.append(
+            {
+                key: int(demo[key]) if key == "doc_index" else str(demo[key])
+                for key in required
+            }
+        )
     demo_ids = [demo["id"] for demo in normalized]
     if demo_ids != [str(value) for value in ids] or len(set(demo_ids)) != 5:
         raise ProbeInputError("five-shot IDs must be ordered and unique")
@@ -523,6 +553,9 @@ def _rendering_contract_entry(item: Mapping[str, Any]) -> Dict[str, Any]:
         "task_group": "mmlu",
         "task_name": str(item["task_name"]),
         "target_doc_id": str(item["target_doc_id"]),
+        "target_doc_index": int(item["target_doc_index"]),
+        "target_doc_sha256": str(item["target_doc_sha256"]),
+        "dataset_fingerprint": str(item["dataset_fingerprint"]),
         "num_fewshot": 5,
         "uses_target_gold_labels": False,
         "fewshot_answers_present": True,

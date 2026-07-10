@@ -200,8 +200,13 @@ def _full_pool_contract():
         "renderer_entrypoint": "fixture.renderer",
         "lm_eval_version": "0.4.11",
         "renderer_source_sha256": "a" * 64,
+        "source_files_sha256": "a" * 64,
         "template_sha256": "b" * 64,
+        "task_configs_sha256": "b" * 64,
         "render_contract_sha256": "c" * 64,
+        "dataset_revision": "f" * 40,
+        "dataset_fingerprint_sha256": "1" * 64,
+        "source_projection_sha256": "2" * 64,
         "render_sha256": "d" * 64,
         "renderer_manifest_sha256": "e" * 64,
     }
