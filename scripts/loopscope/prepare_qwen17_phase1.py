@@ -32,6 +32,8 @@ DEFAULT_REMOTE_REPO = Path(
 )
 DEFAULT_VENV_NAME = ".venv-loopscope-cu121-20260710"
 RUN_SCHEMA_VERSION = "loopscope.phase1-run.v1"
+MODEL_SNAPSHOT_COMMIT = "ea980cb0a6c2ae4b936e82123acc929f1cec04c1"
+REVISION_REPORT_SCHEMA_VERSION = "loopscope.model-tokenizer-revision-check.v2"
 
 
 class PreparationError(ValueError):
@@ -201,6 +203,7 @@ def prepare_run(args: argparse.Namespace) -> int:
         "frozen_recipe": {
             "model": "qwen3-1.7b-base",
             "repo_id": "Qwen/Qwen3-1.7B-Base",
+            "revision": config["model"]["revision"],
             "task": "mmlu",
             "num_fewshot": 5,
             "dtype": "float16",
@@ -214,10 +217,11 @@ def prepare_run(args: argparse.Namespace) -> int:
             "window_width": 4,
         },
         "revision_policy": {
-            "cli_pins_revision": False,
+            "cli_pins_revision": True,
+            "manifest_commit": config["model"]["revision"],
             "rule": (
-                "All actual probe/audit/eval model commit hashes must exactly match. "
-                "A mismatch stops the stage and its results must not be merged."
+                "Every phase-one model and tokenizer load must resolve to the exact "
+                "manifest commit; missing or mismatched commits fail closed."
             ),
             "verification_command": (
                 "python scripts/loopscope/prepare_qwen17_phase1.py verify-revisions "
@@ -332,6 +336,7 @@ def _build_jobs(
 ) -> Dict[str, List[Dict[str, Any]]]:
     del repo_root, venv
     model = str(config["model"]["alias"])
+    revision = _require_exact_model_commit(config["model"].get("revision"), "phase config")
     grid_windows = [str(item["window"]) for item in grid["windows"]]
     anchor = str(grid["anchors"]["required"])
     sentinel_windows = _sentinel_windows(grid_windows, anchor)
@@ -347,6 +352,7 @@ def _build_jobs(
             [
                 "python", "-m", "tflt.cli", "probe-layers",
                 "--model", model,
+                "--revision", revision,
                 "--input-jsonl", str(pool),
                 "--input-manifest", str(pool_manifest),
                 "--output-dir", str(run_root / "gate-c" / "probe-layers-4"),
@@ -357,7 +363,7 @@ def _build_jobs(
                 "--erank-max-vectors", "1024",
             ],
             "probe_report.json",
-            ["model", "revision"],
+            revision_keys=_probe_revision_keys(),
         ),
         _job(
             "audit-anchor-12-15",
@@ -366,6 +372,7 @@ def _build_jobs(
             [
                 "python", "-m", "tflt.cli", "audit-loop-effect",
                 "--model", model,
+                "--revision", revision,
                 "--output-dir", str(run_root / "gate-c" / "audit-anchor-12-15"),
                 "--window", anchor,
                 "--k", "2",
@@ -379,7 +386,11 @@ def _build_jobs(
                 "--device", "cuda",
             ],
             "audit_report.json",
-            ["model", "commit_hash"],
+            revision_keys={
+                "model_commit": ["model", "commit_hash"],
+                "tokenizer_commit": ["tokenizer", "commit_hash"],
+                "manifest_commit": ["revision_closure", "manifest_commit"],
+            },
         ),
         _job(
             "probe-sentinels",
@@ -388,6 +399,7 @@ def _build_jobs(
             [
                 "python", "-m", "tflt.cli", "probe-window",
                 "--model", model,
+                "--revision", revision,
                 "--input-jsonl", str(pool),
                 "--input-manifest", str(pool_manifest),
                 "--window-grid", str(grid_snapshot),
@@ -397,12 +409,12 @@ def _build_jobs(
                 "--device", "cuda",
             ] + [value for window in sentinel_windows for value in ("--window", window)],
             "probe_report.json",
-            ["model", "revision"],
+            revision_keys=_probe_revision_keys(),
         ),
     ]
 
     gate_d = [
-        _eval_job("baseline-limit5", "gate-d-limit", run_root, None, limit=5)
+        _eval_job("baseline-limit5", "gate-d-limit", run_root, None, limit=5, revision=revision)
     ]
     gate_d.extend(
         _eval_job(
@@ -411,6 +423,7 @@ def _build_jobs(
             run_root,
             window,
             limit=5,
+            revision=revision,
         )
         for window in grid_windows
     )
@@ -425,6 +438,7 @@ def _build_jobs(
             [
                 "python", "-m", "tflt.cli", "probe-layers",
                 "--model", model,
+                "--revision", revision,
                 "--input-jsonl", str(pool),
                 "--input-manifest", str(pool_manifest),
                 "--output-dir", str(full_layer_output),
@@ -434,7 +448,7 @@ def _build_jobs(
                 "--erank-max-vectors", "1024",
             ],
             "probe_report.json",
-            ["model", "revision"],
+            revision_keys=_probe_revision_keys(),
         ),
         _job(
             "probe-windows-full",
@@ -443,6 +457,7 @@ def _build_jobs(
             [
                 "python", "-m", "tflt.cli", "probe-window",
                 "--model", model,
+                "--revision", revision,
                 "--input-jsonl", str(pool),
                 "--input-manifest", str(pool_manifest),
                 "--window-grid", str(grid_snapshot),
@@ -451,7 +466,7 @@ def _build_jobs(
                 "--device", "cuda",
             ] + [value for window in grid_windows for value in ("--window", window)],
             "probe_report.json",
-            ["model", "revision"],
+            revision_keys=_probe_revision_keys(),
         ),
     ]
 
@@ -475,7 +490,11 @@ def _build_jobs(
 
     comparison = [str(value) for value in grid["comparison_windows"]["random_in_band"]]
     full_windows = _deduplicate(grid_windows + comparison)
-    gate_e = [_eval_job("baseline-full", "gate-e-full", run_root, None, limit=None)]
+    gate_e = [
+        _eval_job(
+            "baseline-full", "gate-e-full", run_root, None, limit=None, revision=revision
+        )
+    ]
     gate_e.extend(
         _eval_job(
             "window-%s-full" % window.replace(":", "-"),
@@ -483,6 +502,7 @@ def _build_jobs(
             run_root,
             window,
             limit=None,
+            revision=revision,
         )
         for window in full_windows
     )
@@ -502,6 +522,7 @@ def _job(
     argv: List[str],
     revision_artifact: Optional[str] = None,
     revision_key: Optional[List[str]] = None,
+    revision_keys: Optional[Mapping[str, Sequence[str]]] = None,
 ) -> Dict[str, Any]:
     job = {
         "job_id": job_id,
@@ -514,8 +535,25 @@ def _job(
     }
     if revision_artifact is not None:
         job["revision_artifact"] = str(output_dir / revision_artifact)
-        job["revision_key"] = list(revision_key or ())
+        if revision_keys is None:
+            revision_keys = {
+                "model_commit": list(revision_key or ()),
+                "tokenizer_commit": [],
+                "manifest_commit": [],
+            }
+        job["revision_keys"] = {
+            str(name): [str(value) for value in path]
+            for name, path in revision_keys.items()
+        }
     return job
+
+
+def _probe_revision_keys() -> Dict[str, List[str]]:
+    return {
+        "model_commit": ["model", "revision"],
+        "tokenizer_commit": ["tokenizer", "revision"],
+        "manifest_commit": ["revision_closure", "manifest_commit"],
+    }
 
 
 def _eval_job(
@@ -524,11 +562,13 @@ def _eval_job(
     run_root: Path,
     window: Optional[str],
     limit: Optional[int],
+    revision: str,
 ) -> Dict[str, Any]:
     output_dir = run_root / stage / job_id
     argv = [
         "python", "-m", "tflt.eval_runner",
         "--model", "qwen3-1.7b-base",
+        "--revision", revision,
         "--tasks", "mmlu",
         "--output-dir", str(output_dir),
         "--num-fewshot", "5",
@@ -557,7 +597,11 @@ def _eval_job(
         output_dir,
         argv,
         "model_revision.json",
-        ["commit_hash"],
+        revision_keys={
+            "model_commit": ["model_commit"],
+            "tokenizer_commit": ["tokenizer_commit"],
+            "manifest_commit": ["manifest_commit"],
+        },
     )
 
 
@@ -734,6 +778,7 @@ def verify_revisions(run_root: Path, stage: str) -> int:
         raise PreparationError("run manifest path does not match --run-root")
 
     expected_jobs = _revision_jobs_for_stage(manifest, stage)
+    manifest_commit = _manifest_model_commit(manifest)
 
     observations = []
     missing = []
@@ -743,15 +788,23 @@ def verify_revisions(run_root: Path, stage: str) -> int:
             missing.append(str(artifact))
             continue
         payload = _read_json(artifact)
-        revision = _nested_value(payload, [str(value) for value in job["revision_key"]])
-        if not isinstance(revision, str) or not revision.strip():
-            raise PreparationError("missing model revision in %s" % artifact)
+        commits = {}
+        for name, path in job["revision_keys"].items():
+            commits[name] = _require_exact_model_commit(
+                _nested_value(payload, [str(value) for value in path]),
+                "%s %s" % (artifact, name),
+            )
+        if commits["manifest_commit"] != manifest_commit:
+            raise PreparationError("artifact manifest revision differs from run manifest")
         observations.append(
             {
                 "job_id": job["job_id"],
                 "stage": job["stage"],
                 "artifact": str(artifact),
-                "revision": revision,
+                "model_commit": commits["model_commit"],
+                "tokenizer_commit": commits["tokenizer_commit"],
+                "manifest_commit": commits["manifest_commit"],
+                "match": len(set(commits.values())) == 1,
             }
         )
     if missing:
@@ -759,16 +812,23 @@ def verify_revisions(run_root: Path, stage: str) -> int:
             "stage is incomplete; revision artifacts are missing: %s" % ", ".join(missing)
         )
 
-    revisions = sorted({item["revision"] for item in observations})
+    revisions = sorted(
+        {
+            item[key]
+            for item in observations
+            for key in ("model_commit", "tokenizer_commit", "manifest_commit")
+        }
+    )
     report = {
-        "schema_version": "loopscope.model-revision-check.v1",
+        "schema_version": REVISION_REPORT_SCHEMA_VERSION,
         "run_manifest_sha256": manifest["manifest_sha256"],
         "stage": stage,
-        "reference_policy": "all actual commit hashes must exactly match",
+        "manifest_commit": manifest_commit,
+        "reference_policy": "model, tokenizer, and manifest commits must all exactly match",
         "expected_jobs": [_revision_job_contract(job) for job in expected_jobs],
         "observations": observations,
         "unique_revisions": revisions,
-        "match": len(revisions) == 1,
+        "match": len(revisions) == 1 and all(item["match"] for item in observations),
     }
     report["manifest_sha256"] = manifest_sha256(report)
     validate_revision_report_payload(report, manifest, stage)
@@ -777,11 +837,11 @@ def verify_revisions(run_root: Path, stage: str) -> int:
     print(str(report_path))
     if not report["match"]:
         print(
-            "model revision mismatch; stop and do not merge this stage's results",
+            "model/tokenizer/manifest revision mismatch; stop and do not merge this stage's results",
             file=sys.stderr,
         )
         return 2
-    print(revisions[0])
+    print(manifest_commit)
     return 0
 
 
@@ -802,8 +862,13 @@ def _revision_jobs_for_stage(
         jobs.extend(stages["gate-e-probe"]["jobs"])
     jobs.extend(stages[stage]["jobs"])
     for job in jobs:
-        if "revision_artifact" not in job or "revision_key" not in job:
+        if "revision_artifact" not in job or "revision_keys" not in job:
             raise PreparationError("revision stage contains a non-model job")
+        keys = job.get("revision_keys")
+        if not isinstance(keys, Mapping) or set(keys) != {
+            "model_commit", "tokenizer_commit", "manifest_commit"
+        }:
+            raise PreparationError("revision stage lacks the three-party revision contract")
     return jobs
 
 
@@ -812,7 +877,10 @@ def _revision_job_contract(job: Mapping[str, Any]) -> Dict[str, Any]:
         "job_id": str(job["job_id"]),
         "stage": str(job["stage"]),
         "artifact": str(job["revision_artifact"]),
-        "revision_key": [str(value) for value in job["revision_key"]],
+        "revision_keys": {
+            str(name): [str(value) for value in path]
+            for name, path in job["revision_keys"].items()
+        },
     }
 
 
@@ -821,13 +889,16 @@ def validate_revision_report_payload(
     run_manifest: Mapping[str, Any],
     stage: str,
 ) -> str:
-    if report.get("schema_version") != "loopscope.model-revision-check.v1":
+    if report.get("schema_version") != REVISION_REPORT_SCHEMA_VERSION:
         raise PreparationError("unsupported model-revision report schema")
     _verify_manifest_hash(report, "model-revision report")
     if report.get("run_manifest_sha256") != run_manifest.get("manifest_sha256"):
         raise PreparationError("model-revision report is bound to another run manifest")
     if report.get("stage") != stage:
         raise PreparationError("model-revision report stage mismatch")
+    manifest_commit = _manifest_model_commit(run_manifest)
+    if report.get("manifest_commit") != manifest_commit:
+        raise PreparationError("model-revision report manifest commit mismatch")
     expected = [_revision_job_contract(job) for job in _revision_jobs_for_stage(run_manifest, stage)]
     if report.get("expected_jobs") != expected:
         raise PreparationError("model-revision expected jobs differ from the run manifest")
@@ -840,20 +911,29 @@ def validate_revision_report_payload(
             "job_id": str(observation.get("job_id", "")),
             "stage": str(observation.get("stage", "")),
             "artifact": str(observation.get("artifact", "")),
-            "revision_key": contract["revision_key"],
+            "revision_keys": contract["revision_keys"],
         }
         if observed_contract != contract:
             raise PreparationError("model-revision observation job/artifact mismatch")
-        revision = str(observation.get("revision", "")).strip()
-        if not revision:
-            raise PreparationError("model-revision observation is empty")
-        revisions.append(revision)
+        commits = [
+            _require_exact_model_commit(
+                observation.get(key), "model-revision observation %s" % key
+            )
+            for key in ("model_commit", "tokenizer_commit", "manifest_commit")
+        ]
+        if commits[2] != manifest_commit:
+            raise PreparationError("model-revision observation manifest commit mismatch")
+        if observation.get("match") is not True or len(set(commits)) != 1:
+            raise PreparationError("model/tokenizer/manifest revisions do not match")
+        revisions.extend(commits)
     unique = sorted(set(revisions))
     if report.get("unique_revisions") != unique:
         raise PreparationError("model-revision unique set is inconsistent")
     if report.get("match") is not (len(unique) == 1) or report.get("match") is not True:
-        raise PreparationError("model revisions do not match")
-    return unique[0]
+        raise PreparationError("model/tokenizer/manifest revisions do not match")
+    if unique != [manifest_commit]:
+        raise PreparationError("resolved revisions differ from the manifest commit")
+    return manifest_commit
 
 
 def freeze_score(run_root: Path) -> int:
@@ -945,6 +1025,7 @@ def validate_score_freeze_payload(
 def _validate_full_pool_score_inputs(
     run_manifest: Mapping[str, Any], score_report: Mapping[str, Any]
 ) -> Dict[str, Any]:
+    manifest_commit = _manifest_model_commit(run_manifest)
     pool_info = run_manifest["inputs"]["probe_pool"]
     pool_path = Path(str(pool_info["snapshot_path"]))
     pool_manifest_path = Path(str(pool_info["manifest_snapshot_path"]))
@@ -1023,12 +1104,29 @@ def _validate_full_pool_score_inputs(
         for key, expected in expected_pairs.items():
             if probe_pool.get(key) != expected:
                 raise PreparationError("%s probe_pool.%s mismatch" % (name, key))
+        revision_closure = report.get("revision_closure")
+        if not isinstance(revision_closure, Mapping):
+            raise PreparationError("%s full probe lacks revision_closure" % name)
+        expected_revision_closure = {
+            "manifest_commit": manifest_commit,
+            "model_commit": manifest_commit,
+            "tokenizer_commit": manifest_commit,
+            "match": True,
+        }
+        for key, expected in expected_revision_closure.items():
+            if revision_closure.get(key) != expected:
+                raise PreparationError("%s revision closure mismatch at %s" % (name, key))
+        if _nested_value(report, ["model", "revision"]) != manifest_commit:
+            raise PreparationError("%s model revision differs from run manifest" % name)
+        if _nested_value(report, ["tokenizer", "revision"]) != manifest_commit:
+            raise PreparationError("%s tokenizer revision differs from run manifest" % name)
         report_path = Path(expected_paths[name])
         evidence[name] = {
             "path": str(report_path),
             "file_sha256": _file_sha256(report_path),
             "canonical_sha256": report_canonical_hash,
             "probe_pool_manifest_sha256": expected_selected_hash,
+            "revision_closure": dict(revision_closure),
         }
 
     score_pool = _nested_value(score_report, ["probe_provenance", "probe_pool"])
@@ -1047,6 +1145,25 @@ def _validate_full_pool_score_inputs(
     for key, expected in score_expected.items():
         if score_pool.get(key) != expected:
             raise PreparationError("window score probe_pool.%s mismatch" % key)
+    score_model_revision = _nested_value(score_report, ["probe_provenance", "model", "revision"])
+    score_tokenizer_revision = _nested_value(
+        score_report, ["probe_provenance", "tokenizer_revision"]
+    )
+    score_revision_closure = _nested_value(
+        score_report, ["probe_provenance", "revision_closure"]
+    )
+    if score_model_revision != manifest_commit or score_tokenizer_revision != manifest_commit:
+        raise PreparationError("window score model/tokenizer revision differs from run manifest")
+    if not isinstance(score_revision_closure, Mapping):
+        raise PreparationError("window score revision closure is missing")
+    for key, expected in {
+        "manifest_commit": manifest_commit,
+        "model_commit": manifest_commit,
+        "tokenizer_commit": manifest_commit,
+        "match": True,
+    }.items():
+        if score_revision_closure.get(key) != expected:
+            raise PreparationError("window score revision closure mismatch at %s" % key)
     if _nested_value(score_report, ["inputs", "layer_probe_manifest_sha256"]) != expected_selected_hash:
         raise PreparationError("score layer probe manifest SHA256 mismatch")
     if _nested_value(score_report, ["inputs", "window_probe_manifest_sha256"]) != [
@@ -1060,6 +1177,11 @@ def _validate_full_pool_score_inputs(
         "selected_subset_sha256": expected_selected_hash,
         "render_contract_subset_sha256": expected_render_hash,
         "sample_ids_sha256": hashlib.sha256(canonical_json_bytes(sample_ids)).hexdigest(),
+        "revision_binding": {
+            "manifest_commit": manifest_commit,
+            "model_commit": manifest_commit,
+            "tokenizer_commit": manifest_commit,
+        },
         "probe_reports": evidence,
     }
 
@@ -1106,6 +1228,7 @@ def _validate_phase_config(config: Mapping[str, Any]) -> None:
     expected = {
         ("model", "alias"): "qwen3-1.7b-base",
         ("model", "repo_id"): "Qwen/Qwen3-1.7B-Base",
+        ("model", "revision"): MODEL_SNAPSHOT_COMMIT,
         ("evaluation", "task"): "mmlu",
         ("evaluation", "num_fewshot"): 5,
         ("evaluation", "dtype"): "float16",
@@ -1144,6 +1267,22 @@ def _validate_phase_config(config: Mapping[str, Any]) -> None:
                 "phase config changed at %s: expected %r, got %r"
                 % (".".join(path), value, actual)
             )
+
+
+def _manifest_model_commit(manifest: Mapping[str, Any]) -> str:
+    recipe_commit = _require_exact_model_commit(
+        _nested_value(manifest, ["frozen_recipe", "revision"]),
+        "run manifest frozen_recipe.revision",
+    )
+    policy_commit = _require_exact_model_commit(
+        _nested_value(manifest, ["revision_policy", "manifest_commit"]),
+        "run manifest revision_policy.manifest_commit",
+    )
+    if _nested_value(manifest, ["revision_policy", "cli_pins_revision"]) is not True:
+        raise PreparationError("phase-one run manifest must pin revision in every CLI")
+    if recipe_commit != policy_commit:
+        raise PreparationError("run manifest revision policy differs from frozen recipe")
+    return recipe_commit
 
 
 def _validate_criterion(criterion: Mapping[str, Any]) -> None:
@@ -1602,6 +1741,15 @@ def _require_sha256(value: Any, context: str) -> str:
     if len(digest) != 64 or any(char not in "0123456789abcdef" for char in digest):
         raise PreparationError("%s must be a lowercase SHA256" % context)
     return digest
+
+
+def _require_exact_model_commit(value: Any, context: str) -> str:
+    commit = str(value or "")
+    if not re.fullmatch(r"[0-9a-f]{40,64}", commit):
+        raise PreparationError(
+            "%s must be an exact lowercase 40-64 hex model commit" % context
+        )
+    return commit
 
 
 def _write_new_text(path: Path, text: str, executable: bool = False) -> None:

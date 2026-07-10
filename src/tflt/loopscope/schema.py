@@ -166,6 +166,27 @@ def _validate_probe_provenance(payload: Mapping[str, Any]) -> None:
         "model",
     )
     require_keys(tokenizer, ("revision", "choice_token_ids"), "tokenizer")
+    closure = payload.get("revision_closure")
+    if closure is not None:
+        if not isinstance(closure, Mapping):
+            raise SchemaError("revision_closure must be an object")
+        require_keys(
+            closure,
+            ("schema_version", "manifest_commit", "model_commit", "tokenizer_commit", "match"),
+            "revision_closure",
+        )
+        commits = [
+            str(closure.get(key) or "")
+            for key in ("manifest_commit", "model_commit", "tokenizer_commit")
+        ]
+        if closure.get("schema_version") != "loopscope.revision-closure.v1":
+            raise SchemaError("unsupported revision_closure schema")
+        if closure.get("match") is not True or len(set(commits)) != 1:
+            raise SchemaError("revision_closure does not prove one exact commit")
+        if commits[0] != str(model.get("revision")) or commits[0] != str(
+            tokenizer.get("revision")
+        ):
+            raise SchemaError("model/tokenizer revisions differ from revision_closure")
     require_keys(runtime, ("device", "dtype", "versions"), "runtime")
     require_keys(
         pool,

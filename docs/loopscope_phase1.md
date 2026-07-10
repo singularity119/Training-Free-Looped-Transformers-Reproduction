@@ -8,6 +8,7 @@
 
 ```text
 model=qwen3-1.7b-base
+revision=ea980cb0a6c2ae4b936e82123acc929f1cec04c1
 task=mmlu
 num_fewshot=5
 dtype=float16
@@ -199,13 +200,13 @@ bash scripts/loopscope/submit_qwen17_phase1.sh \
 
 Gate C 的四样本/sentinel 不能替代完整校准池 probe。脚本只调用一次 `sbatch`，不自动重试；attempt、receipt、claim 或 output 已存在时拒绝重复提交。
 
-## 模型 revision 的强制事后核验
+## 模型与 tokenizer revision 的强制闭合
 
-当前 `probe-layers`/`probe-window` 能记录模型 revision，但现有 eval CLI 不提供 revision pin 参数。因此本阶段不能声称命令行已经固定 HF revision。Gate C、Gate D 和 Gate E 必须使用同一 shared cache，并以实际工件做一致性核验：
+phase-one config 与 run manifest 固定精确 HF snapshot commit。`probe-layers`、`probe-window`、loop audit 及 smoke/full eval 的 model/tokenizer load 都显式传入该 commit；加载后必须从两个实际对象解析 resolved commit，并与 manifest commit 三方完全一致：
 
-- probe：`probe_report.json` 的 `model.revision`；
-- loop audit：`audit_report.json` 的 `model.commit_hash`；
-- lm-eval baseline/window：`model_revision.json` 的 `commit_hash`。
+- probe：`probe_report.json` 的 `model.revision`、`tokenizer.revision` 与 `revision_closure`；
+- loop audit：`audit_report.json` 的 `model.commit_hash`、`tokenizer.commit_hash` 与 `revision_closure`；
+- lm-eval baseline/window：`model_revision.json` 的 `model_commit`、`tokenizer_commit` 与 `manifest_commit`。
 
 每个阶段结束后运行：
 
@@ -215,7 +216,7 @@ python scripts/loopscope/prepare_qwen17_phase1.py verify-revisions \
   --stage gate-c
 ```
 
-Gate D、完整 probe 和 full 分别使用 `gate-d-limit`、`gate-e-probe`、`gate-e-full`。revision report 必须通过 canonical 自哈希，并精确绑定当前 run manifest、stage、预期 jobs、artifact 路径与 observations；不能只看 `match=true`。缺工件、空 revision 或任何不一致都整体停止。
+Gate D、完整 probe 和 full 分别使用 `gate-d-limit`、`gate-e-probe`、`gate-e-full`。revision report 必须通过 canonical 自哈希，并精确绑定当前 run manifest、stage、预期 jobs、artifact 路径与三方 observations；不能只看 `match=true`。缺工件、缺 resolved commit、manifest 不一致或 model/tokenizer 不一致都整体停止。
 
 离线 score 完成后执行：
 

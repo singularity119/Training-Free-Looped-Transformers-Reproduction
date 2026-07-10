@@ -11,11 +11,17 @@ from typing import Any, Optional
 from tflt.config import LoopConfig
 from tflt.models import resolve_model
 from tflt.wrapper import apply_loop_wrapper
+from tflt.loopscope.revisions import (
+    resolved_model_commit,
+    resolved_tokenizer_commit,
+    strict_revision_closure,
+)
 
 
 def main(argv: Optional[list] = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m tflt.eval_runner")
     parser.add_argument("--model", required=True)
+    parser.add_argument("--revision", default=None)
     parser.add_argument("--tasks", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--limit", type=int, default=None)
@@ -54,6 +60,7 @@ def main(argv: Optional[list] = None) -> int:
         batch_size=args.batch_size,
         dtype=args.dtype,
         loop_config=loop_config,
+        revision=args.revision,
     )
     (output_dir / "results.json").write_text(
         json.dumps(result, indent=2, sort_keys=True, default=str), encoding="utf-8"
@@ -70,10 +77,11 @@ def run_lm_eval(
     batch_size: str,
     dtype: str,
     loop_config: Optional[LoopConfig],
+    revision: Optional[str] = None,
 ) -> Any:
     try:
         import torch
-        from transformers import AutoModelForCausalLM
+        from transformers import AutoModelForCausalLM, AutoTokenizer
 
         from lm_eval import evaluator
         from lm_eval.models.huggingface import HFLM
@@ -84,24 +92,28 @@ def run_lm_eval(
             "Install with: python -m pip install -e '.[eval]'"
         ) from exc
 
+    load_kwargs = {"trust_remote_code": True}
+    if revision:
+        load_kwargs["revision"] = revision
+    tokenizer = AutoTokenizer.from_pretrained(model_repo, **load_kwargs)
     model = AutoModelForCausalLM.from_pretrained(
         model_repo,
         torch_dtype=_torch_dtype(torch, dtype),
-        trust_remote_code=True,
+        **load_kwargs,
     )
     if torch.cuda.is_available():
         model = model.to("cuda")
 
     lm = HFLM(
         pretrained=model,
-        tokenizer=model_repo,
+        tokenizer=tokenizer,
         trust_remote_code=True,
         batch_size=batch_size,
     )
     target = _underlying_hf_model(lm)
     if loop_config is not None:
         apply_loop_wrapper(target, loop_config)
-    _write_model_revision(output_dir, target, model_repo)
+    _write_model_revision(output_dir, target, tokenizer, model_repo, revision)
 
     task_manager = TaskManager()
     return evaluator.simple_evaluate(
@@ -151,13 +163,37 @@ def _torch_dtype(torch_module: Any, dtype: str) -> Any:
     return mapping.get(str(dtype).lower(), dtype)
 
 
-def _write_model_revision(output_dir: Path, model: Any, repo_id: str) -> None:
+def _write_model_revision(
+    output_dir: Path,
+    model: Any,
+    tokenizer: Any,
+    repo_id: str,
+    manifest_revision: Optional[str] = None,
+) -> None:
     cfg = getattr(model, "config", None)
+    closure = (
+        strict_revision_closure(model, tokenizer, manifest_revision)
+        if manifest_revision
+        else None
+    )
+    model_commit = (
+        closure["model_commit"] if closure is not None else resolved_model_commit(model)
+    )
+    tokenizer_commit = (
+        closure["tokenizer_commit"]
+        if closure is not None
+        else resolved_tokenizer_commit(tokenizer)
+    )
     payload = {
+        "schema_version": "loopscope.model-tokenizer-revision.v1",
         "repo_id": repo_id,
         "architectures": getattr(cfg, "architectures", None),
         "model_type": getattr(cfg, "model_type", None),
-        "commit_hash": getattr(cfg, "_commit_hash", None),
+        "commit_hash": model_commit,
+        "model_commit": model_commit,
+        "tokenizer_commit": tokenizer_commit,
+        "manifest_commit": closure["manifest_commit"] if closure is not None else None,
+        "match": closure["match"] if closure is not None else None,
         "transformers_version": _module_version("transformers"),
         "lm_eval_version": _module_version("lm_eval"),
     }

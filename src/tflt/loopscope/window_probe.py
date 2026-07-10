@@ -36,6 +36,7 @@ from tflt.loopscope.schema import (
     validate_probe_report,
     write_new_json,
 )
+from tflt.loopscope.revisions import strict_revision_closure
 from tflt.models import resolve_model
 from tflt.wrapper import apply_loop_wrapper
 
@@ -100,6 +101,11 @@ def run_window_probe(args: Any) -> Dict[str, Any]:
         torch_dtype=torch_dtype(torch, args.dtype),
         **load_kwargs,
     )
+    revision_closure = (
+        strict_revision_closure(model, tokenizer, args.revision)
+        if args.revision
+        else None
+    )
     model.eval()
     model.to(device)
     layer_count = int(getattr(model.config, "num_hidden_layers", 0) or 0)
@@ -152,15 +158,25 @@ def run_window_probe(args: Any) -> Dict[str, Any]:
             handle.restore()
         window_metrics.append(collector.window_summary(window))
 
-    actual_model_revision = getattr(model.config, "_commit_hash", None) or args.revision
+    actual_model_revision = (
+        revision_closure["model_commit"]
+        if revision_closure is not None
+        else getattr(model.config, "_commit_hash", None) or args.revision
+    )
+    actual_tokenizer_revision = (
+        revision_closure["tokenizer_commit"]
+        if revision_closure is not None
+        else tokenizer_revision(tokenizer, actual_model_revision)
+    )
     return {
         "schema_version": PROBE_SCHEMA_VERSION,
         "git": git_provenance(),
         "model": model_metadata(model, model_info, layer_count, actual_model_revision),
         "tokenizer": {
-            "revision": tokenizer_revision(tokenizer, actual_model_revision),
+            "revision": actual_tokenizer_revision,
             "choice_token_ids": {},
         },
+        "revision_closure": revision_closure,
         "runtime": runtime_metadata(torch, device, args.dtype),
         "probe_pool": pool_metadata,
         "position_rule": "explicit answer_position or last non-padding token",

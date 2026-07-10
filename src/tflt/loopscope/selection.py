@@ -303,6 +303,7 @@ def score_windows(
                 for key in ("alias", "repo_id", "revision", "layer_count")
             },
             "tokenizer_revision": layer_report["tokenizer"].get("revision"),
+            "revision_closure": dict(layer_report.get("revision_closure") or {}),
             "runtime_dtype": layer_report["runtime"].get("dtype"),
             "probe_pool": {
                 key: layer_report["probe_pool"].get(key)
@@ -508,6 +509,10 @@ def _validate_probe_alignment(
         ("model", "revision"),
         ("model", "layer_count"),
         ("tokenizer", "revision"),
+        ("revision_closure", "manifest_commit"),
+        ("revision_closure", "model_commit"),
+        ("revision_closure", "tokenizer_commit"),
+        ("revision_closure", "match"),
         ("runtime", "dtype"),
         ("probe_pool", "manifest_sha256"),
         ("probe_pool", "source_manifest_sha256"),
@@ -543,8 +548,14 @@ def _validate_probe_alignment(
     }
     for report_index, report in enumerate(window_reports):
         for section, key in reference_paths:
-            expected = layer_report.get(key) if section is None else layer_report[section].get(key)
-            actual = report.get(key) if section is None else report[section].get(key)
+            layer_section = layer_report if section is None else layer_report.get(section)
+            report_section = report if section is None else report.get(section)
+            expected = (
+                layer_section.get(key) if isinstance(layer_section, Mapping) else None
+            )
+            actual = (
+                report_section.get(key) if isinstance(report_section, Mapping) else None
+            )
             if actual != expected:
                 name = key if section is None else "%s.%s" % (section, key)
                 raise SelectionError(

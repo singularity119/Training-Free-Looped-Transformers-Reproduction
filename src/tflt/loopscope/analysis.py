@@ -34,6 +34,7 @@ PHASE1_FULL_STAGE = "gate-e-full"
 PHASE1_RECIPE = {
     "model": "qwen3-1.7b-base",
     "repo_id": "Qwen/Qwen3-1.7B-Base",
+    "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
     "task": "mmlu",
     "num_fewshot": 5,
     "dtype": "float16",
@@ -1375,18 +1376,20 @@ def _validate_full_cli_provenance(
         "baseline": _validate_eval_bundle(baseline_bundle, baseline_job, recipe),
         "windows": {},
     }
-    revisions = {artifact_records["baseline"]["model_revision"]}
+    revisions = {tuple(artifact_records["baseline"]["revision_closure"].values())}
     for window in expected_windows:
         record = _validate_eval_bundle(
             window_bundles[window], jobs_by_window[window], recipe
         )
         artifact_records["windows"][window] = record
-        revisions.add(record["model_revision"])
+        revisions.add(tuple(record["revision_closure"].values()))
     if len(revisions) != 1:
         raise AnalysisError(
-            "mixed model revisions across full artifacts: %s" % sorted(revisions)
+            "mixed model/tokenizer/manifest revisions across full artifacts: %s"
+            % sorted(revisions)
         )
-    model_revision = next(iter(revisions))
+    revision_closure = artifact_records["baseline"]["revision_closure"]
+    model_revision = revision_closure["model_commit"]
     _validate_score_probe_provenance(
         score_report, run_manifest, recipe, model_revision
     )
@@ -1415,6 +1418,7 @@ def _validate_full_cli_provenance(
         "stage": PHASE1_FULL_STAGE,
         "frozen_recipe": dict(recipe),
         "model_revision": model_revision,
+        "revision_closure": revision_closure,
         "artifacts": artifact_records,
     }
 
@@ -1424,6 +1428,9 @@ def _validate_full_probe_pool_provenance(
     run_manifest: Mapping[str, Any],
     score_report: Mapping[str, Any],
 ) -> Dict[str, Any]:
+    manifest_commit = run_manifest.get("frozen_recipe", {}).get("revision")
+    if manifest_commit != PHASE1_RECIPE["revision"]:
+        raise AnalysisError("run manifest does not freeze the phase-one model revision")
     inputs = run_manifest.get("inputs")
     pool_input = inputs.get("probe_pool") if isinstance(inputs, Mapping) else None
     if not isinstance(pool_input, Mapping):
@@ -1560,11 +1567,27 @@ def _validate_full_probe_pool_provenance(
         ):
             if report_pool.get(key) != score_pool.get(key):
                 raise AnalysisError("Gate E %s probe-pool mismatch at %s" % (label, key))
+        revision_closure = report.get("revision_closure")
+        if not isinstance(revision_closure, Mapping):
+            raise AnalysisError("Gate E %s report lacks revision_closure" % label)
+        for key, expected in {
+            "manifest_commit": manifest_commit,
+            "model_commit": manifest_commit,
+            "tokenizer_commit": manifest_commit,
+            "match": True,
+        }.items():
+            if revision_closure.get(key) != expected:
+                raise AnalysisError("Gate E %s revision mismatch at %s" % (label, key))
+        if report.get("model", {}).get("revision") != manifest_commit or report.get(
+            "tokenizer", {}
+        ).get("revision") != manifest_commit:
+            raise AnalysisError("Gate E %s model/tokenizer revision mismatch" % label)
         report_provenance[label] = {
             "path": str(path.resolve()),
             "file_sha256": _file_sha256(path),
             "canonical_sha256": manifest_sha256(report),
             "probe_pool_manifest_sha256": report_pool["manifest_sha256"],
+            "revision_closure": dict(revision_closure),
         }
     return {
         "manifest_path": str(manifest_path.resolve()),
@@ -1577,6 +1600,11 @@ def _validate_full_probe_pool_provenance(
         "selected_subset_sha256": selected_hash,
         "render_contract_subset_sha256": full_render_hash,
         "sample_ids_sha256": sha256(canonical_json_bytes(sample_ids)).hexdigest(),
+        "revision_binding": {
+            "manifest_commit": manifest_commit,
+            "model_commit": manifest_commit,
+            "tokenizer_commit": manifest_commit,
+        },
         "probe_reports": report_provenance,
     }
 
@@ -1596,6 +1624,7 @@ def _validate_frozen_full_probe_evidence(
         "selected_subset_sha256",
         "render_contract_subset_sha256",
         "sample_ids_sha256",
+        "revision_binding",
     ):
         if key not in frozen:
             raise AnalysisError("Gate E score freeze full-probe evidence is missing %s" % key)
@@ -1621,6 +1650,7 @@ def _validate_frozen_full_probe_evidence(
             "file_sha256",
             "canonical_sha256",
             "probe_pool_manifest_sha256",
+            "revision_closure",
         ):
             if key not in frozen_report:
                 raise AnalysisError(
@@ -1713,12 +1743,30 @@ def _validate_gate_e_score_freeze(
     if not revision_path.is_file():
         raise AnalysisError("gate-e-probe revision report is missing")
     revision_report = _load_json_object(revision_path, "gate-e-probe revision report")
+    expected_revision = PHASE1_RECIPE["revision"]
+    if revision_report.get("schema_version") != "loopscope.model-tokenizer-revision-check.v2":
+        raise AnalysisError("unsupported gate-e-probe revision report schema")
     if revision_report.get("manifest_sha256") != manifest_sha256(revision_report):
         raise AnalysisError("gate-e-probe revision report canonical hash mismatch")
     if revision_report.get("run_manifest_sha256") != run_manifest.get("manifest_sha256"):
         raise AnalysisError("gate-e-probe revision report belongs to another run")
     if revision_report.get("stage") != "gate-e-probe" or revision_report.get("match") is not True:
         raise AnalysisError("gate-e-probe revision report is not a matching stage proof")
+    if revision_report.get("manifest_commit") != expected_revision or revision_report.get(
+        "unique_revisions"
+    ) != [expected_revision]:
+        raise AnalysisError("gate-e-probe revision report differs from frozen manifest commit")
+    observations = revision_report.get("observations")
+    if not isinstance(observations, list) or not observations:
+        raise AnalysisError("gate-e-probe revision report has no observations")
+    for observation in observations:
+        commits = {
+            observation.get("model_commit"),
+            observation.get("tokenizer_commit"),
+            observation.get("manifest_commit"),
+        }
+        if commits != {expected_revision} or observation.get("match") is not True:
+            raise AnalysisError("gate-e-probe observation fails three-party revision closure")
     if freeze.get("gate_e_probe_revision_report_sha256") != revision_report.get(
         "manifest_sha256"
     ):
@@ -1767,8 +1815,13 @@ def _validate_manifest_eval_job(
         raise AnalysisError("Gate E job has invalid id/stage")
     if raw_job.get("automatic_retry") is not False:
         raise AnalysisError("Gate E job must freeze automatic_retry=false")
-    if raw_job.get("revision_key") != ["commit_hash"]:
-        raise AnalysisError("Gate E job must read model_revision.commit_hash")
+    expected_revision_keys = {
+        "model_commit": ["model_commit"],
+        "tokenizer_commit": ["tokenizer_commit"],
+        "manifest_commit": ["manifest_commit"],
+    }
+    if raw_job.get("revision_keys") != expected_revision_keys:
+        raise AnalysisError("Gate E job must freeze model/tokenizer/manifest revision keys")
     output_dir = Path(str(raw_job.get("output_dir", ""))).resolve()
     expected_stage_root = (run_root / PHASE1_FULL_STAGE).resolve()
     if not _path_is_within(output_dir, expected_stage_root):
@@ -1801,6 +1854,7 @@ def _parse_eval_job_argv(argv: Any) -> Dict[str, Any]:
     boolean_flags = {"--loop": "loop"}
     value_flags = {
         "--model": "model",
+        "--revision": "revision",
         "--tasks": "tasks",
         "--output-dir": "output_dir",
         "--limit": "limit",
@@ -1847,6 +1901,7 @@ def _validate_eval_options(
 ) -> None:
     expected_common = {
         "model": recipe["model"],
+        "revision": recipe["revision"],
         "tasks": recipe["task"],
         "batch_size": "auto",
         "dtype": recipe["dtype"],
@@ -1926,9 +1981,16 @@ def _validate_eval_bundle(
         raise AnalysisError("model_revision.json must contain an object")
     if revision.get("repo_id") != recipe["repo_id"]:
         raise AnalysisError("model_revision.json repo_id differs from frozen recipe")
-    commit_hash = revision.get("commit_hash")
-    if not isinstance(commit_hash, str) or not commit_hash.strip():
-        raise AnalysisError("model_revision.json has no commit_hash")
+    closure = {
+        key: revision.get(key)
+        for key in ("model_commit", "tokenizer_commit", "manifest_commit")
+    }
+    if revision.get("match") is not True or len(set(closure.values())) != 1:
+        raise AnalysisError("model_revision.json does not close model/tokenizer/manifest revisions")
+    if next(iter(closure.values())) != recipe["revision"]:
+        raise AnalysisError("model_revision.json differs from frozen manifest revision")
+    if revision.get("commit_hash") != closure["model_commit"]:
+        raise AnalysisError("legacy commit_hash disagrees with model_commit")
 
     results = bundle.get("results")
     result_config = results.get("config") if isinstance(results, Mapping) else None
@@ -1942,7 +2004,8 @@ def _validate_eval_bundle(
         "job_id": job["job_id"],
         "window": job["window"],
         "output_dir": str(output_dir),
-        "model_revision": commit_hash,
+        "model_revision": closure["model_commit"],
+        "revision_closure": closure,
         "artifact_sha256": dict(bundle.get("artifact_sha256", {})),
     }
 
@@ -1971,6 +2034,20 @@ def _validate_score_probe_provenance(
     for key, expected in expected_model.items():
         if model.get(key) != expected:
             raise AnalysisError("window-score probe model mismatch at %s" % key)
+    if provenance.get("tokenizer_revision") != recipe["revision"]:
+        raise AnalysisError("window-score probe tokenizer revision mismatch")
+    closure = provenance.get("revision_closure")
+    if not isinstance(closure, Mapping):
+        raise AnalysisError("window-score probe revision closure is missing")
+    expected_closure = {
+        "manifest_commit": recipe["revision"],
+        "model_commit": recipe["revision"],
+        "tokenizer_commit": recipe["revision"],
+        "match": True,
+    }
+    for key, expected in expected_closure.items():
+        if closure.get(key) != expected:
+            raise AnalysisError("window-score probe revision closure mismatch at %s" % key)
     if provenance.get("runtime_dtype") != recipe["dtype"]:
         raise AnalysisError("window-score probe dtype differs from frozen recipe")
     manifest_git = run_manifest.get("git")

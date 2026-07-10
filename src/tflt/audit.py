@@ -12,6 +12,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from tflt.config import LoopConfig
 from tflt.models import resolve_model
+from tflt.loopscope.revisions import strict_revision_closure
 from tflt.wrapper import apply_loop_wrapper, _find_layer_owner
 
 
@@ -84,6 +85,7 @@ class AuditCollector:
 
 def add_audit_args(parser: Any) -> None:
     parser.add_argument("--model", required=True)
+    parser.add_argument("--revision", default=None)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--window", default="12:15")
     parser.add_argument("--k", type=int, default=2)
@@ -127,11 +129,19 @@ def run_loop_effect_audit(args: Any) -> Dict[str, Any]:
     dtype = _torch_dtype(torch, args.dtype)
     prompts = _audit_prompts(args.prompt)
 
-    tokenizer = AutoTokenizer.from_pretrained(repo_id, trust_remote_code=True)
+    load_kwargs = {"trust_remote_code": True}
+    if args.revision:
+        load_kwargs["revision"] = args.revision
+    tokenizer = AutoTokenizer.from_pretrained(repo_id, **load_kwargs)
     model = AutoModelForCausalLM.from_pretrained(
         repo_id,
         torch_dtype=dtype,
-        trust_remote_code=True,
+        **load_kwargs,
+    )
+    revision_closure = (
+        strict_revision_closure(model, tokenizer, args.revision)
+        if args.revision
+        else None
     )
     model.eval()
     model.to(device)
@@ -219,6 +229,14 @@ def run_loop_effect_audit(args: Any) -> Dict[str, Any]:
             "commit_hash": getattr(getattr(model, "config", None), "_commit_hash", None),
             "model_type": getattr(getattr(model, "config", None), "model_type", None),
         },
+        "tokenizer": {
+            "commit_hash": (
+                revision_closure["tokenizer_commit"]
+                if revision_closure is not None
+                else getattr(tokenizer, "_commit_hash", None)
+            ),
+        },
+        "revision_closure": revision_closure,
         "runtime": {
             "device": device,
             "dtype": args.dtype,

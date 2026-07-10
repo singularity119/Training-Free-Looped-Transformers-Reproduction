@@ -157,6 +157,13 @@ if manifest.get("schema_version") != "loopscope.phase1-run.v1":
     raise SystemExit("unsupported phase-one run manifest")
 if manifest.get("manifest_sha256") != manifest_hash(manifest):
     raise SystemExit("phase-one run manifest SHA256 mismatch")
+manifest_commit = str(manifest.get("revision_policy", {}).get("manifest_commit", ""))
+if not re.fullmatch(r"[0-9a-f]{40,64}", manifest_commit):
+    raise SystemExit("phase-one run manifest lacks an exact model revision")
+if manifest.get("revision_policy", {}).get("cli_pins_revision") is not True:
+    raise SystemExit("phase-one run manifest does not pin CLI revisions")
+if manifest.get("frozen_recipe", {}).get("revision") != manifest_commit:
+    raise SystemExit("phase-one revision policy differs from frozen recipe")
 if pathlib.Path(manifest.get("run_root", "")).resolve() != run_root:
     raise SystemExit("run root does not match its manifest")
 expected_repo = pathlib.Path(
@@ -224,13 +231,16 @@ def revision_contract(job):
         "job_id": str(job["job_id"]),
         "stage": str(job["stage"]),
         "artifact": str(job["revision_artifact"]),
-        "revision_key": [str(value) for value in job["revision_key"]],
+        "revision_keys": {
+            str(name): [str(value) for value in path]
+            for name, path in job["revision_keys"].items()
+        },
     }
 
 def validate_revision_report(report_stage):
     path = run_root / "control" / "provenance" / (report_stage + "-model-revisions.json")
     report = load(path) if path.is_file() else None
-    if not report or report.get("schema_version") != "loopscope.model-revision-check.v1":
+    if not report or report.get("schema_version") != "loopscope.model-tokenizer-revision-check.v2":
         raise SystemExit("%s model-revision report is missing/unsupported" % report_stage)
     if report.get("manifest_sha256") != manifest_hash(report):
         raise SystemExit("%s model-revision report canonical hash mismatch" % report_stage)
@@ -244,25 +254,35 @@ def validate_revision_report(report_stage):
     observations = report.get("observations")
     if not isinstance(observations, list) or len(observations) != len(expected):
         raise SystemExit("model-revision observation count mismatch")
+    manifest_commit = str(manifest.get("revision_policy", {}).get("manifest_commit", ""))
+    if report.get("manifest_commit") != manifest_commit:
+        raise SystemExit("model-revision report manifest commit mismatch")
     revisions = []
     for observation, contract in zip(observations, expected):
         observed = {
             "job_id": str(observation.get("job_id", "")),
             "stage": str(observation.get("stage", "")),
             "artifact": str(observation.get("artifact", "")),
-            "revision_key": contract["revision_key"],
+            "revision_keys": contract["revision_keys"],
         }
         if observed != contract:
             raise SystemExit("model-revision observation job/artifact mismatch")
-        revision = str(observation.get("revision", "")).strip()
-        if not revision:
-            raise SystemExit("model-revision observation is empty")
-        revisions.append(revision)
+        commits = [
+            str(observation.get(key, "")).strip()
+            for key in ("model_commit", "tokenizer_commit", "manifest_commit")
+        ]
+        if any(not value for value in commits):
+            raise SystemExit("model/tokenizer/manifest revision observation is empty")
+        if observation.get("match") is not True or len(set(commits)) != 1:
+            raise SystemExit("model/tokenizer/manifest revisions differ")
+        if commits[0] != manifest_commit:
+            raise SystemExit("resolved revisions differ from run manifest")
+        revisions.extend(commits)
     unique = sorted(set(revisions))
     if report.get("unique_revisions") != unique or report.get("match") is not True:
         raise SystemExit("model-revision report does not prove one exact revision")
     if len(unique) != 1:
-        raise SystemExit("model revisions differ")
+        raise SystemExit("model/tokenizer/manifest revisions differ")
     return report
 
 gate_e_probe_report = None

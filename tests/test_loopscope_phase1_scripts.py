@@ -40,6 +40,15 @@ def _source_record(index, subject="math"):
 
 
 class LoopScopePhaseOneScriptTest(unittest.TestCase):
+    def test_phase_config_requires_exact_model_revision(self):
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "configs/loopscope/qwen17_mmlu_phase1.json")
+            .read_text(encoding="utf-8")
+        )
+        del config["model"]["revision"]
+        with self.assertRaises(prepare.PreparationError):
+            prepare._validate_phase_config(config)
+
     def test_builder_requires_lm_eval_five_shot_contract_and_prepare_accepts_it(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -136,6 +145,17 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
         self.assertEqual(jobs["gate-e-score"][0]["argv"][3], "score-windows")
         self.assertIn("--criterion", jobs["gate-e-score"][0]["argv"])
         self.assertTrue(jobs["gate-e-full"])
+        for stage in ("gate-c", "gate-d-limit", "gate-e-probe", "gate-e-full"):
+            for job in jobs[stage]:
+                self.assertIn("--revision", job["argv"])
+                revision_index = job["argv"].index("--revision")
+                self.assertEqual(
+                    job["argv"][revision_index + 1], prepare.MODEL_SNAPSHOT_COMMIT
+                )
+                self.assertEqual(
+                    set(job["revision_keys"]),
+                    {"model_commit", "tokenizer_commit", "manifest_commit"},
+                )
 
     def test_revision_report_is_bound_to_run_stage_jobs_and_observations(self):
         root = prepare.DEFAULT_RUN_BASE / "loopscope-qwen17-mmlu-phase1-20260710-120000"
@@ -153,36 +173,100 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
         )
         manifest = {
             "schema_version": prepare.RUN_SCHEMA_VERSION,
+            "frozen_recipe": {"revision": prepare.MODEL_SNAPSHOT_COMMIT},
+            "revision_policy": {
+                "cli_pins_revision": True,
+                "manifest_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+            },
             "stages": {stage: {"jobs": values} for stage, values in jobs.items()},
         }
         manifest["manifest_sha256"] = prepare.manifest_sha256(manifest)
         expected_jobs = prepare._revision_jobs_for_stage(manifest, "gate-d-limit")
         report = {
-            "schema_version": "loopscope.model-revision-check.v1",
+            "schema_version": prepare.REVISION_REPORT_SCHEMA_VERSION,
             "run_manifest_sha256": manifest["manifest_sha256"],
             "stage": "gate-d-limit",
-            "reference_policy": "all actual commit hashes must exactly match",
+            "manifest_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+            "reference_policy": "model, tokenizer, and manifest commits must all exactly match",
             "expected_jobs": [prepare._revision_job_contract(job) for job in expected_jobs],
             "observations": [
                 {
                     "job_id": job["job_id"],
                     "stage": job["stage"],
                     "artifact": job["revision_artifact"],
-                    "revision": "revision-a",
+                    "model_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+                    "tokenizer_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+                    "manifest_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+                    "match": True,
                 }
                 for job in expected_jobs
             ],
-            "unique_revisions": ["revision-a"],
+            "unique_revisions": [prepare.MODEL_SNAPSHOT_COMMIT],
             "match": True,
         }
         report["manifest_sha256"] = prepare.manifest_sha256(report)
         self.assertEqual(
             prepare.validate_revision_report_payload(report, manifest, "gate-d-limit"),
-            "revision-a",
+            prepare.MODEL_SNAPSHOT_COMMIT,
         )
         report["observations"] = report["observations"][:-1]
         report["manifest_sha256"] = prepare.manifest_sha256(report)
         with self.assertRaises(prepare.PreparationError):
+            prepare.validate_revision_report_payload(report, manifest, "gate-d-limit")
+
+    def test_revision_report_rejects_probe_eval_mismatch(self):
+        root = prepare.DEFAULT_RUN_BASE / "loopscope-qwen17-mmlu-phase1-20260710-120000"
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "configs/loopscope/qwen17_mmlu_phase1.json")
+            .read_text(encoding="utf-8")
+        )
+        jobs = prepare._build_jobs(
+            root,
+            prepare.DEFAULT_REMOTE_REPO,
+            prepare.DEFAULT_REMOTE_REPO / ".venv-loopscope-cu121-20260710",
+            config,
+            generate_window_grid(28),
+            root / "manifests/criterion_v0.json",
+        )
+        manifest = {
+            "schema_version": prepare.RUN_SCHEMA_VERSION,
+            "frozen_recipe": {"revision": prepare.MODEL_SNAPSHOT_COMMIT},
+            "revision_policy": {
+                "cli_pins_revision": True,
+                "manifest_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+            },
+            "stages": {stage: {"jobs": values} for stage, values in jobs.items()},
+        }
+        manifest["manifest_sha256"] = prepare.manifest_sha256(manifest)
+        expected_jobs = prepare._revision_jobs_for_stage(manifest, "gate-d-limit")
+        observations = []
+        for job in expected_jobs:
+            observations.append(
+                {
+                    "job_id": job["job_id"],
+                    "stage": job["stage"],
+                    "artifact": job["revision_artifact"],
+                    "model_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+                    "tokenizer_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+                    "manifest_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+                    "match": True,
+                }
+            )
+        observations[-1]["tokenizer_commit"] = "b" * 40
+        observations[-1]["match"] = False
+        report = {
+            "schema_version": prepare.REVISION_REPORT_SCHEMA_VERSION,
+            "run_manifest_sha256": manifest["manifest_sha256"],
+            "stage": "gate-d-limit",
+            "manifest_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+            "reference_policy": "model, tokenizer, and manifest commits must all exactly match",
+            "expected_jobs": [prepare._revision_job_contract(job) for job in expected_jobs],
+            "observations": observations,
+            "unique_revisions": [prepare.MODEL_SNAPSHOT_COMMIT, "b" * 40],
+            "match": False,
+        }
+        report["manifest_sha256"] = prepare.manifest_sha256(report)
+        with self.assertRaisesRegex(prepare.PreparationError, "do not match"):
             prepare.validate_revision_report_payload(report, manifest, "gate-d-limit")
 
     def test_score_freeze_rejects_four_sample_prefix_of_larger_frozen_pool(self):
@@ -226,6 +310,11 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
                 json.dumps({"probe_pool": prefix_pool}), encoding="utf-8"
             )
             run_manifest = {
+                "frozen_recipe": {"revision": prepare.MODEL_SNAPSHOT_COMMIT},
+                "revision_policy": {
+                    "cli_pins_revision": True,
+                    "manifest_commit": prepare.MODEL_SNAPSHOT_COMMIT,
+                },
                 "inputs": {
                     "probe_pool": {
                         "snapshot_path": str(pool),

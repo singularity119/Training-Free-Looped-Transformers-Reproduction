@@ -27,6 +27,8 @@ from tflt.loopscope.schema import (
     canonical_json_bytes,
     manifest_sha256,
 )
+
+MODEL_COMMIT = "ea980cb0a6c2ae4b936e82123acc929f1cec04c1"
 from tflt.loopscope.selection import PRIMARY_SIGNALS
 
 
@@ -275,10 +277,17 @@ def _phase1_score_report(grid, pool):
         "model": {
             "alias": "qwen3-1.7b-base",
             "repo_id": "Qwen/Qwen3-1.7B-Base",
-            "revision": "revision-a",
+            "revision": MODEL_COMMIT,
             "layer_count": 28,
         },
-        "tokenizer_revision": "revision-a",
+        "tokenizer_revision": MODEL_COMMIT,
+        "revision_closure": {
+            "schema_version": "loopscope.revision-closure.v1",
+            "manifest_commit": MODEL_COMMIT,
+            "model_commit": MODEL_COMMIT,
+            "tokenizer_commit": MODEL_COMMIT,
+            "match": True,
+        },
         "runtime_dtype": "float16",
         "probe_pool": {
             key: pool[key]
@@ -315,6 +324,8 @@ def _phase1_eval_argv(output_dir, window=None, limit=None):
         "tflt.eval_runner",
         "--model",
         "qwen3-1.7b-base",
+        "--revision",
+        MODEL_COMMIT,
         "--tasks",
         "mmlu",
         "--output-dir",
@@ -357,6 +368,7 @@ def _write_phase1_eval_artifact(output_dir, accuracy, correctness, window, revis
     output_dir.mkdir(parents=True)
     command_args = {
         "model": "qwen3-1.7b-base",
+        "revision": MODEL_COMMIT,
         "tasks": "mmlu",
         "output_dir": str(output_dir),
         "limit": None,
@@ -382,7 +394,15 @@ def _write_phase1_eval_artifact(output_dir, accuracy, correctness, window, revis
     )
     (output_dir / "model_revision.json").write_text(
         json.dumps(
-            {"repo_id": "Qwen/Qwen3-1.7B-Base", "commit_hash": revision}
+            {
+                "schema_version": "loopscope.model-tokenizer-revision.v1",
+                "repo_id": "Qwen/Qwen3-1.7B-Base",
+                "commit_hash": revision,
+                "model_commit": revision,
+                "tokenizer_commit": revision,
+                "manifest_commit": MODEL_COMMIT,
+                "match": revision == MODEL_COMMIT,
+            }
         ),
         encoding="utf-8",
     )
@@ -411,7 +431,23 @@ def _write_full_cli_fixture(root):
     )
     for path in (layer_probe_path, window_probe_path):
         path.parent.mkdir(parents=True)
-        path.write_text(json.dumps({"probe_pool": probe_pool}), encoding="utf-8")
+        path.write_text(
+            json.dumps(
+                {
+                    "model": {"revision": MODEL_COMMIT},
+                    "tokenizer": {"revision": MODEL_COMMIT},
+                    "revision_closure": {
+                        "schema_version": "loopscope.revision-closure.v1",
+                        "manifest_commit": MODEL_COMMIT,
+                        "model_commit": MODEL_COMMIT,
+                        "tokenizer_commit": MODEL_COMMIT,
+                        "match": True,
+                    },
+                    "probe_pool": probe_pool,
+                }
+            ),
+            encoding="utf-8",
+        )
     score = _phase1_score_report(grid, probe_pool)
     score["inputs"] = {
         "paths": {
@@ -434,7 +470,7 @@ def _write_full_cli_fixture(root):
     baseline_output = run_root / "gate-e-full" / "baseline-full"
     baseline_correctness = [1, 0, 1, 0]
     _write_phase1_eval_artifact(
-        baseline_output, 0.5, baseline_correctness, None, "revision-a"
+        baseline_output, 0.5, baseline_correctness, None, MODEL_COMMIT
     )
     jobs = []
 
@@ -448,7 +484,11 @@ def _write_full_cli_fixture(root):
             "argv": argv,
             "command": shlex.join(argv),
             "revision_artifact": str(output_dir / "model_revision.json"),
-            "revision_key": ["commit_hash"],
+            "revision_keys": {
+                "model_commit": ["model_commit"],
+                "tokenizer_commit": ["tokenizer_commit"],
+                "manifest_commit": ["manifest_commit"],
+            },
             "automatic_retry": False,
         }
 
@@ -465,7 +505,7 @@ def _write_full_cli_fixture(root):
     for window, (accuracy, correctness) in window_results.items():
         output = run_root / "gate-e-full" / ("window-" + window.replace(":", "-") + "-full")
         _write_phase1_eval_artifact(
-            output, accuracy, correctness, window, "revision-a"
+            output, accuracy, correctness, window, MODEL_COMMIT
         )
         jobs.append(job("window-%s-full" % window.replace(":", "-"), output, window))
         specifications.append("%s=%s" % (window, output / "results.json"))
@@ -501,6 +541,7 @@ def _write_full_cli_fixture(root):
         "frozen_recipe": {
             "model": "qwen3-1.7b-base",
             "repo_id": "Qwen/Qwen3-1.7B-Base",
+            "revision": MODEL_COMMIT,
             "task": "mmlu",
             "num_fewshot": 5,
             "dtype": "float16",
@@ -513,16 +554,30 @@ def _write_full_cli_fixture(root):
             "decode_mode": "bypass",
             "window_width": 4,
         },
+        "revision_policy": {
+            "cli_pins_revision": True,
+            "manifest_commit": MODEL_COMMIT,
+        },
         "stages": {
             "gate-e-probe": {
                 "jobs": [
                     {
                         "job_id": "probe-layers-full",
                         "revision_artifact": str(layer_probe_path),
+                        "revision_keys": {
+                            "model_commit": ["model", "revision"],
+                            "tokenizer_commit": ["tokenizer", "revision"],
+                            "manifest_commit": ["revision_closure", "manifest_commit"],
+                        },
                     },
                     {
                         "job_id": "probe-windows-full",
                         "revision_artifact": str(window_probe_path),
+                        "revision_keys": {
+                            "model_commit": ["model", "revision"],
+                            "tokenizer_commit": ["tokenizer", "revision"],
+                            "manifest_commit": ["revision_closure", "manifest_commit"],
+                        },
                     },
                 ]
             },
@@ -547,11 +602,27 @@ def _write_full_cli_fixture(root):
     provenance_dir = run_root / "control" / "provenance"
     provenance_dir.mkdir()
     revision_report = {
-        "schema_version": "loopscope.model-revision-check.v1",
+        "schema_version": "loopscope.model-tokenizer-revision-check.v2",
         "run_manifest_sha256": manifest["manifest_sha256"],
         "stage": "gate-e-probe",
+        "manifest_commit": MODEL_COMMIT,
         "match": True,
-        "unique_revisions": ["revision-a"],
+        "unique_revisions": [MODEL_COMMIT],
+        "observations": [
+            {
+                "job_id": job_id,
+                "stage": "gate-e-probe",
+                "artifact": str(path),
+                "model_commit": MODEL_COMMIT,
+                "tokenizer_commit": MODEL_COMMIT,
+                "manifest_commit": MODEL_COMMIT,
+                "match": True,
+            }
+            for job_id, path in (
+                ("probe-layers-full", layer_probe_path),
+                ("probe-windows-full", window_probe_path),
+            )
+        ],
     }
     revision_report["manifest_sha256"] = manifest_sha256(revision_report)
     revision_path = provenance_dir / "gate-e-probe-model-revisions.json"
@@ -579,6 +650,11 @@ def _write_full_cli_fixture(root):
             "sample_ids_sha256": hashlib.sha256(
                 canonical_json_bytes(source_pool_manifest["sample_ids"])
             ).hexdigest(),
+            "revision_binding": {
+                "manifest_commit": MODEL_COMMIT,
+                "model_commit": MODEL_COMMIT,
+                "tokenizer_commit": MODEL_COMMIT,
+            },
             "probe_reports": {
                 label: {
                     "path": str(path.resolve()),
@@ -587,6 +663,13 @@ def _write_full_cli_fixture(root):
                         json.loads(path.read_text(encoding="utf-8"))
                     ),
                     "probe_pool_manifest_sha256": probe_pool["manifest_sha256"],
+                    "revision_closure": {
+                        "schema_version": "loopscope.revision-closure.v1",
+                        "manifest_commit": MODEL_COMMIT,
+                        "model_commit": MODEL_COMMIT,
+                        "tokenizer_commit": MODEL_COMMIT,
+                        "match": True,
+                    },
                 }
                 for label, path in (
                     ("layer", layer_probe_path),
@@ -705,7 +788,8 @@ class LoopScopeAnalysisTest(unittest.TestCase):
             provenance = report["execution_provenance"]
             self.assertTrue(provenance["validated"])
             self.assertEqual(provenance["stage"], "gate-e-full")
-            self.assertEqual(provenance["model_revision"], "revision-a")
+            self.assertEqual(provenance["model_revision"], MODEL_COMMIT)
+            self.assertEqual(provenance["revision_closure"]["tokenizer_commit"], MODEL_COMMIT)
             baseline_hashes = provenance["artifacts"]["baseline"]["artifact_sha256"]
             self.assertIn("command_args.json", baseline_hashes)
 
@@ -726,9 +810,12 @@ class LoopScopeAnalysisTest(unittest.TestCase):
                 run_root / "gate-e-full" / "window-8-11-full" / "model_revision.json"
             )
             revision = json.loads(revision_path.read_text(encoding="utf-8"))
-            revision["commit_hash"] = "revision-b"
+            revision["commit_hash"] = "b" * 40
+            revision["model_commit"] = "b" * 40
+            revision["tokenizer_commit"] = "b" * 40
+            revision["manifest_commit"] = "b" * 40
             revision_path.write_text(json.dumps(revision), encoding="utf-8")
-            with self.assertRaisesRegex(AnalysisError, "mixed model revisions"):
+            with self.assertRaisesRegex(AnalysisError, "frozen manifest revision"):
                 cmd_analyze_window_grid(args)
 
     def test_full_cli_rejects_probe_eval_revision_mix(self):
@@ -736,7 +823,7 @@ class LoopScopeAnalysisTest(unittest.TestCase):
             args, _ = _write_full_cli_fixture(Path(tmp))
             score_path = Path(args.selection_report)
             score = json.loads(score_path.read_text(encoding="utf-8"))
-            score["probe_provenance"]["model"]["revision"] = "revision-b"
+            score["probe_provenance"]["model"]["revision"] = "b" * 40
             score["manifest_sha256"] = manifest_sha256(score)
             score_path.write_text(json.dumps(score), encoding="utf-8")
             freeze_path = (
