@@ -114,7 +114,7 @@ for line in nodes_text.splitlines():
     eligible.append({"node": row.get("NodeName"), "state": state, "cfg_a40": cfg, "alloc_a40": alloc, "free_a40": free})
 
 aggregate = sum(row["free_a40"] for row in eligible)
-concurrency = min(8, aggregate)
+chosen_concurrency = 8
 payload = {
     "schema_version": 1,
     "timestamp_utc": timestamp,
@@ -132,22 +132,19 @@ payload = {
     },
     "eligible_nodes": eligible,
     "aggregate_free_a40": aggregate,
-    "concurrency": concurrency,
+    "chosen_concurrency": chosen_concurrency,
+    "submission_mode": "pending_allowed",
 }
 with snapshot_path.open("x", encoding="utf-8") as handle:
     json.dump(payload, handle, ensure_ascii=False, indent=2, sort_keys=True)
     handle.write("\n")
-print(concurrency)
+print(chosen_concurrency)
 PY_CAPACITY
 )
 (set -C; sha256sum "$snapshot" > "$snapshot.sha256")
-if [[ "$concurrency" = 0 ]]; then
-  printf 'no scheduler-visible free A40; capacity snapshot=%s\n' "$snapshot" >&2
-  exit 3
-fi
-case "$concurrency" in 1|2|3|4|5|6|7|8) ;; *) echo "invalid concurrency: $concurrency" >&2; exit 2 ;; esac
+test "$concurrency" = 8
 
-array="0-7%$concurrency"
+array="0-7%8"
 submit_command="$run_root/receipts/gpu-array-submit-command.txt"
 submit_stdout="$run_root/receipts/gpu-array-submit.stdout"
 submit_stderr="$run_root/receipts/gpu-array-submit.stderr"

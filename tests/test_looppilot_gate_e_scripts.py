@@ -36,10 +36,10 @@ class GateEScriptContractTest(unittest.TestCase):
             self.assertIn(line, text)
         self.assertNotIn("--gres", text)
 
-    def test_submitter_has_one_dynamic_array_and_ambiguous_submit_guard(self):
+    def test_submitter_has_one_pending_allowed_array_and_ambiguous_submit_guard(self):
         gpu = (ROOT / "scripts/looppilot/submit_gate_e_gpu.sh").read_text()
         self.assertEqual(gpu.count("sbatch --parsable"), 1)
-        self.assertIn('array="0-7%$concurrency"', gpu)
+        self.assertIn('array="0-7%8"', gpu)
         self.assertNotIn("0-3%2", gpu)
         self.assertNotIn("4-7%2", gpu)
         self.assertIn("/opt/slurm/bin/sinfo", gpu)
@@ -47,6 +47,9 @@ class GateEScriptContractTest(unittest.TestCase):
         self.assertIn("/opt/slurm/bin/squeue", gpu)
         self.assertIn("gpu-capacity-snapshot-", gpu)
         self.assertIn("gpu-array-submit-started.txt", gpu)
+        self.assertNotIn("--qos", gpu)
+        self.assertNotIn("--nice", gpu)
+        self.assertNotIn("scontrol update", gpu)
         self.assertIn("SubmitLine", gpu)
         self.assertIn("job_id", gpu)
         self.assertNotIn("scancel", gpu)
@@ -80,10 +83,11 @@ class GateEScriptContractTest(unittest.TestCase):
                 check=False,
             )
             self.assertEqual(completed.returncode, 0, completed.stderr)
-            self.assertEqual(completed.stdout.strip(), "5")
+            self.assertEqual(completed.stdout.strip(), "8")
             payload = json.loads(snapshot.read_text())
             self.assertEqual(payload["aggregate_free_a40"], 5)
-            self.assertEqual(payload["concurrency"], 5)
+            self.assertEqual(payload["chosen_concurrency"], 8)
+            self.assertEqual(payload["submission_mode"], "pending_allowed")
             self.assertEqual(payload["eligible_nodes"][0]["node"], "gpu-a")
             self.assertIn("raw_outputs", payload)
 
