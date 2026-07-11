@@ -23,8 +23,13 @@ export HF_HOME="$TFLT_HPC2_CACHE_ROOT/hf_home"
 export TRANSFORMERS_CACHE="$HF_HOME/hub"
 export HF_DATASETS_CACHE="$TFLT_HPC2_CACHE_ROOT/datasets"
 export UV_CACHE_DIR="$TFLT_HPC2_CACHE_ROOT/uv"
-export RESULT_ROOT=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs
+export RESULT_ROOT=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_reproduction/runs
 ```
+
+Project outputs use sibling roots. Reproduction runs/logs/artifacts belong under
+`training_free_looped_transformers_reproduction`; LoopScope inputs/runs/staging/
+artifacts belong under `training_free_looped_transformers_loopscope`. Shared
+Hugging Face, dataset, and uv caches remain under `shared/`.
 
 ## Environment
 

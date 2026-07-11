@@ -25,9 +25,13 @@ from tflt.loopscope.mmlu_renderer import PHASE1_TARGET_SPLIT
 BASE_COMMIT = "4f59bd93eca4da3cbf458a93508f91c5b23912bc"
 EXPECTED_ORIGIN = "git@github.com:singularity119/Training-Free-Looped-Transformers-Reproduction.git"
 RUN_PREFIX = "loopscope-qwen17-mmlu-phase1-"
-DEFAULT_RUN_BASE = Path(
-    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs"
+DEFAULT_WORKSPACE_ROOT = Path(
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope"
 )
+DEFAULT_INPUT_BASE = DEFAULT_WORKSPACE_ROOT / "inputs"
+DEFAULT_RUN_BASE = DEFAULT_WORKSPACE_ROOT / "runs"
+DEFAULT_STAGING_BASE = DEFAULT_WORKSPACE_ROOT / "staging"
+DEFAULT_ARTIFACT_BASE = DEFAULT_WORKSPACE_ROOT / "artifacts"
 DEFAULT_REMOTE_REPO = Path(
     "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope"
 )

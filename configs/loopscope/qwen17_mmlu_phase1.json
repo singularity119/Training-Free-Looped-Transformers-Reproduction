@@ -73,5 +73,12 @@
       }
     }
   },
-  "run_root_template": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-<timestamp>"
+  "workspace": {
+    "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope",
+    "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs",
+    "runs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs",
+    "staging": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging",
+    "artifacts": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts"
+  },
+  "run_root_template": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/loopscope-qwen17-mmlu-phase1-<timestamp>"
 }

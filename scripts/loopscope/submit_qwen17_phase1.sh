@@ -198,7 +198,7 @@ expected_repo = pathlib.Path(
     "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope"
 )
 expected_run_base = pathlib.Path(
-    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs"
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs"
 )
 if pathlib.Path(manifest.get("git", {}).get("root", "")) != expected_repo:
     raise SystemExit("run manifest does not use the exact dedicated HPC2 LoopScope clone")

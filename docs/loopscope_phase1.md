@@ -39,6 +39,21 @@ HPC2：/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopsc
 
 不得在原复现 checkout 中 fetch、切分支、安装环境或运行 LoopScope。不得覆盖、移动、删除或复用已有 run、output、cache、模型及日志。
 
+Gate E 后的新 LoopScope 工件采用专属 workspace：
+
+```text
+/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/
+  inputs/
+  runs/
+  staging/
+  artifacts/
+```
+
+已完成的 Phase 1 canonical run 及历史 siblings 仍永久保留在旧根
+`/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers`，不迁移、
+不改名、不替换，也不创建 symlink 冒充旧绝对路径。共享 cache 继续使用
+`/hpc2hdd/home/xhuang225/shared/{hf_home,datasets,uv}`。
+
 `configs/profiles/hpc2-hkustgz.toml` 的 `remote_src` 指向原始复现 checkout，只保留给复现流水线作历史配置；LoopScope **禁止** 使用该 profile 进行同步、安装、运行或提交。LoopScope 必须显式使用上面的专用 checkout。
 
 ## Window 边界与有效秩冻结语义
@@ -154,9 +169,9 @@ python scripts/loopscope/prepare_qwen17_phase1.py prepare \
   --repo-root /hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope \
   --planning-thread-id 019f4c7b-e5eb-77f2-b007-59d004896550 \
   --venv '/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-YYYYMMDD[-vN]' \
-  --window-grid /path/to/new/window_grid.json \
-  --probe-pool-jsonl /path/to/new/probe_pool.jsonl \
-  --probe-pool-manifest /path/to/new/probe_pool_manifest.json \
+  --window-grid /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/<input-id>/window_grid.json \
+  --probe-pool-jsonl /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/<input-id>/probe_pool.jsonl \
+  --probe-pool-manifest /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/<input-id>/probe_pool_manifest.json \
   --timestamp YYYYMMDD-HHMMSS \
   --dry-run
 ```
@@ -164,7 +179,7 @@ python scripts/loopscope/prepare_qwen17_phase1.py prepare \
 确认预览后去掉 `--dry-run`。目标必须形如：
 
 ```text
-/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-<timestamp>
+/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/loopscope-qwen17-mmlu-phase1-<timestamp>
 ```
 
 repo、run base 和 venv 路径是硬保护，不是可替换示例：repo 必须精确为上述 HPC2 LoopScope clone，run root 必须是固定 run base 的直接子目录且使用完整时间戳，venv 必须是 clone 内 `.venv-loopscope-cu121-YYYYMMDD[-vN]`。任何相邻路径都拒绝。run root 已存在时脚本立即停止。

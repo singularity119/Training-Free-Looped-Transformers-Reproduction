@@ -143,7 +143,8 @@ HPC2：
 ```text
 source checkout=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope
 read-only reproduction checkout=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction
-run root=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs
+reproduction workspace=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_reproduction/{runs,logs,artifacts}
+LoopScope workspace=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/{inputs,runs,staging,artifacts}
 HF_HOME=/hpc2hdd/home/xhuang225/shared/hf_home
 TRANSFORMERS_CACHE=/hpc2hdd/home/xhuang225/shared/hf_home/hub
 HF_DATASETS_CACHE=/hpc2hdd/home/xhuang225/shared/datasets
@@ -153,6 +154,8 @@ wheelhouse=/hpc2hdd/home/xhuang225/shared/wheelhouse/tflt-cu121
 
 - 不得进入固定复现 checkout 执行 fetch、checkout、switch、pull、install 或 LoopScope 运行；只允许必要的只读 provenance 核对。
 - LoopScope checkout 使用同一 lock 文件建立独立 versioned venv；不得原地升级固定复现 `.venv`。
+- LoopScope 后续新 input、run、staging 与 artifact 必须进入专属 workspace；共享 input/cache 不为目录整齐而复制。
+- Phase 1 canonical run 及全部历史 siblings 永久留在旧根 `/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers`；不得移动、改名、替换或用 symlink 冒充。
 - 每个实验使用新的 timestamped run root；不得覆盖、移动或删除既有 runs/cache。
 - SSH 只读探针使用 `ClearAllForwardings=yes`；出现 host-key 变化必须停止并走专用恢复流程。
 

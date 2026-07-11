@@ -704,6 +704,38 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
         self.assertIn("\u0085", records[0]["text"])
 
     def test_exact_hpc2_paths_are_not_configurable(self):
+        workspace = Path(
+            "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope"
+        )
+        self.assertEqual(prepare.DEFAULT_WORKSPACE_ROOT, workspace)
+        self.assertEqual(prepare.DEFAULT_INPUT_BASE, workspace / "inputs")
+        self.assertEqual(prepare.DEFAULT_RUN_BASE, workspace / "runs")
+        self.assertEqual(prepare.DEFAULT_STAGING_BASE, workspace / "staging")
+        self.assertEqual(prepare.DEFAULT_ARTIFACT_BASE, workspace / "artifacts")
+        repo_root = Path(__file__).resolve().parents[1]
+        config = json.loads(
+            (repo_root / "configs/loopscope/qwen17_mmlu_phase1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(
+            config["workspace"],
+            {
+                "root": str(workspace),
+                "inputs": str(workspace / "inputs"),
+                "runs": str(workspace / "runs"),
+                "staging": str(workspace / "staging"),
+                "artifacts": str(workspace / "artifacts"),
+            },
+        )
+        self.assertEqual(
+            config["run_root_template"],
+            str(workspace / "runs" / (prepare.RUN_PREFIX + "<timestamp>")),
+        )
+        submit = (repo_root / "scripts/loopscope/submit_qwen17_phase1.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('"%s"' % (workspace / "runs"), submit)
         run = prepare.DEFAULT_RUN_BASE / (
             "loopscope-qwen17-mmlu-phase1-20260710-120000"
         )
