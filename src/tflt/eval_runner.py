@@ -43,6 +43,11 @@ def main(argv: Optional[list] = None) -> int:
         raise ValueError("--looppilot-signal-jsonl requires --loop")
     if args.looppilot_controller is not None:
         parse_controller_spec(args.looppilot_controller)
+    if args.looppilot_signal_jsonl is not None:
+        raise RuntimeError(
+            "LoopPilot signal execution is not authorized in Gate A; "
+            "the CLI/schema interface is present, but tensor collection must be wired and audited in Gate C"
+        )
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)

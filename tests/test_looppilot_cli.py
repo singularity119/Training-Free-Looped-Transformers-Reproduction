@@ -1,8 +1,11 @@
 import unittest
+import tempfile
 from contextlib import redirect_stdout
 from io import StringIO
+from pathlib import Path
 
 from tflt.cli import main
+from tflt.eval_runner import main as eval_runner_main
 
 
 class LoopPilotCliTest(unittest.TestCase):
@@ -61,6 +64,27 @@ class LoopPilotCliTest(unittest.TestCase):
                     "--dry-run",
                 ]
             )
+
+    def test_signal_execution_fails_before_creating_artifacts_until_gate_c(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "eval"
+            with self.assertRaises(RuntimeError):
+                eval_runner_main(
+                    [
+                        "--model",
+                        "qwen3-1.7b-base",
+                        "--tasks",
+                        "mmlu",
+                        "--output-dir",
+                        str(output),
+                        "--loop",
+                        "--looppilot-controller",
+                        "always_loop",
+                        "--looppilot-signal-jsonl",
+                        str(output / "signals.jsonl"),
+                    ]
+                )
+            self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":
