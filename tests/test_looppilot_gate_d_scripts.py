@@ -45,6 +45,13 @@ class GateDScriptContractTest(unittest.TestCase):
         self.assertEqual(config["limit"], 5)
         self.assertEqual(config["total_docs"], 20)
 
+    def test_qwen_model_is_preloaded_with_gate_c_torch_dtype_contract(self):
+        text = (ROOT / "scripts/looppilot/run_gate_d_limit.py").read_text(encoding="utf-8")
+        self.assertIn("AutoModelForCausalLM.from_pretrained(", text)
+        self.assertIn("torch_dtype=torch.float16", text)
+        hflm_call = text[text.index("lm = GateDHFLM(") : text.index("model = _underlying_hf_model")]
+        self.assertNotIn("dtype=", hflm_call)
+
 
 if __name__ == "__main__":
     unittest.main()

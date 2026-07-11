@@ -185,7 +185,15 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=False)
-    torch, HFLM, evaluator, TaskManager, lm_tasks, snapshot_download = _remote_imports()
+    (
+        torch,
+        AutoModelForCausalLM,
+        HFLM,
+        evaluator,
+        TaskManager,
+        lm_tasks,
+        snapshot_download,
+    ) = _remote_imports()
     if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
         raise RuntimeError("Gate D requires exactly one visible CUDA GPU")
 
@@ -273,12 +281,21 @@ def main(argv: Optional[List[str]] = None) -> int:
                 answers.extend(answer)
             return answers
 
+    preloaded_model = AutoModelForCausalLM.from_pretrained(
+        config["model"],
+        revision=revision,
+        local_files_only=True,
+        trust_remote_code=True,
+        torch_dtype=torch.float16,
+        attn_implementation="eager",
+    )
+    preloaded_model.eval()
+    preloaded_model.to("cuda")
     lm = GateDHFLM(
-        pretrained=config["model"],
+        pretrained=preloaded_model,
         revision=revision,
         tokenizer=config["model"],
         device="cuda",
-        dtype=torch.float16,
         batch_size=1,
         logits_cache=False,
         trust_remote_code=True,
@@ -539,16 +556,25 @@ def _aggregate_decisions(records: List[Mapping[str, Any]]) -> List[Dict[str, Any
     return decisions
 
 
-def _remote_imports() -> Tuple[Any, Any, Any, Any, Any, Any]:
+def _remote_imports() -> Tuple[Any, Any, Any, Any, Any, Any, Any]:
     try:
         import torch
         from huggingface_hub import snapshot_download
         from lm_eval import evaluator, tasks as lm_tasks
         from lm_eval.models.huggingface import HFLM
         from lm_eval.tasks import TaskManager
+        from transformers import AutoModelForCausalLM
     except Exception as exc:
         raise RuntimeError("Gate D requires cached torch, transformers, and lm-eval") from exc
-    return torch, HFLM, evaluator, TaskManager, lm_tasks, snapshot_download
+    return (
+        torch,
+        AutoModelForCausalLM,
+        HFLM,
+        evaluator,
+        TaskManager,
+        lm_tasks,
+        snapshot_download,
+    )
 
 
 def _underlying_hf_model(lm: Any) -> Any:
