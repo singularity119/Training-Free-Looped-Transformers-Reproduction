@@ -758,6 +758,26 @@ class LoopScopePhaseOneScriptTest(unittest.TestCase):
                 prepare.DEFAULT_REMOTE_REPO / ".venv",
             )
 
+    def test_runtime_scripts_activate_venv_without_uv_module(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        task_script = prepare._task_script(
+            prepare.DEFAULT_REMOTE_REPO,
+            prepare.DEFAULT_REMOTE_REPO / ".venv-loopscope-cu121-20260710",
+            "d" * 40,
+            {
+                "output_dir": prepare.DEFAULT_RUN_BASE / "run/output",
+                "claim_dir": prepare.DEFAULT_RUN_BASE / "run/claim",
+                "argv": ["python", "-V"],
+            },
+        )
+        template = (repo_root / "scripts/slurm_eval.sbatch.j2").read_text(
+            encoding="utf-8"
+        )
+        for script in (task_script, template):
+            self.assertIn("module load anaconda3 cuda/12.4", script)
+            self.assertNotIn("module load anaconda3 cuda/12.4 uv", script)
+        self.assertIn('. "$venv/bin/activate"', task_script)
+
     def test_gate_e_jobs_include_full_probe_then_offline_score(self):
         root = prepare.DEFAULT_RUN_BASE / "loopscope-qwen17-mmlu-phase1-20260710-120000"
         config = json.loads(

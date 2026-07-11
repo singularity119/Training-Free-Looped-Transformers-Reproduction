@@ -45,6 +45,10 @@ transformers 4.51.3, and lm_eval 0.4.11. Build a fresh versioned venv and
 validate it before switching the active `.venv` symlink. Do not upgrade an
 active environment in place while jobs may be using it.
 
+Environment maintenance may use the `uv` module, but generated runtime jobs do
+not load it: they load the Python/CUDA modules and activate the audited venv
+directly. This keeps job startup independent of node-local `uv` modulefiles.
+
 ## Preflight
 
 Run before submitting real evals:

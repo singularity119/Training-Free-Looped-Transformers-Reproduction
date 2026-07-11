@@ -154,6 +154,7 @@ wheelhouse=/hpc2hdd/home/xhuang225/shared/wheelhouse/tflt-cu121
 
 - 不得进入固定复现 checkout 执行 fetch、checkout、switch、pull、install 或 LoopScope 运行；只允许必要的只读 provenance 核对。
 - LoopScope checkout 使用同一 lock 文件建立独立 versioned venv；不得原地升级固定复现 `.venv`。
+- 运行时 job 只加载 Python/CUDA modules 并激活已审计 venv，不得依赖 `uv` modulefile；`uv` 仅用于环境构建、下载或冻结维护。
 - LoopScope 后续新 input、run、staging 与 artifact 必须进入专属 workspace；共享 input/cache 不为目录整齐而复制。
 - Phase 1 canonical run 及全部历史 siblings 永久留在旧根 `/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers`；不得移动、改名、替换或用 symlink 冒充。
 - 每个实验使用新的 timestamped run root；不得覆盖、移动或删除既有 runs/cache。

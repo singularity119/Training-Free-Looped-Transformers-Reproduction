@@ -769,7 +769,7 @@ if ! command -v module >/dev/null 2>&1 && [[ -r /etc/profile.d/modules.sh ]]; th
   set -e
 fi
 if command -v module >/dev/null 2>&1; then
-  module load anaconda3 cuda/12.4 uv
+  module load anaconda3 cuda/12.4
 fi
 . "$venv/bin/activate"
 cd "$repo_root"
