@@ -1,0 +1,5 @@
+host = "hpc2-hkustgz"
+partition = "i64m512u"
+cpus_per_task = 8
+mem = "64G"
+time = "02:00:00"

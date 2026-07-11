@@ -1,0 +1,7 @@
+host = "hpc2-hkustgz"
+partition = "i64m1tga40u"
+gres = "gpu:a40:1"
+cpus_per_task = 8
+mem = "64G"
+time = "06:00:00"
+array_concurrency = 2
