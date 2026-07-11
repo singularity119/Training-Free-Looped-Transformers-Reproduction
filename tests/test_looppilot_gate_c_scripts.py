@@ -19,6 +19,17 @@ class GateCScriptContractTest(unittest.TestCase):
         self.assertIn("HF_HUB_OFFLINE=1", text)
         self.assertIn("HF_DATASETS_OFFLINE=1", text)
 
+    def test_sbatch_checks_preflight_manifest_from_control_directory(self):
+        text = (ROOT / "scripts/looppilot/gate_c_probe.sbatch").read_text(encoding="utf-8")
+        self.assertIn(
+            '(cd "$RUN_ROOT/control" && sha256sum -c preflight_sha256.txt)',
+            text,
+        )
+        self.assertNotIn(
+            'sha256sum -c "$RUN_ROOT/control/preflight_sha256.txt"',
+            text,
+        )
+
     def test_submitter_has_one_sbatch_and_write_once_root_guard(self):
         text = (ROOT / "scripts/looppilot/submit_gate_c_probe.sh").read_text(encoding="utf-8")
         self.assertEqual(text.count("sbatch --parsable"), 1)

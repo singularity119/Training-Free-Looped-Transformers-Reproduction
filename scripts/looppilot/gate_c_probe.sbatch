@@ -41,7 +41,7 @@ export HF_DATASETS_OFFLINE=1
 hostname > "$RUN_ROOT/control/compute_hostname.txt"
 "$python_bin" -V > "$RUN_ROOT/control/job_python_version.txt" 2>&1
 nvidia-smi > "$RUN_ROOT/control/nvidia_smi_before.txt"
-sha256sum -c "$RUN_ROOT/control/preflight_sha256.txt"
+(cd "$RUN_ROOT/control" && sha256sum -c preflight_sha256.txt)
 
 "$python_bin" scripts/looppilot/run_gate_c_probe.py \
   --config configs/looppilot/gate_c_probe.json \
