@@ -320,11 +320,15 @@ wheelhouse=/hpc2hdd/home/xhuang225/shared/wheelhouse/tflt-cu121
 2. 一个 commit 只修一个根因；
 3. 修复后运行完整本地测试和适用远端 CPU 回归；
 4. 原失败命令只能在全新 write-once staging 中重跑；
-5. 不得自动重试已提交 GPU/Slurm job。
+5. 原失败证据、JobID、run root 和日志必须永久保留，不得覆盖、移动或复用。
 
 允许自行修复：不改变科学契约的 import、CLI 透传、schema adapter、路径解析、provenance 绑定和纯工程兼容问题。
 
-必须立即升级并 `BLOCK`：改变 model/task/split/sample/window/K/solver/signal 定义/token mask/阈值/评价标准；修改 cache；扩大远端权限；需要破坏性操作；存在多个科学上合理方案；两轮额度耗尽。
+小型可容许问题不需要逐项或逐轮上报规划/审计任务。执行任务应在 handoff 的自主修复预算内连续完成失败取证、根因修复、回归和 fresh write-once 重跑，并在 Gate 终态包中一次性汇总根因、commit、测试、旧/新路径和 repair/retry 计数。
+
+GPU/Slurm job 默认不得静默重试；仅当 handoff 明确给出 replacement 预算，且失败发生在模型加载或科学 probe/forward 开始前、根因是单一可复现的纯工程启动错误时，才允许保留旧 Job/run、使用完全相同的资源和全新 run root 自主修复重提。scheduler/QOS 拒绝、OOM、超时、cache/model/data 缺失、实际科学执行失败或需要改变 partition/GPU/资源时不属于小问题。
+
+必须立即升级并 `BLOCK`：改变 model/task/split/sample/window/K/solver/signal 定义/token mask/schema/阈值/评价标准；修改 cache；扩大远端权限或计算资源；需要破坏性操作；存在多个科学上合理方案；实际科学作业失败；handoff 未授权 replacement；两轮额度耗尽。
 
 执行任务可以保守使用只读分析 subagent，但主执行任务独占共享工作树写入、Git、SSH/HPC2、Slurm、实验状态和最终证据。不得让多个 agent 同时修改同一 clone 或操作同一远端 run。
 
