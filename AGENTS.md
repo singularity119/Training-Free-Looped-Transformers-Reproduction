@@ -42,7 +42,8 @@ remote=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reprod
 local=/Users/huangxutao/Desktop/Training-free looped transformer/LoopPilot_Input-Adaptive Training-Free Looping for Frozen Transformers/looppilot-tflt
 branch=looppilot
 remote=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_looppilot
-run_root=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs
+workspace_root=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_looppilot
+run_root=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_looppilot/runs
 ```
 
 强制规则：
@@ -238,7 +239,8 @@ HPC2：
 ```text
 source_checkout=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_looppilot
 read_only_reproduction=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction
-run_root=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs
+workspace_root=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_looppilot
+run_root=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_looppilot/runs
 HF_HOME=/hpc2hdd/home/xhuang225/shared/hf_home
 TRANSFORMERS_CACHE=/hpc2hdd/home/xhuang225/shared/hf_home/hub
 HF_DATASETS_CACHE=/hpc2hdd/home/xhuang225/shared/datasets
@@ -246,7 +248,8 @@ UV_CACHE_DIR=/hpc2hdd/home/xhuang225/shared/uv
 wheelhouse=/hpc2hdd/home/xhuang225/shared/wheelhouse/tflt-cu121
 ```
 
-- 使用独立 versioned venv，不得修改固定复现环境或 LoopScope venv。
+- 环境优先只读复用源复现项目 `/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction/.venv`；必须从 LoopPilot checkout 运行并用 `PYTHONPATH` 指向当前代码，设置 `PYTHONDONTWRITEBYTECODE=1`，不得在复用 venv 中安装、升级、卸载或生成新文件。只有复用环境不满足冻结依赖时，才可在新 handoff 明确授权后创建 LoopPilot 专用 versioned venv。
+- LoopPilot 新建的 venv、Gate 证据、staging 与正式 run 必须全部位于独立 `workspace_root` 下；不得写入或复用 `/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/` 中既有项目的目录。只读复用上述源复现 venv 是唯一例外，不得把任何 LoopPilot 工件写回源复现项目。
 - 每次实验使用新的 timestamped write-once run root。
 - 不得删除、移动、覆盖、复用 claim 或自动重试已提交 Slurm job。
 - SSH 只读探针使用 `ClearAllForwardings=yes`。
@@ -283,7 +286,7 @@ wheelhouse=/hpc2hdd/home/xhuang225/shared/wheelhouse/tflt-cu121
 ### Gate B：HPC2 CPU/import
 
 - local/origin/HPC2 commit 一致；
-- 独立 venv 和 lock 验证；
+- 优先只读复用源复现 venv，并验证解释器、依赖锁定、当前 `tflt` 源路径和前后未修改；仅在明确授权时创建独立 venv；
 - remote tests/import/compile/help 通过；
 - 不运行 GPU/Slurm。
 
