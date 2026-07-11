@@ -1,0 +1,10 @@
+{
+  "bootstrap": {"unit": "subject", "replicates": 10000, "seed": 20260712, "ci": [0.025, 0.975]},
+  "candidate_grid": {"signals": ["r0_median", "c0", "n0_median"], "directions": ["BASELINE_IF_HIGH", "BASELINE_IF_LOW"], "baseline_coverages": [0.1, 0.25, 0.5, 0.75]},
+  "comparators": ["subject_only", "prompt_length_only", "baseline_margin_only", "random_gate", "oracle"],
+  "holdout_once_only": true,
+  "random_null": {"match": "per-subject-baseline-count", "replicates": 10000, "seed": 20260711},
+  "schema_version": 1,
+  "selection_tie_break": ["signal", "direction", "coverage"],
+  "terminal_order": ["BLOCK", "assessable", "PASS_TO_ONLINE", "PIVOT_TO_COARSE", "PIVOT_TO_PHASE3"]
+}
