@@ -178,7 +178,19 @@ class LoopBlockEntryWrapper(_ModuleBase):
         def operator(x: Any) -> Any:
             snap = snapshot_cache(body_kwargs)
             try:
-                out = _run_layers_hidden(self.layers, x, args, body_kwargs)
+                signal_collector = self.config.signal_collector
+                if signal_collector is None:
+                    out = _run_layers_hidden(self.layers, x, args, body_kwargs)
+                else:
+                    if self.config.controller is None:
+                        raise ValueError("signal_collector requires an explicit controller")
+                    observer = getattr(signal_collector, "observe_operator_call", None)
+                    if not callable(observer):
+                        raise TypeError("signal_collector must provide observe_operator_call")
+                    out, layer_updates = _run_layers_hidden_with_updates(
+                        self.layers, x, args, body_kwargs
+                    )
+                    observer(x, out, layer_updates)
                 _audit(self.config, "body_call", wrapper_type="block")
                 _audit_tensor_diff(self.config, "g_minus_x", x, out)
                 return out
@@ -255,6 +267,19 @@ def _run_layers_hidden(
     layers: Iterable[Any], hidden_states: Any, args: Tuple[Any, ...], kwargs: Dict[str, Any]
 ) -> Any:
     return _hidden(_run_layers(layers, hidden_states, args, kwargs))
+
+
+def _run_layers_hidden_with_updates(
+    layers: Iterable[Any], hidden_states: Any, args: Tuple[Any, ...], kwargs: Dict[str, Any]
+) -> Tuple[Any, List[Any]]:
+    result = hidden_states
+    updates: List[Any] = []
+    for layer in layers:
+        before = _hidden(result)
+        after = _hidden(layer(before, *args, **kwargs))
+        updates.append(after - before)
+        result = after
+    return _hidden(result), updates
 
 
 def _hidden(result: Any) -> Any:

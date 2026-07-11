@@ -47,6 +47,17 @@ def config(controller=None, collector=None):
     )
 
 
+class RecordingSignalCollector:
+    def __init__(self):
+        self.calls = []
+
+    def observe_operator_call(self, x, y, layer_updates):
+        self.calls.append((x, y, list(layer_updates)))
+
+    def controller_probe(self, x, y):
+        return {"observed_calls": len(self.calls)}
+
+
 class LoopPilotWrapperTest(unittest.TestCase):
     def test_none_controller_preserves_legacy_output_and_emits_no_controller_events(self):
         model = Model()
@@ -89,6 +100,21 @@ class LoopPilotWrapperTest(unittest.TestCase):
         self.assertEqual(collector.summary()["counts"]["k_used_total"], 1)
         self.assertEqual(first.inputs[-1], 0.0)
         self.assertEqual(second.inputs[-1], 1.0)
+
+    def test_controlled_block_exposes_per_layer_updates_to_signal_collector(self):
+        model = Model()
+        signal_collector = RecordingSignalCollector()
+        cfg = config(AlwaysLoop(), AuditCollector())
+        object.__setattr__(cfg, "signal_collector", signal_collector)
+        object.__setattr__(cfg, "controller_probe", signal_collector.controller_probe)
+        handle = apply_loop_wrapper(model, cfg)
+        try:
+            model.forward(0.0)
+        finally:
+            handle.restore()
+        self.assertEqual(len(signal_collector.calls), 2)
+        self.assertEqual(signal_collector.calls[0][2], [1.0, 2.0])
+        self.assertEqual(signal_collector.calls[1][2], [1.0, 2.0])
 
 
 if __name__ == "__main__":
