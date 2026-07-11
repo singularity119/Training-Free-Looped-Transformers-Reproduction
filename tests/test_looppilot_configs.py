@@ -15,8 +15,7 @@ class LoopPilotConfigTest(unittest.TestCase):
         self.assertEqual(config["model"], "Qwen/Qwen3-1.7B-Base")
         self.assertEqual(config["window"], [12, 15])
         self.assertEqual(config["k"], 2)
-        self.assertIsNone(config["batch_size"])
-        self.assertNotEqual(config["batch_size"], "auto")
+        self.assertEqual(config["batch_size"], 1)
         self.assertEqual(config["model_revision"], revisions["model"]["commit_hash"])
         self.assertEqual(config["tokenizer_revision"], revisions["tokenizer"]["commit_hash"])
 

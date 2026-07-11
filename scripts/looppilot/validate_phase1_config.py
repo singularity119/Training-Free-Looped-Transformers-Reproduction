@@ -24,6 +24,7 @@ EXPECTED = {
     "cache_strategy": "last",
     "decode_mode": "bypass",
     "actions": ["BASELINE", "LOOP_K2"],
+    "batch_size": 1,
 }
 
 
@@ -44,8 +45,8 @@ def main(argv: Optional[list] = None) -> int:
         revision = payload.get(key)
         if not isinstance(revision, str) or len(revision) != 40:
             raise ValueError("%s must be a resolved 40-character commit" % key)
-    if payload.get("batch_size") == "auto":
-        raise ValueError("batch_size may not be auto")
+    if payload.get("batch_size") != 1:
+        raise ValueError("batch_size must be frozen to 1 for Gate C")
     print(hashlib.sha256(path.read_bytes()).hexdigest())
     return 0
 

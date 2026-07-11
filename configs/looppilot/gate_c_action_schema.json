@@ -1,0 +1,57 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "action": {
+      "enum": [
+        "legacy_k2",
+        "always_loop",
+        "never_loop"
+      ]
+    },
+    "decision_reason": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "doc_key": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "k_used": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "operator_body_calls": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "schema_version": {
+      "const": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "doc_key",
+    "task",
+    "action",
+    "decision_reason",
+    "k_used",
+    "operator_body_calls",
+    "endpoint",
+    "audit"
+  ],
+  "title": "LoopPilot Gate C per-document action record",
+  "type": "object",
+  "x_forbidden_persisted_fields": [
+    "answer",
+    "gold",
+    "correctness",
+    "is_correct",
+    "target",
+    "raw_hidden",
+    "full_logits"
+  ]
+}

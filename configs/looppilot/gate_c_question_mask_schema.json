@@ -1,0 +1,17 @@
+{
+  "aggregation": "per-token vector norm followed by linear-interpolated median/p90/max",
+  "epsilon": 1e-12,
+  "excludes": [
+    "few-shot examples",
+    "padding",
+    "special tokens",
+    "choice continuation"
+  ],
+  "includes": [
+    "current MMLU question",
+    "current MMLU choices",
+    "current unlabeled Answer prefix"
+  ],
+  "mask_construction": "fast-tokenizer offset overlaps the final current-doc renderer span and attention_mask=1",
+  "schema_version": 1
+}
