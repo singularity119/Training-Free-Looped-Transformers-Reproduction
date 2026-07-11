@@ -1,0 +1,21 @@
+{
+  "actions": ["BASELINE", "LOOP_K2"],
+  "alpha": 1.0,
+  "batch_size": null,
+  "batch_size_status": "MUST_FREEZE_TO_EXPLICIT_INTEGER_BEFORE_GATE_C",
+  "beta": 0.0,
+  "cache_strategy": "last",
+  "decode_mode": "bypass",
+  "dtype": "float16",
+  "iteration_mode": "block",
+  "k": 2,
+  "model": "Qwen/Qwen3-1.7B-Base",
+  "model_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+  "num_fewshot": 5,
+  "renderer_hash_status": "REQUIRED_FROM_AUTHORITATIVE_LM_EVAL_RENDERER_ARTIFACT",
+  "schema_version": 1,
+  "strategy": "damped_euler",
+  "task": "mmlu",
+  "tokenizer_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+  "window": [12, 15]
+}

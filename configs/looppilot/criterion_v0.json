@@ -1,0 +1,9 @@
+{
+  "allowed_engineering_controllers": ["always_loop", "never_loop"],
+  "label_fitted": false,
+  "online_signals": ["r0_median", "c0", "n0_median"],
+  "q1_online_allowed": false,
+  "rule_status": "NOT_SELECTED_GATE_A_ENGINEERING_ONLY",
+  "schema_version": 1,
+  "threshold": null
+}

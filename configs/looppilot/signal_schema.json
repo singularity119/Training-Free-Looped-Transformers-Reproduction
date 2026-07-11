@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "c0": {"type": ["number", "null"]},
+    "choice_index": {"minimum": 0, "type": "integer"},
+    "doc_key": {
+      "additionalProperties": false,
+      "properties": {
+        "doc_hash": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "occurrence_id": {"minLength": 1, "type": "string"},
+        "renderer_hash": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "task": {"minLength": 1, "type": "string"},
+        "task_version": {"minLength": 1, "type": "string"}
+      },
+      "required": ["task", "task_version", "renderer_hash", "doc_hash", "occurrence_id"],
+      "type": "object"
+    },
+    "n0_max": {"type": "number"},
+    "n0_median": {"type": "number"},
+    "n0_p90": {"type": "number"},
+    "q1": {"type": ["number", "null"]},
+    "question_token_count": {"minimum": 1, "type": "integer"},
+    "r0_max": {"type": "number"},
+    "r0_median": {"type": "number"},
+    "r0_p90": {"type": "number"},
+    "residual_cosine": {"type": ["number", "null"]},
+    "row_id": {"minLength": 1, "type": "string"},
+    "schema_version": {"const": 1}
+  },
+  "required": ["schema_version", "doc_key", "row_id", "choice_index", "question_token_count", "r0_median", "r0_p90", "r0_max", "c0", "n0_median", "n0_p90", "n0_max"],
+  "title": "LoopPilot phase-one per-row signal record",
+  "type": "object",
+  "x_looppilot_contract": {
+    "epsilon": 1e-12,
+    "mask": "question/context tokens only; excludes few-shot template, padding, special, continuation",
+    "q1_usage": "post-second-call diagnostic only",
+    "raw_tensors_persisted": false
+  }
+}

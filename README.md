@@ -1,5 +1,9 @@
 # Training-Free Looped Transformers
 
+LoopPilot 第一阶段的冻结配置、信号 schema 与本地 Gate A 契约见
+[`docs/looppilot_phase1.md`](docs/looppilot_phase1.md)。该增量默认关闭；未提供 controller 时
+原有 wrapper/strategy 热路径保持不变。
+
 Local codebase for reproducing the paper "Training-Free Looped Transformers".
 
 This repository is intentionally code-only. Model weights, datasets, dependency

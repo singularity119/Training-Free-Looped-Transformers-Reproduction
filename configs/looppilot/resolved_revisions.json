@@ -1,0 +1,17 @@
+{
+  "model": {
+    "commit_hash": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "repo_id": "Qwen/Qwen3-1.7B-Base"
+  },
+  "resolved_at": "2026-07-11",
+  "resolver": {
+    "command": "git ls-remote https://huggingface.co/Qwen/Qwen3-1.7B-Base HEAD",
+    "exit_code": 0,
+    "ref": "HEAD"
+  },
+  "schema_version": 1,
+  "tokenizer": {
+    "commit_hash": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "repo_id": "Qwen/Qwen3-1.7B-Base"
+  }
+}
