@@ -1,0 +1,8 @@
+{
+  "analysis_files": ["paired_samples.jsonl", "selected_policy.json", "candidate_grid.json", "bootstrap.json", "random_null.json", "comparators.json", "strata.json", "gate_e_summary.json", "gate_e_report.md", "decision_trace.json", "final_sha256.txt", "analysis_complete.txt"],
+  "forbidden_signal_fields": ["gold", "prediction", "margin", "correctness", "continuation", "full_logits", "raw_hidden"],
+  "required_shard_files": ["baseline_a_samples.jsonl", "baseline_b_samples.jsonl", "always_loop_samples.jsonl", "signal_records.jsonl", "decisions.jsonl", "join_report.json", "runtime.json", "results_manifest.txt"],
+  "schema_version": 1,
+  "signal_analysis_separation": true,
+  "write_once": true
+}
