@@ -7,13 +7,14 @@ local tests.
 
 from __future__ import annotations
 
-from typing import Callable, List
+from typing import Any, Callable, List, Optional
 
 from tflt.config import LoopConfig
 
 
 TensorLike = object
 Operator = Callable[[TensorLike], TensorLike]
+EventEmitter = Callable[[str, dict], None]
 
 
 def blend(x: TensorLike, y: TensorLike, weight: float) -> TensorLike:
@@ -48,6 +49,72 @@ def run_loop(operator: Operator, x0: TensorLike, config: LoopConfig) -> TensorLi
     if strategy == "anderson":
         return _anderson(operator, x0, config)
     raise ValueError("unknown loop strategy: %s" % config.strategy)
+
+
+def run_loop_controlled(
+    operator: Operator,
+    x0: TensorLike,
+    config: LoopConfig,
+    controller: Any = None,
+    probe: Any = None,
+    emit: Optional[EventEmitter] = None,
+) -> TensorLike:
+    """Run the frozen LoopPilot K=2 path, preserving legacy behavior when disabled."""
+
+    if controller is None:
+        return run_loop(operator, x0, config)
+    strategy = "damped_euler" if config.strategy == "euler" else config.strategy
+    if (
+        config.k != 2
+        or strategy != "damped_euler"
+        or config.alpha != 1.0
+        or config.beta != 0.0
+    ):
+        raise ValueError(
+            "LoopPilot phase one requires k=2, damped_euler, alpha=1.0, beta=0.0"
+        )
+
+    from tflt.looppilot.controller import Action, Decision
+
+    decision = controller.decide(probe)
+    if not isinstance(decision, Decision):
+        raise TypeError("controller.decide must return Decision")
+
+    y0 = operator(x0)
+    body_calls = 1
+    _emit(emit, "controller_decision", action=decision.action.value, reason=decision.reason)
+    if decision.action == Action.BASELINE:
+        _emit(
+            emit,
+            "controller_health",
+            action=decision.action.value,
+            k_used=1,
+            operator_body_calls=body_calls,
+            claimed_compute_saving=False,
+        )
+        return y0
+    if decision.action != Action.LOOP_K2:
+        raise ValueError("unsupported LoopPilot action: %s" % decision.action)
+
+    step = config.alpha / float(config.k)
+    x1 = x0 + step * (y0 - x0)  # type: ignore[operator]
+    y1 = operator(x1)
+    body_calls += 1
+    x2 = x1 + step * (y1 - x1)  # type: ignore[operator]
+    _emit(
+        emit,
+        "controller_health",
+        action=decision.action.value,
+        k_used=2,
+        operator_body_calls=body_calls,
+        claimed_compute_saving=False,
+    )
+    return x2
+
+
+def _emit(emit: Optional[EventEmitter], event: str, **payload: Any) -> None:
+    if emit is not None:
+        emit(event, payload)
 
 
 def _naive(operator: Operator, x: TensorLike, k: int) -> TensorLike:
