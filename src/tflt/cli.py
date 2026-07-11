@@ -11,6 +11,7 @@ from typing import Any, Dict, Optional
 from tflt.audit import add_audit_args, cmd_audit_loop_effect
 from tflt.config import LoopConfig
 from tflt.models import load_model_registry, resolve_model
+from tflt.looppilot.controller import parse_controller_spec
 from tflt.remote import (
     EvalSpec,
     build_lm_eval_command,
@@ -86,6 +87,8 @@ def add_eval_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--cache-strategy", choices=["first", "last", "none"], default="last")
     parser.add_argument("--decode-mode", choices=["bypass", "full", "first_n"], default="bypass")
     parser.add_argument("--first-n", type=int, default=None)
+    parser.add_argument("--looppilot-controller", default=None)
+    parser.add_argument("--looppilot-signal-jsonl", default=None)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--execute", action="store_true")
 
@@ -197,6 +200,12 @@ def cmd_report(args: argparse.Namespace) -> int:
 
 
 def _eval_spec_from_args(args: argparse.Namespace) -> EvalSpec:
+    if args.looppilot_controller is not None:
+        if not args.loop:
+            raise ValueError("--looppilot-controller requires --loop")
+        parse_controller_spec(args.looppilot_controller)
+    if args.looppilot_signal_jsonl is not None and not args.loop:
+        raise ValueError("--looppilot-signal-jsonl requires --loop")
     loop_config = None
     if args.loop:
         loop_config = LoopConfig.from_window_string(
@@ -221,6 +230,8 @@ def _eval_spec_from_args(args: argparse.Namespace) -> EvalSpec:
         dtype=args.dtype,
         loop_config=loop_config,
         output_dir=output_dir,
+        looppilot_controller=args.looppilot_controller,
+        looppilot_signal_jsonl=args.looppilot_signal_jsonl,
     )
 
 

@@ -18,6 +18,23 @@ class RemoteCommandTest(unittest.TestCase):
         self.assertIn("--dtype", cmd)
         self.assertIn("float16", cmd)
 
+    def test_eval_command_passes_looppilot_arguments(self):
+        cmd = build_lm_eval_command(
+            EvalSpec(
+                model="qwen3-1.7b-base",
+                tasks="mmlu",
+                limit=None,
+                loop_config=None,
+                output_dir="/tmp/looppilot",
+                dtype="float16",
+                looppilot_controller="never_loop",
+                looppilot_signal_jsonl="/tmp/looppilot/signals.jsonl",
+            )
+        )
+        self.assertIn("--looppilot-controller", cmd)
+        self.assertIn("never_loop", cmd)
+        self.assertIn("--looppilot-signal-jsonl", cmd)
+
     def test_slurm_script_uses_full_gres_and_hpc2_environment(self):
         script = render_slurm_script(
             command=["python", "-m", "tflt.eval_runner", "--dtype", "float16"],

@@ -10,6 +10,7 @@ from typing import Any, Optional
 
 from tflt.config import LoopConfig
 from tflt.models import resolve_model
+from tflt.looppilot.controller import parse_controller_spec
 from tflt.wrapper import apply_loop_wrapper
 
 
@@ -32,7 +33,16 @@ def main(argv: Optional[list] = None) -> int:
     parser.add_argument("--cache-strategy", choices=["first", "last", "none"], default="last")
     parser.add_argument("--decode-mode", choices=["bypass", "full", "first_n"], default="bypass")
     parser.add_argument("--first-n", type=int, default=None)
+    parser.add_argument("--looppilot-controller", default=None)
+    parser.add_argument("--looppilot-signal-jsonl", default=None)
     args = parser.parse_args(argv)
+
+    if args.looppilot_controller is not None and not args.loop:
+        raise ValueError("--looppilot-controller requires --loop")
+    if args.looppilot_signal_jsonl is not None and not args.loop:
+        raise ValueError("--looppilot-signal-jsonl requires --loop")
+    if args.looppilot_controller is not None:
+        parse_controller_spec(args.looppilot_controller)
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -116,6 +126,11 @@ def run_lm_eval(
 
 
 def _loop_config(args: argparse.Namespace) -> LoopConfig:
+    controller = (
+        parse_controller_spec(args.looppilot_controller)
+        if args.looppilot_controller is not None
+        else None
+    )
     return LoopConfig.from_window_string(
         model_alias=args.model,
         window=args.window,
@@ -127,6 +142,7 @@ def _loop_config(args: argparse.Namespace) -> LoopConfig:
         cache_strategy=args.cache_strategy,
         decode_mode=args.decode_mode,
         first_n=args.first_n,
+        controller=controller,
     )
 
 

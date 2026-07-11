@@ -22,6 +22,8 @@ class EvalSpec:
     num_fewshot: Optional[int] = None
     batch_size: str = "auto"
     dtype: str = "bfloat16"
+    looppilot_controller: Optional[str] = None
+    looppilot_signal_jsonl: Optional[str] = None
 
 
 def build_lm_eval_command(spec: EvalSpec) -> List[str]:
@@ -44,6 +46,10 @@ def build_lm_eval_command(spec: EvalSpec) -> List[str]:
         cmd.extend(["--limit", str(spec.limit)])
     if spec.num_fewshot is not None:
         cmd.extend(["--num-fewshot", str(spec.num_fewshot)])
+    if spec.looppilot_controller is not None:
+        cmd.extend(["--looppilot-controller", spec.looppilot_controller])
+    if spec.looppilot_signal_jsonl is not None:
+        cmd.extend(["--looppilot-signal-jsonl", spec.looppilot_signal_jsonl])
     if spec.loop_config is not None:
         cfg = spec.loop_config
         cmd.extend(
