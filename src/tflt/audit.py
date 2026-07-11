@@ -70,16 +70,29 @@ class AuditCollector:
             self.counts["identity_layer_forwards"] += 1
         elif event == "bypass":
             self.counts["bypass_events"] += 1
+        elif event == "controller_decision":
+            self.counts["controller_decisions"] += 1
+        elif event == "controller_health":
+            self.counts["controller_health_events"] += 1
+            self.counts["k_used_total"] += int(payload["k_used"])
+            self.counts["declared_operator_body_calls"] += int(payload["operator_body_calls"])
 
     def record_tensor_diff(self, name: str, before: Any, after: Any) -> None:
         self.tensor_diffs[name].append(diff_stats(before, after))
 
     def summary(self) -> Dict[str, Any]:
-        return {
+        summary = {
             "counts": dict(self.counts),
             "forward_records": self.forward_records,
             "tensor_diffs": dict(self.tensor_diffs),
         }
+        if self.counts.get("controller_health_events", 0):
+            summary["controller_health_closed"] = (
+                self.counts["operator_body_calls"]
+                == self.counts["k_used_total"]
+                == self.counts["declared_operator_body_calls"]
+            )
+        return summary
 
 
 def add_audit_args(parser: Any) -> None:

@@ -8,7 +8,7 @@ from typing import Any, Dict, Iterable, Iterator, List, Optional, Sequence, Tupl
 
 from tflt.cache import cache_arg, crop_cache, snapshot_cache
 from tflt.config import LoopConfig
-from tflt.strategies import run_loop
+from tflt.strategies import run_loop_controlled
 
 
 try:
@@ -130,11 +130,27 @@ class LoopLayerWrapper(_ModuleBase):
             finally:
                 crop_cache(snap)
 
-        looped = run_loop(operator, hidden_states, self.config)
+        controller_state: Dict[str, Any] = {}
+        looped = run_loop_controlled(
+            operator,
+            hidden_states,
+            self.config,
+            controller=self.config.controller,
+            probe=self.config.controller_probe,
+            emit=_controller_emitter(self.config, controller_state),
+        )
         _audit_tensor_diff(self.config, "looped_hidden_vs_input", hidden_states, looped)
         if self.config.cache_strategy != "none":
             _audit(self.config, "stash_pass", wrapper_type="layer", cache_strategy=self.config.cache_strategy)
-        return _stash_or_return(self.layer, hidden_states, looped, args, kwargs, self.config)
+        return _stash_or_return(
+            self.layer,
+            hidden_states,
+            looped,
+            args,
+            kwargs,
+            self.config,
+            baseline_action=controller_state.get("action") == "BASELINE",
+        )
 
 
 class LoopBlockEntryWrapper(_ModuleBase):
@@ -169,12 +185,25 @@ class LoopBlockEntryWrapper(_ModuleBase):
             finally:
                 crop_cache(snap)
 
-        looped = run_loop(operator, hidden_states, self.config)
+        controller_state: Dict[str, Any] = {}
+        looped = run_loop_controlled(
+            operator,
+            hidden_states,
+            self.config,
+            controller=self.config.controller,
+            probe=self.config.controller_probe,
+            emit=_controller_emitter(self.config, controller_state),
+        )
         _audit_tensor_diff(self.config, "looped_hidden_vs_input", hidden_states, looped)
         if self.config.cache_strategy == "none":
             return _as_layer_output(looped, kwargs)
 
-        stash_input = hidden_states if self.config.cache_strategy == "first" else looped
+        baseline_action = controller_state.get("action") == "BASELINE"
+        stash_input = (
+            hidden_states
+            if baseline_action or self.config.cache_strategy == "first"
+            else looped
+        )
         _audit(self.config, "stash_pass", wrapper_type="block", cache_strategy=self.config.cache_strategy)
         stash_result = _run_layers(self.layers, stash_input, args, kwargs)
         return _replace_hidden(stash_result, looped)
@@ -260,10 +289,11 @@ def _stash_or_return(
     args: Tuple[Any, ...],
     kwargs: Dict[str, Any],
     config: LoopConfig,
+    baseline_action: bool = False,
 ) -> Any:
     if config.cache_strategy == "none":
         return _as_layer_output(looped_hidden, kwargs)
-    stash_input = original_hidden if config.cache_strategy == "first" else looped_hidden
+    stash_input = original_hidden if baseline_action or config.cache_strategy == "first" else looped_hidden
     stash_result = layer(stash_input, *args, **kwargs)
     return _replace_hidden(stash_result, looped_hidden)
 
@@ -427,3 +457,12 @@ def _audit_tensor_diff(config: LoopConfig, name: str, before: Any, after: Any) -
     record = getattr(collector, "record_tensor_diff", None)
     if callable(record):
         record(name, before, after)
+
+
+def _controller_emitter(config: LoopConfig, state: Dict[str, Any]) -> Any:
+    def emit(event: str, payload: Dict[str, Any]) -> None:
+        if event == "controller_decision":
+            state["action"] = payload.get("action")
+        _audit(config, event, **payload)
+
+    return emit

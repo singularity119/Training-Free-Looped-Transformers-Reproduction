@@ -49,6 +49,9 @@ class LoopConfig:
     anderson_m: int = 5
     anderson_lambda: float = 1e-4
     audit_collector: Any = None
+    controller: Any = None
+    controller_probe: Any = None
+    signal_collector: Any = None
 
     def __post_init__(self) -> None:
         a, b = self.window
@@ -70,6 +73,14 @@ class LoopConfig:
             raise ValueError("anderson_m must be >= 2")
         if self.anderson_lambda < 0:
             raise ValueError("anderson_lambda must be >= 0")
+        if self.controller is not None:
+            if not callable(getattr(self.controller, "decide", None)):
+                raise TypeError("controller must provide a callable decide method")
+            strategy = "damped_euler" if self.strategy == "euler" else self.strategy
+            if self.k != 2 or strategy != "damped_euler" or self.alpha != 1.0 or self.beta != 0.0:
+                raise ValueError(
+                    "LoopPilot phase one requires k=2, damped_euler, alpha=1.0, beta=0.0"
+                )
 
     @property
     def start(self) -> int:
