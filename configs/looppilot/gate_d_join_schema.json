@@ -1,0 +1,32 @@
+{
+  "canonical_key": [
+    "task",
+    "task_version",
+    "renderer_hash",
+    "doc_hash",
+    "occurrence_id"
+  ],
+  "controller_input_fields": ["r0_median", "c0", "n0_median"],
+  "decision_unit": "doc",
+  "expected_choice_indices": [0, 1, 2, 3],
+  "expected_doc_count": 20,
+  "expected_signal_request_count": 80,
+  "join_by_line_number": false,
+  "schema_version": 1,
+  "signal_decision_forbidden_fields": [
+    "answer",
+    "gold",
+    "target",
+    "correctness",
+    "is_correct",
+    "prediction",
+    "margin",
+    "logits",
+    "full_logits",
+    "raw_hidden",
+    "raw_hidden_state",
+    "hidden_states",
+    "continuation",
+    "choice_continuation"
+  ]
+}
