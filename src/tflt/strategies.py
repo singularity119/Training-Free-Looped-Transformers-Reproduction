@@ -76,12 +76,13 @@ def run_loop_controlled(
 
     from tflt.looppilot.controller import Action, Decision
 
-    decision = controller.decide(probe)
+    y0 = operator(x0)
+    body_calls = 1
+    resolved_probe = probe(x0, y0) if callable(probe) else probe
+    decision = controller.decide(resolved_probe)
     if not isinstance(decision, Decision):
         raise TypeError("controller.decide must return Decision")
 
-    y0 = operator(x0)
-    body_calls = 1
     _emit(emit, "controller_decision", action=decision.action.value, reason=decision.reason)
     if decision.action == Action.BASELINE:
         _emit(

@@ -89,6 +89,27 @@ class ControlledStrategyTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             run_loop_controlled(CountingOperator(), 0.0, bad, controller=AlwaysLoop())
 
+    def test_decision_uses_probe_built_after_first_required_body_call(self):
+        operator = CountingOperator()
+
+        class ObservingController:
+            def decide(self, probe=None):
+                self.test.assertEqual(operator.calls, 1)
+                self.test.assertEqual(probe, {"x0": 3.0, "y0": 8.0})
+                return NeverLoop().decide(probe)
+
+        controller = ObservingController()
+        controller.test = self
+        actual = run_loop_controlled(
+            operator,
+            3.0,
+            self.config,
+            controller=controller,
+            probe=lambda x0, y0: {"x0": x0, "y0": y0},
+        )
+        self.assertEqual(actual, 8.0)
+        self.assertEqual(operator.calls, 1)
+
 
 if __name__ == "__main__":
     unittest.main()
