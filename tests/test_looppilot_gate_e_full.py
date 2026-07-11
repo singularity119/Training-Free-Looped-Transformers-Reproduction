@@ -17,6 +17,7 @@ from tflt.looppilot.full import (
 from scripts.looppilot.analyze_gate_e import _cluster_ci, _random_null
 from scripts.looppilot.analyze_gate_e import main as analyze_main
 from scripts.looppilot.verify_gate_e_final import main as verify_final_main
+from scripts.looppilot.prepare_gate_e_full import _expand_group
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -85,6 +86,33 @@ def signals(key="k0"):
 
 
 class GateEManifestTest(unittest.TestCase):
+    def test_authoritative_tag_expansion_and_fail_closed_inputs(self):
+        class NoYaml:
+            @staticmethod
+            def safe_load(_text):
+                raise AssertionError("tag expansion must use TaskManager entry children")
+
+        index = {
+            "mmlu_tag": {"type": "tag", "task": ["mmlu_a", "mmlu_nested"], "yaml_path": -1},
+            "mmlu_nested": {"type": "tag", "task": ["mmlu_b"], "yaml_path": -1},
+            "mmlu_a": {"type": "task", "yaml_path": "/unused/a.yaml"},
+            "mmlu_b": {"type": "task", "yaml_path": "/unused/b.yaml"},
+        }
+        self.assertEqual(_expand_group("mmlu_tag", index, NoYaml, set()), ["mmlu_a", "mmlu_b"])
+        for entry in (
+            {"type": "tag", "task": [], "yaml_path": -1},
+            {"type": "tag", "task": [1], "yaml_path": -1},
+            {"type": "unknown", "task": ["mmlu_a"], "yaml_path": -1},
+        ):
+            changed = dict(index)
+            changed["bad"] = entry
+            with self.subTest(entry=entry):
+                with self.assertRaises(RuntimeError):
+                    _expand_group("bad", changed, NoYaml, set())
+        recursive = {"loop": {"type": "tag", "task": ["loop"], "yaml_path": -1}}
+        with self.assertRaises(RuntimeError):
+            _expand_group("loop", recursive, NoYaml, set())
+
     def test_checked_in_config_is_frozen_and_drift_rejected(self):
         validate_gate_e_config(config())
         for field, value in (("batch_size", "auto"), ("k", 3), ("shard_count", 7)):

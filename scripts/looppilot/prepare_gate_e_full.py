@@ -148,14 +148,18 @@ def _expand_group(name: str, index: Mapping[str, Any], yaml: Any, active: Set[st
     entry = index.get(name)
     if not isinstance(entry, Mapping):
         raise RuntimeError("missing lm-eval task index entry: %s" % name)
-    if entry.get("type") == "task":
+    entry_type = entry.get("type")
+    if entry_type == "task":
         return [name]
-    if entry.get("type") != "group" or "yaml_path" not in entry:
+    if entry_type == "tag":
+        children = entry.get("task")
+    elif entry_type == "group" and "yaml_path" in entry:
+        payload = yaml.safe_load(Path(str(entry["yaml_path"])).read_text())
+        children = payload.get("task") if isinstance(payload, Mapping) else None
+    else:
         raise RuntimeError("invalid lm-eval group entry: %s" % name)
-    payload = yaml.safe_load(Path(str(entry["yaml_path"])).read_text())
-    children = payload.get("task") if isinstance(payload, Mapping) else None
     if not isinstance(children, list) or not children:
-        raise RuntimeError("lm-eval group has no children: %s" % name)
+        raise RuntimeError("lm-eval group/tag has no children: %s" % name)
     result: List[str] = []
     for child in children:
         if not isinstance(child, str):
