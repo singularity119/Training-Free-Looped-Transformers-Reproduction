@@ -8,12 +8,12 @@
 
 # LoopScope 项目操作约定
 
-> 本文件只适用于 LoopScope 专用新 clone 的 `loopscope` 分支。它定义第一阶段 Qwen3-1.7B LoopScope 增量实现、HPC2 验证和实验的强制边界。原有本地/HPC2 固定复现 checkout 均为只读参照。发现本文件与用户最新明确指令冲突时，以用户最新指令为准并先暂停报告。
+> 本文件只适用于 LoopScope 专用 clone 的 `loopscope` 分支。它定义 LoopScope 第一阶段及后续阶段增量实现、HPC2 验证和实验的长期强制边界；阶段进度与动态授权分别记录在对应 control 文件中。原有本地/HPC2 固定复现 checkout 均为只读参照。发现本文件与用户最新明确指令冲突时，以用户最新指令为准并先暂停报告。
 
 ## 0. 计划与信息源
 
 - `AGENTS.md` 只保存长期稳定的项目边界、工程规则和 Gate 验收标准，不记录临时进度、当前执行线程或逐次工具日志。
-- `../.planning/loopscope_phase1_control.md` 是第一阶段唯一的可变全局计划与控制文件；当前 Gate、Gate 决策、线程分配、已审计 commit、下一步授权条件均以它为准。
+- `../.planning/loopscope_phase1_control.md` 是已关闭第一阶段的历史控制面；`../.planning/loopscope_phase2_control.md` 是第二阶段唯一的可变全局计划与控制文件。当前 Gate、Gate 决策、线程分配、已审计 commit、下一步授权条件均以当前阶段 control 为准。
 - 旧工作区 `.planning/` 包、历史 handoff、线程聊天和 Codex memory 只作历史证据或辅助回忆；如果与当前代码或控制文件冲突，不得据此覆盖当前事实。
 - 单线程内的临时步骤优先使用 Codex 原生 plan/goal，不把每一步复制到项目文件。
 - 不得自动调用 `planning-with-files` skill。只有用户在当前请求中明确点名或明确要求启用该工作流时才可使用。
@@ -28,6 +28,7 @@
 - 第一阶段模型：`Qwen/Qwen3-1.7B-Base`。
 - 第一阶段任务：`mmlu`，5-shot。
 - 第一阶段目标：验证免训练内部信号能否预测不同 loop window 的真实收益；不提前宣称已经得到通用自动选窗器。
+- 第二阶段目标：围绕第一阶段局部结果验证“可迭代精炼区”机制——区分持续有益修正、短暂最优、无益扰动和错误过度自信；先用小范围 `k` 轨迹与逐样本分析理解机制，只有机制得到支持后才讨论无标签选窗或跨模型扩展。
 - 基础复现分支 `main` 是固定对照，不接受 LoopScope 功能提交。
 - 新 clone 的默认 `main` 也只作只读引用；clone 后首次工作分支必须是从固定基点新建的 `loopscope`。
 
@@ -238,3 +239,76 @@ requested decision: PASS / PASS_WITH_FIXES / BLOCK
 ```
 
 未收到 `PASS` 时不得自动进入下一门。
+
+## 11. 第二阶段稳定科学与治理边界
+
+### 11.1 阶段定位
+
+- 第一阶段 `Qwen3-1.7B-Base × MMLU 5-shot` 已经看过完整 accuracy，是第二阶段提出机制假设的开发锚点，不是 held-out 证据。
+- 第二阶段核心是验证“可迭代精炼区”：某个 block 在单次前向已有明显作用，但重复调用时在观测到的 K≤4 范围仍保留方向有益的修正能力。是否以及何时饱和必须单独报告；未在 K≤4 观察到饱和不等于 H1 失败，也不自动授权 K>4。
+- `Native-Continuation Alignment (NCA)` 是 H1 V2 拟在 Gate A 冻结的无标签、相关性方向代理：它比较真实 loop residual 与同一样本原生下游延续方向。只有 Gate A 审计 `PASS` 后才可称为预注册。NCA 正值只表示与原模型原生路径一致，不证明朝正确答案移动，也不能替代 gold-label 纠错裁决。
+- 当前不得直接建设新的加权 selector 或 NCA certificate selector。先判断 `12:15` 的收益究竟来自持续有益修正、一次性关键层作用、普通扰动、错误过度自信，还是仅仅保持原生路径。
+- 正结果、负结果和“仅 K=2 短暂最优”都必须如实报告。Gate 的 `PASS` 只表示契约和证据完整；H1 结果与 NCA 诊断必须分开记录。
+- 旧版多模型、多任务、全窗口信号竞赛不是第二阶段核心门；它只在核心机制得到支持且用户另行授权后，作为可选扩展。
+- `configs/eval/phase2_qwen17_mmlu.json` 属于基础复现项目的历史 Phase 2 命名，不得覆盖或改作 LoopScope 配置。LoopScope 第二阶段新配置只进入 `configs/loopscope/`。
+
+### 11.2 核心实验不变量与测量分层
+
+Gate A 拟冻结的核心机制卡草案：
+
+```text
+card=H1_ITERATIVE_REFINEMENT_ZONE_V2
+model=Qwen/Qwen3-1.7B-Base@ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+task=mmlu
+num_fewshot=5
+dtype=float16
+windows=11:14,12:15,13:16  # inclusive, width=4
+iteration_mode=block
+strategy=damped_euler
+beta=0.0
+cache_strategy=last
+decode_mode=bypass
+primary continuation=(k,alpha)=(2,1.0),(3,1.5),(4,2.0)  # 固定 h=alpha/k=0.5
+fixed-horizon control=(k,alpha)=(1,1.0),(2,1.0),(3,1.0),(4,1.0)
+nca_position=final_pre_answer_prompt_token
+nca_calibration=Phase 1 frozen validation 512; labels sealed during probe
+nca_bootstrap=10000; seed=0
+nca_role=prospective_secondary_direction_proxy; never selector in H1
+```
+
+- 当前 `damped_euler` 的单步大小为 `h=alpha/k`。主轨迹固定 Phase 1 的 `h=0.5` 并随 K 延长总迭代时长，用于直接检验“继续计算”；固定 `alpha=1` 的控制轨迹只检验同一总时长下更细的子步，二者不得混写。
+- `(k=1,alpha=1)` 必须先在小样本上证明与普通单次前向等价；若不等价，立即 `BLOCK`，不得把它静默当 baseline。
+- 主 continuation 的 step 都是 `0.5`，因此 K=3/4 的前两次调用状态/residual tensors 必须与 K=2 在同样输入上于内存中 allclose；工件只保存 max-abs/scalar 证明。Gate B 若不能证明 prefix consistency，必须 `BLOCK`，不能解释为“继续同一迭代”。
+- Phase 1 的 baseline 与三个窗口 `k=2` 结果优先只读复用；不得为目录整齐或补字段自动重跑。若缺少关键逐样本字段，先报告并由规划线程决定是否授权 write-once trace 补跑。
+- 每个新工件的 identity/path 必须同时编码 `protocol、window、k、alpha`；不得仅按 K 命名而让 `(3,1)` 与 `(3,1.5)` 冲突。
+- 指标必须标明来源，禁止混写：
+  1. **baseline layer probe / provenance A**：boundary entropy、KL、effective rank，以及 baseline window update 与原生下游延续的 NCA；
+  2. **actual loop trajectory / provenance B**：每轮 residual norm、`q_t`、相邻方向和每轮 NCA，来自实际重复调用；
+  3. **final model output by k / provenance C**：完整前向结束后的 choice probability、entropy、top-1/top-2 margin、JS divergence 与答案；
+  4. **gold-label adjudication / provenance D**：card 与无标签字段冻结后才计算的 `wrong→right`、`right→wrong`、正确答案 margin 和错误过度自信。
+- NCA 的原生延续为 `c_(w,i)=B_N[i,p,:]-B_(b+1)[i,p,:]`，其中 `p` 是冻结的 final pre-answer prompt token。body-call index 冻结为 zero-based `t=0..K-1`：`t=0` 是 initial call，baseline NCA 使用普通单次前向 `B_(b+1)-B_a`，actual-loop NCA 只汇总 repeated calls `t=1..K-1`；`K=1` 不产生 repeated-step NCA。近零向量、非有限值、位置或边界 identity 不一致必须显式 invalid/fail-fast，不得静默当作普通零分。
+- NCA 默认只在冻结 512 校准池上采集。向量可在设备内以 float32 临时计算，但工件只持久化 per-sample cosine、`||c||`、`||delta||`、validity mask 和汇总值；不得持久化完整 hidden/residual tensors。
+- full trace 继续只保存 answer-position residual 的标量 norm/ratio/cosine、必要的 NCA scalar（仅当无需新增 full baseline pass 即可诚实得到）和每样本四个 choice scores。不得为 NCA 自动新增 14,042-sample baseline trace 或重跑 Phase 1。
+- baseline layer probe 的 entropy drop 不能表述为“loop 后 entropy 下降”。中间 block hidden state 经 final norm/lm_head 得到的 lens 量只作辅助；未经有效性门不得当作 primary evidence。
+- NCA、`q`、entropy 和 eRank 都不能单独证明方向有益。H1 的最终科学裁决仍由 final-output 与 gold-label paired outcome 给出；NCA 只回答它是否提供额外的无标签区分力。
+- 三窗口的六个 prospective incremental contrasts 构成唯一 primary confirmatory family，使用 two-sided exact McNemar 与 Holm step-down、family-wise `alpha=0.05`；fixed-horizon 是独立、内部 Holm 校正的 secondary control family，cumulative-vs-baseline 只作 secondary context，二者均不得单独触发 `REFINEMENT_SUPPORTED`。NCA diagnosis 必须独立于 H1 outcome，使用预先声明的 pointwise、未校正 secondary intervals，不作 FWER-controlled confirmatory claim。Gate A 必须把 H1/NCA 标签的判定顺序、符号条件、区间比较、valid-fraction 下限和 multiplicity（包括 NCA 明确不校正）写入 versioned config/hash，规划线程审计后才可冻结。
+- H1 outcome 只回答 `12:15` 在当前 model-task cell 的 continuation 结果；“目标窗口显著、邻窗不显著”不能证明窗口间差异，不得据此声称 `12:15` 唯一或显著优于邻窗。窗口选择性只能由未来独立 direct contrast/selector card 检验。
+- 第一阶段 effective rank 继续作为解释性 covariate；10k-token pooled eRank、angular/BI、tuned lens 和新复合分数均不属于核心必做项，需独立 hypothesis card。
+
+### 11.3 敏捷 hypothesis card
+
+- 第二阶段按小型 hypothesis card 推进，而不是一次冻结整个研究项目。每张卡只能回答一个主要问题，并明确 model/task/window/k、指标来源、需要的新计算、成功/反证模式和最大新 full-run 数。
+- NCA 在 H1 V2 冻结前由用户明确加入，因此可作为 prospective secondary observable；此后出现的新指标不能回写为 H1 的预注册证据，所有 post-hoc 发现必须标记 exploratory。
+- 只读分析现有工件的卡不需要重复 GPU Gate；新增采集代码才进入本地门；新增 GPU 字段先过小样本门；只有小样本闭环后才能 full。
+- 优先复用既有 repo、venv、缓存、renderer、Phase 1 samples 与 paired-analysis 基础设施。不得为了通用化而先做大规模重构。
+
+### 11.4 第二阶段核心 Gate
+
+1. **Gate A：轻量轨迹/NCA 实现与 H1 V2 冻结**——只实现每轮 residual、512 校准池 NCA、最终输出轨迹及逐样本分析所需的最小 schema、配置和测试；不得远程运行。
+2. **Gate B：HPC2 CPU + smoke/limit + bounded NCA calibration 门**——先做 CPU/provenance，再做四样本与 limit 轨迹；验证 `k=1` 等价、fixed-step prefix consistency、调用次数、NCA 位置/边界/字段、样本 identity 和资源上限。工程闭环后可在同一 Gate 内执行冻结 512 池、三核心窗口的无标签 NCA/final-choice probe；B2 最多一个 no-loop boundary cell 加十五个 loop cells、单 GPU 总计不超过 18 GPU-hours。不得运行 full MMLU，也不得按 NCA 改 Gate C 窗口或 K。
+3. **Gate C：三窗口 focused full 门**——复用 Phase 1 baseline 与 `(k=2,alpha=1)`；主轨迹只新增三窗口 `(3,1.5)/(4,2)` 六个配置，并为 `12:15` 新增 `(3,1)/(4,1)` 两个 fixed-horizon controls，默认最多八个 full 配置；执行一次 write-once paired mechanism analysis，并分别报告 H1 outcome 与 NCA diagnosis。
+4. **Gate D：Gate C 后的可选条件分支**——使用互斥矩阵：H1=`TRANSIENT_ONLY/PERTURBATION`（任意 NCA）停止 selector；H1=`SUGGESTIVE/INCONCLUSIVE`（任意 NCA）只可停止或另立最小 H1 消歧卡；只有 H1=`REFINEMENT_SUPPORTED` 时才按 NCA 分流，其中 `NCA_INCONCLUSIVE` 只可停止或最小 NCA 消歧，`NCA_DIRECTION_SUPPORTED` 可由用户另立 `H2_NCA_CERTIFICATE`，`NCA_NONDISCRIMINATIVE/NCA_NATIVE_FIDELITY_ONLY` 可选择一个新任务或一个新模型做最小机制确认。任何分支都需独立授权。
+
+完整的全窗口 NCA 排名、top-3 shortlist、唯一胜者/no-loop verifier、window-identity permutation 和固定部署协议不属于 H1，也不构成 Gate C admission；它们只可在 Gate C 审计后作为独立 H2 card 冻结。旧版 16/17-window grid、三模型×两任务、depth-controlled signal competition、10k-token eRank 和生成任务继续保留为 optional backlog。
+
+每一 Gate 使用独立执行线程；规划/审计线程不亲自执行、不轮询、不预建未来 Gate 执行线程。执行线程只在终态主动发送一次结构化 `GATE_X_FINAL_AUDIT` 或 `BLOCK`，规划/审计线程收到后重新读取 live Git、Slurm 和不可变工件再决定。
