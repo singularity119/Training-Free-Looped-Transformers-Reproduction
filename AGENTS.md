@@ -115,7 +115,7 @@ src/tflt/loopscope/
 允许的既有文件小改动：
 
 - `src/tflt/cli.py`：注册 LoopScope 子命令。
-- `src/tflt/eval_runner.py`：第二阶段只允许新增显式 opt-in 的 trace adapter；默认关闭时 parser、`LoopConfig.audit_collector=None`、HFLM/TaskManager/`simple_evaluate` 参数、revision closure、`results.json` 和科学行为必须保持不变。trace 只写独立 sidecar，必须用稳定 sample identity 关联，不能按回调顺序猜测；无法在 `batch_size=auto` 下证明一一对应时必须 fail-fast。
+- `src/tflt/eval_runner.py`：第二阶段只允许新增显式 opt-in 的 final-output sidecar adapter；默认关闭时 parser、`LoopConfig.audit_collector=None`、HFLM/TaskManager/`simple_evaluate` 参数、revision closure、`results.json` 和科学行为必须保持不变。adapter 只从 evaluator 已完成的逐样本记录提取四个 raw choice scores，并用稳定 sample identity 作顺序无关的精确 join；不能按 callback/batch 顺序猜测。当前 H1 不允许通过该 adapter 接入 wrapper residual collector，也不允许为 full residual 新增 HFLM request router。
 - `README.md` 或 `docs/loopscope_phase*.md`：记录使用方法与工件契约。
 - `configs/loopscope/`：保存固定配置、schema 和 manifest 模板。
 - `scripts/loopscope/`：保存可审计的 pool 生成/Slurm 编排脚本。
@@ -290,7 +290,9 @@ nca_role=prospective_secondary_direction_proxy; never selector in H1
   4. **gold-label adjudication / provenance D**：card 与无标签字段冻结后才计算的 `wrong→right`、`right→wrong`、正确答案 margin 和错误过度自信。
 - NCA 的原生延续为 `c_(w,i)=B_N[i,p,:]-B_(b+1)[i,p,:]`，其中 `p` 是冻结的 final pre-answer prompt token。body-call index 冻结为 zero-based `t=0..K-1`：`t=0` 是 initial call，baseline NCA 使用普通单次前向 `B_(b+1)-B_a`，actual-loop NCA 只汇总 repeated calls `t=1..K-1`；`K=1` 不产生 repeated-step NCA。近零向量、非有限值、位置或边界 identity 不一致必须显式 invalid/fail-fast，不得静默当作普通零分。
 - NCA 默认只在冻结 512 校准池上采集。向量可在设备内以 float32 临时计算，但工件只持久化 per-sample cosine、`||c||`、`||delta||`、validity mask 和汇总值；不得持久化完整 hidden/residual tensors。
-- full trace 继续只保存 answer-position residual 的标量 norm/ratio/cosine、必要的 NCA scalar（仅当无需新增 full baseline pass 即可诚实得到）和每样本四个 choice scores。不得为 NCA 自动新增 14,042-sample baseline trace 或重跑 Phase 1。
+- H1 V2 采用尺度分离：冻结 512 calibration 是 actual-loop residual、`q_t`、相邻方向、NCA 和无标签 final-choice 轨迹的唯一 mandatory trajectory scale；14,042-sample full 只保存 evaluator 产生的每样本四个 raw choice scores、概率、entropy/margin/JS、答案与 gold paired outcome，不要求也不允许新增 full residual/NCA trace。
+- full final-output sidecar 必须用 canonical `task/doc_id/doc_hash` manifest 作唯一、完整、原序 closure；evaluator 输出可任意排序，但 join 后必须恢复 canonical natural order。若 lm-eval 真实 logged sample 缺少足以证明该 join 或 raw four-choice scoring 的字段，Gate B 必须 `BLOCK`，不得自动增加 HFLM router、改 batch size、改 renderer 或改用 direct full producer。
+- full-population residual–answer-flip 个体相关性不属于当前 H1 的 confirmatory claim。Gate C 对 residual/NCA 的机制解释引用经审计的 512 calibration；14,042 full 只负责最终决策轨迹和 gold-label outcome。若以后确需 full residual correlation，必须另立 hypothesis card 和独立预算。
 - baseline layer probe 的 entropy drop 不能表述为“loop 后 entropy 下降”。中间 block hidden state 经 final norm/lm_head 得到的 lens 量只作辅助；未经有效性门不得当作 primary evidence。
 - NCA、`q`、entropy 和 eRank 都不能单独证明方向有益。H1 的最终科学裁决仍由 final-output 与 gold-label paired outcome 给出；NCA 只回答它是否提供额外的无标签区分力。
 - 三窗口的六个 prospective incremental contrasts 构成唯一 primary confirmatory family，使用 two-sided exact McNemar 与 Holm step-down、family-wise `alpha=0.05`；fixed-horizon 是独立、内部 Holm 校正的 secondary control family，cumulative-vs-baseline 只作 secondary context，二者均不得单独触发 `REFINEMENT_SUPPORTED`。NCA diagnosis 必须独立于 H1 outcome，使用预先声明的 pointwise、未校正 secondary intervals，不作 FWER-controlled confirmatory claim。Gate A 必须把 H1/NCA 标签的判定顺序、符号条件、区间比较、valid-fraction 下限和 multiplicity（包括 NCA 明确不校正）写入 versioned config/hash，规划线程审计后才可冻结。
@@ -304,14 +306,15 @@ nca_role=prospective_secondary_direction_proxy; never selector in H1
 - 只读分析现有工件的卡不需要重复 GPU Gate；新增采集代码才进入本地门；新增 GPU 字段先过小样本门；只有小样本闭环后才能 full。
 - 优先复用既有 repo、venv、缓存、renderer、Phase 1 samples 与 paired-analysis 基础设施。不得为了通用化而先做大规模重构。
 - Gate A 初始授权不得修改 `wrapper.py`、`strategies.py`、`cache.py` 或 `config.py`。现有 `audit_collector`/`record_tensor_diff` 事件应先由新的 Phase 2 collector 消费；只有执行线程给出最小失败用例、规划线程另发 superseding authorization 后，才可讨论在现有 payload 中增加纯索引 metadata，且不得改变 tensor 数值、loop/cache/restore 语义或旧 collector。
+- 用户在 Gate A `BLOCK` 后选择尺度分离路线；当前 superseding contract 仍不授权修改 `wrapper.py`、`strategies.py`、`cache.py`、`config.py`，也不授权 HFLM request fingerprint/router、独立 full direct residual producer 或任何 14,042-sample residual/NCA 补跑。
 - B2 的 deterministic no-loop boundary 与 15 个 loop logical cells 必须在同一受控进程/session 中顺序完成或使用等价的内存内复用设计，使 native-continuation vectors 只短暂驻留内存；不得为跨进程复用持久化完整 hidden/residual vectors，也不得把一次 baseline 静默扩成 15 次未声明重复运行。
 - 本地无 torch/transformers 仍须通过 lazy import 与 pure-Python/fake-tensor contract tests；真实 CUDA dtype/device/数值闭环留给 Gate B1，不得在 Gate A 伪造 GPU 证明。
 
 ### 11.4 第二阶段核心 Gate
 
-1. **Gate A：轻量轨迹/NCA 实现与 H1 V2 冻结**——只实现每轮 residual、512 校准池 NCA、最终输出轨迹及逐样本分析所需的最小 schema、配置和测试；不得远程运行。
+1. **Gate A：轻量轨迹/NCA 实现与 H1 V2 冻结**——只实现 512 calibration 的每轮 residual/NCA producer、独立 full final-output sidecar、从 canonical per-sample 工件重建统计量的分析 producer，以及所需最小 closed-world schema、配置和测试；不得远程运行。
 2. **Gate B：HPC2 CPU + smoke/limit + bounded NCA calibration 门**——先做 CPU/provenance，再做四样本与 limit 轨迹；验证 `k=1` 等价、fixed-step prefix consistency、调用次数、NCA 位置/边界/字段、样本 identity 和资源上限。工程闭环后可在同一 Gate 内执行冻结 512 池、三核心窗口的无标签 NCA/final-choice probe；B2 最多一个 no-loop boundary cell 加十五个 loop cells、单 GPU 总计不超过 18 GPU-hours。不得运行 full MMLU，也不得按 NCA 改 Gate C 窗口或 K。
-3. **Gate C：三窗口 focused full 门**——复用 Phase 1 baseline 与 `(k=2,alpha=1)`；主轨迹只新增三窗口 `(3,1.5)/(4,2)` 六个配置，并为 `12:15` 新增 `(3,1)/(4,1)` 两个 fixed-horizon controls，默认最多八个 full 配置；执行一次 write-once paired mechanism analysis，并分别报告 H1 outcome 与 NCA diagnosis。
+3. **Gate C：三窗口 focused full 门**——复用 Phase 1 baseline 与 `(k=2,alpha=1)`；主轨迹只新增三窗口 `(3,1.5)/(4,2)` 六个配置，并为 `12:15` 新增 `(3,1)/(4,1)` 两个 fixed-horizon controls，默认最多八个 full 配置；full 只产出 canonical final-choice/gold paired evidence，不采集 residual/NCA。执行一次 write-once paired mechanism analysis，引用 Gate B 已审计的 512 residual/NCA evidence，并分别报告 H1 outcome 与 NCA diagnosis。
 4. **Gate D：Gate C 后的可选条件分支**——使用互斥矩阵：H1=`TRANSIENT_ONLY/PERTURBATION`（任意 NCA）停止 selector；H1=`SUGGESTIVE/INCONCLUSIVE`（任意 NCA）只可停止或另立最小 H1 消歧卡；只有 H1=`REFINEMENT_SUPPORTED` 时才按 NCA 分流，其中 `NCA_INCONCLUSIVE` 只可停止或最小 NCA 消歧，`NCA_DIRECTION_SUPPORTED` 可由用户另立 `H2_NCA_CERTIFICATE`，`NCA_NONDISCRIMINATIVE/NCA_NATIVE_FIDELITY_ONLY` 可选择一个新任务或一个新模型做最小机制确认。任何分支都需独立授权。
 
 完整的全窗口 NCA 排名、top-3 shortlist、唯一胜者/no-loop verifier、window-identity permutation 和固定部署协议不属于 H1，也不构成 Gate C admission；它们只可在 Gate C 审计后作为独立 H2 card 冻结。旧版 16/17-window grid、三模型×两任务、depth-controlled signal competition、10k-token eRank 和生成任务继续保留为 optional backlog。
