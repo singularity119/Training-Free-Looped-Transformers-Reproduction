@@ -115,7 +115,8 @@ src/tflt/loopscope/
 允许的既有文件小改动：
 
 - `src/tflt/cli.py`：注册 LoopScope 子命令。
-- `README.md` 或 `docs/loopscope_phase1.md`：记录使用方法。
+- `src/tflt/eval_runner.py`：第二阶段只允许新增显式 opt-in 的 trace adapter；默认关闭时 parser、`LoopConfig.audit_collector=None`、HFLM/TaskManager/`simple_evaluate` 参数、revision closure、`results.json` 和科学行为必须保持不变。trace 只写独立 sidecar，必须用稳定 sample identity 关联，不能按回调顺序猜测；无法在 `batch_size=auto` 下证明一一对应时必须 fail-fast。
+- `README.md` 或 `docs/loopscope_phase*.md`：记录使用方法与工件契约。
 - `configs/loopscope/`：保存固定配置、schema 和 manifest 模板。
 - `scripts/loopscope/`：保存可审计的 pool 生成/Slurm 编排脚本。
 - `tests/`：新增纯 Python 单元测试。
@@ -125,6 +126,7 @@ src/tflt/loopscope/
 - `src/tflt/wrapper.py`
 - `src/tflt/strategies.py`
 - `src/tflt/cache.py`
+- `src/tflt/config.py`
 - 已完成复现实验 manifest
 
 如果确实必须修改默认禁止文件，先停止并提交最小复现、原因、拟议 diff 和回归测试，等待规划/审计线程批准。
@@ -301,6 +303,9 @@ nca_role=prospective_secondary_direction_proxy; never selector in H1
 - NCA 在 H1 V2 冻结前由用户明确加入，因此可作为 prospective secondary observable；此后出现的新指标不能回写为 H1 的预注册证据，所有 post-hoc 发现必须标记 exploratory。
 - 只读分析现有工件的卡不需要重复 GPU Gate；新增采集代码才进入本地门；新增 GPU 字段先过小样本门；只有小样本闭环后才能 full。
 - 优先复用既有 repo、venv、缓存、renderer、Phase 1 samples 与 paired-analysis 基础设施。不得为了通用化而先做大规模重构。
+- Gate A 初始授权不得修改 `wrapper.py`、`strategies.py`、`cache.py` 或 `config.py`。现有 `audit_collector`/`record_tensor_diff` 事件应先由新的 Phase 2 collector 消费；只有执行线程给出最小失败用例、规划线程另发 superseding authorization 后，才可讨论在现有 payload 中增加纯索引 metadata，且不得改变 tensor 数值、loop/cache/restore 语义或旧 collector。
+- B2 的 deterministic no-loop boundary 与 15 个 loop logical cells 必须在同一受控进程/session 中顺序完成或使用等价的内存内复用设计，使 native-continuation vectors 只短暂驻留内存；不得为跨进程复用持久化完整 hidden/residual vectors，也不得把一次 baseline 静默扩成 15 次未声明重复运行。
+- 本地无 torch/transformers 仍须通过 lazy import 与 pure-Python/fake-tensor contract tests；真实 CUDA dtype/device/数值闭环留给 Gate B1，不得在 Gate A 伪造 GPU 证明。
 
 ### 11.4 第二阶段核心 Gate
 
