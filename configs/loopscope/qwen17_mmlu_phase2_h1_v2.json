@@ -1,0 +1,221 @@
+{
+  "card_id": "H1_ITERATIVE_REFINEMENT_ZONE_V2",
+  "decision_rules": {
+    "h1_priority": [
+      "PERTURBATION",
+      "REFINEMENT_SUPPORTED",
+      "TRANSIENT_ONLY",
+      "SUGGESTIVE",
+      "INCONCLUSIVE"
+    ],
+    "native_fidelity_min_valid_per_subgroup": 10,
+    "nca_priority": [
+      "NCA_INCONCLUSIVE",
+      "NCA_NATIVE_FIDELITY_ONLY",
+      "NCA_DIRECTION_SUPPORTED",
+      "NCA_NONDISCRIMINATIVE"
+    ],
+    "nca_valid_fraction_min": 0.95,
+    "significance_comparison": "adjusted_p_strictly_less_than_0.05",
+    "wrong_overconfidence": {
+      "condition": "entropy_decreases_and_raw_top_margin_increases",
+      "denominator": "final_wrong_pairs=wrong_to_wrong+right_to_wrong",
+      "role": "mechanism_diagnostic_not_H1_decision_rule",
+      "subgroups_reported": [
+        "wrong_to_wrong",
+        "right_to_wrong"
+      ]
+    }
+  },
+  "evidence_scales": {
+    "calibration_512": {
+      "gold_state": "sealed_until_authorized_unseal",
+      "identity_namespace": "loopscope.phase2.calibration.validation512.v1",
+      "residual_nca": "mandatory",
+      "sample_count": 512,
+      "score_source": "direct_probe_next_token_log_probability_over_frozen_choice_token_ids",
+      "split": "phase1_frozen_validation",
+      "trajectory_scope": "residual_q_adjacent_cosine_nca_and_unlabeled_final_choice"
+    },
+    "full_14042": {
+      "gold_state": "full_evaluator_gold_authorized",
+      "identity_namespace": "loopscope.phase2.full.mmlu14042.v1",
+      "residual_nca": "forbidden",
+      "sample_count": 14042,
+      "score_source": "lm_eval_acc_none_raw_per_choice_loglikelihood",
+      "split": "mmlu_test_full",
+      "trajectory_scope": "evaluator_final_choice_entropy_margin_js_answer_and_gold_paired_outcome_only"
+    }
+  },
+  "fixed_horizon_contrast_ids": [
+    "fh_12_15_k1_k2",
+    "fh_12_15_k2_k3",
+    "fh_12_15_k3_k4"
+  ],
+  "implementation_sha256": {
+    "scripts/loopscope/prepare_qwen17_phase2.py": "5556aca88128c5b0fde8df7f321fb1658168bb8f44d0f7ea04b277005d779e74",
+    "src/tflt/cli.py": "85534e184581a7ff2a896679d2860ebe4140c93f062c812eef3ff5a499d3277e",
+    "src/tflt/eval_runner.py": "7161245ffc5b77ba299c858d5e2e113f12aab64b7147b24b23c672dfdac9be6c",
+    "src/tflt/loopscope/__init__.py": "1c27b799768fe343d96f0b2837a38e97811765562cb695f4082385fcd710810e",
+    "src/tflt/loopscope/phase2_analysis.py": "b75edd31b563cd187e9696e723abb23c44820d6fab5f6986040adfa49f8e3484",
+    "src/tflt/loopscope/phase2_reuse.py": "04b667b73faa368b81c9cdbccd875500856b74e9ef9fad6a5a7561026d485884",
+    "src/tflt/loopscope/phase2_schema.py": "847a9b9ce12eb60d9aebd76d957d88741a88f76545ffffed45899ecbd371a1db",
+    "src/tflt/loopscope/phase2_trajectory.py": "6673609bcd5dd171c006de2587fbaef96f7e8fa95620699c3bae78c933e3cccb"
+  },
+  "manifest_sha256": "a58216a37807d92eeb0701dcf190e4395d92fb3daf35edb0b86678efc24f5006",
+  "measurement": {
+    "actual_loop_nca_steps": "t=1..K-1_only",
+    "calibration_choice_score_source": "direct_probe_next_token_log_probability_over_frozen_choice_token_ids",
+    "choice_probability": "float32_softmax",
+    "correct_margin": "raw_gold_score_minus_max_raw_non_gold_score",
+    "entropy_log_base": "e",
+    "final_output_forbids_intermediate_lens_fields": true,
+    "full_choice_score_source": "lm_eval_acc_none_raw_per_choice_loglikelihood",
+    "js_log_base": "e",
+    "nca_continuation": "B_N-B_(b+1)",
+    "nca_dtype": "float32",
+    "nca_min_norm": 1e-08,
+    "nca_position": "final_pre_answer_prompt_token",
+    "top1_tie_break": "first_maximum_A_B_C_D",
+    "top_margin": "raw_top1_score_minus_raw_top2_score"
+  },
+  "phase1_reuse_policy": {
+    "allowed_statuses": [
+      "local_schema_confirmed",
+      "historical_only",
+      "requires_gate_b_live_check"
+    ],
+    "gate_a_remote_reads": 0,
+    "k2_full_rerun_authorized": false
+  },
+  "primary_contrast_ids": [
+    "fs_11_14_k2_k3",
+    "fs_11_14_k3_k4",
+    "fs_12_15_k2_k3",
+    "fs_12_15_k3_k4",
+    "fs_13_16_k2_k3",
+    "fs_13_16_k3_k4"
+  ],
+  "schema_version": "loopscope.phase2-h1-card.v3",
+  "science": {
+    "beta": 0.0,
+    "cache_strategy": "last",
+    "calibration_count": 512,
+    "calibration_gold_sealed": true,
+    "calibration_split": "phase1_frozen_validation",
+    "decode_mode": "bypass",
+    "dtype": "float16",
+    "full_ordered_sample_count": 14042,
+    "full_split": "mmlu_test_full",
+    "iteration_mode": "block",
+    "model": "Qwen/Qwen3-1.7B-Base",
+    "num_fewshot": 5,
+    "primary_metric": "acc,none",
+    "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "strategy": "damped_euler",
+    "task": "mmlu",
+    "window_width_inclusive": 4,
+    "windows": [
+      "11:14",
+      "12:15",
+      "13:16"
+    ]
+  },
+  "statistics": {
+    "fixed_horizon_family_order": [
+      "fh_12_15_k1_k2",
+      "fh_12_15_k2_k3",
+      "fh_12_15_k3_k4"
+    ],
+    "full_paired_bootstrap": {
+      "denominator": 14042,
+      "interval": [
+        2.5,
+        97.5
+      ],
+      "replicates": 2000,
+      "seed": 20260710
+    },
+    "holm_familywise_alpha": 0.05,
+    "mcnemar": "two_sided_exact_binomial",
+    "native_fidelity_resampling": "stratified_within_frozen_subgroup",
+    "nca_bootstrap": {
+      "denominator": 512,
+      "interval": [
+        2.5,
+        97.5
+      ],
+      "replicates": 10000,
+      "seed": 0
+    },
+    "nca_interval_role": "pointwise_unadjusted_secondary_diagnostic",
+    "paired_nca_resampling": "same_sample_index_for_both_medians",
+    "primary_family_order": [
+      "fs_11_14_k2_k3",
+      "fs_11_14_k3_k4",
+      "fs_12_15_k2_k3",
+      "fs_12_15_k3_k4",
+      "fs_13_16_k2_k3",
+      "fs_13_16_k3_k4"
+    ],
+    "quantile_method": "linear_interpolation_n_minus_1",
+    "unit": "percentage_points"
+  },
+  "status": "freeze_candidate_not_preregistered",
+  "tolerances": {
+    "k1_scores_atol": 0.0001,
+    "k1_scores_rtol": 1e-05,
+    "prefix_atol": 1e-05,
+    "prefix_rtol": 0.001
+  },
+  "trajectories": {
+    "fixed_horizon": [
+      {
+        "alpha": 1.0,
+        "k": 1
+      },
+      {
+        "alpha": 1.0,
+        "k": 2
+      },
+      {
+        "alpha": 1.0,
+        "k": 3
+      },
+      {
+        "alpha": 1.0,
+        "k": 4
+      }
+    ],
+    "fixed_step": [
+      {
+        "alpha": 1.0,
+        "k": 2
+      },
+      {
+        "alpha": 1.5,
+        "k": 3
+      },
+      {
+        "alpha": 2.0,
+        "k": 4
+      }
+    ],
+    "fixed_step_h": 0.5,
+    "shared_execution": {
+      "alpha": 1.0,
+      "k": 2,
+      "name": "shared_k2_anchor"
+    }
+  },
+  "write_once_contract": {
+    "analysis_output_create": "same_directory_atomic_exclusive_create_fsync",
+    "b2_logical_loop_cells": 15,
+    "b2_no_loop_boundary_cells": 1,
+    "full_residual_nca_fields_allowed": false,
+    "full_vectors_persisted": false,
+    "native_continuation_lifetime": "same_process_memory_only",
+    "sidecar_only": true,
+    "workspace_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope"
+  }
+}

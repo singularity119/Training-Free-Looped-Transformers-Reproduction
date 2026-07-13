@@ -15,6 +15,24 @@ from tflt.loopscope.grid import add_make_window_grid_args, cmd_make_window_grid
 from tflt.loopscope.probe import add_probe_layers_args, cmd_probe_layers
 from tflt.loopscope.selection import add_score_windows_args, cmd_score_windows
 from tflt.loopscope.window_probe import add_probe_window_args, cmd_probe_window
+from tflt.loopscope.phase2_analysis import (
+    analyze_phase2_evidence,
+    load_phase2_analysis_evidence,
+)
+from tflt.loopscope.phase2_trajectory import (
+    add_probe_phase2_trajectory_args,
+    cmd_probe_phase2_trajectory,
+)
+from tflt.loopscope.phase2_reuse import build_phase2_freeze_candidate
+from tflt.loopscope.phase2_schema import (
+    atomic_write_new_json,
+    validate_calibration_baseline_envelope,
+    validate_calibration_cell_envelope,
+    validate_full_final_output_envelope,
+    validate_identity_manifest,
+    validate_phase2_card,
+)
+from tflt.loopscope.schema import ensure_new_directory
 from tflt.models import load_model_registry, resolve_model
 from tflt.remote import (
     EvalSpec,
@@ -92,8 +110,78 @@ def main(argv: Optional[list] = None) -> int:
     add_analyze_window_grid_args(p)
     p.set_defaults(func=cmd_analyze_window_grid)
 
+    p = sub.add_parser(
+        "probe-phase2-trajectory",
+        help="Collect the controlled Phase 2 no-loop boundary and 15 scalar loop cells.",
+    )
+    add_probe_phase2_trajectory_args(p)
+    p.set_defaults(func=cmd_probe_phase2_trajectory)
+
+    p = sub.add_parser(
+        "prepare-phase2-h1",
+        help="Validate the H1 V2 freeze candidate and write a local-only logical plan.",
+    )
+    p.add_argument("--card", required=True)
+    p.add_argument("--output-dir", required=True)
+    p.set_defaults(func=cmd_prepare_phase2_h1)
+
+    p = sub.add_parser(
+        "validate-phase2-trace",
+        help="Validate one scalar-only Phase 2 trajectory/final-output sidecar.",
+    )
+    p.add_argument("--trace", required=True)
+    p.add_argument("--card", required=True)
+    p.add_argument("--identity-manifest", required=True)
+    p.set_defaults(func=cmd_validate_phase2_trace)
+
+    p = sub.add_parser(
+        "analyze-phase2-h1",
+        help="Apply the frozen H1 and independent NCA decision rules.",
+    )
+    p.add_argument("--input", required=True)
+    p.add_argument("--output-dir", required=True)
+    p.set_defaults(func=cmd_analyze_phase2_h1)
+
     args = parser.parse_args(argv)
     return int(args.func(args))
+
+
+def cmd_prepare_phase2_h1(args: argparse.Namespace) -> int:
+    card_path = Path(args.card)
+    card = json.loads(card_path.read_text(encoding="utf-8"))
+    payload = build_phase2_freeze_candidate(card, Path(__file__).resolve().parents[2])
+    output_dir = ensure_new_directory(Path(args.output_dir))
+    atomic_write_new_json(output_dir / "phase2_freeze_candidate.json", payload)
+    print(str(output_dir / "phase2_freeze_candidate.json"))
+    return 0
+
+
+def cmd_validate_phase2_trace(args: argparse.Namespace) -> int:
+    payload = json.loads(Path(args.trace).read_text(encoding="utf-8"))
+    card = json.loads(Path(args.card).read_text(encoding="utf-8"))
+    identity = json.loads(Path(args.identity_manifest).read_text(encoding="utf-8"))
+    validate_phase2_card(card)
+    validate_identity_manifest(identity, card)
+    kind = payload.get("artifact_kind")
+    if kind == "calibration_no_loop_baseline":
+        validate_calibration_baseline_envelope(payload, card, identity)
+    elif kind == "calibration_trajectory_cell":
+        validate_calibration_cell_envelope(payload, card, identity)
+    elif kind == "full_final_output_cell":
+        validate_full_final_output_envelope(payload, card, identity)
+    else:
+        raise ValueError("unsupported Phase 2 artifact kind")
+    print(str(Path(args.trace)))
+    return 0
+
+
+def cmd_analyze_phase2_h1(args: argparse.Namespace) -> int:
+    evidence = load_phase2_analysis_evidence(Path(args.input))
+    report = analyze_phase2_evidence(evidence)
+    output_dir = ensure_new_directory(Path(args.output_dir))
+    atomic_write_new_json(output_dir / "phase2_h1_analysis.json", report)
+    print(str(output_dir / "phase2_h1_analysis.json"))
+    return 0
 
 
 def add_eval_args(parser: argparse.ArgumentParser) -> None:

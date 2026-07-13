@@ -67,7 +67,7 @@ q_t = ||delta_(t+1)||_2 / ||delta_t||_2
 - 实际 operator body-call index 与总调用数；
 - NaN/Inf、shape、dtype、device 和恢复状态。
 
-只在设备上计算 answer-position scalar 后写入；不得把完整 residual/hidden tensor 持久化到 full run 工件。
+只在设备上计算 answer-position scalar 后写入；本 H1 的 residual、`q_t`、相邻方向与 NCA 只在冻结 512 calibration 上采集。14,042 full 不含任何 residual/NCA 字段，也不研究 full residual–答案翻转个体相关性。完整 residual/hidden/native-continuation tensor 在两个尺度都不得持久化。
 
 `q_t≈1` 只说明 residual 强度持续，不说明方向有益。更新方向是否有益必须由最终输出和 gold-label paired analysis 判定。
 
@@ -83,6 +83,8 @@ top1_retained(K) = [argmax P_K == argmax P_1]
 ```
 
 这些指标来自最终模型输出，不需要把中间 block hidden state 当成可直接解码表示，是 H1 的主要置信度/决策证据。
+
+两个尺度的 score provenance 必须分开：512 direct probe 使用 final pre-answer token 上、冻结 A/B/C/D choice token 的 next-token log probability，字段值固定为 `direct_probe_next_token_log_probability_over_frozen_choice_token_ids`；14,042 full 使用 lm-eval `acc,none` 实际消费的四个 raw per-choice log-likelihood，字段值固定为 `lm_eval_acc_none_raw_per_choice_loglikelihood`。前者不得冒充后者；跨尺度不做 identity bridge 或逐样本 join。
 
 ### 3.4 Gold-label paired 分析
 
@@ -178,7 +180,7 @@ seed=20260710
 1. 版本化 H1 V2 config/card、schema、上述 H1/NCA 判读优先级与 deterministic hash。
 2. 实现冻结 final pre-answer token、inclusive boundary 与 native continuation `B_N-B_(b+1)` 的最小 NCA 采集路径。
 3. 最小方式采集每个实际 body call 的 residual norm、相邻 residual ratio/cosine、NCA 和调用序号；只保存 scalar/norm/validity，不保存完整向量。
-4. 保存每个 K 的最终 choice scores/probabilities、doc identity 和完整命令 provenance。
+4. 在 512 保存 direct-probe final choice，在 full final-output adapter 保存 evaluator raw choice；两者分别绑定独立 canonical identity namespace、card/revision/cell 与 attempt/receipt provenance。
 5. 实现逐样本四类翻转、entropy/margin/JS 条件分析、paired bootstrap/McNemar，以及独立 NCA diagnosis。
 6. 只读审计 Phase 1 baseline/K=2 与 512 probe 是否包含可复用 final choice/boundary 字段，输出 reuse matrix；缺字段只报告，不自动补跑。
 7. 单元测试必须覆盖：
@@ -213,6 +215,79 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m tflt.cli --help
 退出包必须包含 commit/diff、full tests、card/config/schema hashes、reuse matrix 和未执行事项。
 
 ## 6. Gate B — HPC2 CPU + smoke/limit + bounded NCA calibration
+
+### Gate A 实现接口（freeze candidate）
+
+Gate A 的本地实现提供四个显式接口，默认 Phase 1/eval 路径不启用任何
+Phase 2 行为：
+
+```bash
+python -m tflt.cli prepare-phase2-h1 \
+  --card configs/loopscope/qwen17_mmlu_phase2_h1_v2.json \
+  --output-dir <new-local-output>
+
+python -m tflt.cli probe-phase2-trajectory \
+  --probe-mode b1-smoke --max-examples 4 \
+  --model qwen3-1.7b-base \
+  --revision ea980cb0a6c2ae4b936e82123acc929f1cec04c1 \
+  --card configs/loopscope/qwen17_mmlu_phase2_h1_v2.json \
+  --input-jsonl <frozen-probe-pool.jsonl> \
+  --input-manifest <frozen-probe-pool-manifest.json> \
+  --attempt-manifest <write-once-attempt.json> \
+  --receipt-manifest <write-once-receipt.json> \
+  --output-dir <new-write-once-output> \
+  --dtype float16 --device cuda
+
+python -m tflt.cli probe-phase2-trajectory \
+  --probe-mode b2-calibration \
+  --b1-admission-proof <audited-b1-admission-proof.json> \
+  --model qwen3-1.7b-base \
+  --revision ea980cb0a6c2ae4b936e82123acc929f1cec04c1 \
+  --card configs/loopscope/qwen17_mmlu_phase2_h1_v2.json \
+  --input-jsonl <frozen-probe-pool.jsonl> \
+  --input-manifest <frozen-probe-pool-manifest.json> \
+  --attempt-manifest <write-once-attempt.json> \
+  --receipt-manifest <write-once-receipt.json> \
+  --output-dir <new-write-once-output> \
+  --dtype float16 --device cuda
+
+python -m tflt.cli validate-phase2-trace \
+  --trace <scalar-envelope.json> \
+  --card configs/loopscope/qwen17_mmlu_phase2_h1_v2.json \
+  --identity-manifest <canonical-identity-manifest.json>
+python -m tflt.cli analyze-phase2-h1 --input <complete-analysis-input.json> \
+  --output-dir <new-write-once-analysis>
+```
+
+`probe-phase2-trajectory` 是 Gate B 才可执行的 remote-only producer；Gate A
+只实现并用 fake/pure-Python fixture 测试。`b1-smoke` 在一个 model process 中对四个
+样本实际执行 no-loop、三个 K1 admission cells 与 15 个 logical cells，写出 K1 choice
+equivalence 及 K2 对 K3/K4 的 state/residual prefix scalar proof；只有该 proof 经审计后，
+`b2-calibration` 才在同一进程内对冻结 512 先执行一次 no-loop boundary pass，再执行
+15 个 logical cells。三个窗口的 `B_N-B_(b+1)` 始终只保留在内存。
+写盘内容限于 identity、norm、ratio、cosine、NCA validity/scalar 与 final four-choice
+scores/probabilities；完整 hidden、residual 和 native-continuation vectors 禁止持久化。
+
+`python -m tflt.eval_runner` 另提供显式 opt-in
+`--phase2-final-output-manifest <versioned-json>`，只从 lm-eval completed logged samples 生成独立
+`phase2_final_outputs.json`，不修改 `results.json`。参数未出现时使用
+`argparse.SUPPRESS`，因此既有 `command_args.json`、`LoopConfig.audit_collector=None`、
+HFLM/TaskManager/simple_evaluate 和结果语义保持不变。adapter 不接 wrapper collector，
+也不按 callback/batch 顺序关联；它把 evaluator 任意顺序的 logged rows 与 canonical
+full `task/doc_id/doc_hash` manifest 作唯一、完整、无额外项的 exact join，再恢复 natural
+order。因此 `batch_size=auto` 本身不是 blocker；缺 identity、duplicate/extra row 或缺四个
+raw choice scores 才 fail-fast。Phase 1 full artifacts 是否具备 raw choice/doc_hash 仍属于
+`requires_gate_b_live_check`，不能由本地 schema 宣称已验证。
+
+`complete-analysis-input.json` 只能列出 card、两个 canonical identity manifest、sealed
+baseline/15 calibration cells、12 个 full final-output cells、authorized calibration gold-index
+sidecar及 unseal authorization/receipt 的 path+hash；禁止提供预聚合 delta、p-value、Holm
+或 NCA summary。analysis producer重新从逐样本 sidecar计算全部统计，并以 same-directory
+atomic exclusive-create + fsync 写出报告。
+
+错误过度自信是非决定性机制诊断：冻结候选将分母明确为 final-wrong pairs
+（`wrong→wrong + right→wrong`），条件为 final entropy 下降且 raw top margin 上升，
+并分别报告两个 subgroup。该指标不参与 H1 或 NCA 标签。
 
 Gate B 在一个 executor 内按 B0→B1→B2 顺序执行；前一子门失败不得进入下一子门。
 
@@ -282,7 +357,7 @@ fixed-horizon control:
 1. 完成所有新结果并核对 Slurm/job/log/revision/sample identity；
 2. 合并 Phase 1 reuse data，不复制覆盖旧工件；
 3. 只执行一次 write-once mechanism analysis；
-4. 分别输出 fixed-step continuation 与 fixed-horizon control，报告 paired CI/McNemar/Holm、四类翻转、entropy/margin/JS、residual trajectory，并引用独立 B2 NCA evidence；
+4. 分别输出 fixed-step continuation 与 fixed-horizon control，报告 paired CI/McNemar/Holm、四类翻转与 full entropy/margin/JS；residual/q/NCA 机制解释只引用独立、已审计的 B2 512 evidence；
 5. 对 `REFINEMENT_SUPPORTED / SUGGESTIVE / TRANSIENT_ONLY / PERTURBATION / INCONCLUSIVE` 给出 H1 证据矩阵；
 6. 独立给出 `NCA_DIRECTION_SUPPORTED / NCA_NONDISCRIMINATIVE / NCA_NATIVE_FIDELITY_ONLY / NCA_INCONCLUSIVE` 诊断矩阵；executor 不自宣科学结论或 Gate PASS。
 

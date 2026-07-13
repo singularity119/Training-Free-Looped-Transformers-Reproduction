@@ -17,6 +17,19 @@ from tflt.loopscope.revisions import (
     resolved_tokenizer_commit,
     strict_revision_closure,
 )
+from tflt.loopscope.phase2_analysis import choice_output, required_full_cell_ids
+from tflt.loopscope.phase2_schema import (
+    FULL_IDENTITY_NAMESPACE,
+    FULL_LM_EVAL_SCORE_SOURCE,
+    atomic_write_new_json,
+    make_full_final_output_envelope,
+    stable_sample_identity,
+    validate_identity_manifest,
+    validate_phase2_card,
+    validate_producer_provenance,
+    validate_protocol_cell,
+)
+from tflt.loopscope.schema import verify_manifest_sha256
 
 
 def main(argv: Optional[list] = None) -> int:
@@ -39,10 +52,16 @@ def main(argv: Optional[list] = None) -> int:
     parser.add_argument("--cache-strategy", choices=["first", "last", "none"], default="last")
     parser.add_argument("--decode-mode", choices=["bypass", "full", "first_n"], default="bypass")
     parser.add_argument("--first-n", type=int, default=None)
+    parser.add_argument("--phase2-final-output-manifest", default=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    phase2_final_output = None
+    if hasattr(args, "phase2_final_output_manifest"):
+        phase2_final_output = _load_phase2_final_output_manifest(
+            Path(args.phase2_final_output_manifest), output_dir
+        )
     (output_dir / "command_args.json").write_text(
         json.dumps(vars(args), indent=2, sort_keys=True), encoding="utf-8"
     )
@@ -63,6 +82,9 @@ def main(argv: Optional[list] = None) -> int:
         loop_config=loop_config,
         revision=args.revision,
     )
+    if phase2_final_output is not None:
+        sidecar = _build_phase2_final_output_sidecar(result, phase2_final_output)
+        atomic_write_new_json(output_dir / "phase2_final_outputs.json", sidecar)
     (output_dir / "results.json").write_text(
         json.dumps(result, indent=2, sort_keys=True, default=str), encoding="utf-8"
     )
@@ -234,6 +256,165 @@ def _env_snapshot() -> dict:
         "PYTHONPATH",
     ]
     return {key: os.environ[key] for key in keys if key in os.environ}
+
+
+def _load_phase2_final_output_manifest(path: Path, output_dir: Path) -> dict:
+    """Load the explicit final-output-only adapter request.
+
+    Auto batching is intentionally irrelevant: the adapter consumes completed
+    evaluator logged samples and performs an unordered identity join after the
+    evaluator returns.
+    """
+
+    request = json.loads(path.read_text(encoding="utf-8"))
+    expected_keys = {
+        "schema_version", "artifact_kind", "card_path", "card_manifest_sha256",
+        "identity_manifest_path", "identity_manifest_sha256", "cell", "producer",
+        "identity_join", "score_source", "output_filename", "manifest_sha256",
+    }
+    if not isinstance(request, dict) or set(request) != expected_keys:
+        raise ValueError("Phase 2 final-output adapter manifest has an exact-key mismatch")
+    verify_manifest_sha256(request)
+    if request["schema_version"] != "loopscope.phase2-final-output-adapter-manifest.v1":
+        raise ValueError("unsupported Phase 2 final-output adapter manifest")
+    if request["artifact_kind"] != "full_final_output_adapter_request":
+        raise ValueError("adapter manifest artifact kind differs")
+    if request["identity_join"] != "unordered_exact_task_doc_id_doc_hash_to_canonical_manifest":
+        raise ValueError("adapter manifest lacks the frozen unordered exact join")
+    if request["score_source"] != FULL_LM_EVAL_SCORE_SOURCE:
+        raise ValueError("adapter score source differs from lm-eval acc,none")
+    if request["output_filename"] != "phase2_final_outputs.json":
+        raise ValueError("adapter output filename differs from the write-once contract")
+    base = path.parent
+    card_path = _resolve_manifest_path(base, request["card_path"])
+    identity_path = _resolve_manifest_path(base, request["identity_manifest_path"])
+    card = json.loads(card_path.read_text(encoding="utf-8"))
+    identity_manifest = json.loads(identity_path.read_text(encoding="utf-8"))
+    validate_phase2_card(card)
+    validate_identity_manifest(identity_manifest, card)
+    if identity_manifest["identity_namespace"] != FULL_IDENTITY_NAMESPACE:
+        raise ValueError("final-output adapter requires the full 14,042 identity namespace")
+    if request["card_manifest_sha256"] != card["manifest_sha256"]:
+        raise ValueError("adapter card hash differs from loaded card")
+    if request["identity_manifest_sha256"] != identity_manifest["manifest_sha256"]:
+        raise ValueError("adapter identity hash differs from loaded canonical manifest")
+    validate_protocol_cell(request["cell"], allow_baseline=True)
+    if request["cell"]["cell_id"] not in required_full_cell_ids(card):
+        raise ValueError("adapter cell is outside the frozen 12-cell full evidence set")
+    validate_producer_provenance(
+        request["producer"], allowed_kinds={"lm_eval_logged_samples_adapter"}
+    )
+    if (output_dir / request["output_filename"]).exists():
+        raise FileExistsError("refusing to overwrite Phase 2 final-output sidecar")
+    return {"request": request, "card": card, "identity_manifest": identity_manifest}
+
+
+def _build_phase2_final_output_sidecar(result: Any, context: dict) -> dict:
+    request = context["request"]
+    card = context["card"]
+    identity_manifest = context["identity_manifest"]
+    rows = _join_phase2_logged_samples(result, identity_manifest["ordered_sample_identity"])
+    return make_full_final_output_envelope(
+        card,
+        identity_manifest,
+        cell=request["cell"],
+        samples=rows,
+        producer=request["producer"],
+    )
+
+
+def _join_phase2_logged_samples(
+    result: Any, expected_identities: list
+) -> list:
+    """Exact-join arbitrary-order evaluator samples and restore canonical order."""
+
+    samples_by_task = result.get("samples") if isinstance(result, dict) else None
+    if not isinstance(samples_by_task, dict):
+        raise ValueError("lm-eval result does not expose logged samples for Phase 2 final output")
+    expected = [
+        stable_sample_identity(item.get("task"), item.get("doc_id"), item.get("doc_hash"))
+        for item in expected_identities
+    ]
+    expected_keys = {
+        (item["task"], item["doc_id"], item["doc_hash"]) for item in expected
+    }
+    if len(expected_keys) != len(expected):
+        raise ValueError("canonical final-output identities contain duplicates")
+    observed = {}
+    for task, task_samples in samples_by_task.items():
+        if not isinstance(task, str) or not isinstance(task_samples, list):
+            raise ValueError("lm-eval samples mapping is malformed")
+        for sample in task_samples:
+            if not isinstance(sample, dict):
+                raise ValueError("lm-eval logged sample must be an object")
+            if "task" in sample and str(sample["task"]) != task:
+                raise ValueError("logged sample task disagrees with its evaluator task bucket")
+            try:
+                sample_identity = stable_sample_identity(task, sample["doc_id"], sample["doc_hash"])
+            except (KeyError, TypeError, ValueError) as exc:
+                raise ValueError("lm-eval sample lacks stable task/doc_id/doc_hash identity") from exc
+            key = (
+                sample_identity["task"], sample_identity["doc_id"], sample_identity["doc_hash"]
+            )
+            if key in observed:
+                raise ValueError("lm-eval logged samples contain duplicate stable identity")
+            scores = _extract_four_raw_choice_scores(sample)
+            gold_index = sample.get("target")
+            if isinstance(gold_index, str) and gold_index in ("A", "B", "C", "D"):
+                gold_index = ("A", "B", "C", "D").index(gold_index)
+            if isinstance(gold_index, bool) or not isinstance(gold_index, int) or not 0 <= gold_index < 4:
+                raise ValueError("lm-eval sample lacks a frozen A-D gold index")
+            observed[key] = choice_output(
+                scores,
+                identity=sample_identity,
+                score_source=FULL_LM_EVAL_SCORE_SOURCE,
+                gold_index=gold_index,
+                evaluator_acc=_extract_sample_acc_none(sample),
+            )
+    if set(observed) != expected_keys:
+        missing = len(expected_keys - set(observed))
+        extra = len(set(observed) - expected_keys)
+        raise ValueError("lm-eval exact identity join is incomplete; missing=%d extra=%d" % (missing, extra))
+    return [observed[(item["task"], item["doc_id"], item["doc_hash"])] for item in expected]
+
+
+def _resolve_manifest_path(base: Path, raw: str) -> Path:
+    path = Path(raw)
+    return path if path.is_absolute() else base / path
+
+
+def _extract_four_raw_choice_scores(sample: dict) -> list:
+    values = sample.get("filtered_resps")
+    if isinstance(values, list) and len(values) == 4 and all(
+        isinstance(item, (int, float)) and not isinstance(item, bool) for item in values
+    ):
+        return [float(item) for item in values]
+    values = sample.get("resps")
+    scores = []
+    if isinstance(values, list) and len(values) == 4:
+        for response in values:
+            current = response
+            while isinstance(current, (list, tuple)) and len(current) == 1:
+                current = current[0]
+            if isinstance(current, (list, tuple)) and current:
+                current = current[0]
+            if not isinstance(current, (int, float)) or isinstance(current, bool):
+                break
+            scores.append(float(current))
+    if len(scores) != 4:
+        raise ValueError("lm-eval sample lacks exactly four raw choice log-likelihood scores")
+    return scores
+
+
+def _extract_sample_acc_none(sample: dict) -> bool:
+    metrics = sample.get("metrics")
+    if isinstance(metrics, dict) and "acc,none" in metrics:
+        value = metrics["acc,none"]
+    else:
+        value = sample.get("acc,none")
+    if value not in (0, 1, False, True):
+        raise ValueError("lm-eval sample lacks binary acc,none for correctness closure")
+    return bool(value)
 
 
 if __name__ == "__main__":
