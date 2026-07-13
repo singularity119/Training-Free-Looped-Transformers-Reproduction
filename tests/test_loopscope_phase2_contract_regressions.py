@@ -48,7 +48,50 @@ def producer(kind):
     }
     if kind == "lm_eval_logged_samples_adapter":
         payload["results_sha256"] = "6" * 64
+    elif kind == "phase1_immutable_reuse_adapter":
+        payload["results_sha256"] = "6" * 64
+        payload["source_manifest_sha256"] = "7" * 64
     return payload
+
+
+def full_evidence(kind):
+    root = (
+        "/hpc2hdd/home/xhuang225/workspaces/"
+        "training_free_looped_transformers_loopscope/runs/full-fixture"
+    )
+    ref = lambda name, digest: {"path": "%s/%s" % (root, name), "sha256": digest}
+    if kind == "lm_eval_logged_samples_adapter":
+        results = ref("results.json", "6" * 64)
+        return {
+            "adapter_request": ref("provenance/request.json", "8" * 64),
+            "attempt_manifest": ref("provenance/attempt.json", "1" * 64),
+            "receipt_manifest": ref("provenance/receipt.json", "2" * 64),
+            "command_args": ref("command_args.json", "3" * 64),
+            "environment": ref("env.json", "4" * 64),
+            "revision_report": ref("model_revision.json", "5" * 64),
+            "results": results,
+            "sample_source": {"kind": "results_inline_samples", "artifacts": [results]},
+        }
+    phase1 = (
+        "/hpc2hdd/home/xhuang225/workspaces/"
+        "training_free_looped_transformers/runs/"
+        "loopscope-qwen17-mmlu-phase1-20260711-053022"
+    )
+    source = lambda name, digest: {"path": "%s/%s" % (phase1, name), "sha256": digest}
+    results = source("gate-e-full/baseline-full/results.json", "6" * 64)
+    return {
+        "reuse_request": ref("provenance/reuse-request.json", "8" * 64),
+        "attempt_manifest": ref("provenance/attempt.json", "1" * 64),
+        "receipt_manifest": ref("provenance/receipt.json", "2" * 64),
+        "command_args": ref("command_args.json", "3" * 64),
+        "environment": ref("env.json", "4" * 64),
+        "source_run_manifest": source("control/phase1_run_manifest.json", "7" * 64),
+        "source_command_args": source("gate-e-full/baseline-full/command_args.json", "9" * 64),
+        "source_environment": source("gate-e-full/baseline-full/env.json", "a" * 64),
+        "source_revision_report": source("gate-e-full/baseline-full/model_revision.json", "5" * 64),
+        "source_results": results,
+        "sample_source": {"kind": "results_inline_samples", "artifacts": [results]},
+    }
 
 
 def source_provenance(namespace):
@@ -598,6 +641,11 @@ class Phase2ClosedWorldRegressionTests(unittest.TestCase):
             cell=cell,
             samples=samples,
             producer=producer("lm_eval_logged_samples_adapter"),
+            artifact_root=(
+                "/hpc2hdd/home/xhuang225/workspaces/"
+                "training_free_looped_transformers_loopscope/runs/full-fixture"
+            ),
+            producer_evidence=full_evidence("lm_eval_logged_samples_adapter"),
         )
         validate_full_final_output_envelope(envelope, self.card, full_manifest)
 

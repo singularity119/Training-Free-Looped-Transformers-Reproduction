@@ -18,18 +18,27 @@ from tflt.loopscope.revisions import (
     resolved_tokenizer_commit,
     strict_revision_closure,
 )
-from tflt.loopscope.phase2_analysis import choice_output, required_full_cell_ids
+from tflt.loopscope.phase2_analysis import required_full_cell_ids
+from tflt.loopscope.phase2_reuse import (
+    Phase2ReuseError,
+    extract_four_raw_choice_scores,
+    extract_sample_acc_none,
+    join_lm_eval_logged_samples,
+    verify_full_final_output_artifact,
+)
 from tflt.loopscope.phase2_schema import (
     FULL_IDENTITY_NAMESPACE,
     FULL_LM_EVAL_SCORE_SOURCE,
+    PHASE2_WORKSPACE_ROOT,
     atomic_write_new_json,
     file_sha256,
+    expected_full_producer_kind,
     make_full_final_output_envelope,
-    stable_sample_identity,
     validate_identity_manifest,
     validate_source_provenance,
     verify_live_source_provenance,
     validate_phase2_card,
+    validate_contained_path,
     validate_phase2_workspace_output_path,
     validate_producer_provenance,
     validate_protocol_cell,
@@ -100,7 +109,13 @@ def main(argv: Optional[list] = None) -> int:
         sidecar = _build_phase2_final_output_sidecar(
             result, phase2_final_output, output_dir=output_dir, args=args
         )
-        atomic_write_new_json(output_dir / "phase2_final_outputs.json", sidecar)
+        sidecar_path = output_dir / "phase2_final_outputs.json"
+        atomic_write_new_json(sidecar_path, sidecar)
+        verify_full_final_output_artifact(
+            sidecar_path,
+            phase2_final_output["card"],
+            phase2_final_output["identity_manifest"],
+        )
     else:
         (output_dir / "results.json").write_text(
             json.dumps(result, indent=2, sort_keys=True, default=str), encoding="utf-8"
@@ -292,6 +307,11 @@ def _load_phase2_final_output_manifest(path: Path, args: argparse.Namespace) -> 
     evaluator returns.
     """
 
+    path = validate_contained_path(
+        path,
+        PHASE2_WORKSPACE_ROOT,
+        context="Phase 2 adapter request",
+    )
     request = json.loads(path.read_text(encoding="utf-8"))
     expected_keys = {
         "schema_version", "artifact_kind", "card", "identity_manifest", "cell",
@@ -312,15 +332,20 @@ def _load_phase2_final_output_manifest(path: Path, args: argparse.Namespace) -> 
     if request["output_filename"] != "phase2_final_outputs.json":
         raise ValueError("adapter output filename differs from the write-once contract")
     base = path.parent
-    card, card_path = _load_hashed_manifest_ref(request["card"], base, "adapter card")
+    card, card_path = _load_hashed_manifest_ref(
+        request["card"], base, "adapter card", allowed_root=PHASE2_WORKSPACE_ROOT
+    )
     identity_manifest, identity_path = _load_hashed_manifest_ref(
-        request["identity_manifest"], base, "adapter identity manifest"
+        request["identity_manifest"], base, "adapter identity manifest",
+        allowed_root=PHASE2_WORKSPACE_ROOT,
     )
     attempt, attempt_path = _load_hashed_manifest_ref(
-        request["attempt_manifest"], base, "adapter attempt manifest"
+        request["attempt_manifest"], base, "adapter attempt manifest",
+        allowed_root=PHASE2_WORKSPACE_ROOT,
     )
     receipt, receipt_path = _load_hashed_manifest_ref(
-        request["receipt_manifest"], base, "adapter receipt manifest"
+        request["receipt_manifest"], base, "adapter receipt manifest",
+        allowed_root=PHASE2_WORKSPACE_ROOT,
     )
     validate_phase2_card(card)
     validate_phase2_workspace_output_path(
@@ -342,9 +367,20 @@ def _load_phase2_final_output_manifest(path: Path, args: argparse.Namespace) -> 
     validate_protocol_cell(request["cell"], allow_baseline=True)
     if request["cell"]["cell_id"] not in required_full_cell_ids(card):
         raise ValueError("adapter cell is outside the frozen 12-cell full evidence set")
+    if expected_full_producer_kind(request["cell"]) != "lm_eval_logged_samples_adapter":
+        raise ValueError("Phase 1 reuse cells cannot be produced by the new-run adapter")
     _validate_phase2_adapter_argv(args, card, request["cell"])
     _validate_adapter_control_manifests(
-        attempt, receipt, card=card, cell=request["cell"], args=args
+        attempt,
+        receipt,
+        card=card,
+        cell=request["cell"],
+        args=args,
+        request_path=path.resolve(),
+        card_path=card_path,
+        identity_path=identity_path,
+        attempt_path=attempt_path,
+        receipt_path=receipt_path,
     )
     return {
         "request": request,
@@ -387,12 +423,49 @@ def _build_phase2_final_output_sidecar(
     validate_producer_provenance(
         producer, allowed_kinds={"lm_eval_logged_samples_adapter"}
     )
+    results_ref = {
+        "path": str((Path(output_dir) / "results.json").resolve()),
+        "sha256": actual["results_sha256"],
+    }
+    producer_evidence = {
+        "adapter_request": {
+            "path": str(context["request_path"]),
+            "sha256": context["request"]["manifest_sha256"],
+        },
+        "attempt_manifest": {
+            "path": str(context["attempt_path"]),
+            "sha256": context["attempt"]["manifest_sha256"],
+        },
+        "receipt_manifest": {
+            "path": str(context["receipt_path"]),
+            "sha256": context["receipt"]["manifest_sha256"],
+        },
+        "command_args": {
+            "path": str((Path(output_dir) / "command_args.json").resolve()),
+            "sha256": actual["command_sha256"],
+        },
+        "environment": {
+            "path": str((Path(output_dir) / "env.json").resolve()),
+            "sha256": actual["environment_sha256"],
+        },
+        "revision_report": {
+            "path": str((Path(output_dir) / "model_revision.json").resolve()),
+            "sha256": actual["revision_report_sha256"],
+        },
+        "results": results_ref,
+        "sample_source": {
+            "kind": "results_inline_samples",
+            "artifacts": [results_ref],
+        },
+    }
     return make_full_final_output_envelope(
         card,
         identity_manifest,
         cell=request["cell"],
         samples=rows,
         producer=producer,
+        artifact_root=str(Path(output_dir).resolve()),
+        producer_evidence=producer_evidence,
     )
 
 
@@ -403,6 +476,8 @@ def _validate_phase2_adapter_argv(
 
     validate_phase2_card(card)
     validate_protocol_cell(cell, allow_baseline=True)
+    if expected_full_producer_kind(cell) != "lm_eval_logged_samples_adapter":
+        raise ValueError("new-run adapter cannot execute a Phase 1 reuse cell")
     required = {
         "model": "qwen3-1.7b-base",
         "revision": card["science"]["revision"],
@@ -414,10 +489,6 @@ def _validate_phase2_adapter_argv(
     for key, expected in required.items():
         if getattr(args, key, None) != expected:
             raise ValueError("Phase 2 adapter argv %s differs from the card" % key)
-    if cell["protocol"] == "baseline_no_loop":
-        if getattr(args, "loop", None) is not False:
-            raise ValueError("baseline adapter cell requires --loop to be absent")
-        return
     if getattr(args, "loop", None) is not True:
         raise ValueError("loop adapter cell requires --loop")
     active = {
@@ -436,14 +507,21 @@ def _validate_phase2_adapter_argv(
             raise ValueError("Phase 2 loop argv %s differs from the requested cell" % key)
 
 
-def _load_hashed_manifest_ref(ref: Any, base: Path, context: str) -> tuple:
+def _load_hashed_manifest_ref(
+    ref: Any, base: Path, context: str, *, allowed_root: Optional[Any] = None
+) -> tuple:
     if not isinstance(ref, dict) or set(ref) != {"path", "sha256"}:
         raise ValueError("%s must be an exact path+hash reference" % context)
     if not isinstance(ref["path"], str) or not ref["path"].strip():
         raise ValueError("%s path must be non-empty" % context)
     if not isinstance(ref["sha256"], str) or len(ref["sha256"]) != 64:
         raise ValueError("%s hash must be SHA256" % context)
-    resolved = _resolve_manifest_path(base, ref["path"]).resolve()
+    candidate = _resolve_manifest_path(base, ref["path"])
+    resolved = (
+        validate_contained_path(candidate, allowed_root, context=context)
+        if allowed_root is not None
+        else candidate.resolve()
+    )
     payload = json.loads(resolved.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("%s must contain a JSON object" % context)
@@ -454,25 +532,38 @@ def _load_hashed_manifest_ref(ref: Any, base: Path, context: str) -> tuple:
 
 
 def _validate_adapter_control_manifests(
-    attempt: dict, receipt: dict, *, card: dict, cell: dict, args: argparse.Namespace
+    attempt: dict,
+    receipt: dict,
+    *,
+    card: dict,
+    cell: dict,
+    args: argparse.Namespace,
+    request_path: Path,
+    card_path: Path,
+    identity_path: Path,
+    attempt_path: Path,
+    receipt_path: Path,
 ) -> None:
     attempt_keys = {
         "schema_version", "artifact_kind", "card_manifest_sha256", "cell_id",
         "revision", "executor_thread_id", "created_at_utc", "manifest_sha256",
-        "output_root",
+        "producer_kind", "authorization_root", "output_root",
     }
     receipt_keys = {
         "schema_version", "artifact_kind", "card_manifest_sha256", "cell_id",
         "revision", "attempt_manifest_sha256", "executor_thread_id",
-        "created_at_utc", "manifest_sha256", "output_root",
+        "created_at_utc", "manifest_sha256", "producer_kind",
+        "authorization_root", "output_root",
     }
     if set(attempt) != attempt_keys or set(receipt) != receipt_keys:
         raise ValueError("adapter attempt/receipt exact-key contract differs")
     if (
-        attempt["schema_version"] != "loopscope.phase2-full-attempt.v1"
+        attempt["schema_version"] != "loopscope.phase2-full-attempt.v2"
         or attempt["artifact_kind"] != "full_final_output_attempt"
-        or receipt["schema_version"] != "loopscope.phase2-full-receipt.v1"
+        or receipt["schema_version"] != "loopscope.phase2-full-receipt.v2"
         or receipt["artifact_kind"] != "full_final_output_execution_receipt"
+        or attempt["producer_kind"] != "lm_eval_logged_samples_adapter"
+        or receipt["producer_kind"] != "lm_eval_logged_samples_adapter"
     ):
         raise ValueError("unsupported adapter attempt/receipt schema")
     expected = (card["manifest_sha256"], cell["cell_id"], card["science"]["revision"])
@@ -486,6 +577,11 @@ def _validate_adapter_control_manifests(
         raise ValueError("adapter receipt is bound to a different attempt")
     if attempt["executor_thread_id"] != receipt["executor_thread_id"]:
         raise ValueError("adapter attempt/receipt executor differs")
+    if attempt["authorization_root"] != receipt["authorization_root"]:
+        raise ValueError("adapter attempt/receipt authorization root differs")
+    authorization_root = validate_phase2_workspace_output_path(
+        attempt["authorization_root"], card, context="Phase 2 full authorization root"
+    )
     expected_root = str(
         validate_phase2_workspace_output_path(
             args.output_dir, card, context="Phase 2 full output directory"
@@ -493,6 +589,20 @@ def _validate_adapter_control_manifests(
     )
     if attempt["output_root"] != expected_root or receipt["output_root"] != expected_root:
         raise ValueError("adapter attempt/receipt output_root differs from actual argv")
+    validate_contained_path(
+        expected_root,
+        authorization_root,
+        context="Phase 2 full output root",
+        allow_root=True,
+    )
+    for provenance_path, context in (
+        (request_path, "adapter request"),
+        (card_path, "adapter card"),
+        (identity_path, "adapter identity manifest"),
+        (attempt_path, "adapter attempt"),
+        (receipt_path, "adapter receipt"),
+    ):
+        validate_contained_path(provenance_path, authorization_root, context=context)
     for packet in (attempt, receipt):
         if not isinstance(packet["executor_thread_id"], str) or not packet["executor_thread_id"].strip():
             raise ValueError("adapter executor thread must be non-empty")
@@ -538,6 +648,7 @@ def _verify_phase2_adapter_actual_files(
             context["request"]["%s_manifest" % name],
             context["request_path"].parent,
             "adapter %s manifest" % name,
+            allowed_root=context["card"]["write_once_contract"]["workspace_root"],
         )
         if loaded != context[name] or resolved != context["%s_path" % name]:
             raise ValueError("adapter %s provenance changed during execution" % name)
@@ -564,56 +675,10 @@ def _parse_utc(value: Any) -> datetime:
 def _join_phase2_logged_samples(
     result: Any, expected_identities: list
 ) -> list:
-    """Exact-join arbitrary-order evaluator samples and restore canonical order."""
-
-    samples_by_task = result.get("samples") if isinstance(result, dict) else None
-    if not isinstance(samples_by_task, dict):
-        raise ValueError("lm-eval result does not expose logged samples for Phase 2 final output")
-    expected = [
-        stable_sample_identity(item.get("task"), item.get("doc_id"), item.get("doc_hash"))
-        for item in expected_identities
-    ]
-    expected_keys = {
-        (item["task"], item["doc_id"], item["doc_hash"]) for item in expected
-    }
-    if len(expected_keys) != len(expected):
-        raise ValueError("canonical final-output identities contain duplicates")
-    observed = {}
-    for task, task_samples in samples_by_task.items():
-        if not isinstance(task, str) or not isinstance(task_samples, list):
-            raise ValueError("lm-eval samples mapping is malformed")
-        for sample in task_samples:
-            if not isinstance(sample, dict):
-                raise ValueError("lm-eval logged sample must be an object")
-            if "task" in sample and str(sample["task"]) != task:
-                raise ValueError("logged sample task disagrees with its evaluator task bucket")
-            try:
-                sample_identity = stable_sample_identity(task, sample["doc_id"], sample["doc_hash"])
-            except (KeyError, TypeError, ValueError) as exc:
-                raise ValueError("lm-eval sample lacks stable task/doc_id/doc_hash identity") from exc
-            key = (
-                sample_identity["task"], sample_identity["doc_id"], sample_identity["doc_hash"]
-            )
-            if key in observed:
-                raise ValueError("lm-eval logged samples contain duplicate stable identity")
-            scores = _extract_four_raw_choice_scores(sample)
-            gold_index = sample.get("target")
-            if isinstance(gold_index, str) and gold_index in ("A", "B", "C", "D"):
-                gold_index = ("A", "B", "C", "D").index(gold_index)
-            if isinstance(gold_index, bool) or not isinstance(gold_index, int) or not 0 <= gold_index < 4:
-                raise ValueError("lm-eval sample lacks a frozen A-D gold index")
-            observed[key] = choice_output(
-                scores,
-                identity=sample_identity,
-                score_source=FULL_LM_EVAL_SCORE_SOURCE,
-                gold_index=gold_index,
-                evaluator_acc=_extract_sample_acc_none(sample),
-            )
-    if set(observed) != expected_keys:
-        missing = len(expected_keys - set(observed))
-        extra = len(set(observed) - expected_keys)
-        raise ValueError("lm-eval exact identity join is incomplete; missing=%d extra=%d" % (missing, extra))
-    return [observed[(item["task"], item["doc_id"], item["doc_hash"])] for item in expected]
+    try:
+        return join_lm_eval_logged_samples(result, expected_identities)
+    except Phase2ReuseError as exc:
+        raise ValueError(str(exc)) from exc
 
 
 def _resolve_manifest_path(base: Path, raw: str) -> Path:
@@ -622,37 +687,17 @@ def _resolve_manifest_path(base: Path, raw: str) -> Path:
 
 
 def _extract_four_raw_choice_scores(sample: dict) -> list:
-    values = sample.get("filtered_resps")
-    if isinstance(values, list) and len(values) == 4 and all(
-        isinstance(item, (int, float)) and not isinstance(item, bool) for item in values
-    ):
-        return [float(item) for item in values]
-    values = sample.get("resps")
-    scores = []
-    if isinstance(values, list) and len(values) == 4:
-        for response in values:
-            current = response
-            while isinstance(current, (list, tuple)) and len(current) == 1:
-                current = current[0]
-            if isinstance(current, (list, tuple)) and current:
-                current = current[0]
-            if not isinstance(current, (int, float)) or isinstance(current, bool):
-                break
-            scores.append(float(current))
-    if len(scores) != 4:
-        raise ValueError("lm-eval sample lacks exactly four raw choice log-likelihood scores")
-    return scores
+    try:
+        return extract_four_raw_choice_scores(sample)
+    except Phase2ReuseError as exc:
+        raise ValueError(str(exc)) from exc
 
 
 def _extract_sample_acc_none(sample: dict) -> bool:
-    metrics = sample.get("metrics")
-    if isinstance(metrics, dict) and "acc,none" in metrics:
-        value = metrics["acc,none"]
-    else:
-        value = sample.get("acc,none")
-    if value not in (0, 1, False, True):
-        raise ValueError("lm-eval sample lacks binary acc,none for correctness closure")
-    return bool(value)
+    try:
+        return extract_sample_acc_none(sample)
+    except Phase2ReuseError as exc:
+        raise ValueError(str(exc)) from exc
 
 
 if __name__ == "__main__":

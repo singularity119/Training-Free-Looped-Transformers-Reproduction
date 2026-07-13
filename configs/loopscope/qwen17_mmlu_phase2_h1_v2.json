@@ -182,15 +182,15 @@
   ],
   "implementation_sha256": {
     "scripts/loopscope/prepare_qwen17_phase2.py": "5556aca88128c5b0fde8df7f321fb1658168bb8f44d0f7ea04b277005d779e74",
-    "src/tflt/cli.py": "f5f9962f39341ff04cd53cbe3db3af441c6eb78e156cdc239b8bd5f1e65c4f93",
-    "src/tflt/eval_runner.py": "92b40daff34d314db770295587cc4d8dabaa3d47fe21d7f127237a5a4ae862b9",
+    "src/tflt/cli.py": "754f524f5bb7cf0cb1b32a523893c6ef63cf5c75139832396d71f4b54551cb27",
+    "src/tflt/eval_runner.py": "7eb1d4e4c32b4fd355378330aa18531e0efaf1b5da462ec4de2ccbb4abccaad7",
     "src/tflt/loopscope/__init__.py": "98065275bbec2833a131fce7ef982ea1e2d90059c5d79ba16def75dc937112cd",
-    "src/tflt/loopscope/phase2_analysis.py": "c87ef7392be86df216e7d045eb28c2c2d242ace4960da820728100595368f091",
-    "src/tflt/loopscope/phase2_reuse.py": "246ab2637960b3e83baf629bfd10a02df4982592435cd93e488d9a7a3e290d84",
-    "src/tflt/loopscope/phase2_schema.py": "8a0f970b77863e8bc36a052aa932e8b570983308fc81615e8268933a3a59d72e",
-    "src/tflt/loopscope/phase2_trajectory.py": "2b8e6f33c2b96f975091762718a441a88b79b4613fb3e3f38cbc9a9d52cbe54b"
+    "src/tflt/loopscope/phase2_analysis.py": "817b24ec50658c39ab1f9610bb1c005491e251faf98cdd2757d5d2d0788a232b",
+    "src/tflt/loopscope/phase2_reuse.py": "7a4e6f53662e9c9c8a0af478bb693cdd5a7bb95497523a2dba3519a4ab14d086",
+    "src/tflt/loopscope/phase2_schema.py": "1846ced72d35b678c8bcc9e8047a7680bb12593eab663a41a16dfaa15f91c8b8",
+    "src/tflt/loopscope/phase2_trajectory.py": "b7898c4e83ad71b80eef6f80527aab6dc398dc42f1460fee88529b0f8b515841"
   },
-  "manifest_sha256": "315d28c54661a1fe277cf0a98e0142560206bd67259314ec80b33de1665b91ff",
+  "manifest_sha256": "7d682e8e5ddc9e66b8e07770eaa3a8e83f95ba0161ae3a8d34e629b744fc82be",
   "measurement": {
     "actual_loop_nca_steps": "t=1..K-1_only",
     "calibration_choice_score_source": "direct_probe_next_token_log_probability_over_frozen_choice_token_ids",
@@ -214,7 +214,32 @@
       "requires_gate_b_live_check"
     ],
     "gate_a_remote_reads": 0,
-    "k2_full_rerun_authorized": false
+    "k2_full_rerun_authorized": false,
+    "live_digest_status": "requires_gate_b_live_check",
+    "new_full_cell_ids": [
+      "fixed_step_11_14_k3_a1p5",
+      "fixed_step_11_14_k4_a2",
+      "fixed_step_12_15_k3_a1p5",
+      "fixed_step_12_15_k4_a2",
+      "fixed_step_13_16_k3_a1p5",
+      "fixed_step_13_16_k4_a2",
+      "fixed_horizon_12_15_k3_a1",
+      "fixed_horizon_12_15_k4_a1"
+    ],
+    "phase1_run_manifest_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-20260711-053022/control/phase1_run_manifest.json",
+    "reuse_cell_to_job": {
+      "baseline_no_loop_none_k1_a1": "baseline-full",
+      "shared_k2_anchor_11_14_k2_a1": "window-11-14-full",
+      "shared_k2_anchor_12_15_k2_a1": "window-12-15-full",
+      "shared_k2_anchor_13_16_k2_a1": "window-13-16-full"
+    },
+    "reuse_full_cell_ids": [
+      "baseline_no_loop_none_k1_a1",
+      "shared_k2_anchor_11_14_k2_a1",
+      "shared_k2_anchor_12_15_k2_a1",
+      "shared_k2_anchor_13_16_k2_a1"
+    ],
+    "unknown_digest_policy": "fail_closed_no_synthesis_no_k2_rerun"
   },
   "primary_contrast_ids": [
     "fs_11_14_k2_k3",
@@ -224,7 +249,7 @@
     "fs_13_16_k2_k3",
     "fs_13_16_k3_k4"
   ],
-  "schema_version": "loopscope.phase2-h1-card.v3",
+  "schema_version": "loopscope.phase2-h1-card.v4",
   "science": {
     "beta": 0.0,
     "cache_strategy": "last",

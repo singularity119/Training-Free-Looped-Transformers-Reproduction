@@ -181,7 +181,7 @@ seed=20260710
 1. 版本化 H1 V2 config/card、schema、上述 H1/NCA 判读优先级与 deterministic hash。
 2. 实现冻结 final pre-answer token、inclusive boundary 与 native continuation `B_N-B_(b+1)` 的最小 NCA 采集路径。
 3. 最小方式采集每个实际 body call 的 residual norm、相邻 residual ratio/cosine、NCA 和调用序号；只保存 scalar/norm/validity，不保存完整向量。
-4. 在 512 保存 direct-probe final choice，在 full final-output adapter 保存 evaluator raw choice；两者分别绑定独立 canonical identity namespace、card/revision/cell 与 attempt/receipt provenance。
+4. 在 512 保存 direct-probe final choice，在 full final-output producer 保存 evaluator raw choice；两者分别绑定独立 canonical identity namespace、card/revision/cell 与 attempt/receipt provenance。full producer 必须按 cell 闭合：baseline 与三个 shared K2 只能由 Phase 1 immutable reuse loader 产生，六个 fixed-step K3/K4 与 `12:15` 两个 fixed-horizon K3/K4 只能由新 lm-eval adapter 产生。
 5. 实现逐样本四类翻转、entropy/margin/JS 条件分析、paired bootstrap/McNemar，以及独立 NCA diagnosis。
 6. 只读审计 Phase 1 baseline/K=2 与 512 probe 是否包含可复用 final choice/boundary 字段，输出 reuse matrix；缺字段只报告，不自动补跑。
    本地只能确认 Phase 1 schema 不持久化 Phase 2 per-step NCA；512 live identity、14,042
@@ -199,6 +199,9 @@ seed=20260710
    - ordered identity mismatch 拒绝分析；
    - frozen pool exact schema、sealed-label guard、B1 first-four→B2 source binding；
    - actual argv/attempt/receipt/command/env/revision/results provenance 与 new-root 写入；
+   - 四个 reuse 与八个 new-run cell 的 producer 双向错配、错误 cell-to-output mapping、伪 digest、缺失或篡改 source；
+   - full/probe evidence 的 workspace containment、`..`/prefix sibling/`/tmp`/symlink escape 拒绝；
+   - source-aware analysis 必须重载 actual producer/source rows，不能只信 sidecar aggregate；
    - per-cell wall-clock/peak-memory/restore proof schema；
    - B2 aggregate identity/baseline/15-cell path+hash closure 与 source-aware report 重算；
    - wrong/right 四类计数和 margin 公式；
@@ -226,8 +229,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m tflt.cli --help
 
 ### Gate A 实现接口（freeze candidate）
 
-Gate A 的本地实现提供五个显式接口，默认 Phase 1/eval 路径不启用任何
-Phase 2 行为：
+Gate A 的本地实现提供五个 CLI 接口以及一个 fail-closed Phase 1 immutable reuse loader；默认 Phase 1/eval 路径不启用任何 Phase 2 行为：
 
 ```bash
 python -m tflt.cli prepare-phase2-h1 \
@@ -294,13 +296,26 @@ order。因此 `batch_size=auto` 本身不是 blocker；缺 identity、duplicate
 raw choice scores 才 fail-fast。Phase 1 full artifacts 是否具备 raw choice/doc_hash 仍属于
 `requires_gate_b_live_check`，不能由本地 schema 宣称已验证。
 
+full 的 producer partition 是 closed-world：`baseline_no_loop` 与三个
+`shared_k2_anchor` 只能引用 Phase 1 `gate-e-full/{baseline-full,window-11-14-full,
+window-12-15-full,window-13-16-full}`；八个 K3/K4 cell 只能走新-run adapter。reuse loader
+重新读取 canonical Phase 1 run manifest、精确 job/output mapping、`command_args.json`、
+`env.json`、`model_revision.json`、`results.json` 以及必要时完整排序的
+`samples_*.jsonl`，核对 frozen source digest、科学 argv、revision、四个 raw choice score 与
+14,042 ordered identity。Gate B 未完成 live read 之前，reuse matrix 仍保持
+`requires_gate_b_live_check`；不得合成 digest、分数或以 K2 重跑代替历史复用。
+该闭包由 H1 card v4 与 full-final-output envelope v3 版本化；旧的无
+`artifact_root/producer_evidence` full sidecar 不可被当前 analysis 接受。
+
 adapter request 使用 v2 path+hash refs 实际读取 card、full identity、attempt 和 receipt；运行前
 把 requested cell 与真实 model/revision/task/fewshot/dtype 及 active loop argv 逐字段核对，
-baseline 的 inactive loop defaults 不冒充 active science。运行后再读取 write-once
+reuse cell 会在 model load 前被拒绝。运行后再读取 write-once
 `command_args.json、env.json、model_revision.json、results.json`，核对 model/tokenizer revision
 closure，并由这些实际文件构造 producer hashes。adapter 模式要求新 output root，所有上述
 文件与 sidecar 都使用 exclusive-create；未启用 adapter 的默认 eval 路径保持原行为。
-attempt/receipt 还必须把真实 `output_root` 绑定到 card 冻结的独立
+attempt/receipt v2 还必须同时绑定 producer kind、真实 `authorization_root` 与 `output_root`；
+request/control 可位于同一授权 cell/staging root 的 write-once provenance 子树，output-owned
+`command_args/env/model_revision/results/sidecar` 必须位于精确 output root。所有新证据均绑定到 card 冻结的独立
 `training_free_looped_transformers_loopscope` workspace；resolved path 落入旧 Phase 1 workspace、
 `/tmp` 或经 symlink 逃逸都会在 model load 前失败。
 
@@ -318,15 +333,21 @@ run/input root。source-provenance v2 不只核对 source manifest 元数据：c
 完整、排序且逐文件哈希的 `samples_*.jsonl` 集合。两条路径都按 task 名排序、task 内保留
 logged-sample 顺序，派生 14,042 identity，并与
 canonical manifest 完全同序。尚未在 Gate B live 核验的 digest 只能保持
-`requires_gate_b_live_check` 和 null，不能虚构。analysis producer重新从逐样本 sidecar计算
+`requires_gate_b_live_check` 和 null，不能虚构。每个 full envelope 声明实际 artifact root 与
+exact path+hash producer-evidence tree；analysis 在统计前重新读取 request/attempt/receipt、
+command/env/revision/results 或 immutable Phase 1 source，并从真实 logged samples 重建 canonical rows。
+structural-valid 但 source 不存在、hash 不同或 cell mapping 错误的 sidecar 一律拒绝。analysis producer重新从逐样本 sidecar计算
 全部统计，并以 same-directory atomic exclusive-create + fsync 写出报告；随后必须运行
 `verify-phase2-analysis`，从相同 source 重新确定性计算并要求报告逐字段及 manifest hash 相等。
 analysis input 的 authorization/attempt/receipt 均为实际 path+hash refs，三者绑定 card、完整
 source-ref tree、executor 与独立 workspace output root；CLI write-once 生成自己的
 `command_args.json/env.json`，verifier 重新读取并核对后才重算报告。
 
-B1/B2 probe 的 attempt/receipt 同样使用 exact versioned schema，绑定 probe mode、4/512
-尺度、card/revision、Phase 1 input manifest、executor 与 output root。aggregate 与 B1 proof
+B1/B2 probe 的 attempt/receipt 同样使用 exact v2 schema，绑定 probe mode、4/512
+尺度、card/revision、Phase 1 input manifest、executor、authorization root 与 output root。
+`input_manifest` 只能是 canonical Phase 1 input root 下的 `probe_pool_manifest.json`；
+`command_args/env/revision_evidence` 必须位于精确 output root，attempt/receipt 必须留在同一
+LoopScope 授权 root，任何系统临时目录、prefix sibling 或 symlink escape 都 fail closed。aggregate 与 B1 proof
 保存实际 attempt/receipt/input/command/env/revision path+hash；B2 admission 还会从 512 pool
 重新计算 natural-order 前四记录的 selected/render hashes，不能用任意四样本 proof 解锁。
 合法 renderer `target={source,split,subject}` 仅作无标签 provenance；任何 target answer、

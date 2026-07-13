@@ -8,6 +8,7 @@ from unittest import mock
 from tflt import eval_runner
 from tflt.loopscope.phase2_schema import (
     FULL_IDENTITY_NAMESPACE,
+    SchemaError,
     atomic_write_new_json,
     make_hashed_manifest,
     make_identity_manifest,
@@ -73,6 +74,8 @@ class Phase2EvalAdapterTests(unittest.TestCase):
                 eval_runner, "_load_phase2_final_output_manifest", return_value=context
             ) as load, mock.patch.object(
                 eval_runner, "_build_phase2_final_output_sidecar", return_value={"artifact": "final-only"}
+            ), mock.patch.object(
+                eval_runner, "verify_full_final_output_artifact", return_value={}
             ), mock.patch.object(eval_runner, "run_lm_eval", return_value=result):
                 rc = eval_runner.main(
                     [
@@ -107,6 +110,18 @@ class Phase2EvalAdapterTests(unittest.TestCase):
                         ]
                     )
 
+    def test_adapter_request_outside_governed_workspace_fails_before_ref_loading(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            workspace = root / "workspace"
+            workspace.mkdir()
+            outside = root / "outside-request.json"
+            outside.write_text("{}", encoding="utf-8")
+            args = argparse.Namespace(output_dir=str(workspace / "output"))
+            with mock.patch.object(eval_runner, "PHASE2_WORKSPACE_ROOT", str(workspace)):
+                with self.assertRaises(SchemaError):
+                    eval_runner._load_phase2_final_output_manifest(outside, args)
+
     def test_adapter_argv_matches_active_cell_and_ignores_inactive_baseline_defaults(self):
         baseline = {
             "cell_id": protocol_cell_id("baseline_no_loop", "none", 1, 1.0),
@@ -124,7 +139,8 @@ class Phase2EvalAdapterTests(unittest.TestCase):
             cache_strategy="none", decode_mode="full", first_n=7,
             phase2_final_output_manifest="request.json",
         )
-        eval_runner._validate_phase2_adapter_argv(args, self.card, baseline)
+        with self.assertRaisesRegex(ValueError, "reuse cell"):
+            eval_runner._validate_phase2_adapter_argv(args, self.card, baseline)
 
         loop_cell = {
             "cell_id": protocol_cell_id("fixed_step", "12:15", 3, 1.5),
@@ -182,37 +198,41 @@ class Phase2EvalAdapterTests(unittest.TestCase):
             )
             atomic_write_new_json(root / "identity.json", identity_manifest)
             cell = {
-                "cell_id": protocol_cell_id("baseline_no_loop", "none", 1, 1.0),
-                "protocol": "baseline_no_loop",
-                "window": "none",
-                "k": 1,
-                "alpha": 1.0,
-                "step_size": 1.0,
+                "cell_id": protocol_cell_id("fixed_step", "12:15", 3, 1.5),
+                "protocol": "fixed_step",
+                "window": "12:15",
+                "k": 3,
+                "alpha": 1.5,
+                "step_size": 0.5,
             }
             output = root / "out"
             attempt = make_hashed_manifest(
                 {
-                    "schema_version": "loopscope.phase2-full-attempt.v1",
+                    "schema_version": "loopscope.phase2-full-attempt.v2",
                     "artifact_kind": "full_final_output_attempt",
+                    "producer_kind": "lm_eval_logged_samples_adapter",
                     "card_manifest_sha256": self.card["manifest_sha256"],
                     "cell_id": cell["cell_id"],
                     "revision": self.card["science"]["revision"],
                     "executor_thread_id": "executor-test",
                     "created_at_utc": "2026-07-14T01:02:03Z",
+                    "authorization_root": str(root.resolve()),
                     "output_root": str(output.resolve()),
                 }
             )
             atomic_write_new_json(root / "attempt.json", attempt)
             receipt = make_hashed_manifest(
                 {
-                    "schema_version": "loopscope.phase2-full-receipt.v1",
+                    "schema_version": "loopscope.phase2-full-receipt.v2",
                     "artifact_kind": "full_final_output_execution_receipt",
+                    "producer_kind": "lm_eval_logged_samples_adapter",
                     "card_manifest_sha256": self.card["manifest_sha256"],
                     "cell_id": cell["cell_id"],
                     "revision": self.card["science"]["revision"],
                     "attempt_manifest_sha256": attempt["manifest_sha256"],
                     "executor_thread_id": "executor-test",
                     "created_at_utc": "2026-07-14T01:02:04Z",
+                    "authorization_root": str(root.resolve()),
                     "output_root": str(output.resolve()),
                 }
             )
@@ -245,8 +265,8 @@ class Phase2EvalAdapterTests(unittest.TestCase):
             args = argparse.Namespace(
                 model="qwen3-1.7b-base", revision=self.card["science"]["revision"],
                 tasks="mmlu", output_dir=str(output), limit=None, num_fewshot=5,
-                batch_size="auto", dtype="float16", loop=False, window="12:15", k=2,
-                iteration_mode="block", strategy="damped_euler", alpha=1.0, beta=0.0,
+                batch_size="auto", dtype="float16", loop=True, window="12:15", k=3,
+                iteration_mode="block", strategy="damped_euler", alpha=1.5, beta=0.0,
                 cache_strategy="last", decode_mode="bypass", first_n=None,
                 phase2_final_output_manifest=str(request_path),
             )
@@ -256,6 +276,8 @@ class Phase2EvalAdapterTests(unittest.TestCase):
                 eval_runner,
                 "validate_phase2_workspace_output_path",
                 side_effect=lambda value, card, context: Path(value).resolve(),
+            ), mock.patch.object(
+                eval_runner, "PHASE2_WORKSPACE_ROOT", str(root.resolve()),
             ):
                 context = eval_runner._load_phase2_final_output_manifest(request_path, args)
             live_check.assert_called_once()
@@ -281,6 +303,10 @@ class Phase2EvalAdapterTests(unittest.TestCase):
                 eval_runner,
                 "validate_phase2_workspace_output_path",
                 side_effect=lambda value, card, context: Path(value).resolve(),
+            ), mock.patch.object(
+                eval_runner,
+                "validate_contained_path",
+                side_effect=lambda value, root, **kwargs: Path(value).resolve(),
             ):
                 actual = eval_runner._verify_phase2_adapter_actual_files(
                     output_dir=output, args=args, result=result, context=context

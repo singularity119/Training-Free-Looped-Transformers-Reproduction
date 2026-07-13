@@ -29,6 +29,7 @@ from tflt.loopscope.phase2_schema import (
     protocol_cell_id,
     stable_sample_identity,
     strict_frozen_equal,
+    validate_contained_path,
     validate_no_persisted_vectors,
     validate_phase2_card,
     validate_phase2_workspace_output_path,
@@ -613,9 +614,19 @@ def _load_probe_control_manifests(
     resolved_output = validate_phase2_workspace_output_path(
         output_dir, card, context="Phase 2 probe output directory"
     )
-    attempt_path = Path(args.attempt_manifest).resolve()
-    receipt_path = Path(args.receipt_manifest).resolve()
-    input_path = Path(args.input_manifest).resolve()
+    workspace_root = Path(card["write_once_contract"]["workspace_root"])
+    attempt_path = _probe_contained_path(
+        args.attempt_manifest, workspace_root, context="probe attempt manifest"
+    )
+    receipt_path = _probe_contained_path(
+        args.receipt_manifest, workspace_root, context="probe receipt manifest"
+    )
+    input_path = _probe_contained_path(
+        args.input_manifest,
+        PHASE1_INPUT_ROOT,
+        context="Phase 2 probe input manifest",
+        exact_relative="probe_pool_manifest.json",
+    )
     try:
         attempt = json.loads(attempt_path.read_text(encoding="utf-8"))
         receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
@@ -627,13 +638,19 @@ def _load_probe_control_manifests(
             raise TrajectoryError("probe control/input manifest must be an object")
         verify_manifest_sha256(payload)
     input_ref = {"path": str(input_path), "sha256": input_manifest["manifest_sha256"]}
-    _validate_probe_control_packets(
+    authorization_root = _validate_probe_control_packets(
         attempt,
         receipt,
         card=card,
         probe_mode=mode,
         output_root=resolved_output,
         input_ref=input_ref,
+    )
+    attempt_path = _probe_contained_path(
+        attempt_path, authorization_root, context="probe attempt manifest"
+    )
+    receipt_path = _probe_contained_path(
+        receipt_path, authorization_root, context="probe receipt manifest"
     )
     return {
         "attempt": attempt,
@@ -652,11 +669,12 @@ def _validate_probe_control_packets(
     probe_mode: str,
     output_root: Path,
     input_ref: Mapping[str, Any],
-) -> None:
+) -> Path:
     attempt_keys = {
         "schema_version", "artifact_kind", "card_manifest_sha256", "probe_mode",
         "evidence_scale", "identity_namespace", "revision", "input_manifest",
-        "output_root", "executor_thread_id", "created_at_utc", "manifest_sha256",
+        "authorization_root", "output_root", "executor_thread_id", "created_at_utc",
+        "manifest_sha256",
     }
     receipt_keys = attempt_keys | {"attempt_manifest_sha256"}
     _trajectory_exact_keys(attempt, attempt_keys, "probe attempt manifest")
@@ -664,9 +682,9 @@ def _validate_probe_control_packets(
     expected_scale = "calibration_smoke_4" if probe_mode == "b1-smoke" else "calibration_512"
     expected_kind = "phase2_b1_smoke" if probe_mode == "b1-smoke" else "phase2_b2_calibration"
     if (
-        attempt["schema_version"] != "loopscope.phase2-probe-attempt.v1"
+        attempt["schema_version"] != "loopscope.phase2-probe-attempt.v2"
         or attempt["artifact_kind"] != "%s_attempt" % expected_kind
-        or receipt["schema_version"] != "loopscope.phase2-probe-receipt.v1"
+        or receipt["schema_version"] != "loopscope.phase2-probe-receipt.v2"
         or receipt["artifact_kind"] != "%s_execution_receipt" % expected_kind
     ):
         raise TrajectoryError("unsupported probe attempt/receipt schema")
@@ -690,8 +708,20 @@ def _validate_probe_control_packets(
         raise TrajectoryError("probe receipt is bound to a different attempt")
     if receipt["executor_thread_id"] != attempt["executor_thread_id"]:
         raise TrajectoryError("probe attempt/receipt executor differs")
+    if receipt["authorization_root"] != attempt["authorization_root"]:
+        raise TrajectoryError("probe attempt/receipt authorization roots differ")
+    authorization_root = validate_phase2_workspace_output_path(
+        attempt["authorization_root"], card, context="Phase 2 probe authorization root"
+    )
+    _probe_contained_path(
+        output_root,
+        authorization_root,
+        context="Phase 2 probe output root",
+        allow_root=True,
+    )
     if _parse_probe_utc(receipt["created_at_utc"]) < _parse_probe_utc(attempt["created_at_utc"]):
         raise TrajectoryError("probe receipt predates its attempt")
+    return authorization_root
 
 
 def _parse_probe_utc(value: Any) -> datetime:
@@ -950,6 +980,26 @@ def _trajectory_ref(value: Any, context: str) -> None:
     _trajectory_sha256(value["sha256"], "%s hash" % context)
 
 
+def _probe_contained_path(
+    value: Any,
+    root: Any,
+    *,
+    context: str,
+    exact_relative: Optional[str] = None,
+    allow_root: bool = False,
+) -> Path:
+    try:
+        return validate_contained_path(
+            value,
+            root,
+            context=context,
+            exact_relative=exact_relative,
+            allow_root=allow_root,
+        )
+    except SchemaError as exc:
+        raise TrajectoryError(str(exc)) from exc
+
+
 def _validate_probe_producer_evidence(
     evidence: Any,
     producer: Mapping[str, Any],
@@ -978,6 +1028,30 @@ def _validate_probe_producer_evidence(
     for key, digest in expected_hashes.items():
         if evidence[key]["sha256"] != digest:
             raise TrajectoryError("probe producer evidence hash differs from producer")
+    _probe_contained_path(
+        evidence["input_manifest"]["path"],
+        PHASE1_INPUT_ROOT,
+        context="probe producer input manifest",
+        exact_relative="probe_pool_manifest.json",
+    )
+    for key, filename in (
+        ("command_args", "command_args.json"),
+        ("environment", "env.json"),
+        ("revision_report", "revision_evidence.json"),
+    ):
+        _probe_contained_path(
+            evidence[key]["path"],
+            output_root,
+            context="probe producer %s" % key,
+            exact_relative=filename,
+        )
+    workspace_root = Path(card["write_once_contract"]["workspace_root"])
+    for key in ("attempt_manifest", "receipt_manifest"):
+        _probe_contained_path(
+            evidence[key]["path"],
+            workspace_root,
+            context="probe producer %s" % key,
+        )
     if not load_files:
         return
     loaded: Dict[str, Any] = {}
@@ -1003,13 +1077,23 @@ def _validate_probe_producer_evidence(
             if payload["manifest_sha256"] != ref["sha256"]:
                 raise TrajectoryError("probe producer manifest hash differs: %s" % key)
         loaded[key] = payload
-    _validate_probe_control_packets(
+    authorization_root = _validate_probe_control_packets(
         loaded["attempt_manifest"],
         loaded["receipt_manifest"],
         card=card,
         probe_mode=probe_mode,
         output_root=Path(output_root),
         input_ref=evidence["input_manifest"],
+    )
+    _probe_contained_path(
+        evidence["attempt_manifest"]["path"],
+        authorization_root,
+        context="probe producer attempt manifest",
+    )
+    _probe_contained_path(
+        evidence["receipt_manifest"]["path"],
+        authorization_root,
+        context="probe producer receipt manifest",
     )
     command = loaded["command_args"]
     expected_command = {

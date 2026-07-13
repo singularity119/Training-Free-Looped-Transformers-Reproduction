@@ -28,13 +28,13 @@ from tflt.loopscope.schema import (
 
 
 PHASE2_CARD_ID = "H1_ITERATIVE_REFINEMENT_ZONE_V2"
-PHASE2_CARD_SCHEMA_VERSION = "loopscope.phase2-h1-card.v3"
+PHASE2_CARD_SCHEMA_VERSION = "loopscope.phase2-h1-card.v4"
 PHASE2_IDENTITY_MANIFEST_SCHEMA_VERSION = "loopscope.phase2-identity-manifest.v2"
 PHASE2_TRACE_SCHEMA_VERSION = "loopscope.phase2-calibration-trajectory-sample.v2"
 PHASE2_CALIBRATION_CELL_SCHEMA_VERSION = "loopscope.phase2-calibration-cell.v2"
 PHASE2_CALIBRATION_BASELINE_SCHEMA_VERSION = "loopscope.phase2-calibration-baseline.v2"
 PHASE2_FINAL_OUTPUT_SCHEMA_VERSION = "loopscope.phase2-final-output-sample.v2"
-PHASE2_FULL_FINAL_OUTPUT_SCHEMA_VERSION = "loopscope.phase2-full-final-output-cell.v2"
+PHASE2_FULL_FINAL_OUTPUT_SCHEMA_VERSION = "loopscope.phase2-full-final-output-cell.v3"
 PHASE2_CALIBRATION_LABEL_SCHEMA_VERSION = "loopscope.phase2-calibration-labels.v1"
 PHASE2_UNSEAL_AUTHORIZATION_SCHEMA_VERSION = "loopscope.phase2-unseal-authorization.v1"
 PHASE2_UNSEAL_RECEIPT_SCHEMA_VERSION = "loopscope.phase2-unseal-receipt.v1"
@@ -255,6 +255,9 @@ _PRODUCER_KEYS = frozenset(
     )
 )
 _FULL_ADAPTER_PRODUCER_KEYS = _PRODUCER_KEYS | frozenset(("results_sha256",))
+_FULL_REUSE_PRODUCER_KEYS = _FULL_ADAPTER_PRODUCER_KEYS | frozenset(
+    ("source_manifest_sha256",)
+)
 _FINAL_BASE_KEYS = frozenset(
     (
         "schema_version",
@@ -333,6 +336,35 @@ _ENVELOPE_KEYS = frozenset(
         "manifest_sha256",
     )
 )
+_FULL_ENVELOPE_KEYS = _ENVELOPE_KEYS | frozenset(("artifact_root", "producer_evidence"))
+_FILE_REF_KEYS = frozenset(("path", "sha256"))
+_NEW_FULL_EVIDENCE_KEYS = frozenset(
+    (
+        "adapter_request",
+        "attempt_manifest",
+        "receipt_manifest",
+        "command_args",
+        "environment",
+        "revision_report",
+        "results",
+        "sample_source",
+    )
+)
+_REUSE_FULL_EVIDENCE_KEYS = frozenset(
+    (
+        "reuse_request",
+        "attempt_manifest",
+        "receipt_manifest",
+        "command_args",
+        "environment",
+        "source_run_manifest",
+        "source_command_args",
+        "source_environment",
+        "source_revision_report",
+        "source_results",
+        "sample_source",
+    )
+)
 _BASELINE_SAMPLE_KEYS = frozenset(
     ("sample_identity", "answer_position", "final_output", "window_boundaries")
 )
@@ -358,6 +390,55 @@ def protocol_cell_id(protocol: str, window: str, k: int, alpha: float) -> str:
         int(k),
         _format_float(alpha),
     )
+
+
+def phase1_reuse_full_cell_ids() -> Tuple[str, ...]:
+    """Return the only full cells whose immutable Phase 1 outputs may be reused."""
+
+    return (
+        protocol_cell_id("baseline_no_loop", "none", 1, 1.0),
+        protocol_cell_id("shared_k2_anchor", "11:14", 2, 1.0),
+        protocol_cell_id("shared_k2_anchor", "12:15", 2, 1.0),
+        protocol_cell_id("shared_k2_anchor", "13:16", 2, 1.0),
+    )
+
+
+def phase2_new_full_cell_ids() -> Tuple[str, ...]:
+    """Return the eight cells that require a new Phase 2 lm-eval execution."""
+
+    result: List[str] = []
+    for window in ("11:14", "12:15", "13:16"):
+        result.extend(
+            (
+                protocol_cell_id("fixed_step", window, 3, 1.5),
+                protocol_cell_id("fixed_step", window, 4, 2.0),
+            )
+        )
+    result.extend(
+        (
+            protocol_cell_id("fixed_horizon", "12:15", 3, 1.0),
+            protocol_cell_id("fixed_horizon", "12:15", 4, 1.0),
+        )
+    )
+    if len(result) != 8 or len(set(result)) != 8:
+        raise SchemaError("Phase 2 new-run full cell partition is not eight unique cells")
+    return tuple(result)
+
+
+def expected_full_producer_kind(cell: Mapping[str, Any]) -> str:
+    """Bind every frozen full cell to exactly one producer namespace."""
+
+    _validate_cell(cell, allow_baseline=True)
+    cell_id = cell["cell_id"]
+    reuse = phase1_reuse_full_cell_ids()
+    new = phase2_new_full_cell_ids()
+    if set(reuse) & set(new) or len(reuse) + len(new) != 12:
+        raise SchemaError("full producer partitions overlap or are incomplete")
+    if cell_id in reuse:
+        return "phase1_immutable_reuse_adapter"
+    if cell_id in new:
+        return "lm_eval_logged_samples_adapter"
+    raise SchemaError("full cell is outside the frozen producer partition")
 
 
 def stable_sample_identity(task: str, doc_id: Any, doc_hash: str) -> Dict[str, str]:
@@ -855,6 +936,36 @@ def validate_phase2_workspace_output_path(
     return resolved
 
 
+def validate_contained_path(
+    value: Any,
+    root: Any,
+    *,
+    context: str,
+    exact_relative: Optional[str] = None,
+    allow_root: bool = False,
+) -> Path:
+    """Resolve a path without accepting traversal, prefix tricks, or symlink escape."""
+
+    raw = Path(_nonempty_string(str(value), context))
+    raw_root = Path(_nonempty_string(str(root), "%s root" % context))
+    if not raw.is_absolute() or not raw_root.is_absolute():
+        raise SchemaError("%s and its root must be absolute" % context)
+    if ".." in raw.parts or ".." in raw_root.parts:
+        raise SchemaError("%s cannot contain parent traversal" % context)
+    resolved_root = raw_root.resolve(strict=False)
+    resolved = raw.resolve(strict=False)
+    if (resolved == resolved_root and not allow_root) or not resolved.is_relative_to(resolved_root):
+        raise SchemaError("%s escapes its declared root" % context)
+    if exact_relative is not None:
+        relative = Path(exact_relative)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise SchemaError("%s exact relative path is invalid" % context)
+        expected = (resolved_root / relative).resolve(strict=False)
+        if resolved != expected:
+            raise SchemaError("%s differs from its exact governed location" % context)
+    return resolved
+
+
 def validate_ordered_identity(
     left: Sequence[Mapping[str, Any]], right: Sequence[Mapping[str, Any]]
 ) -> None:
@@ -979,6 +1090,17 @@ def validate_phase2_card(card: Mapping[str, Any]) -> None:
         ],
         "gate_a_remote_reads": 0,
         "k2_full_rerun_authorized": False,
+        "phase1_run_manifest_path": PHASE1_RUN_ROOT + "/control/phase1_run_manifest.json",
+        "reuse_full_cell_ids": list(phase1_reuse_full_cell_ids()),
+        "new_full_cell_ids": list(phase2_new_full_cell_ids()),
+        "reuse_cell_to_job": {
+            phase1_reuse_full_cell_ids()[0]: "baseline-full",
+            phase1_reuse_full_cell_ids()[1]: "window-11-14-full",
+            phase1_reuse_full_cell_ids()[2]: "window-12-15-full",
+            phase1_reuse_full_cell_ids()[3]: "window-13-16-full",
+        },
+        "live_digest_status": "requires_gate_b_live_check",
+        "unknown_digest_policy": "fail_closed_no_synthesis_no_k2_rerun",
     })
     _exact_mapping(card, "write_once_contract", {
         "workspace_root": PHASE2_WORKSPACE_ROOT,
@@ -1048,6 +1170,8 @@ def make_full_final_output_envelope(
     cell: Mapping[str, Any],
     samples: Sequence[Mapping[str, Any]],
     producer: Mapping[str, Any],
+    artifact_root: Any,
+    producer_evidence: Mapping[str, Any],
 ) -> Dict[str, Any]:
     payload = _make_envelope(
         card,
@@ -1060,6 +1184,8 @@ def make_full_final_output_envelope(
         cell=cell,
         samples=samples,
         producer=producer,
+        artifact_root=str(artifact_root),
+        producer_evidence=producer_evidence,
     )
     validate_full_final_output_envelope(payload, card, identity_manifest)
     return payload
@@ -1659,6 +1785,8 @@ def _make_envelope(
     cell: Mapping[str, Any],
     samples: Sequence[Mapping[str, Any]],
     producer: Mapping[str, Any],
+    artifact_root: Optional[str] = None,
+    producer_evidence: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     validate_phase2_card(card)
     validate_identity_manifest(identity_manifest, card)
@@ -1678,6 +1806,11 @@ def _make_envelope(
         "samples": [dict(sample) for sample in samples],
         "producer": dict(producer),
     }
+    if artifact_root is not None or producer_evidence is not None:
+        if artifact_root is None or producer_evidence is None:
+            raise SchemaError("full envelope root and producer evidence must be supplied together")
+        payload["artifact_root"] = artifact_root
+        payload["producer_evidence"] = dict(producer_evidence)
     attach_manifest_sha256(payload)
     return payload
 
@@ -1695,7 +1828,8 @@ def _validate_envelope_common(
 ) -> None:
     validate_phase2_card(card)
     validate_identity_manifest(identity_manifest, card)
-    _exact_keys(payload, _ENVELOPE_KEYS, "%s envelope" % artifact_kind)
+    envelope_keys = _FULL_ENVELOPE_KEYS if evidence_scale == "full_14042" else _ENVELOPE_KEYS
+    _exact_keys(payload, envelope_keys, "%s envelope" % artifact_kind)
     verify_manifest_sha256(payload)
     expected = {
         "schema_version": schema_version,
@@ -1715,13 +1849,28 @@ def _validate_envelope_common(
             raise SchemaError("%s.%s differs from the frozen envelope" % (artifact_kind, key))
     if identity_manifest["identity_namespace"] != expected["identity_namespace"]:
         raise SchemaError("artifact and canonical manifest use different identity namespaces")
-    _validate_cell(_mapping(payload, "cell"), allow_baseline=evidence_scale == "full_14042")
+    cell = _mapping(payload, "cell")
+    _validate_cell(cell, allow_baseline=evidence_scale == "full_14042")
     allowed_kinds = (
         {"gate_b_remote_calibration_probe"}
         if evidence_scale == "calibration_512"
         else {"lm_eval_logged_samples_adapter", "phase1_immutable_reuse_adapter"}
     )
-    _validate_producer(_mapping(payload, "producer"), allowed_kinds=allowed_kinds)
+    producer = _mapping(payload, "producer")
+    _validate_producer(producer, allowed_kinds=allowed_kinds)
+    if evidence_scale == "full_14042":
+        expected_kind = expected_full_producer_kind(cell)
+        if producer["producer_kind"] != expected_kind:
+            raise SchemaError(
+                "full cell %s requires producer_kind=%s"
+                % (cell["cell_id"], expected_kind)
+            )
+        artifact_root = Path(_nonempty_string(payload["artifact_root"], "artifact_root"))
+        if not artifact_root.is_absolute() or ".." in artifact_root.parts:
+            raise SchemaError("full artifact_root must be an absolute canonical path")
+        _validate_full_producer_evidence_structure(
+            _mapping(payload, "producer_evidence"), producer
+        )
     samples = payload["samples"]
     if not isinstance(samples, list) or len(samples) != expected["sample_count"]:
         raise SchemaError("artifact sample count differs from frozen scale")
@@ -1844,17 +1993,86 @@ def _validate_producer(
 ) -> None:
     if not isinstance(producer, Mapping):
         raise SchemaError("producer provenance must be an object")
-    keys = (
-        _FULL_ADAPTER_PRODUCER_KEYS
-        if producer.get("producer_kind") == "lm_eval_logged_samples_adapter"
-        else _PRODUCER_KEYS
-    )
+    if producer.get("producer_kind") == "lm_eval_logged_samples_adapter":
+        keys = _FULL_ADAPTER_PRODUCER_KEYS
+    elif producer.get("producer_kind") == "phase1_immutable_reuse_adapter":
+        keys = _FULL_REUSE_PRODUCER_KEYS
+    else:
+        keys = _PRODUCER_KEYS
     _exact_keys(producer, keys, "producer provenance")
     kind = _nonempty_string(producer["producer_kind"], "producer_kind")
     if allowed_kinds is not None and kind not in set(allowed_kinds):
         raise SchemaError("producer_kind is not allowed for this artifact")
     for key in keys - {"producer_kind"}:
         _sha256(producer[key], "producer.%s" % key)
+
+
+def _validate_full_producer_evidence_structure(
+    evidence: Mapping[str, Any], producer: Mapping[str, Any]
+) -> None:
+    kind = producer["producer_kind"]
+    expected = (
+        _NEW_FULL_EVIDENCE_KEYS
+        if kind == "lm_eval_logged_samples_adapter"
+        else _REUSE_FULL_EVIDENCE_KEYS
+    )
+    _exact_keys(evidence, expected, "full producer evidence")
+    for key, value in evidence.items():
+        if key == "sample_source":
+            continue
+        _validate_file_ref(value, "full producer evidence.%s" % key)
+    sample_source = evidence["sample_source"]
+    _exact_keys(sample_source, {"kind", "artifacts"}, "full sample source")
+    if sample_source["kind"] not in {
+        "results_inline_samples",
+        "exact_sorted_logged_sample_sidecars",
+    }:
+        raise SchemaError("unsupported full sample-source kind")
+    artifacts = sample_source["artifacts"]
+    if not isinstance(artifacts, list) or not artifacts:
+        raise SchemaError("full sample source requires at least one artifact")
+    for index, ref in enumerate(artifacts):
+        _validate_file_ref(ref, "full sample source artifact %d" % index)
+    if sample_source["kind"] == "results_inline_samples" and len(artifacts) != 1:
+        raise SchemaError("inline full sample source must bind exactly results.json")
+    hash_bindings = {
+        "attempt_manifest": "attempt_manifest_sha256",
+        "receipt_manifest": "receipt_manifest_sha256",
+        "command_args": "command_sha256",
+        "environment": "environment_sha256",
+    }
+    if kind == "lm_eval_logged_samples_adapter":
+        hash_bindings.update(
+            {
+                "revision_report": "revision_report_sha256",
+                "results": "results_sha256",
+            }
+        )
+        if sample_source["artifacts"][0] != evidence["results"]:
+            raise SchemaError("new full sample source must be its actual results.json")
+    else:
+        hash_bindings.update(
+            {
+                "source_run_manifest": "source_manifest_sha256",
+                "source_revision_report": "revision_report_sha256",
+                "source_results": "results_sha256",
+            }
+        )
+        if sample_source["kind"] == "results_inline_samples" and (
+            sample_source["artifacts"][0] != evidence["source_results"]
+        ):
+            raise SchemaError("Phase 1 inline sample source must be source_results")
+    for evidence_key, producer_key in hash_bindings.items():
+        if evidence[evidence_key]["sha256"] != producer[producer_key]:
+            raise SchemaError("full producer evidence hash differs from producer summary")
+
+
+def _validate_file_ref(value: Any, context: str) -> None:
+    _exact_keys(value, _FILE_REF_KEYS, context)
+    path = Path(_nonempty_string(value["path"], "%s.path" % context))
+    if not path.is_absolute() or ".." in path.parts:
+        raise SchemaError("%s path must be absolute and canonical" % context)
+    _sha256(value["sha256"], "%s.sha256" % context)
 
 
 def _reject_calibration_gold_fields(payload: Any, path: str = "root") -> None:
@@ -2084,6 +2302,7 @@ __all__ = [
     "canonical_json_bytes",
     "file_sha256",
     "frozen_decision_rules",
+    "expected_full_producer_kind",
     "make_calibration_cell_envelope",
     "make_calibration_baseline_envelope",
     "make_calibration_label_sidecar",
@@ -2095,6 +2314,8 @@ __all__ = [
     "make_unseal_receipt",
     "manifest_sha256",
     "ordered_identity_sha256",
+    "phase1_reuse_full_cell_ids",
+    "phase2_new_full_cell_ids",
     "protocol_cell_id",
     "stable_sample_identity",
     "strict_frozen_equal",
@@ -2102,6 +2323,7 @@ __all__ = [
     "validate_calibration_baseline_envelope",
     "validate_calibration_baseline_sample",
     "validate_calibration_label_sidecar",
+    "validate_contained_path",
     "validate_final_output_sample",
     "validate_full_final_output_envelope",
     "validate_identity_against_manifest",

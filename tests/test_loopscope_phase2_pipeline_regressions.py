@@ -9,6 +9,7 @@ from unittest import mock
 from pathlib import Path
 
 from tflt import eval_runner
+from tflt.loopscope import phase2_schema as p2s
 from tflt.loopscope import phase2_trajectory as p2t
 from tflt.loopscope import phase2_analysis as p2a
 from tflt.loopscope.phase2_analysis import (
@@ -261,7 +262,15 @@ def producer_evidence(value, suffix="fixture"):
     return {
         "attempt_manifest": {"path": root + "/attempt.json", "sha256": value["attempt_manifest_sha256"]},
         "receipt_manifest": {"path": root + "/receipt.json", "sha256": value["receipt_manifest_sha256"]},
-        "input_manifest": {"path": root + "/probe_pool_manifest.json", "sha256": "8" * 64},
+        "input_manifest": {
+            "path": (
+                "/hpc2hdd/home/xhuang225/workspaces/"
+                "training_free_looped_transformers/inputs/"
+                "loopscope-qwen17-mmlu-phase1-20260711-043615/"
+                "probe_pool_manifest.json"
+            ),
+            "sha256": "8" * 64,
+        },
         "command_args": {"path": root + "/command_args.json", "sha256": value["command_sha256"]},
         "environment": {"path": root + "/env.json", "sha256": value["environment_sha256"]},
         "revision_report": {"path": root + "/revision_evidence.json", "sha256": value["revision_report_sha256"]},
@@ -660,31 +669,47 @@ class Phase2PipelineRegressionTests(unittest.TestCase):
 
     def test_probe_producer_reloads_exact_attempt_receipt_and_actual_files(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
+            tmp_root = Path(tmp)
+            workspace = tmp_root / "workspace"
+            authorization_root = workspace / "staging" / "probe"
+            root = authorization_root / "output"
+            input_root = tmp_root / "phase1-input"
+            root.mkdir(parents=True)
+            input_root.mkdir()
+            card = copy.deepcopy(self.card)
+            card["write_once_contract"]["workspace_root"] = str(workspace)
+            self._rehash(card)
+            workspace_patch = mock.patch.object(p2s, "PHASE2_WORKSPACE_ROOT", str(workspace))
+            input_patch = mock.patch.object(p2t, "PHASE1_INPUT_ROOT", str(input_root))
+            workspace_patch.start()
+            input_patch.start()
+            self.addCleanup(workspace_patch.stop)
+            self.addCleanup(input_patch.stop)
             input_manifest = make_hashed_manifest({"schema_version": "fixture.pool.v1"})
-            atomic_write_new_json(root / "probe_pool_manifest.json", input_manifest)
+            atomic_write_new_json(input_root / "probe_pool_manifest.json", input_manifest)
             input_ref = {
-                "path": str((root / "probe_pool_manifest.json").resolve()),
+                "path": str((input_root / "probe_pool_manifest.json").resolve()),
                 "sha256": input_manifest["manifest_sha256"],
             }
             common = {
-                "card_manifest_sha256": self.card["manifest_sha256"],
+                "card_manifest_sha256": card["manifest_sha256"],
                 "probe_mode": "b1-smoke",
                 "evidence_scale": "calibration_smoke_4",
                 "identity_namespace": CALIBRATION_IDENTITY_NAMESPACE,
-                "revision": self.card["science"]["revision"],
+                "revision": card["science"]["revision"],
                 "input_manifest": input_ref,
+                "authorization_root": str(authorization_root.resolve()),
                 "output_root": str(root.resolve()),
                 "executor_thread_id": "executor-test",
             }
             attempt = make_hashed_manifest({
-                "schema_version": "loopscope.phase2-probe-attempt.v1",
+                "schema_version": "loopscope.phase2-probe-attempt.v2",
                 "artifact_kind": "phase2_b1_smoke_attempt",
                 **common,
                 "created_at_utc": "2026-07-14T02:00:00Z",
             })
             receipt = make_hashed_manifest({
-                "schema_version": "loopscope.phase2-probe-receipt.v1",
+                "schema_version": "loopscope.phase2-probe-receipt.v2",
                 "artifact_kind": "phase2_b1_smoke_execution_receipt",
                 **common,
                 "attempt_manifest_sha256": attempt["manifest_sha256"],
@@ -695,8 +720,8 @@ class Phase2PipelineRegressionTests(unittest.TestCase):
             command = {
                 "probe_mode": "b1-smoke",
                 "model": "qwen3-1.7b-base",
-                "revision": self.card["science"]["revision"],
-                "dtype": self.card["science"]["dtype"],
+                "revision": card["science"]["revision"],
+                "dtype": card["science"]["dtype"],
                 "output_dir": str(root.resolve()),
                 "input_manifest": input_ref["path"],
                 "attempt_manifest": str((root / "attempt.json").resolve()),
@@ -708,12 +733,12 @@ class Phase2PipelineRegressionTests(unittest.TestCase):
             atomic_write_new_json(root / "env.json", {"VIRTUAL_ENV": "/fixture"})
             revision = make_hashed_manifest({
                 "schema_version": "loopscope.phase2-probe-revision-evidence.v1",
-                "card_manifest_sha256": self.card["manifest_sha256"],
-                "manifest_revision": self.card["science"]["revision"],
+                "card_manifest_sha256": card["manifest_sha256"],
+                "manifest_revision": card["science"]["revision"],
                 "revision_closure": {
-                    "manifest_commit": self.card["science"]["revision"],
-                    "model_commit": self.card["science"]["revision"],
-                    "tokenizer_commit": self.card["science"]["revision"],
+                    "manifest_commit": card["science"]["revision"],
+                    "model_commit": card["science"]["revision"],
+                    "tokenizer_commit": card["science"]["revision"],
                     "match": True,
                 },
             })
@@ -737,11 +762,39 @@ class Phase2PipelineRegressionTests(unittest.TestCase):
             p2t._validate_probe_producer_evidence(
                 evidence,
                 probe_producer,
-                card=self.card,
+                card=card,
                 probe_mode="b1-smoke",
                 output_root=root,
                 load_files=True,
             )
+            outside = tmp_root / "outside"
+            outside.mkdir()
+            outside_command = outside / "command_args.json"
+            outside_command.write_bytes((root / "command_args.json").read_bytes())
+            outside_evidence = copy.deepcopy(evidence)
+            outside_evidence["command_args"]["path"] = str(outside_command.resolve())
+            with self.assertRaises(TrajectoryError):
+                p2t._validate_probe_producer_evidence(
+                    outside_evidence,
+                    probe_producer,
+                    card=card,
+                    probe_mode="b1-smoke",
+                    output_root=root,
+                    load_files=True,
+                )
+            outside_attempt = outside / "attempt.json"
+            outside_attempt.write_bytes((root / "attempt.json").read_bytes())
+            outside_control = copy.deepcopy(evidence)
+            outside_control["attempt_manifest"]["path"] = str(outside_attempt.resolve())
+            with self.assertRaises(TrajectoryError):
+                p2t._validate_probe_producer_evidence(
+                    outside_control,
+                    probe_producer,
+                    card=card,
+                    probe_mode="b1-smoke",
+                    output_root=root,
+                    load_files=True,
+                )
             forged = copy.deepcopy(receipt)
             forged["attempt_manifest_sha256"] = "f" * 64
             self._rehash(forged)
@@ -757,7 +810,7 @@ class Phase2PipelineRegressionTests(unittest.TestCase):
                 p2t._validate_probe_producer_evidence(
                     forged_evidence,
                     forged_producer,
-                    card=self.card,
+                    card=card,
                     probe_mode="b1-smoke",
                     output_root=root,
                     load_files=True,

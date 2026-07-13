@@ -34,6 +34,7 @@ from tflt.loopscope.phase2_schema import (
     protocol_cell_id,
     stable_sample_identity,
     strict_frozen_equal,
+    validate_contained_path,
     validate_calibration_baseline_envelope,
     validate_calibration_cell_envelope,
     validate_calibration_label_sidecar,
@@ -424,10 +425,7 @@ def load_phase2_analysis_evidence(input_path: Path) -> Dict[str, Any]:
 
     full_cells: Dict[str, Mapping[str, Any]] = {}
     for ref in sources["full_final_output_cells"]:
-        cell = _load_ref(ref, base, "full final-output cell %s" % ref["cell_id"])
-        if cell.get("cell", {}).get("cell_id") != ref["cell_id"]:
-            raise SchemaError("full cell ref and artifact cell_id disagree")
-        validate_full_final_output_envelope(cell, card, full_identity)
+        cell = _load_verified_full_cell(ref, base, card, full_identity)
         full_cells[ref["cell_id"]] = cell
 
     authorization = _load_ref(sources["unseal_authorization"], base, "unseal_authorization")
@@ -1632,6 +1630,40 @@ def _load_ref(ref: Mapping[str, Any], base: Path, context: str) -> Mapping[str, 
     if payload.get("manifest_sha256") != ref["sha256"]:
         raise SchemaError("%s source hash differs from the analysis request" % context)
     return payload
+
+
+def _load_verified_full_cell(
+    ref: Mapping[str, Any],
+    base: Path,
+    card: Mapping[str, Any],
+    full_identity: Mapping[str, Any],
+) -> Mapping[str, Any]:
+    cell_path = _source_ref_path(ref, base)
+    validate_contained_path(
+        cell_path,
+        card["write_once_contract"]["workspace_root"],
+        context="analysis full final-output cell",
+    )
+    source_ref = {"path": ref["path"], "sha256": ref["sha256"]}
+    cell = _load_ref(
+        source_ref, base, "full final-output cell %s" % ref["cell_id"]
+    )
+    if cell.get("cell", {}).get("cell_id") != ref["cell_id"]:
+        raise SchemaError("full cell ref and artifact cell_id disagree")
+    from tflt.loopscope.phase2_reuse import (
+        Phase2ReuseError,
+        verify_full_final_output_artifact,
+    )
+
+    try:
+        reloaded = verify_full_final_output_artifact(cell_path, card, full_identity)
+    except (Phase2ReuseError, OSError, ValueError) as exc:
+        raise SchemaError(
+            "full cell producer/source verification failed: %s" % ref["cell_id"]
+        ) from exc
+    if reloaded != cell:
+        raise SchemaError("full cell changed between route and producer verification")
+    return cell
 
 
 def _source_ref_path(ref: Mapping[str, Any], base: Path) -> Path:

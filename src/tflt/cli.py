@@ -27,12 +27,14 @@ from tflt.loopscope.phase2_trajectory import (
     add_probe_phase2_trajectory_args,
     cmd_probe_phase2_trajectory,
 )
-from tflt.loopscope.phase2_reuse import build_phase2_freeze_candidate
+from tflt.loopscope.phase2_reuse import (
+    build_phase2_freeze_candidate,
+    verify_full_final_output_artifact,
+)
 from tflt.loopscope.phase2_schema import (
     atomic_write_new_json,
     validate_calibration_baseline_envelope,
     validate_calibration_cell_envelope,
-    validate_full_final_output_envelope,
     validate_identity_manifest,
     validate_phase2_card,
     validate_phase2_workspace_output_path,
@@ -181,7 +183,7 @@ def cmd_validate_phase2_trace(args: argparse.Namespace) -> int:
     elif kind == "calibration_trajectory_cell":
         validate_calibration_cell_envelope(payload, card, identity)
     elif kind == "full_final_output_cell":
-        validate_full_final_output_envelope(payload, card, identity)
+        verify_full_final_output_artifact(Path(args.trace), card, identity)
     else:
         raise ValueError("unsupported Phase 2 artifact kind")
     print(str(Path(args.trace)))
