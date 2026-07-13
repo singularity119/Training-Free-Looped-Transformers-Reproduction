@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -22,10 +23,14 @@ from tflt.loopscope.phase2_schema import (
     FULL_IDENTITY_NAMESPACE,
     FULL_LM_EVAL_SCORE_SOURCE,
     atomic_write_new_json,
+    file_sha256,
     make_full_final_output_envelope,
     stable_sample_identity,
     validate_identity_manifest,
+    validate_source_provenance,
+    verify_live_source_provenance,
     validate_phase2_card,
+    validate_phase2_workspace_output_path,
     validate_producer_provenance,
     validate_protocol_cell,
 )
@@ -56,18 +61,22 @@ def main(argv: Optional[list] = None) -> int:
     args = parser.parse_args(argv)
 
     output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
     phase2_final_output = None
     if hasattr(args, "phase2_final_output_manifest"):
         phase2_final_output = _load_phase2_final_output_manifest(
-            Path(args.phase2_final_output_manifest), output_dir
+            Path(args.phase2_final_output_manifest), args
         )
-    (output_dir / "command_args.json").write_text(
-        json.dumps(vars(args), indent=2, sort_keys=True), encoding="utf-8"
-    )
-    (output_dir / "env.json").write_text(
-        json.dumps(_env_snapshot(), indent=2, sort_keys=True), encoding="utf-8"
-    )
+        output_dir.mkdir(parents=True, exist_ok=False)
+        atomic_write_new_json(output_dir / "command_args.json", vars(args))
+        atomic_write_new_json(output_dir / "env.json", _env_snapshot())
+    else:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "command_args.json").write_text(
+            json.dumps(vars(args), indent=2, sort_keys=True), encoding="utf-8"
+        )
+        (output_dir / "env.json").write_text(
+            json.dumps(_env_snapshot(), indent=2, sort_keys=True), encoding="utf-8"
+        )
 
     model_info = resolve_model(args.model)
     loop_config = _loop_config(args) if args.loop else None
@@ -81,13 +90,21 @@ def main(argv: Optional[list] = None) -> int:
         dtype=args.dtype,
         loop_config=loop_config,
         revision=args.revision,
+        exclusive_writes=phase2_final_output is not None,
     )
     if phase2_final_output is not None:
-        sidecar = _build_phase2_final_output_sidecar(result, phase2_final_output)
+        atomic_write_new_json(
+            output_dir / "results.json",
+            json.loads(json.dumps(result, sort_keys=True, default=str)),
+        )
+        sidecar = _build_phase2_final_output_sidecar(
+            result, phase2_final_output, output_dir=output_dir, args=args
+        )
         atomic_write_new_json(output_dir / "phase2_final_outputs.json", sidecar)
-    (output_dir / "results.json").write_text(
-        json.dumps(result, indent=2, sort_keys=True, default=str), encoding="utf-8"
-    )
+    else:
+        (output_dir / "results.json").write_text(
+            json.dumps(result, indent=2, sort_keys=True, default=str), encoding="utf-8"
+        )
     return 0
 
 
@@ -101,6 +118,7 @@ def run_lm_eval(
     dtype: str,
     loop_config: Optional[LoopConfig],
     revision: Optional[str] = None,
+    exclusive_writes: bool = False,
 ) -> Any:
     try:
         import torch
@@ -145,6 +163,7 @@ def run_lm_eval(
         model_repo,
         revision,
         resolved_tokenizer_revision=resolved_tokenizer_revision,
+        exclusive=exclusive_writes,
     )
 
     task_manager = TaskManager()
@@ -202,6 +221,7 @@ def _write_model_revision(
     repo_id: str,
     manifest_revision: Optional[str] = None,
     resolved_tokenizer_revision: Optional[str] = None,
+    exclusive: bool = False,
 ) -> None:
     cfg = getattr(model, "config", None)
     closure = (
@@ -230,9 +250,15 @@ def _write_model_revision(
         "transformers_version": _module_version("transformers"),
         "lm_eval_version": _module_version("lm_eval"),
     }
-    (output_dir / "model_revision.json").write_text(
-        json.dumps(payload, indent=2, sort_keys=True, default=str), encoding="utf-8"
-    )
+    if exclusive:
+        atomic_write_new_json(
+            output_dir / "model_revision.json",
+            json.loads(json.dumps(payload, sort_keys=True, default=str)),
+        )
+    else:
+        (output_dir / "model_revision.json").write_text(
+            json.dumps(payload, indent=2, sort_keys=True, default=str), encoding="utf-8"
+        )
 
 
 def _module_version(name: str) -> Optional[str]:
@@ -258,7 +284,7 @@ def _env_snapshot() -> dict:
     return {key: os.environ[key] for key in keys if key in os.environ}
 
 
-def _load_phase2_final_output_manifest(path: Path, output_dir: Path) -> dict:
+def _load_phase2_final_output_manifest(path: Path, args: argparse.Namespace) -> dict:
     """Load the explicit final-output-only adapter request.
 
     Auto batching is intentionally irrelevant: the adapter consumes completed
@@ -268,14 +294,14 @@ def _load_phase2_final_output_manifest(path: Path, output_dir: Path) -> dict:
 
     request = json.loads(path.read_text(encoding="utf-8"))
     expected_keys = {
-        "schema_version", "artifact_kind", "card_path", "card_manifest_sha256",
-        "identity_manifest_path", "identity_manifest_sha256", "cell", "producer",
-        "identity_join", "score_source", "output_filename", "manifest_sha256",
+        "schema_version", "artifact_kind", "card", "identity_manifest", "cell",
+        "attempt_manifest", "receipt_manifest", "identity_join", "score_source",
+        "output_filename", "manifest_sha256",
     }
     if not isinstance(request, dict) or set(request) != expected_keys:
         raise ValueError("Phase 2 final-output adapter manifest has an exact-key mismatch")
     verify_manifest_sha256(request)
-    if request["schema_version"] != "loopscope.phase2-final-output-adapter-manifest.v1":
+    if request["schema_version"] != "loopscope.phase2-final-output-adapter-manifest.v2":
         raise ValueError("unsupported Phase 2 final-output adapter manifest")
     if request["artifact_kind"] != "full_final_output_adapter_request":
         raise ValueError("adapter manifest artifact kind differs")
@@ -286,41 +312,253 @@ def _load_phase2_final_output_manifest(path: Path, output_dir: Path) -> dict:
     if request["output_filename"] != "phase2_final_outputs.json":
         raise ValueError("adapter output filename differs from the write-once contract")
     base = path.parent
-    card_path = _resolve_manifest_path(base, request["card_path"])
-    identity_path = _resolve_manifest_path(base, request["identity_manifest_path"])
-    card = json.loads(card_path.read_text(encoding="utf-8"))
-    identity_manifest = json.loads(identity_path.read_text(encoding="utf-8"))
+    card, card_path = _load_hashed_manifest_ref(request["card"], base, "adapter card")
+    identity_manifest, identity_path = _load_hashed_manifest_ref(
+        request["identity_manifest"], base, "adapter identity manifest"
+    )
+    attempt, attempt_path = _load_hashed_manifest_ref(
+        request["attempt_manifest"], base, "adapter attempt manifest"
+    )
+    receipt, receipt_path = _load_hashed_manifest_ref(
+        request["receipt_manifest"], base, "adapter receipt manifest"
+    )
     validate_phase2_card(card)
+    validate_phase2_workspace_output_path(
+        args.output_dir, card, context="Phase 2 full output directory"
+    )
     validate_identity_manifest(identity_manifest, card)
     if identity_manifest["identity_namespace"] != FULL_IDENTITY_NAMESPACE:
         raise ValueError("final-output adapter requires the full 14,042 identity namespace")
-    if request["card_manifest_sha256"] != card["manifest_sha256"]:
-        raise ValueError("adapter card hash differs from loaded card")
-    if request["identity_manifest_sha256"] != identity_manifest["manifest_sha256"]:
-        raise ValueError("adapter identity hash differs from loaded canonical manifest")
+    validate_source_provenance(
+        identity_manifest["source_provenance"],
+        FULL_IDENTITY_NAMESPACE,
+        require_live=True,
+    )
+    verify_live_source_provenance(
+        identity_manifest["source_provenance"],
+        FULL_IDENTITY_NAMESPACE,
+        identity_manifest["ordered_sample_identity"],
+    )
     validate_protocol_cell(request["cell"], allow_baseline=True)
     if request["cell"]["cell_id"] not in required_full_cell_ids(card):
         raise ValueError("adapter cell is outside the frozen 12-cell full evidence set")
-    validate_producer_provenance(
-        request["producer"], allowed_kinds={"lm_eval_logged_samples_adapter"}
+    _validate_phase2_adapter_argv(args, card, request["cell"])
+    _validate_adapter_control_manifests(
+        attempt, receipt, card=card, cell=request["cell"], args=args
     )
-    if (output_dir / request["output_filename"]).exists():
-        raise FileExistsError("refusing to overwrite Phase 2 final-output sidecar")
-    return {"request": request, "card": card, "identity_manifest": identity_manifest}
+    return {
+        "request": request,
+        "request_path": path.resolve(),
+        "card": card,
+        "card_path": card_path,
+        "identity_manifest": identity_manifest,
+        "identity_manifest_path": identity_path,
+        "attempt": attempt,
+        "attempt_path": attempt_path,
+        "receipt": receipt,
+        "receipt_path": receipt_path,
+    }
 
 
-def _build_phase2_final_output_sidecar(result: Any, context: dict) -> dict:
+def _build_phase2_final_output_sidecar(
+    result: Any,
+    context: dict,
+    *,
+    output_dir: Path,
+    args: argparse.Namespace,
+) -> dict:
     request = context["request"]
     card = context["card"]
     identity_manifest = context["identity_manifest"]
+    _validate_phase2_adapter_argv(args, card, request["cell"])
+    actual = _verify_phase2_adapter_actual_files(
+        output_dir=Path(output_dir), args=args, result=result, context=context
+    )
     rows = _join_phase2_logged_samples(result, identity_manifest["ordered_sample_identity"])
+    producer = {
+        "producer_kind": "lm_eval_logged_samples_adapter",
+        "attempt_manifest_sha256": context["attempt"]["manifest_sha256"],
+        "receipt_manifest_sha256": context["receipt"]["manifest_sha256"],
+        "command_sha256": actual["command_sha256"],
+        "environment_sha256": actual["environment_sha256"],
+        "revision_report_sha256": actual["revision_report_sha256"],
+        "results_sha256": actual["results_sha256"],
+    }
+    validate_producer_provenance(
+        producer, allowed_kinds={"lm_eval_logged_samples_adapter"}
+    )
     return make_full_final_output_envelope(
         card,
         identity_manifest,
         cell=request["cell"],
         samples=rows,
-        producer=request["producer"],
+        producer=producer,
     )
+
+
+def _validate_phase2_adapter_argv(
+    args: argparse.Namespace, card: dict, cell: dict
+) -> None:
+    """Bind the request cell to active scientific argv before model loading."""
+
+    validate_phase2_card(card)
+    validate_protocol_cell(cell, allow_baseline=True)
+    required = {
+        "model": "qwen3-1.7b-base",
+        "revision": card["science"]["revision"],
+        "tasks": card["science"]["task"],
+        "limit": None,
+        "num_fewshot": card["science"]["num_fewshot"],
+        "dtype": card["science"]["dtype"],
+    }
+    for key, expected in required.items():
+        if getattr(args, key, None) != expected:
+            raise ValueError("Phase 2 adapter argv %s differs from the card" % key)
+    if cell["protocol"] == "baseline_no_loop":
+        if getattr(args, "loop", None) is not False:
+            raise ValueError("baseline adapter cell requires --loop to be absent")
+        return
+    if getattr(args, "loop", None) is not True:
+        raise ValueError("loop adapter cell requires --loop")
+    active = {
+        "window": cell["window"],
+        "k": cell["k"],
+        "alpha": cell["alpha"],
+        "iteration_mode": card["science"]["iteration_mode"],
+        "strategy": card["science"]["strategy"],
+        "beta": card["science"]["beta"],
+        "cache_strategy": card["science"]["cache_strategy"],
+        "decode_mode": card["science"]["decode_mode"],
+        "first_n": None,
+    }
+    for key, expected in active.items():
+        if getattr(args, key, None) != expected:
+            raise ValueError("Phase 2 loop argv %s differs from the requested cell" % key)
+
+
+def _load_hashed_manifest_ref(ref: Any, base: Path, context: str) -> tuple:
+    if not isinstance(ref, dict) or set(ref) != {"path", "sha256"}:
+        raise ValueError("%s must be an exact path+hash reference" % context)
+    if not isinstance(ref["path"], str) or not ref["path"].strip():
+        raise ValueError("%s path must be non-empty" % context)
+    if not isinstance(ref["sha256"], str) or len(ref["sha256"]) != 64:
+        raise ValueError("%s hash must be SHA256" % context)
+    resolved = _resolve_manifest_path(base, ref["path"]).resolve()
+    payload = json.loads(resolved.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("%s must contain a JSON object" % context)
+    verify_manifest_sha256(payload)
+    if payload.get("manifest_sha256") != ref["sha256"]:
+        raise ValueError("%s hash differs from the loaded manifest" % context)
+    return payload, resolved
+
+
+def _validate_adapter_control_manifests(
+    attempt: dict, receipt: dict, *, card: dict, cell: dict, args: argparse.Namespace
+) -> None:
+    attempt_keys = {
+        "schema_version", "artifact_kind", "card_manifest_sha256", "cell_id",
+        "revision", "executor_thread_id", "created_at_utc", "manifest_sha256",
+        "output_root",
+    }
+    receipt_keys = {
+        "schema_version", "artifact_kind", "card_manifest_sha256", "cell_id",
+        "revision", "attempt_manifest_sha256", "executor_thread_id",
+        "created_at_utc", "manifest_sha256", "output_root",
+    }
+    if set(attempt) != attempt_keys or set(receipt) != receipt_keys:
+        raise ValueError("adapter attempt/receipt exact-key contract differs")
+    if (
+        attempt["schema_version"] != "loopscope.phase2-full-attempt.v1"
+        or attempt["artifact_kind"] != "full_final_output_attempt"
+        or receipt["schema_version"] != "loopscope.phase2-full-receipt.v1"
+        or receipt["artifact_kind"] != "full_final_output_execution_receipt"
+    ):
+        raise ValueError("unsupported adapter attempt/receipt schema")
+    expected = (card["manifest_sha256"], cell["cell_id"], card["science"]["revision"])
+    if (
+        attempt["card_manifest_sha256"], attempt["cell_id"], attempt["revision"]
+    ) != expected or (
+        receipt["card_manifest_sha256"], receipt["cell_id"], receipt["revision"]
+    ) != expected:
+        raise ValueError("adapter attempt/receipt differs from card/cell/revision")
+    if receipt["attempt_manifest_sha256"] != attempt["manifest_sha256"]:
+        raise ValueError("adapter receipt is bound to a different attempt")
+    if attempt["executor_thread_id"] != receipt["executor_thread_id"]:
+        raise ValueError("adapter attempt/receipt executor differs")
+    expected_root = str(
+        validate_phase2_workspace_output_path(
+            args.output_dir, card, context="Phase 2 full output directory"
+        )
+    )
+    if attempt["output_root"] != expected_root or receipt["output_root"] != expected_root:
+        raise ValueError("adapter attempt/receipt output_root differs from actual argv")
+    for packet in (attempt, receipt):
+        if not isinstance(packet["executor_thread_id"], str) or not packet["executor_thread_id"].strip():
+            raise ValueError("adapter executor thread must be non-empty")
+        _parse_utc(packet["created_at_utc"])
+    if _parse_utc(receipt["created_at_utc"]) < _parse_utc(attempt["created_at_utc"]):
+        raise ValueError("adapter receipt predates its attempt")
+
+
+def _verify_phase2_adapter_actual_files(
+    *, output_dir: Path, args: argparse.Namespace, result: Any, context: dict
+) -> dict:
+    resolved_output = validate_phase2_workspace_output_path(
+        output_dir, context["card"], context="Phase 2 full artifact root"
+    )
+    if resolved_output != Path(output_dir).resolve() or Path(args.output_dir).resolve() != resolved_output:
+        raise ValueError("Phase 2 full artifact root differs from actual --output-dir")
+    command_path = output_dir / "command_args.json"
+    environment_path = output_dir / "env.json"
+    revision_path = output_dir / "model_revision.json"
+    results_path = output_dir / "results.json"
+    command = json.loads(command_path.read_text(encoding="utf-8"))
+    environment = json.loads(environment_path.read_text(encoding="utf-8"))
+    revision = json.loads(revision_path.read_text(encoding="utf-8"))
+    stored_results = json.loads(results_path.read_text(encoding="utf-8"))
+    if command != vars(args):
+        raise ValueError("write-once command_args.json differs from actual parsed argv")
+    if environment != _env_snapshot():
+        raise ValueError("write-once env.json differs from the actual producer environment")
+    expected_results = json.loads(json.dumps(result, sort_keys=True, default=str))
+    if stored_results != expected_results:
+        raise ValueError("write-once results.json differs from evaluator return value")
+    expected_revision = context["card"]["science"]["revision"]
+    if (
+        revision.get("repo_id") != context["card"]["science"]["model"]
+        or revision.get("model_commit") != expected_revision
+        or revision.get("tokenizer_commit") != expected_revision
+        or revision.get("manifest_commit") != expected_revision
+        or revision.get("match") is not True
+    ):
+        raise ValueError("actual model/tokenizer revision closure differs from the card")
+    for name in ("attempt", "receipt"):
+        loaded, resolved = _load_hashed_manifest_ref(
+            context["request"]["%s_manifest" % name],
+            context["request_path"].parent,
+            "adapter %s manifest" % name,
+        )
+        if loaded != context[name] or resolved != context["%s_path" % name]:
+            raise ValueError("adapter %s provenance changed during execution" % name)
+    return {
+        "command_sha256": file_sha256(command_path),
+        "environment_sha256": file_sha256(environment_path),
+        "revision_report_sha256": file_sha256(revision_path),
+        "results_sha256": file_sha256(results_path),
+    }
+
+
+def _parse_utc(value: Any) -> datetime:
+    if not isinstance(value, str) or not value.endswith("Z"):
+        raise ValueError("adapter timestamp must be real UTC")
+    try:
+        parsed = datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError as exc:
+        raise ValueError("adapter timestamp must be real UTC") from exc
+    if parsed.utcoffset() != timezone.utc.utcoffset(parsed):
+        raise ValueError("adapter timestamp must be UTC")
+    return parsed
 
 
 def _join_phase2_logged_samples(

@@ -6,6 +6,9 @@ import math
 import random
 import struct
 import json
+import hashlib
+import os
+from datetime import datetime, timezone
 from statistics import median
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
@@ -23,11 +26,14 @@ from tflt.loopscope.phase2_schema import (
     SchemaError,
     atomic_write_new_json,
     b2_logical_cells,
+    canonical_json_bytes,
     file_sha256,
+    frozen_decision_rules,
     make_hashed_manifest,
     manifest_sha256,
     protocol_cell_id,
     stable_sample_identity,
+    strict_frozen_equal,
     validate_calibration_baseline_envelope,
     validate_calibration_cell_envelope,
     validate_calibration_label_sidecar,
@@ -35,7 +41,10 @@ from tflt.loopscope.phase2_schema import (
     validate_identity_manifest,
     validate_ordered_identity,
     validate_phase2_card,
+    validate_phase2_workspace_output_path,
     validate_scalar_sidecar,
+    validate_source_provenance,
+    verify_live_source_provenance,
     validate_unseal_authorization,
     validate_unseal_receipt,
 )
@@ -109,7 +118,7 @@ def validate_analysis_input_manifest(payload: Mapping[str, Any], card: Mapping[s
     verify_manifest_sha256(payload)
     if payload["schema_version"] != PHASE2_ANALYSIS_INPUT_SCHEMA_VERSION:
         raise SchemaError("unsupported Phase 2 analysis-input schema")
-    if payload["statistics_contract"] != card["statistics"]:
+    if not strict_frozen_equal(payload["statistics_contract"], card["statistics"]):
         raise SchemaError("analysis statistics contract differs from the frozen card")
     sources = payload["sources"]
     _analysis_exact_keys(
@@ -119,6 +128,7 @@ def validate_analysis_input_manifest(payload: Mapping[str, Any], card: Mapping[s
             "calibration_identity_manifest",
             "full_identity_manifest",
             "calibration_baseline",
+            "calibration_aggregate",
             "calibration_cells",
             "full_final_output_cells",
             "calibration_labels",
@@ -132,6 +142,7 @@ def validate_analysis_input_manifest(payload: Mapping[str, Any], card: Mapping[s
         "calibration_identity_manifest",
         "full_identity_manifest",
         "calibration_baseline",
+        "calibration_aggregate",
         "calibration_labels",
         "unseal_authorization",
         "unseal_receipt",
@@ -149,25 +160,155 @@ def validate_analysis_input_manifest(payload: Mapping[str, Any], card: Mapping[s
     _analysis_exact_keys(
         provenance,
         {
-            "authorization_manifest_sha256",
-            "attempt_manifest_sha256",
-            "receipt_manifest_sha256",
+            "authorization_manifest",
+            "attempt_manifest",
+            "receipt_manifest",
             "executor_thread_id",
-            "command_sha256",
-            "environment_sha256",
         },
         "analysis provenance",
     )
-    for key in (
-        "authorization_manifest_sha256",
-        "attempt_manifest_sha256",
-        "receipt_manifest_sha256",
-        "command_sha256",
-        "environment_sha256",
-    ):
-        _analysis_sha256(provenance[key], "analysis_provenance.%s" % key)
+    for key in ("authorization_manifest", "attempt_manifest", "receipt_manifest"):
+        _validate_source_ref(provenance[key], "analysis_provenance.%s" % key)
     if not isinstance(provenance["executor_thread_id"], str) or not provenance["executor_thread_id"].strip():
         raise SchemaError("analysis executor_thread_id must be non-empty")
+
+
+def _load_analysis_control_manifests(
+    request: Mapping[str, Any], base: Path, card: Mapping[str, Any]
+) -> Dict[str, Any]:
+    provenance = request["analysis_provenance"]
+    authorization = _load_ref(
+        provenance["authorization_manifest"], base, "analysis authorization"
+    )
+    attempt = _load_ref(provenance["attempt_manifest"], base, "analysis attempt")
+    receipt = _load_ref(provenance["receipt_manifest"], base, "analysis receipt")
+    authorization_keys = {
+        "schema_version", "artifact_kind", "card_manifest_sha256",
+        "analysis_sources_sha256", "output_root", "executor_thread_id",
+        "created_at_utc", "manifest_sha256",
+    }
+    attempt_keys = authorization_keys | {"authorization_manifest_sha256"}
+    receipt_keys = authorization_keys | {
+        "authorization_manifest_sha256", "attempt_manifest_sha256"
+    }
+    _analysis_exact_keys(authorization, authorization_keys, "analysis authorization")
+    _analysis_exact_keys(attempt, attempt_keys, "analysis attempt")
+    _analysis_exact_keys(receipt, receipt_keys, "analysis receipt")
+    if (
+        authorization["schema_version"] != "loopscope.phase2-analysis-authorization.v1"
+        or authorization["artifact_kind"] != "phase2_h1_analysis_authorization"
+        or attempt["schema_version"] != "loopscope.phase2-analysis-attempt.v1"
+        or attempt["artifact_kind"] != "phase2_h1_analysis_attempt"
+        or receipt["schema_version"] != "loopscope.phase2-analysis-receipt.v1"
+        or receipt["artifact_kind"] != "phase2_h1_analysis_execution_receipt"
+    ):
+        raise SchemaError("unsupported analysis authorization/attempt/receipt schema")
+    sources_sha = hashlib.sha256(canonical_json_bytes(request["sources"])).hexdigest()
+    executor = provenance["executor_thread_id"]
+    output_roots = set()
+    for packet in (authorization, attempt, receipt):
+        if (
+            packet["card_manifest_sha256"] != card["manifest_sha256"]
+            or packet["analysis_sources_sha256"] != sources_sha
+            or packet["executor_thread_id"] != executor
+        ):
+            raise SchemaError("analysis control packet card/source/executor binding differs")
+        _analysis_utc(packet["created_at_utc"])
+        output_roots.add(
+            str(
+                validate_phase2_workspace_output_path(
+                    packet["output_root"], card, context="analysis control output_root"
+                )
+            )
+        )
+    if len(output_roots) != 1:
+        raise SchemaError("analysis control packets disagree on output_root")
+    if attempt["authorization_manifest_sha256"] != authorization["manifest_sha256"]:
+        raise SchemaError("analysis attempt is bound to a different authorization")
+    if (
+        receipt["authorization_manifest_sha256"] != authorization["manifest_sha256"]
+        or receipt["attempt_manifest_sha256"] != attempt["manifest_sha256"]
+    ):
+        raise SchemaError("analysis receipt is bound to different control packets")
+    if not (
+        _analysis_utc(authorization["created_at_utc"])
+        <= _analysis_utc(attempt["created_at_utc"])
+        <= _analysis_utc(receipt["created_at_utc"])
+    ):
+        raise SchemaError("analysis control timestamps are out of order")
+    return {
+        "authorization": authorization,
+        "attempt": attempt,
+        "receipt": receipt,
+        "output_root": Path(next(iter(output_roots))),
+    }
+
+
+def analysis_command_record(input_path: Path, output_dir: Path) -> Dict[str, Any]:
+    return {
+        "schema_version": "loopscope.phase2-analysis-command.v1",
+        "command": "analyze-phase2-h1",
+        "input": str(Path(input_path).resolve()),
+        "output_dir": str(Path(output_dir).resolve()),
+    }
+
+
+def analysis_environment_record() -> Dict[str, Any]:
+    keys = (
+        "PYTHONPATH", "VIRTUAL_ENV", "CUDA_VISIBLE_DEVICES", "HF_HOME",
+        "HF_DATASETS_CACHE", "TRANSFORMERS_CACHE",
+    )
+    return {
+        "schema_version": "loopscope.phase2-analysis-environment.v1",
+        "variables": {key: os.environ[key] for key in keys if key in os.environ},
+    }
+
+
+def derive_analysis_execution_provenance(
+    evidence: Mapping[str, Any], output_dir: Path
+) -> Dict[str, Any]:
+    control = evidence.get("analysis_control")
+    if not isinstance(control, Mapping):
+        raise SchemaError("analysis evidence lacks loaded control manifests")
+    resolved_output = validate_phase2_workspace_output_path(
+        output_dir, evidence["card"], context="analysis report output directory"
+    )
+    if resolved_output != Path(control["output_root"]).resolve():
+        raise SchemaError("analysis report directory differs from authorized output_root")
+    command_path = resolved_output / "command_args.json"
+    environment_path = resolved_output / "env.json"
+    try:
+        command = json.loads(command_path.read_text(encoding="utf-8"))
+        environment = json.loads(environment_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise SchemaError("analysis command/environment evidence is unreadable") from exc
+    expected_command = analysis_command_record(evidence["request_path"], resolved_output)
+    if not strict_frozen_equal(command, expected_command):
+        raise SchemaError("analysis command_args.json differs from the actual request/output")
+    _analysis_exact_keys(
+        environment, {"schema_version", "variables"}, "analysis environment"
+    )
+    if environment["schema_version"] != "loopscope.phase2-analysis-environment.v1" or not isinstance(environment["variables"], Mapping):
+        raise SchemaError("analysis environment schema differs")
+    result = {
+        "authorization_manifest_sha256": control["authorization"]["manifest_sha256"],
+        "attempt_manifest_sha256": control["attempt"]["manifest_sha256"],
+        "receipt_manifest_sha256": control["receipt"]["manifest_sha256"],
+        "executor_thread_id": control["attempt"]["executor_thread_id"],
+        "command_sha256": file_sha256(command_path),
+        "environment_sha256": file_sha256(environment_path),
+    }
+    _validate_analysis_provenance(result)
+    return result
+
+
+def _analysis_utc(value: Any) -> datetime:
+    if not isinstance(value, str):
+        raise SchemaError("analysis control timestamp must be text")
+    try:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError as exc:
+        raise SchemaError("analysis control timestamp must be a real UTC timestamp") from exc
 
 
 def load_phase2_analysis_evidence(input_path: Path) -> Dict[str, Any]:
@@ -184,6 +325,7 @@ def load_phase2_analysis_evidence(input_path: Path) -> Dict[str, Any]:
     card = _load_ref(raw_sources["card"], base, "card")
     validate_phase2_card(card)
     validate_analysis_input_manifest(request, card)
+    analysis_control = _load_analysis_control_manifests(request, base, card)
     sources = request["sources"]
 
     calibration_identity = _load_ref(
@@ -196,6 +338,24 @@ def load_phase2_analysis_evidence(input_path: Path) -> Dict[str, Any]:
         raise SchemaError("calibration source uses the wrong identity namespace")
     if full_identity["identity_namespace"] != FULL_IDENTITY_NAMESPACE:
         raise SchemaError("full source uses the wrong identity namespace")
+    validate_source_provenance(
+        calibration_identity["source_provenance"],
+        CALIBRATION_IDENTITY_NAMESPACE,
+        require_live=True,
+    )
+    validate_source_provenance(
+        full_identity["source_provenance"], FULL_IDENTITY_NAMESPACE, require_live=True
+    )
+    verify_live_source_provenance(
+        calibration_identity["source_provenance"],
+        CALIBRATION_IDENTITY_NAMESPACE,
+        calibration_identity["ordered_sample_identity"],
+    )
+    verify_live_source_provenance(
+        full_identity["source_provenance"],
+        FULL_IDENTITY_NAMESPACE,
+        full_identity["ordered_sample_identity"],
+    )
 
     calibration_baseline = _load_ref(
         sources["calibration_baseline"], base, "calibration_baseline"
@@ -209,6 +369,58 @@ def load_phase2_analysis_evidence(input_path: Path) -> Dict[str, Any]:
             raise SchemaError("calibration cell ref and artifact cell_id disagree")
         validate_calibration_cell_envelope(cell, card, calibration_identity)
         calibration_cells[ref["cell_id"]] = cell
+
+    calibration_aggregate = _load_ref(
+        sources["calibration_aggregate"], base, "calibration_aggregate"
+    )
+    aggregate_path = _source_ref_path(
+        sources["calibration_aggregate"], base
+    )
+    prior_b1_ref = calibration_aggregate.get("prior_b1_admission_proof")
+    if not isinstance(prior_b1_ref, Mapping):
+        raise SchemaError("calibration aggregate lacks its prior B1 proof ref")
+    b1_proof = _load_ref(prior_b1_ref, aggregate_path.parent, "prior B1 admission proof")
+    _require_same_source_ref(
+        calibration_aggregate["identity_manifest"],
+        sources["calibration_identity_manifest"],
+        aggregate_path.parent,
+        base,
+        "calibration identity manifest",
+    )
+    _require_same_source_ref(
+        calibration_aggregate["baseline"],
+        sources["calibration_baseline"],
+        aggregate_path.parent,
+        base,
+        "calibration baseline",
+    )
+    aggregate_cell_refs = {
+        ref["cell_id"]: ref for ref in calibration_aggregate.get("cells", [])
+        if isinstance(ref, Mapping) and isinstance(ref.get("cell_id"), str)
+    }
+    for external_ref in sources["calibration_cells"]:
+        cell_id = external_ref["cell_id"]
+        if cell_id not in aggregate_cell_refs:
+            raise SchemaError("calibration aggregate lacks cell ref %s" % cell_id)
+        _require_same_source_ref(
+            aggregate_cell_refs[cell_id],
+            external_ref,
+            aggregate_path.parent,
+            base,
+            "calibration cell %s" % cell_id,
+            ignore_cell_id=True,
+        )
+    from tflt.loopscope.phase2_trajectory import validate_probe_aggregate
+
+    validate_probe_aggregate(
+        calibration_aggregate,
+        card,
+        b1_proof=b1_proof,
+        identity_manifest=calibration_identity,
+        baseline=calibration_baseline,
+        cells=calibration_cells,
+        aggregate_path=aggregate_path,
+    )
 
     full_cells: Dict[str, Mapping[str, Any]] = {}
     for ref in sources["full_final_output_cells"]:
@@ -241,10 +453,14 @@ def load_phase2_analysis_evidence(input_path: Path) -> Dict[str, Any]:
     return {
         "request": request,
         "request_file_sha256": file_sha256(path),
+        "request_path": path.resolve(),
+        "analysis_control": analysis_control,
         "card": card,
         "calibration_identity": calibration_identity,
         "full_identity": full_identity,
         "calibration_baseline": calibration_baseline,
+        "calibration_aggregate": calibration_aggregate,
+        "b1_proof": b1_proof,
         "calibration_cells": calibration_cells,
         "full_cells": full_cells,
         "authorization": authorization,
@@ -253,7 +469,11 @@ def load_phase2_analysis_evidence(input_path: Path) -> Dict[str, Any]:
     }
 
 
-def analyze_phase2_evidence(evidence: Mapping[str, Any]) -> Dict[str, Any]:
+def analyze_phase2_evidence(
+    evidence: Mapping[str, Any],
+    *,
+    execution_provenance: Optional[Mapping[str, Any]] = None,
+) -> Dict[str, Any]:
     """Recompute H1 and NCA decisions exclusively from validated sample rows."""
 
     card = evidence["card"]
@@ -342,6 +562,7 @@ def analyze_phase2_evidence(evidence: Mapping[str, Any]) -> Dict[str, Any]:
         d24_12_15_pp=d24["delta_acc_pp"],
         d24_12_15_ci_pp=d24["paired_ci_pp"],
         phase1_k2_vs_baseline_pp=phase1_anchor["delta_acc_pp"],
+        decision_rules=card["decision_rules"],
     )
 
     mechanism = {}
@@ -376,7 +597,9 @@ def analyze_phase2_evidence(evidence: Mapping[str, Any]) -> Dict[str, Any]:
             canonical_identities=evidence["calibration_identity"]["ordered_sample_identity"],
         )
     nca_native = _native_fidelity_cells(evidence, nca_records_by_key)
-    nca_decision = classify_nca(nca_primary, nca_paired, nca_native)
+    nca_decision = classify_nca(
+        nca_primary, nca_paired, nca_native, decision_rules=card["decision_rules"]
+    )
     nca = {
         "primary_cells": nca_primary,
         "paired_12_15_minus_13_16": nca_paired,
@@ -386,6 +609,15 @@ def analyze_phase2_evidence(evidence: Mapping[str, Any]) -> Dict[str, Any]:
     }
     trajectory_summary = summarize_calibration_trajectory(calibration_cells, card)
 
+    if execution_provenance is None:
+        execution_provenance = evidence.get("execution_provenance")
+    if execution_provenance is None:
+        # Pure-Python analysis unit fixtures predate the routed producer but
+        # cannot occur through a validated v4 analysis-input manifest.
+        candidate = evidence.get("request", {}).get("analysis_provenance")
+        if isinstance(candidate, Mapping) and "command_sha256" in candidate:
+            execution_provenance = candidate
+    _validate_analysis_provenance(execution_provenance)
     report = make_hashed_manifest(
         {
             "schema_version": PHASE2_ANALYSIS_SCHEMA_VERSION,
@@ -407,12 +639,35 @@ def analyze_phase2_evidence(evidence: Mapping[str, Any]) -> Dict[str, Any]:
             "calibration_trajectory_summary": trajectory_summary,
             "nca": nca,
             "h1": h1,
-            "execution_provenance": dict(evidence["request"]["analysis_provenance"]),
+            "execution_provenance": dict(execution_provenance),
             "independent_decisions": True,
         }
     )
     validate_analysis_report(report, card)
     return report
+
+
+def verify_phase2_analysis_report(
+    input_path: Path, report_path: Path
+) -> Dict[str, Any]:
+    """Reload canonical sources, recompute the report, and require exact equality."""
+
+    evidence = load_phase2_analysis_evidence(Path(input_path))
+    observed = json.loads(Path(report_path).read_text(encoding="utf-8"))
+    if not isinstance(observed, Mapping):
+        raise SchemaError("analysis report must contain a JSON object")
+    validate_analysis_report(observed, evidence["card"])
+    actual_provenance = derive_analysis_execution_provenance(
+        evidence, Path(report_path).resolve().parent
+    )
+    expected = analyze_phase2_evidence(
+        evidence, execution_provenance=actual_provenance
+    )
+    if not strict_frozen_equal(observed, expected):
+        raise SchemaError(
+            "analysis report differs from deterministic recomputation of canonical sources"
+        )
+    return expected
 
 
 def choice_output(
@@ -780,12 +1035,14 @@ def paired_nca_cells(
 
 
 def collapse_nca_sample_cell(steps: Sequence[Mapping[str, Any]], k: int) -> Dict[str, Any]:
-    if int(k) < 1:
+    if isinstance(k, bool) or not isinstance(k, int) or k < 1:
         raise Phase2AnalysisError("K must be positive")
-    if int(k) == 1:
+    if k == 1:
         return {"valid": False, "value": None, "reason": "K1_has_no_repeated_step_NCA"}
-    expected = list(range(1, int(k)))
-    actual = [int(step.get("body_call_t", -1)) for step in steps]
+    expected = list(range(1, k))
+    actual = [step.get("body_call_t", -1) for step in steps]
+    if any(isinstance(value, bool) or not isinstance(value, int) for value in actual):
+        return {"valid": False, "value": None, "reason": "repeated_step_index_mismatch"}
     if actual != expected:
         return {"valid": False, "value": None, "reason": "repeated_step_index_mismatch"}
     if not all(step.get("valid") is True and step.get("value") is not None for step in steps):
@@ -799,33 +1056,59 @@ def classify_h1(
     d24_12_15_pp: float,
     d24_12_15_ci_pp: Sequence[float],
     phase1_k2_vs_baseline_pp: float,
+    decision_rules: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, str]:
     if set(primary) != set(PRIMARY_CONTRAST_IDS) or len(d24_12_15_ci_pp) != 2:
         raise Phase2AnalysisError("H1 classification requires the complete frozen family")
     for identifier in PRIMARY_CONTRAST_IDS:
         _require_contrast(primary[identifier])
-    c23 = primary["fs_12_15_k2_k3"]
-    c34 = primary["fs_12_15_k3_k4"]
+    rules = _validated_decision_rules(decision_rules)
+    h1_rules = rules["h1"]
+    significance_threshold = float(h1_rules["significance"]["threshold"])
+    perturbation_rules = h1_rules["perturbation"]
+    refinement_rules = h1_rules["refinement_supported"]
+    transient_rules = h1_rules["transient_only"]
+    suggestive_rules = h1_rules["suggestive"]
+    saturation_rules = h1_rules["saturation"]
+    c23 = primary[refinement_rules["target_contrast_id"]]
+    c34 = primary[saturation_rules["target_contrast_id"]]
     perturbation = any(
-        float(cell["delta_acc_pp"]) < 0.0
-        and float(cell["holm_adjusted_p"]) < 0.05
+        float(cell["delta_acc_pp"]) < float(perturbation_rules["delta_threshold_pp"])
+        and float(cell["holm_adjusted_p"]) < significance_threshold
         and int(cell["right_to_wrong"]) > int(cell["wrong_to_right"])
-        for cell in (c23, c34)
+        for cell in (
+            primary[identifier]
+            for identifier in perturbation_rules["target_contrast_ids"]
+        )
     )
     if perturbation:
         label = "PERTURBATION"
-    elif float(c23["delta_acc_pp"]) > 0.0 and float(c23["holm_adjusted_p"]) < 0.05 and d24_12_15_pp >= 0.0:
+    elif (
+        float(c23["delta_acc_pp"]) > float(refinement_rules["delta_threshold_pp"])
+        and float(c23["holm_adjusted_p"]) < significance_threshold
+        and d24_12_15_pp >= float(refinement_rules["d24_threshold_pp"])
+    ):
         label = "REFINEMENT_SUPPORTED"
-    elif phase1_k2_vs_baseline_pp > 0.0 and float(d24_12_15_ci_pp[1]) < 0.0:
+    elif (
+        phase1_k2_vs_baseline_pp
+        > float(transient_rules["phase1_k2_vs_baseline_threshold_pp"])
+        and float(d24_12_15_ci_pp[1])
+        < float(transient_rules["d24_endpoint_threshold_pp"])
+    ):
         label = "TRANSIENT_ONLY"
-    elif float(c23["delta_acc_pp"]) > 0.0 and d24_12_15_pp >= 0.0 and float(c23["holm_adjusted_p"]) >= 0.05:
+    elif (
+        float(c23["delta_acc_pp"]) > float(suggestive_rules["delta_threshold_pp"])
+        and d24_12_15_pp >= float(suggestive_rules["d24_threshold_pp"])
+        and float(c23["holm_adjusted_p"]) >= significance_threshold
+    ):
         label = "SUGGESTIVE"
     else:
         label = "INCONCLUSIVE"
     saturation = (
-        "still_improving_at_k4"
-        if float(c34["delta_acc_pp"]) > 0.0 and float(c34["holm_adjusted_p"]) < 0.05
-        else "saturation_not_established"
+        saturation_rules["positive_label"]
+        if float(c34["delta_acc_pp"]) > float(saturation_rules["delta_threshold_pp"])
+        and float(c34["holm_adjusted_p"]) < significance_threshold
+        else saturation_rules["otherwise_label"]
     )
     return {"h1_outcome": label, "k4_saturation": saturation}
 
@@ -834,49 +1117,73 @@ def classify_nca(
     primary_cells: Mapping[str, Mapping[str, Any]],
     paired_cells: Mapping[str, Mapping[str, Any]],
     native_cells: Mapping[str, Mapping[str, Any]],
+    decision_rules: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, str]:
-    if len(primary_cells) != 9 or len(paired_cells) != 3:
+    rules = _validated_decision_rules(decision_rules)["nca"]
+    if len(primary_cells) != rules["primary_cell_count"] or len(paired_cells) != rules["paired_cell_count"]:
         raise Phase2AnalysisError("NCA diagnosis requires 9 primary and 3 paired cells")
+    valid_threshold = float(rules["valid_fraction_threshold"])
     incomplete = any(
-        float(cell.get("valid_fraction", -1.0)) < 0.95
+        float(cell.get("valid_fraction", -1.0)) < valid_threshold
         or not _available_interval(cell.get("overall_interval"))
         for cell in primary_cells.values()
     ) or any(
-        float(cell.get("paired_valid_fraction", -1.0)) < 0.95
+        float(cell.get("paired_valid_fraction", -1.0)) < valid_threshold
         or not _available_interval(cell.get("difference_interval"))
         for cell in paired_cells.values()
     )
     if incomplete:
         return {"nca_diagnosis": "NCA_INCONCLUSIVE", "native_fidelity_check": "NOT_EVALUABLE"}
-    targets = [primary_cells["12:15_k%d" % k] for k in (2, 3, 4)]
-    all_target_positive = all(float(cell["overall_interval"]["interval"][0]) > 0.0 for cell in targets)
+    targets = [
+        primary_cells["%s_k%d" % (rules["target_window"], k)]
+        for k in rules["primary_k"]
+    ]
+    all_target_positive = sum(
+        float(cell["overall_interval"]["interval"][0])
+        > float(rules["target_positive_threshold"])
+        for cell in targets
+    ) == int(rules["target_positive_required_count"])
     eligible = []
-    for key in ("12:15_k2", "12:15_k3", "12:15_k4"):
+    native_rules = rules["native_fidelity"]
+    for key in ("%s_k%d" % (rules["target_window"], k) for k in rules["primary_k"]):
         cell = native_cells.get(key, {})
         counts = cell.get("valid_subgroup_counts", {})
-        if all(int(counts.get(group, 0)) >= 10 for group in ("right_to_right", "wrong_to_right", "wrong_to_wrong")):
+        if all(
+            int(counts.get(group, 0)) >= int(native_rules["min_valid_per_subgroup"])
+            for group in native_rules["required_subgroups"]
+        ):
             eligible.append(cell)
     native_supported = sum(
         _available_interval(cell.get("right_to_right_interval"))
-        and float(cell["right_to_right_interval"]["interval"][0]) > 0.0
+        and float(cell["right_to_right_interval"]["interval"][0])
+        > float(native_rules["right_to_right_threshold"])
         and _available_interval(cell.get("wrong_to_right_minus_wrong_to_wrong_interval"))
-        and float(cell["wrong_to_right_minus_wrong_to_wrong_interval"]["interval"][1]) <= 0.0
+        and float(cell["wrong_to_right_minus_wrong_to_wrong_interval"]["interval"][1])
+        <= float(native_rules["wrong_to_right_minus_wrong_to_wrong_threshold"])
         for cell in eligible
     )
-    if all_target_positive and len(eligible) >= 2 and native_supported >= 2:
+    if (
+        all_target_positive
+        and len(eligible) >= int(native_rules["eligible_cell_required_count"])
+        and native_supported >= int(rules["native_supported_required_count"])
+    ):
         diagnosis = "NCA_NATIVE_FIDELITY_ONLY"
     else:
         positive_differences = sum(
-            float(paired_cells["k%d" % k]["difference_interval"]["interval"][0]) > 0.0
-            for k in (2, 3, 4)
+            float(paired_cells["k%d" % k]["difference_interval"]["interval"][0])
+            > float(rules["paired_positive_threshold"])
+            for k in rules["primary_k"]
         )
         diagnosis = (
             "NCA_DIRECTION_SUPPORTED"
-            if all_target_positive and positive_differences >= 2
+            if all_target_positive
+            and positive_differences >= int(rules["direction_positive_required_count"])
             else "NCA_NONDISCRIMINATIVE"
         )
-    native_check = "NOT_EVALUABLE" if len(eligible) < 2 else (
-        "SUPPORTED" if native_supported >= 2 else "EVALUATED_NOT_SUPPORTED"
+    native_check = "NOT_EVALUABLE" if len(eligible) < int(native_rules["eligible_cell_required_count"]) else (
+        "SUPPORTED"
+        if native_supported >= int(rules["native_supported_required_count"])
+        else "EVALUATED_NOT_SUPPORTED"
     )
     return {"nca_diagnosis": diagnosis, "native_fidelity_check": native_check}
 
@@ -965,7 +1272,11 @@ def summarize_calibration_trajectory(
         steps = []
         for body_call_t in range(expected["k"]):
             rows = [sample["steps"][body_call_t] for sample in samples]
-            if any(int(row.get("body_call_t", -1)) != body_call_t for row in rows):
+            indices = [row.get("body_call_t", -1) for row in rows]
+            if any(
+                isinstance(value, bool) or not isinstance(value, int) or value != body_call_t
+                for value in indices
+            ):
                 raise Phase2AnalysisError("trajectory step index differs from cell K")
             residual_norm = [_finite(row["residual_norm"], "residual norm") for row in rows]
             state_norm = [_finite(row["state_norm"], "state norm") for row in rows]
@@ -1065,18 +1376,26 @@ def _primary_contrast_specs() -> List[Tuple[str, str, str]]:
 
 
 def _fixed_horizon_contrast_specs() -> List[Tuple[str, str, str]]:
-    baseline = protocol_cell_id("baseline_no_loop", "none", 1, 1.0)
     k2 = protocol_cell_id("shared_k2_anchor", "12:15", 2, 1.0)
     k3 = protocol_cell_id("fixed_horizon", "12:15", 3, 1.0)
     k4 = protocol_cell_id("fixed_horizon", "12:15", 4, 1.0)
     result = [
-        ("fh_12_15_k1_k2", baseline, k2),
         ("fh_12_15_k2_k3", k2, k3),
         ("fh_12_15_k3_k4", k3, k4),
     ]
     if [item[0] for item in result] != list(FIXED_HORIZON_CONTRAST_IDS):
         raise Phase2AnalysisError("fixed-horizon contrast spec order drifted")
     return result
+
+
+def _validated_decision_rules(
+    value: Optional[Mapping[str, Any]],
+) -> Mapping[str, Any]:
+    expected = frozen_decision_rules()
+    observed = expected if value is None else value
+    if not isinstance(observed, Mapping) or not strict_frozen_equal(observed, expected):
+        raise Phase2AnalysisError("decision rules differ from the versioned frozen contract")
+    return observed
 
 
 def _nca_records(samples: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
@@ -1167,6 +1486,7 @@ def _identity_closure(manifest: Mapping[str, Any]) -> Dict[str, Any]:
         "ordered_identity_sha256": manifest["ordered_identity_sha256"],
         "sample_count": manifest["sample_count"],
         "natural_order": manifest["natural_order"],
+        "source_provenance": dict(manifest["source_provenance"]),
     }
 
 
@@ -1177,6 +1497,7 @@ def _source_artifact_hashes(evidence: Mapping[str, Any]) -> Dict[str, Any]:
         "calibration_identity_manifest": evidence["calibration_identity"]["manifest_sha256"],
         "full_identity_manifest": evidence["full_identity"]["manifest_sha256"],
         "calibration_baseline": evidence["calibration_baseline"]["manifest_sha256"],
+        "calibration_aggregate": evidence["calibration_aggregate"]["manifest_sha256"],
         "calibration_cells": {
             cell_id: evidence["calibration_cells"][cell_id]["manifest_sha256"]
             for cell_id in required_calibration_cell_ids(card)
@@ -1301,9 +1622,7 @@ def _validate_cell_refs(value: Any, expected_ids: Sequence[str], context: str) -
 
 def _load_ref(ref: Mapping[str, Any], base: Path, context: str) -> Mapping[str, Any]:
     _validate_source_ref(ref, context)
-    path = Path(ref["path"])
-    if not path.is_absolute():
-        path = base / path
+    path = _source_ref_path(ref, base)
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, Mapping):
         raise SchemaError("%s source must contain a JSON object" % context)
@@ -1313,6 +1632,35 @@ def _load_ref(ref: Mapping[str, Any], base: Path, context: str) -> Mapping[str, 
     if payload.get("manifest_sha256") != ref["sha256"]:
         raise SchemaError("%s source hash differs from the analysis request" % context)
     return payload
+
+
+def _source_ref_path(ref: Mapping[str, Any], base: Path) -> Path:
+    path = Path(ref["path"])
+    return path.resolve() if path.is_absolute() else (Path(base) / path).resolve()
+
+
+def _require_same_source_ref(
+    internal: Mapping[str, Any],
+    external: Mapping[str, Any],
+    internal_base: Path,
+    external_base: Path,
+    context: str,
+    *,
+    ignore_cell_id: bool = False,
+) -> None:
+    internal_ref = dict(internal)
+    external_ref = dict(external)
+    if ignore_cell_id:
+        internal_ref.pop("cell_id", None)
+        external_ref.pop("cell_id", None)
+    _validate_source_ref(internal_ref, "%s internal ref" % context)
+    _validate_source_ref(external_ref, "%s external ref" % context)
+    if (
+        internal_ref["sha256"] != external_ref["sha256"]
+        or _source_ref_path(internal_ref, internal_base)
+        != _source_ref_path(external_ref, external_base)
+    ):
+        raise SchemaError("%s path/hash differs between aggregate and analysis input" % context)
 
 
 def validate_analysis_report(report: Mapping[str, Any], card: Mapping[str, Any]) -> None:
@@ -1340,7 +1688,7 @@ def validate_analysis_report(report: Mapping[str, Any], card: Mapping[str, Any])
         raise SchemaError("analysis report is bound to a different card")
     if report["revision"] != card["science"]["revision"]:
         raise SchemaError("analysis report revision differs from the card")
-    if report["statistics_contract"] != card["statistics"]:
+    if not strict_frozen_equal(report["statistics_contract"], card["statistics"]):
         raise SchemaError("analysis report statistics differ from the card")
     _analysis_sha256(report["analysis_input_manifest_sha256"], "analysis_input_manifest_sha256")
     _analysis_sha256(report["analysis_input_file_sha256"], "analysis_input_file_sha256")
@@ -1382,6 +1730,7 @@ def validate_analysis_report(report: Mapping[str, Any], card: Mapping[str, Any])
         d24_12_15_pp=cumulative["fixed_step_k4_vs_k2_12_15"]["delta_acc_pp"],
         d24_12_15_ci_pp=cumulative["fixed_step_k4_vs_k2_12_15"]["paired_ci_pp"],
         phase1_k2_vs_baseline_pp=cumulative["phase1_k2_vs_baseline_12_15"]["delta_acc_pp"],
+        decision_rules=card["decision_rules"],
     )
     if report["h1"] != expected_h1:
         raise SchemaError("H1 label differs from recomputed frozen priority rules")
@@ -1408,7 +1757,10 @@ def validate_analysis_report(report: Mapping[str, Any], card: Mapping[str, Any])
         raise SchemaError("NCA report role differs")
     _validate_nca_report(nca, card)
     expected_nca = classify_nca(
-        nca["primary_cells"], nca["paired_12_15_minus_13_16"], nca["native_fidelity_cells"]
+        nca["primary_cells"],
+        nca["paired_12_15_minus_13_16"],
+        nca["native_fidelity_cells"],
+        decision_rules=card["decision_rules"],
     )
     if nca["decision"] != expected_nca:
         raise SchemaError("NCA label differs from recomputed frozen rules")
@@ -1472,14 +1824,19 @@ def _validate_contrast(cell: Any, card: Mapping[str, Any], *, augmented: bool) -
     expected_p = exact_mcnemar_p(transitions["wrong_to_right"], transitions["right_to_wrong"])
     _assert_close(cell["mcnemar_raw_p"], expected_p, "McNemar p", abs_tol=1e-14)
     _validate_interval(cell["paired_ci_pp"], "paired_ci_pp")
+    if (
+        float(cell["paired_ci_pp"][0]) < -100.0
+        or float(cell["paired_ci_pp"][1]) > 100.0
+    ):
+        raise SchemaError("paired accuracy interval must remain within [-100,100] pp")
     bootstrap = cell["bootstrap"]
     _analysis_exact_keys(bootstrap, {"replicates", "seed", "paired_index"}, "full bootstrap")
     expected_bootstrap = card["statistics"]["full_paired_bootstrap"]
-    if bootstrap != {
+    if not strict_frozen_equal(bootstrap, {
         "replicates": expected_bootstrap["replicates"],
         "seed": expected_bootstrap["seed"],
         "paired_index": True,
-    }:
+    }):
         raise SchemaError("full bootstrap seed/replicates differ from the card")
     if augmented:
         for key in ("contrast_id", "left_cell_id", "right_cell_id"):
@@ -1509,10 +1866,20 @@ def _validate_mechanism_diagnostic(value: Any, card: Mapping[str, Any]) -> None:
         "mean_correct_margin_delta_raw", "top1_retained_fraction",
     ):
         _finite(value[key], key)
+    if not 0.0 <= float(value["mean_js_nats"]) <= math.log(2.0):
+        raise SchemaError("mean JS divergence must be in [0,ln(2)]")
     if not 0.0 <= float(value["top1_retained_fraction"]) <= 1.0:
         raise SchemaError("top1 retention must be in [0,1]")
     transitions = value["transitions"]
-    if not isinstance(transitions, Mapping) or sum(int(item) for item in transitions.values()) != 14042:
+    _analysis_exact_keys(
+        transitions,
+        {"right_to_right", "wrong_to_right", "right_to_wrong", "wrong_to_wrong"},
+        "mechanism transitions",
+    )
+    if any(
+        isinstance(item, bool) or not isinstance(item, int) or item < 0
+        for item in transitions.values()
+    ) or sum(transitions.values()) != 14042:
         raise SchemaError("mechanism transition denominator differs")
     overconfidence = value["wrong_overconfidence"]
     _analysis_exact_keys(
@@ -1536,8 +1903,33 @@ def _validate_mechanism_diagnostic(value: Any, card: Mapping[str, Any]) -> None:
         _assert_close(overconfidence["fraction"], expected_fraction, "wrong-overconfidence fraction")
     subgroups = overconfidence["subgroups"]
     _analysis_exact_keys(subgroups, {"wrong_to_wrong", "right_to_wrong"}, "wrong-overconfidence subgroups")
-    for subgroup in subgroups.values():
+    subgroup_count = 0
+    subgroup_denominator = 0
+    for subgroup_name, subgroup in subgroups.items():
         _analysis_exact_keys(subgroup, {"count", "denominator", "fraction"}, "wrong-overconfidence subgroup")
+        subgroup_value = subgroup["count"]
+        subgroup_total = subgroup["denominator"]
+        if any(
+            isinstance(item, bool) or not isinstance(item, int) or item < 0
+            for item in (subgroup_value, subgroup_total)
+        ) or subgroup_value > subgroup_total:
+            raise SchemaError("wrong-overconfidence subgroup counts are invalid")
+        if subgroup_total != transitions[subgroup_name]:
+            raise SchemaError("wrong-overconfidence subgroup denominator differs from transitions")
+        expected = float(subgroup_value) / subgroup_total if subgroup_total else None
+        if expected is None:
+            if subgroup["fraction"] is not None:
+                raise SchemaError("empty wrong-overconfidence subgroup requires null fraction")
+        else:
+            _assert_close(subgroup["fraction"], expected, "wrong-overconfidence subgroup fraction")
+        subgroup_count += subgroup_value
+        subgroup_denominator += subgroup_total
+    if (
+        subgroup_count != count
+        or subgroup_denominator != denominator
+        or denominator != transitions["wrong_to_wrong"] + transitions["right_to_wrong"]
+    ):
+        raise SchemaError("wrong-overconfidence subgroup totals differ from the aggregate")
 
 
 def _validate_nca_report(nca: Mapping[str, Any], card: Mapping[str, Any]) -> None:
@@ -1551,23 +1943,45 @@ def _validate_nca_report(nca: Mapping[str, Any], card: Mapping[str, Any]) -> Non
         raise SchemaError("NCA primary cell order differs")
     for cell in primary.values():
         _analysis_exact_keys(cell, {"denominator", "valid_count", "valid_fraction", "overall_interval"}, "NCA primary cell")
-        if cell["denominator"] != 512 or not 0 <= cell["valid_count"] <= 512:
+        valid_count = cell["valid_count"]
+        if (
+            cell["denominator"] != 512
+            or isinstance(valid_count, bool)
+            or not isinstance(valid_count, int)
+            or not 0 <= valid_count <= 512
+        ):
             raise SchemaError("NCA denominator/count differs")
-        _assert_close(cell["valid_fraction"], cell["valid_count"] / 512.0, "NCA valid fraction")
+        _assert_close(cell["valid_fraction"], valid_count / 512.0, "NCA valid fraction")
         _validate_optional_interval(cell["overall_interval"], -1.0, 1.0, card, kind="median")
+        if (valid_count > 0) is not (cell["overall_interval"].get("available") is True):
+            raise SchemaError("NCA valid count and interval availability disagree")
     paired = nca["paired_12_15_minus_13_16"]
     if not isinstance(paired, Mapping) or set(paired) != {"k2", "k3", "k4"}:
         raise SchemaError("NCA paired cell order differs")
-    for cell in paired.values():
+    for key, cell in paired.items():
         _analysis_exact_keys(cell, {"denominator", "paired_valid_count", "paired_valid_fraction", "difference_interval"}, "paired NCA cell")
-        if cell["denominator"] != 512 or not 0 <= cell["paired_valid_count"] <= 512:
+        paired_count = cell["paired_valid_count"]
+        if (
+            cell["denominator"] != 512
+            or isinstance(paired_count, bool)
+            or not isinstance(paired_count, int)
+            or not 0 <= paired_count <= 512
+        ):
             raise SchemaError("paired NCA denominator/count differs")
-        _assert_close(cell["paired_valid_fraction"], cell["paired_valid_count"] / 512.0, "paired-valid fraction")
+        _assert_close(cell["paired_valid_fraction"], paired_count / 512.0, "paired-valid fraction")
         _validate_optional_interval(cell["difference_interval"], -2.0, 2.0, card, kind="paired_difference")
+        if (paired_count > 0) is not (cell["difference_interval"].get("available") is True):
+            raise SchemaError("paired NCA valid count and interval availability disagree")
+        k = int(key[1:])
+        if paired_count > min(
+            primary["12:15_k%d" % k]["valid_count"],
+            primary["13:16_k%d" % k]["valid_count"],
+        ):
+            raise SchemaError("paired NCA valid count exceeds a source-cell valid count")
     native = nca["native_fidelity_cells"]
     if not isinstance(native, Mapping) or set(native) != {"12:15_k2", "12:15_k3", "12:15_k4"}:
         raise SchemaError("native-fidelity cell order differs")
-    for cell in native.values():
+    for cell_id, cell in native.items():
         _analysis_exact_keys(
             cell,
             {"valid_subgroup_counts", "right_to_right_interval", "wrong_to_right_minus_wrong_to_wrong_interval", "resampling"},
@@ -1582,8 +1996,10 @@ def _validate_nca_report(nca: Mapping[str, Any], card: Mapping[str, Any]) -> Non
             raise SchemaError("native-fidelity subgroup set differs")
         if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in counts.values()):
             raise SchemaError("native-fidelity counts are invalid")
-        if sum(counts.values()) > 512:
-            raise SchemaError("native-fidelity valid subgroup counts exceed the frozen denominator")
+        if sum(counts.values()) != primary[cell_id]["valid_count"]:
+            raise SchemaError(
+                "native-fidelity subgroups must partition the primary valid samples"
+            )
         _validate_optional_interval(cell["right_to_right_interval"], -1.0, 1.0, card, kind="median")
         _validate_optional_interval(
             cell["wrong_to_right_minus_wrong_to_wrong_interval"],
@@ -1592,6 +2008,19 @@ def _validate_nca_report(nca: Mapping[str, Any], card: Mapping[str, Any]) -> Non
             card,
             kind="independent_difference",
         )
+        rr_available = cell["right_to_right_interval"].get("available") is True
+        if rr_available is not (counts["right_to_right"] > 0):
+            raise SchemaError("native-fidelity right-to-right count/interval disagree")
+        difference = cell["wrong_to_right_minus_wrong_to_wrong_interval"]
+        difference_available = difference.get("available") is True
+        expected_available = counts["wrong_to_right"] > 0 and counts["wrong_to_wrong"] > 0
+        if difference_available is not expected_available:
+            raise SchemaError("native-fidelity subgroup counts/interval disagree")
+        if difference_available and (
+            difference["left_count"] != counts["wrong_to_right"]
+            or difference["right_count"] != counts["wrong_to_wrong"]
+        ):
+            raise SchemaError("native-fidelity interval counts differ from frozen subgroups")
 
 
 def _validate_trajectory_summary(value: Any, card: Mapping[str, Any]) -> None:
@@ -1605,7 +2034,7 @@ def _validate_trajectory_summary(value: Any, card: Mapping[str, Any]) -> None:
             {"cell", "sample_count", "valid_sample_count", "valid_sample_fraction", "steps", "role"},
             "trajectory summary cell",
         )
-        if cell["cell"] != expected or cell["sample_count"] != 512:
+        if not strict_frozen_equal(cell["cell"], expected) or cell["sample_count"] != 512:
             raise SchemaError("trajectory summary cell identity/count differs")
         valid_count = cell["valid_sample_count"]
         if isinstance(valid_count, bool) or not isinstance(valid_count, int) or not 0 <= valid_count <= 512:
@@ -1626,7 +2055,7 @@ def _validate_trajectory_summary(value: Any, card: Mapping[str, Any]) -> None:
                 },
                 "trajectory summary step",
             )
-            if step["body_call_t"] != index:
+            if isinstance(step["body_call_t"], bool) or not isinstance(step["body_call_t"], int) or step["body_call_t"] != index:
                 raise SchemaError("trajectory summary step index differs")
             for key in ("residual_norm_median", "state_norm_median", "relative_activity_median"):
                 if _finite(step[key], key) < 0.0:
@@ -1654,6 +2083,8 @@ def _validate_optional_interval(
     if not isinstance(value, Mapping) or value.get("available") is not True:
         if not isinstance(value, Mapping) or set(value) != {"available", "reason"} or value.get("available") is not False:
             raise SchemaError("unavailable interval must contain only available=false and reason")
+        if not isinstance(value.get("reason"), str) or not value["reason"].strip():
+            raise SchemaError("unavailable interval requires a non-empty reason")
         return
     common = {"available", "difference" if "difference" in kind else "median", "interval", "replicates", "seed", "pointwise", "multiplicity_adjustment", "role"}
     if kind == "paired_difference":
@@ -1671,7 +2102,11 @@ def _validate_optional_interval(
     _validate_interval(interval, "bootstrap interval")
     if float(interval[0]) < lower or float(interval[1]) > upper:
         raise SchemaError("bootstrap interval exceeds its mathematical range")
-    if value.get("replicates") != 10000 or value.get("seed") != 0:
+    nca_contract = card["statistics"]["nca_bootstrap"]
+    if not strict_frozen_equal(
+        {"replicates": value.get("replicates"), "seed": value.get("seed")},
+        {"replicates": nca_contract["replicates"], "seed": nca_contract["seed"]},
+    ):
         raise SchemaError("NCA interval seed/replicates differ from the card")
     if value.get("pointwise") is not True or value.get("multiplicity_adjustment") != "none":
         raise SchemaError("NCA interval multiplicity role differs")
@@ -1705,7 +2140,7 @@ def _validate_source_hash_tree(value: Any, card: Mapping[str, Any]) -> None:
         value,
         {
             "card", "calibration_identity_manifest", "full_identity_manifest",
-            "calibration_baseline", "calibration_cells", "full_final_output_cells",
+            "calibration_baseline", "calibration_aggregate", "calibration_cells", "full_final_output_cells",
             "calibration_labels", "unseal_authorization", "unseal_receipt",
         },
         "source artifact hashes",
@@ -1714,6 +2149,7 @@ def _validate_source_hash_tree(value: Any, card: Mapping[str, Any]) -> None:
         raise SchemaError("source card hash differs")
     for key in (
         "card", "calibration_identity_manifest", "full_identity_manifest", "calibration_baseline",
+        "calibration_aggregate",
         "calibration_labels", "unseal_authorization", "unseal_receipt",
     ):
         _analysis_sha256(value[key], "source_artifacts.%s" % key)
@@ -1737,7 +2173,7 @@ def _validate_identity_closure(value: Any, card: Mapping[str, Any]) -> None:
         current = value[key]
         _analysis_exact_keys(
             current,
-            {"identity_namespace", "identity_manifest_sha256", "ordered_identity_sha256", "sample_count", "natural_order"},
+            {"identity_namespace", "identity_manifest_sha256", "ordered_identity_sha256", "sample_count", "natural_order", "source_provenance"},
             "%s identity closure" % key,
         )
         if current["identity_namespace"] != namespace or current["sample_count"] != count:
@@ -1746,6 +2182,9 @@ def _validate_identity_closure(value: Any, card: Mapping[str, Any]) -> None:
             raise SchemaError("%s natural-order rule differs" % key)
         _analysis_sha256(current["identity_manifest_sha256"], "%s identity manifest" % key)
         _analysis_sha256(current["ordered_identity_sha256"], "%s ordered identity" % key)
+        validate_source_provenance(
+            current["source_provenance"], namespace, require_live=True
+        )
 
 
 def _validate_analysis_provenance(value: Any) -> None:
@@ -1781,6 +2220,8 @@ def _probability(value: Any) -> float:
 
 
 def _finite(value: Any, context: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise Phase2AnalysisError("%s must be a non-boolean number" % context)
     result = float(value)
     if not math.isfinite(result):
         raise Phase2AnalysisError("%s must be finite" % context)
@@ -1801,6 +2242,8 @@ def _quantile(values: Sequence[float], probability: float) -> float:
 __all__ = [
     "Phase2AnalysisError",
     "analyze_phase2_evidence",
+    "analysis_command_record",
+    "analysis_environment_record",
     "bootstrap_median",
     "bootstrap_paired_median_difference",
     "bootstrap_stratified_median_difference",
@@ -1812,6 +2255,7 @@ __all__ = [
     "classify_nca",
     "collapse_nca_sample_cell",
     "exact_mcnemar_p",
+    "derive_analysis_execution_provenance",
     "holm_step_down",
     "jensen_shannon",
     "load_phase2_analysis_evidence",
@@ -1827,4 +2271,5 @@ __all__ = [
     "required_full_cell_ids",
     "validate_analysis_input_manifest",
     "validate_analysis_report",
+    "verify_phase2_analysis_report",
 ]

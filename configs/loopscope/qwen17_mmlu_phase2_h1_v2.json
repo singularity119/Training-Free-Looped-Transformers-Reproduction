@@ -1,22 +1,151 @@
 {
   "card_id": "H1_ITERATIVE_REFINEMENT_ZONE_V2",
   "decision_rules": {
-    "h1_priority": [
-      "PERTURBATION",
-      "REFINEMENT_SUPPORTED",
-      "TRANSIENT_ONLY",
-      "SUGGESTIVE",
-      "INCONCLUSIVE"
-    ],
-    "native_fidelity_min_valid_per_subgroup": 10,
-    "nca_priority": [
-      "NCA_INCONCLUSIVE",
-      "NCA_NATIVE_FIDELITY_ONLY",
-      "NCA_DIRECTION_SUPPORTED",
-      "NCA_NONDISCRIMINATIVE"
-    ],
-    "nca_valid_fraction_min": 0.95,
-    "significance_comparison": "adjusted_p_strictly_less_than_0.05",
+    "h1": {
+      "diagnostic_only": [
+        "q",
+        "js",
+        "entropy",
+        "margin",
+        "wrong_overconfidence",
+        "fixed_horizon_family",
+        "cumulative_contrasts"
+      ],
+      "inconclusive": "otherwise_with_complete_evidence",
+      "neighbor_window_claim": "controls_and_falsifiers_not_between_window_significance",
+      "perturbation": {
+        "delta_operator": "strictly_less_than",
+        "delta_threshold_pp": 0.0,
+        "target_contrast_ids": [
+          "fs_12_15_k2_k3",
+          "fs_12_15_k3_k4"
+        ],
+        "transition_comparison": "right_to_wrong_strictly_greater_than_wrong_to_right"
+      },
+      "priority": [
+        "PERTURBATION",
+        "REFINEMENT_SUPPORTED",
+        "TRANSIENT_ONLY",
+        "SUGGESTIVE",
+        "INCONCLUSIVE"
+      ],
+      "refinement_supported": {
+        "d24_operator": "greater_than_or_equal",
+        "d24_threshold_pp": 0.0,
+        "delta_operator": "strictly_greater_than",
+        "delta_threshold_pp": 0.0,
+        "target_contrast_id": "fs_12_15_k2_k3"
+      },
+      "saturation": {
+        "delta_operator": "strictly_greater_than",
+        "delta_threshold_pp": 0.0,
+        "equivalence_claim_allowed": false,
+        "k_greater_than_4_authorized": false,
+        "otherwise_label": "saturation_not_established",
+        "positive_label": "still_improving_at_k4",
+        "significance_operator": "strictly_less_than",
+        "target_contrast_id": "fs_12_15_k3_k4"
+      },
+      "significance": {
+        "field": "holm_adjusted_p",
+        "operator": "strictly_less_than",
+        "threshold": 0.05
+      },
+      "suggestive": {
+        "d24_operator": "greater_than_or_equal",
+        "d24_threshold_pp": 0.0,
+        "delta_operator": "strictly_greater_than",
+        "delta_threshold_pp": 0.0,
+        "significance_operator": "greater_than_or_equal",
+        "target_contrast_id": "fs_12_15_k2_k3"
+      },
+      "target_window": "12:15",
+      "transient_only": {
+        "d24_endpoint_operator": "strictly_less_than",
+        "d24_endpoint_threshold_pp": 0.0,
+        "d24_interval_endpoint": "upper",
+        "phase1_k2_vs_baseline_operator": "strictly_greater_than",
+        "phase1_k2_vs_baseline_threshold_pp": 0.0
+      }
+    },
+    "multiplicity": {
+      "familywise_alpha": 0.05,
+      "fixed_horizon_family": [
+        "fh_12_15_k2_k3",
+        "fh_12_15_k3_k4"
+      ],
+      "fixed_horizon_method": "two_sided_exact_mcnemar_then_holm_step_down",
+      "k1_to_k2_role": "equivalence_and_cumulative_context_not_in_holm_family",
+      "nca_interval_role": "pointwise_unadjusted_secondary_diagnostic",
+      "primary_family": [
+        "fs_11_14_k2_k3",
+        "fs_11_14_k3_k4",
+        "fs_12_15_k2_k3",
+        "fs_12_15_k3_k4",
+        "fs_13_16_k2_k3",
+        "fs_13_16_k3_k4"
+      ],
+      "primary_method": "two_sided_exact_mcnemar_then_holm_step_down"
+    },
+    "nca": {
+      "denominator": 512,
+      "direction_positive_required_count": 2,
+      "harmful_control_window": "13:16",
+      "interval_role": "pointwise_unadjusted_secondary_diagnostic_no_fwer_claim",
+      "missing_or_nonfinite_primary_interval_label": "NCA_INCONCLUSIVE",
+      "native_fidelity": {
+        "eligible_cell_required_count": 2,
+        "min_valid_per_subgroup": 10,
+        "not_evaluable_does_not_force_inconclusive": true,
+        "required_subgroups": [
+          "right_to_right",
+          "wrong_to_right",
+          "wrong_to_wrong"
+        ],
+        "right_to_right_interval_endpoint": "lower",
+        "right_to_right_operator": "strictly_greater_than",
+        "right_to_right_threshold": 0.0,
+        "wrong_to_right_minus_wrong_to_wrong_interval_endpoint": "upper",
+        "wrong_to_right_minus_wrong_to_wrong_operator": "less_than_or_equal",
+        "wrong_to_right_minus_wrong_to_wrong_threshold": 0.0
+      },
+      "native_supported_required_count": 2,
+      "paired_cell_count": 3,
+      "paired_difference": "12:15_minus_13:16",
+      "paired_interval_endpoint": "lower",
+      "paired_keys": [
+        "k2",
+        "k3",
+        "k4"
+      ],
+      "paired_positive_operator": "strictly_greater_than",
+      "paired_positive_threshold": 0.0,
+      "primary_cell_count": 9,
+      "primary_k": [
+        2,
+        3,
+        4
+      ],
+      "primary_windows": [
+        "11:14",
+        "12:15",
+        "13:16"
+      ],
+      "priority": [
+        "NCA_INCONCLUSIVE",
+        "NCA_NATIVE_FIDELITY_ONLY",
+        "NCA_DIRECTION_SUPPORTED",
+        "NCA_NONDISCRIMINATIVE"
+      ],
+      "sample_cell_validity": "all_declared_repeated_steps_valid",
+      "target_interval_endpoint": "lower",
+      "target_positive_operator": "strictly_greater_than",
+      "target_positive_required_count": 3,
+      "target_positive_threshold": 0.0,
+      "target_window": "12:15",
+      "valid_fraction_operator": "greater_than_or_equal",
+      "valid_fraction_threshold": 0.95
+    },
     "wrong_overconfidence": {
       "condition": "entropy_decreases_and_raw_top_margin_increases",
       "denominator": "final_wrong_pairs=wrong_to_wrong+right_to_wrong",
@@ -48,21 +177,20 @@
     }
   },
   "fixed_horizon_contrast_ids": [
-    "fh_12_15_k1_k2",
     "fh_12_15_k2_k3",
     "fh_12_15_k3_k4"
   ],
   "implementation_sha256": {
     "scripts/loopscope/prepare_qwen17_phase2.py": "5556aca88128c5b0fde8df7f321fb1658168bb8f44d0f7ea04b277005d779e74",
-    "src/tflt/cli.py": "85534e184581a7ff2a896679d2860ebe4140c93f062c812eef3ff5a499d3277e",
-    "src/tflt/eval_runner.py": "7161245ffc5b77ba299c858d5e2e113f12aab64b7147b24b23c672dfdac9be6c",
-    "src/tflt/loopscope/__init__.py": "1c27b799768fe343d96f0b2837a38e97811765562cb695f4082385fcd710810e",
-    "src/tflt/loopscope/phase2_analysis.py": "b75edd31b563cd187e9696e723abb23c44820d6fab5f6986040adfa49f8e3484",
-    "src/tflt/loopscope/phase2_reuse.py": "04b667b73faa368b81c9cdbccd875500856b74e9ef9fad6a5a7561026d485884",
-    "src/tflt/loopscope/phase2_schema.py": "847a9b9ce12eb60d9aebd76d957d88741a88f76545ffffed45899ecbd371a1db",
-    "src/tflt/loopscope/phase2_trajectory.py": "6673609bcd5dd171c006de2587fbaef96f7e8fa95620699c3bae78c933e3cccb"
+    "src/tflt/cli.py": "f5f9962f39341ff04cd53cbe3db3af441c6eb78e156cdc239b8bd5f1e65c4f93",
+    "src/tflt/eval_runner.py": "92b40daff34d314db770295587cc4d8dabaa3d47fe21d7f127237a5a4ae862b9",
+    "src/tflt/loopscope/__init__.py": "98065275bbec2833a131fce7ef982ea1e2d90059c5d79ba16def75dc937112cd",
+    "src/tflt/loopscope/phase2_analysis.py": "c87ef7392be86df216e7d045eb28c2c2d242ace4960da820728100595368f091",
+    "src/tflt/loopscope/phase2_reuse.py": "246ab2637960b3e83baf629bfd10a02df4982592435cd93e488d9a7a3e290d84",
+    "src/tflt/loopscope/phase2_schema.py": "8a0f970b77863e8bc36a052aa932e8b570983308fc81615e8268933a3a59d72e",
+    "src/tflt/loopscope/phase2_trajectory.py": "2b8e6f33c2b96f975091762718a441a88b79b4613fb3e3f38cbc9a9d52cbe54b"
   },
-  "manifest_sha256": "a58216a37807d92eeb0701dcf190e4395d92fb3daf35edb0b86678efc24f5006",
+  "manifest_sha256": "315d28c54661a1fe277cf0a98e0142560206bd67259314ec80b33de1665b91ff",
   "measurement": {
     "actual_loop_nca_steps": "t=1..K-1_only",
     "calibration_choice_score_source": "direct_probe_next_token_log_probability_over_frozen_choice_token_ids",
@@ -123,7 +251,6 @@
   },
   "statistics": {
     "fixed_horizon_family_order": [
-      "fh_12_15_k1_k2",
       "fh_12_15_k2_k3",
       "fh_12_15_k3_k4"
     ],

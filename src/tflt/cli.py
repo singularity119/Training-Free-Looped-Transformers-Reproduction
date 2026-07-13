@@ -16,8 +16,12 @@ from tflt.loopscope.probe import add_probe_layers_args, cmd_probe_layers
 from tflt.loopscope.selection import add_score_windows_args, cmd_score_windows
 from tflt.loopscope.window_probe import add_probe_window_args, cmd_probe_window
 from tflt.loopscope.phase2_analysis import (
+    analysis_command_record,
+    analysis_environment_record,
     analyze_phase2_evidence,
+    derive_analysis_execution_provenance,
     load_phase2_analysis_evidence,
+    verify_phase2_analysis_report,
 )
 from tflt.loopscope.phase2_trajectory import (
     add_probe_phase2_trajectory_args,
@@ -31,6 +35,7 @@ from tflt.loopscope.phase2_schema import (
     validate_full_final_output_envelope,
     validate_identity_manifest,
     validate_phase2_card,
+    validate_phase2_workspace_output_path,
 )
 from tflt.loopscope.schema import ensure_new_directory
 from tflt.models import load_model_registry, resolve_model
@@ -142,6 +147,14 @@ def main(argv: Optional[list] = None) -> int:
     p.add_argument("--output-dir", required=True)
     p.set_defaults(func=cmd_analyze_phase2_h1)
 
+    p = sub.add_parser(
+        "verify-phase2-analysis",
+        help="Reload canonical sources and verify a Phase 2 report by exact recomputation.",
+    )
+    p.add_argument("--input", required=True)
+    p.add_argument("--report", required=True)
+    p.set_defaults(func=cmd_verify_phase2_analysis)
+
     args = parser.parse_args(argv)
     return int(args.func(args))
 
@@ -177,10 +190,29 @@ def cmd_validate_phase2_trace(args: argparse.Namespace) -> int:
 
 def cmd_analyze_phase2_h1(args: argparse.Namespace) -> int:
     evidence = load_phase2_analysis_evidence(Path(args.input))
-    report = analyze_phase2_evidence(evidence)
-    output_dir = ensure_new_directory(Path(args.output_dir))
+    output_dir = validate_phase2_workspace_output_path(
+        args.output_dir, evidence["card"], context="Phase 2 analysis output directory"
+    )
+    if output_dir != Path(evidence["analysis_control"]["output_root"]).resolve():
+        raise ValueError("analysis output directory differs from authorization")
+    output_dir = ensure_new_directory(output_dir)
+    atomic_write_new_json(
+        output_dir / "command_args.json",
+        analysis_command_record(Path(args.input), output_dir),
+    )
+    atomic_write_new_json(output_dir / "env.json", analysis_environment_record())
+    execution_provenance = derive_analysis_execution_provenance(evidence, output_dir)
+    report = analyze_phase2_evidence(
+        evidence, execution_provenance=execution_provenance
+    )
     atomic_write_new_json(output_dir / "phase2_h1_analysis.json", report)
     print(str(output_dir / "phase2_h1_analysis.json"))
+    return 0
+
+
+def cmd_verify_phase2_analysis(args: argparse.Namespace) -> int:
+    verify_phase2_analysis_report(Path(args.input), Path(args.report))
+    print(str(Path(args.report)))
     return 0
 
 

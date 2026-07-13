@@ -25,6 +25,7 @@ local repo=/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_
 remote repo=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope
 read-only reproduction repo=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction
 Phase 2 workspace=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope
+Phase 1 input=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/inputs/loopscope-qwen17-mmlu-phase1-20260711-043615
 Phase 1 run=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-20260711-053022
 reusable venv=/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711
 shared caches=/hpc2hdd/home/xhuang225/shared/{hf_home,datasets,uv}
@@ -96,7 +97,7 @@ card 与无标签字段冻结后才解封 label：
 - `correct_margin = score(gold) - max score(non-gold)`；
 - 错误样本 entropy 下降且错误 top1 margin 上升的“错误过度自信”比例。
 
-同时计算累计（相对 baseline）和 incremental（相邻 continuation 点）净纠错率。六个三窗口 prospective incremental contrasts（每窗口 `K2→K3`、`K3→K4`）构成唯一 primary confirmatory family，使用 two-sided exact McNemar 与 Holm step-down、family-wise `alpha=0.05`。`12:15` fixed-horizon controls 构成独立、内部 Holm 校正的 secondary control family；cumulative-vs-baseline / `K4-vs-K2` 只作 secondary sign guard/context，不能单独触发 `REFINEMENT_SUPPORTED`。净纠错率与 accuracy delta 数值相关，但四类转移和条件分布揭示机制，不能只报告 aggregate accuracy。
+同时计算累计（相对 baseline）和 incremental（相邻 continuation 点）净纠错率。六个三窗口 prospective incremental contrasts（每窗口 `K2→K3`、`K3→K4`）构成唯一 primary confirmatory family，使用 two-sided exact McNemar 与 Holm step-down、family-wise `alpha=0.05`。`12:15` fixed-horizon controls 构成独立、内部 Holm 校正的 secondary control family，且仅含 `K2→K3` 与 `K3→K4`；`K1→K2` 只属于 B1 等价性与 cumulative context，不进入 Holm family。cumulative-vs-baseline / `K4-vs-K2` 只作 secondary sign guard/context，不能单独触发 `REFINEMENT_SUPPORTED`。净纠错率与 accuracy delta 数值相关，但四类转移和条件分布揭示机制，不能只报告 aggregate accuracy。
 
 冻结 512 NCA 的公式、位置、validity、汇总和 artifact hash 后，才可解封该池 label，作 baseline-correct/wrong 与四类转移的 development-only 条件分析。不得用这些 label 调 NCA 阈值或重新选窗。full paired outcome 继续使用 2,000 次 bootstrap、seed 20260710，不得和 NCA 的 10,000/seed 0 混成同一统计 family。
 
@@ -183,6 +184,9 @@ seed=20260710
 4. 在 512 保存 direct-probe final choice，在 full final-output adapter 保存 evaluator raw choice；两者分别绑定独立 canonical identity namespace、card/revision/cell 与 attempt/receipt provenance。
 5. 实现逐样本四类翻转、entropy/margin/JS 条件分析、paired bootstrap/McNemar，以及独立 NCA diagnosis。
 6. 只读审计 Phase 1 baseline/K=2 与 512 probe 是否包含可复用 final choice/boundary 字段，输出 reuse matrix；缺字段只报告，不自动补跑。
+   本地只能确认 Phase 1 schema 不持久化 Phase 2 per-step NCA；512 live identity、14,042
+   ordered identity 与 raw four-choice availability 均保持 `requires_gate_b_live_check`，不得把
+   “schema 可描述”写成“live artifact 已验证”。
 7. 单元测试必须覆盖：
    - inclusive window 与 body-call count；
    - final pre-answer token、`B_(b+1)`/`B_N` boundary identity 和 NCA 方向；
@@ -193,6 +197,10 @@ seed=20260710
    - `q_t` 零分母/NaN fail-fast；
    - final-output 与 intermediate-lens 字段不可混用；
    - ordered identity mismatch 拒绝分析；
+   - frozen pool exact schema、sealed-label guard、B1 first-four→B2 source binding；
+   - actual argv/attempt/receipt/command/env/revision/results provenance 与 new-root 写入；
+   - per-cell wall-clock/peak-memory/restore proof schema；
+   - B2 aggregate identity/baseline/15-cell path+hash closure 与 source-aware report 重算；
    - wrong/right 四类计数和 margin 公式；
    - six-contrast Holm family、H1/NCA 标签优先级与边界条件；
    - Phase 1 schema 向后兼容。
@@ -218,7 +226,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m tflt.cli --help
 
 ### Gate A 实现接口（freeze candidate）
 
-Gate A 的本地实现提供四个显式接口，默认 Phase 1/eval 路径不启用任何
+Gate A 的本地实现提供五个显式接口，默认 Phase 1/eval 路径不启用任何
 Phase 2 行为：
 
 ```bash
@@ -257,6 +265,9 @@ python -m tflt.cli validate-phase2-trace \
   --identity-manifest <canonical-identity-manifest.json>
 python -m tflt.cli analyze-phase2-h1 --input <complete-analysis-input.json> \
   --output-dir <new-write-once-analysis>
+python -m tflt.cli verify-phase2-analysis \
+  --input <complete-analysis-input.json> \
+  --report <new-write-once-analysis/phase2_h1_analysis.json>
 ```
 
 `probe-phase2-trajectory` 是 Gate B 才可执行的 remote-only producer；Gate A
@@ -264,9 +275,13 @@ python -m tflt.cli analyze-phase2-h1 --input <complete-analysis-input.json> \
 样本实际执行 no-loop、三个 K1 admission cells 与 15 个 logical cells，写出 K1 choice
 equivalence 及 K2 对 K3/K4 的 state/residual prefix scalar proof；只有该 proof 经审计后，
 `b2-calibration` 才在同一进程内对冻结 512 先执行一次 no-loop boundary pass，再执行
-15 个 logical cells。三个窗口的 `B_N-B_(b+1)` 始终只保留在内存。
+15 个 logical cells。B1 proof 绑定同一 Phase 1 frozen 512 source manifest、确定性前四
+identity、renderer subset、card/revision 与实际 producer；B2 admission 必须逐项核对这些
+绑定，不能用任意四样本 proof 解锁。三个窗口的 `B_N-B_(b+1)` 始终只保留在内存。
 写盘内容限于 identity、norm、ratio、cosine、NCA validity/scalar 与 final four-choice
-scores/probabilities；完整 hidden、residual 和 native-continuation vectors 禁止持久化。
+scores/probabilities；aggregate 另以 closed-world schema 记录每 cell wall-clock、peak GPU
+memory 和 wrapper restore proof。完整 hidden、residual 和 native-continuation vectors
+禁止持久化。
 
 `python -m tflt.eval_runner` 另提供显式 opt-in
 `--phase2-final-output-manifest <versioned-json>`，只从 lm-eval completed logged samples 生成独立
@@ -279,11 +294,43 @@ order。因此 `batch_size=auto` 本身不是 blocker；缺 identity、duplicate
 raw choice scores 才 fail-fast。Phase 1 full artifacts 是否具备 raw choice/doc_hash 仍属于
 `requires_gate_b_live_check`，不能由本地 schema 宣称已验证。
 
-`complete-analysis-input.json` 只能列出 card、两个 canonical identity manifest、sealed
-baseline/15 calibration cells、12 个 full final-output cells、authorized calibration gold-index
+adapter request 使用 v2 path+hash refs 实际读取 card、full identity、attempt 和 receipt；运行前
+把 requested cell 与真实 model/revision/task/fewshot/dtype 及 active loop argv 逐字段核对，
+baseline 的 inactive loop defaults 不冒充 active science。运行后再读取 write-once
+`command_args.json、env.json、model_revision.json、results.json`，核对 model/tokenizer revision
+closure，并由这些实际文件构造 producer hashes。adapter 模式要求新 output root，所有上述
+文件与 sidecar 都使用 exclusive-create；未启用 adapter 的默认 eval 路径保持原行为。
+attempt/receipt 还必须把真实 `output_root` 绑定到 card 冻结的独立
+`training_free_looped_transformers_loopscope` workspace；resolved path 落入旧 Phase 1 workspace、
+`/tmp` 或经 symlink 逃逸都会在 model load 前失败。
+
+`complete-analysis-input.json` 只能列出 card、两个 canonical identity manifest、sealed B2
+aggregate、baseline/15 calibration cells、12 个 full final-output cells、authorized calibration gold-index
 sidecar及 unseal authorization/receipt 的 path+hash；禁止提供预聚合 delta、p-value、Holm
-或 NCA summary。analysis producer重新从逐样本 sidecar计算全部统计，并以 same-directory
-atomic exclusive-create + fsync 写出报告。
+或 NCA summary。B2 aggregate 的 artifact root、identity/baseline/15-cell refs 必须与实际加载
+路径和 hash 完全一致；probe pool 递归拒绝 `gold_index/correctness`。calibration identity 绑定
+Phase 1 frozen pool manifest、renderer subset 与 dataset revision；full identity 绑定
+`cais/mmlu@c30699e8356da336a370243923dbaf21066bb9fe`、5-shot natural order 与 Phase 1
+run/input root。source-provenance v2 不只核对 source manifest 元数据：calibration 必须从
+`rendering_records[task_name,target_doc_id,target_doc_sha256]` 逐项派生 512 identity；full 必须
+从逐文件哈希的 immutable Phase 1 `gate-e-full/baseline-full/results.json` 中
+`samples` 映射逐项派生；若该历史结果不内嵌 `samples`，则按 Phase 1 loader 契约使用同目录
+完整、排序且逐文件哈希的 `samples_*.jsonl` 集合。两条路径都按 task 名排序、task 内保留
+logged-sample 顺序，派生 14,042 identity，并与
+canonical manifest 完全同序。尚未在 Gate B live 核验的 digest 只能保持
+`requires_gate_b_live_check` 和 null，不能虚构。analysis producer重新从逐样本 sidecar计算
+全部统计，并以 same-directory atomic exclusive-create + fsync 写出报告；随后必须运行
+`verify-phase2-analysis`，从相同 source 重新确定性计算并要求报告逐字段及 manifest hash 相等。
+analysis input 的 authorization/attempt/receipt 均为实际 path+hash refs，三者绑定 card、完整
+source-ref tree、executor 与独立 workspace output root；CLI write-once 生成自己的
+`command_args.json/env.json`，verifier 重新读取并核对后才重算报告。
+
+B1/B2 probe 的 attempt/receipt 同样使用 exact versioned schema，绑定 probe mode、4/512
+尺度、card/revision、Phase 1 input manifest、executor 与 output root。aggregate 与 B1 proof
+保存实际 attempt/receipt/input/command/env/revision path+hash；B2 admission 还会从 512 pool
+重新计算 natural-order 前四记录的 selected/render hashes，不能用任意四样本 proof 解锁。
+合法 renderer `target={source,split,subject}` 仅作无标签 provenance；任何 target answer、
+`gold_index`、correctness 或 evaluator accuracy 仍被 sealed schema 拒绝。
 
 错误过度自信是非决定性机制诊断：冻结候选将分母明确为 final-wrong pairs
 （`wrong→wrong + right→wrong`），条件为 final entropy 下降且 raw top margin 上升，

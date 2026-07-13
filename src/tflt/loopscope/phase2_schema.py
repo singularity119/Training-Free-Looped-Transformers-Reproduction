@@ -14,6 +14,7 @@ import math
 import os
 import struct
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Sequence, Tuple
 
@@ -28,7 +29,7 @@ from tflt.loopscope.schema import (
 
 PHASE2_CARD_ID = "H1_ITERATIVE_REFINEMENT_ZONE_V2"
 PHASE2_CARD_SCHEMA_VERSION = "loopscope.phase2-h1-card.v3"
-PHASE2_IDENTITY_MANIFEST_SCHEMA_VERSION = "loopscope.phase2-identity-manifest.v1"
+PHASE2_IDENTITY_MANIFEST_SCHEMA_VERSION = "loopscope.phase2-identity-manifest.v2"
 PHASE2_TRACE_SCHEMA_VERSION = "loopscope.phase2-calibration-trajectory-sample.v2"
 PHASE2_CALIBRATION_CELL_SCHEMA_VERSION = "loopscope.phase2-calibration-cell.v2"
 PHASE2_CALIBRATION_BASELINE_SCHEMA_VERSION = "loopscope.phase2-calibration-baseline.v2"
@@ -37,8 +38,8 @@ PHASE2_FULL_FINAL_OUTPUT_SCHEMA_VERSION = "loopscope.phase2-full-final-output-ce
 PHASE2_CALIBRATION_LABEL_SCHEMA_VERSION = "loopscope.phase2-calibration-labels.v1"
 PHASE2_UNSEAL_AUTHORIZATION_SCHEMA_VERSION = "loopscope.phase2-unseal-authorization.v1"
 PHASE2_UNSEAL_RECEIPT_SCHEMA_VERSION = "loopscope.phase2-unseal-receipt.v1"
-PHASE2_ANALYSIS_INPUT_SCHEMA_VERSION = "loopscope.phase2-h1-analysis-input.v2"
-PHASE2_ANALYSIS_SCHEMA_VERSION = "loopscope.phase2-h1-analysis-report.v2"
+PHASE2_ANALYSIS_INPUT_SCHEMA_VERSION = "loopscope.phase2-h1-analysis-input.v4"
+PHASE2_ANALYSIS_SCHEMA_VERSION = "loopscope.phase2-h1-analysis-report.v4"
 PHASE2_REUSE_SCHEMA_VERSION = "loopscope.phase2-reuse-matrix.v1"
 
 CALIBRATION_IDENTITY_NAMESPACE = "loopscope.phase2.calibration.validation512.v1"
@@ -47,6 +48,18 @@ DIRECT_PROBE_SCORE_SOURCE = (
     "direct_probe_next_token_log_probability_over_frozen_choice_token_ids"
 )
 FULL_LM_EVAL_SCORE_SOURCE = "lm_eval_acc_none_raw_per_choice_loglikelihood"
+MMLU_DATASET_REVISION = "c30699e8356da336a370243923dbaf21066bb9fe"
+PHASE1_INPUT_ROOT = (
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/inputs/"
+    "loopscope-qwen17-mmlu-phase1-20260711-043615"
+)
+PHASE1_RUN_ROOT = (
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/"
+    "loopscope-qwen17-mmlu-phase1-20260711-053022"
+)
+PHASE2_WORKSPACE_ROOT = (
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope"
+)
 
 CHOICE_LABELS: Tuple[str, ...] = ("A", "B", "C", "D")
 PRIMARY_CONTRAST_IDS: Tuple[str, ...] = (
@@ -58,7 +71,6 @@ PRIMARY_CONTRAST_IDS: Tuple[str, ...] = (
     "fs_13_16_k3_k4",
 )
 FIXED_HORIZON_CONTRAST_IDS: Tuple[str, ...] = (
-    "fh_12_15_k1_k2",
     "fh_12_15_k2_k3",
     "fh_12_15_k3_k4",
 )
@@ -75,6 +87,140 @@ IMPLEMENTATION_FILES: Tuple[str, ...] = (
     "src/tflt/cli.py",
     "scripts/loopscope/prepare_qwen17_phase2.py",
 )
+
+
+def frozen_decision_rules() -> Dict[str, Any]:
+    """Return the complete versioned H1/NCA decision contract.
+
+    A fresh mapping is returned so callers cannot mutate module-level state.
+    The validator compares this object exactly; classifiers then read the
+    registered targets and thresholds from the validated mapping.
+    """
+
+    return {
+        "multiplicity": {
+            "primary_family": list(PRIMARY_CONTRAST_IDS),
+            "fixed_horizon_family": list(FIXED_HORIZON_CONTRAST_IDS),
+            "primary_method": "two_sided_exact_mcnemar_then_holm_step_down",
+            "fixed_horizon_method": "two_sided_exact_mcnemar_then_holm_step_down",
+            "familywise_alpha": 0.05,
+            "k1_to_k2_role": "equivalence_and_cumulative_context_not_in_holm_family",
+            "nca_interval_role": "pointwise_unadjusted_secondary_diagnostic",
+        },
+        "h1": {
+            "priority": [
+                "PERTURBATION",
+                "REFINEMENT_SUPPORTED",
+                "TRANSIENT_ONLY",
+                "SUGGESTIVE",
+                "INCONCLUSIVE",
+            ],
+            "target_window": "12:15",
+            "significance": {
+                "field": "holm_adjusted_p",
+                "operator": "strictly_less_than",
+                "threshold": 0.05,
+            },
+            "perturbation": {
+                "target_contrast_ids": ["fs_12_15_k2_k3", "fs_12_15_k3_k4"],
+                "delta_operator": "strictly_less_than",
+                "delta_threshold_pp": 0.0,
+                "transition_comparison": "right_to_wrong_strictly_greater_than_wrong_to_right",
+            },
+            "refinement_supported": {
+                "target_contrast_id": "fs_12_15_k2_k3",
+                "delta_operator": "strictly_greater_than",
+                "delta_threshold_pp": 0.0,
+                "d24_operator": "greater_than_or_equal",
+                "d24_threshold_pp": 0.0,
+            },
+            "transient_only": {
+                "phase1_k2_vs_baseline_operator": "strictly_greater_than",
+                "phase1_k2_vs_baseline_threshold_pp": 0.0,
+                "d24_interval_endpoint": "upper",
+                "d24_endpoint_operator": "strictly_less_than",
+                "d24_endpoint_threshold_pp": 0.0,
+            },
+            "suggestive": {
+                "target_contrast_id": "fs_12_15_k2_k3",
+                "delta_operator": "strictly_greater_than",
+                "delta_threshold_pp": 0.0,
+                "d24_operator": "greater_than_or_equal",
+                "d24_threshold_pp": 0.0,
+                "significance_operator": "greater_than_or_equal",
+            },
+            "inconclusive": "otherwise_with_complete_evidence",
+            "saturation": {
+                "target_contrast_id": "fs_12_15_k3_k4",
+                "delta_operator": "strictly_greater_than",
+                "delta_threshold_pp": 0.0,
+                "significance_operator": "strictly_less_than",
+                "positive_label": "still_improving_at_k4",
+                "otherwise_label": "saturation_not_established",
+                "equivalence_claim_allowed": False,
+                "k_greater_than_4_authorized": False,
+            },
+            "diagnostic_only": [
+                "q",
+                "js",
+                "entropy",
+                "margin",
+                "wrong_overconfidence",
+                "fixed_horizon_family",
+                "cumulative_contrasts",
+            ],
+            "neighbor_window_claim": "controls_and_falsifiers_not_between_window_significance",
+        },
+        "nca": {
+            "priority": [
+                "NCA_INCONCLUSIVE",
+                "NCA_NATIVE_FIDELITY_ONLY",
+                "NCA_DIRECTION_SUPPORTED",
+                "NCA_NONDISCRIMINATIVE",
+            ],
+            "primary_windows": ["11:14", "12:15", "13:16"],
+            "primary_k": [2, 3, 4],
+            "primary_cell_count": 9,
+            "paired_keys": ["k2", "k3", "k4"],
+            "paired_cell_count": 3,
+            "sample_cell_validity": "all_declared_repeated_steps_valid",
+            "denominator": 512,
+            "valid_fraction_operator": "greater_than_or_equal",
+            "valid_fraction_threshold": 0.95,
+            "missing_or_nonfinite_primary_interval_label": "NCA_INCONCLUSIVE",
+            "target_window": "12:15",
+            "harmful_control_window": "13:16",
+            "target_interval_endpoint": "lower",
+            "target_positive_operator": "strictly_greater_than",
+            "target_positive_threshold": 0.0,
+            "target_positive_required_count": 3,
+            "paired_difference": "12:15_minus_13:16",
+            "paired_interval_endpoint": "lower",
+            "paired_positive_operator": "strictly_greater_than",
+            "paired_positive_threshold": 0.0,
+            "direction_positive_required_count": 2,
+            "native_fidelity": {
+                "required_subgroups": ["right_to_right", "wrong_to_right", "wrong_to_wrong"],
+                "min_valid_per_subgroup": 10,
+                "eligible_cell_required_count": 2,
+                "right_to_right_interval_endpoint": "lower",
+                "right_to_right_operator": "strictly_greater_than",
+                "right_to_right_threshold": 0.0,
+                "wrong_to_right_minus_wrong_to_wrong_interval_endpoint": "upper",
+                "wrong_to_right_minus_wrong_to_wrong_operator": "less_than_or_equal",
+                "wrong_to_right_minus_wrong_to_wrong_threshold": 0.0,
+                "not_evaluable_does_not_force_inconclusive": True,
+            },
+            "native_supported_required_count": 2,
+            "interval_role": "pointwise_unadjusted_secondary_diagnostic_no_fwer_claim",
+        },
+        "wrong_overconfidence": {
+            "condition": "entropy_decreases_and_raw_top_margin_increases",
+            "denominator": "final_wrong_pairs=wrong_to_wrong+right_to_wrong",
+            "subgroups_reported": ["wrong_to_wrong", "right_to_wrong"],
+            "role": "mechanism_diagnostic_not_H1_decision_rule",
+        },
+    }
 
 _CARD_KEYS = frozenset(
     (
@@ -108,6 +254,7 @@ _PRODUCER_KEYS = frozenset(
         "revision_report_sha256",
     )
 )
+_FULL_ADAPTER_PRODUCER_KEYS = _PRODUCER_KEYS | frozenset(("results_sha256",))
 _FINAL_BASE_KEYS = frozenset(
     (
         "schema_version",
@@ -235,6 +382,7 @@ def make_identity_manifest(
     identity_namespace: str,
     split: str,
     identities: Sequence[Mapping[str, Any]],
+    source_provenance: Mapping[str, Any],
 ) -> Dict[str, Any]:
     validate_phase2_card(card)
     normalized = [_validate_identity(item) for item in identities]
@@ -246,6 +394,7 @@ def make_identity_manifest(
         "split": str(split),
         "sample_count": len(normalized),
         "natural_order": "canonical_manifest_list_order_zero_based",
+        "source_provenance": dict(source_provenance),
         "ordered_sample_identity": normalized,
         "ordered_identity_sha256": ordered_identity_sha256(normalized),
         "card_manifest_sha256": card["manifest_sha256"],
@@ -261,7 +410,7 @@ def validate_identity_manifest(manifest: Mapping[str, Any], card: Mapping[str, A
     _exact_keys(manifest, {
         "schema_version", "identity_namespace", "evidence_scale", "task_group", "split",
         "sample_count", "natural_order", "ordered_sample_identity", "ordered_identity_sha256",
-        "card_manifest_sha256", "revision", "manifest_sha256",
+        "source_provenance", "card_manifest_sha256", "revision", "manifest_sha256",
     }, "identity manifest")
     verify_manifest_sha256(manifest)
     if manifest["schema_version"] != PHASE2_IDENTITY_MANIFEST_SCHEMA_VERSION:
@@ -275,6 +424,7 @@ def validate_identity_manifest(manifest: Mapping[str, Any], card: Mapping[str, A
         raise SchemaError("identity manifest task/split differs from the card")
     if manifest["natural_order"] != "canonical_manifest_list_order_zero_based":
         raise SchemaError("identity manifest natural-order rule differs")
+    validate_source_provenance(manifest["source_provenance"], namespace)
     if manifest["card_manifest_sha256"] != card["manifest_sha256"]:
         raise SchemaError("identity manifest is bound to a different card")
     if manifest["revision"] != card["science"]["revision"]:
@@ -295,6 +445,383 @@ def validate_identity_manifest(manifest: Mapping[str, Any], card: Mapping[str, A
         raise SchemaError("ordered identity hash mismatch")
 
 
+def make_source_provenance(
+    *,
+    identity_namespace: str,
+    verification_status: str,
+    source_manifest_path: Optional[str],
+    source_manifest_sha256: Optional[str],
+    renderer_subset_sha256: Optional[str],
+    identity_artifacts: Optional[Sequence[Mapping[str, str]]] = None,
+    phase1_input_root: str = PHASE1_INPUT_ROOT,
+    phase1_run_root: str = PHASE1_RUN_ROOT,
+) -> Dict[str, Any]:
+    """Build the canonical Phase 1 source binding for one identity namespace."""
+
+    if identity_namespace == CALIBRATION_IDENTITY_NAMESPACE:
+        source_kind = "phase1_frozen_validation_probe_pool"
+        natural_order_producer = "phase1_frozen_probe_pool_manifest_records_order"
+        identity_derivation = (
+            "probe_pool_rendering_records_task_name_target_doc_id_target_doc_sha256"
+        )
+    elif identity_namespace == FULL_IDENTITY_NAMESPACE:
+        source_kind = "phase1_full_mmlu_evaluator_identity"
+        natural_order_producer = (
+            "phase1_baseline_result_loader_sorted_task_then_logged_sample_order"
+        )
+        identity_derivation = (
+            "results_samples_else_exact_sorted_sample_sidecars_task_doc_id_doc_hash"
+        )
+    else:
+        raise SchemaError("unknown Phase 2 identity namespace")
+    artifacts = [dict(value) for value in (identity_artifacts or [])]
+    if (
+        verification_status == "live_verified"
+        and identity_namespace == CALIBRATION_IDENTITY_NAMESPACE
+        and not artifacts
+        and source_manifest_path is not None
+        and source_manifest_sha256 is not None
+    ):
+        artifacts = [
+            {"path": str(source_manifest_path), "sha256": str(source_manifest_sha256)}
+        ]
+    payload: Dict[str, Any] = {
+        "schema_version": "loopscope.phase2-source-provenance.v2",
+        "verification_status": verification_status,
+        "source_kind": source_kind,
+        "phase1_input_root": str(phase1_input_root),
+        "phase1_run_root": str(phase1_run_root),
+        "source_manifest_path": source_manifest_path,
+        "source_manifest_sha256": source_manifest_sha256,
+        "renderer_subset_sha256": renderer_subset_sha256,
+        "dataset_source": "cais/mmlu",
+        "dataset_revision": MMLU_DATASET_REVISION,
+        "num_fewshot": 5,
+        "natural_order_producer": natural_order_producer,
+        "identity_derivation": identity_derivation,
+        "identity_artifacts": artifacts,
+    }
+    attach_manifest_sha256(payload)
+    validate_source_provenance(payload, identity_namespace)
+    return payload
+
+
+def validate_source_provenance(
+    payload: Mapping[str, Any], identity_namespace: str, *, require_live: bool = False
+) -> None:
+    _exact_keys(
+        payload,
+        {
+            "schema_version", "verification_status", "source_kind",
+            "phase1_input_root", "phase1_run_root", "source_manifest_path",
+            "source_manifest_sha256", "renderer_subset_sha256", "dataset_source",
+            "dataset_revision", "num_fewshot", "natural_order_producer",
+            "identity_derivation", "identity_artifacts",
+            "manifest_sha256",
+        },
+        "identity source provenance",
+    )
+    verify_manifest_sha256(payload)
+    if payload["schema_version"] != "loopscope.phase2-source-provenance.v2":
+        raise SchemaError("unsupported identity source-provenance schema")
+    if identity_namespace == CALIBRATION_IDENTITY_NAMESPACE:
+        expected_kind = "phase1_frozen_validation_probe_pool"
+        expected_order = "phase1_frozen_probe_pool_manifest_records_order"
+        expected_derivation = (
+            "probe_pool_rendering_records_task_name_target_doc_id_target_doc_sha256"
+        )
+    elif identity_namespace == FULL_IDENTITY_NAMESPACE:
+        expected_kind = "phase1_full_mmlu_evaluator_identity"
+        expected_order = (
+            "phase1_baseline_result_loader_sorted_task_then_logged_sample_order"
+        )
+        expected_derivation = (
+            "results_samples_else_exact_sorted_sample_sidecars_task_doc_id_doc_hash"
+        )
+    else:
+        raise SchemaError("unknown Phase 2 identity namespace")
+    if (
+        payload["source_kind"] != expected_kind
+        or payload["natural_order_producer"] != expected_order
+        or payload["identity_derivation"] != expected_derivation
+    ):
+        raise SchemaError("identity source kind/natural-order producer differs")
+    if payload["phase1_input_root"] != PHASE1_INPUT_ROOT or payload["phase1_run_root"] != PHASE1_RUN_ROOT:
+        raise SchemaError("identity source roots differ from immutable Phase 1 provenance")
+    if (
+        payload["dataset_source"] != "cais/mmlu"
+        or payload["dataset_revision"] != MMLU_DATASET_REVISION
+        or payload["num_fewshot"] != 5
+    ):
+        raise SchemaError("identity dataset/few-shot provenance differs")
+    status = payload["verification_status"]
+    if status not in {"live_verified", "requires_gate_b_live_check"}:
+        raise SchemaError("identity source verification status differs")
+    if require_live and status != "live_verified":
+        raise SchemaError("analysis requires live-verified canonical source provenance")
+    if status == "live_verified":
+        path = _nonempty_string(payload["source_manifest_path"], "source_manifest_path")
+        if not Path(path).is_absolute():
+            raise SchemaError("source manifest path must be absolute")
+        roots = (Path(PHASE1_INPUT_ROOT), Path(PHASE1_RUN_ROOT))
+        if not any(Path(path).is_relative_to(root) for root in roots):
+            raise SchemaError("source manifest path is outside immutable Phase 1 roots")
+        expected_path = (
+            Path(PHASE1_INPUT_ROOT) / "probe_pool_manifest.json"
+            if identity_namespace == CALIBRATION_IDENTITY_NAMESPACE
+            else Path(PHASE1_RUN_ROOT) / "control" / "phase1_run_manifest.json"
+        )
+        if Path(path) != expected_path:
+            raise SchemaError("source manifest path differs from the canonical Phase 1 artifact")
+        _sha256(payload["source_manifest_sha256"], "source_manifest_sha256")
+        _sha256(payload["renderer_subset_sha256"], "renderer_subset_sha256")
+        artifacts = payload["identity_artifacts"]
+        if not isinstance(artifacts, list) or not artifacts:
+            raise SchemaError("live source provenance requires identity artifacts")
+        normalized_paths = []
+        for ref in artifacts:
+            _exact_keys(ref, {"path", "sha256"}, "identity source artifact")
+            raw_artifact_path = _nonempty_string(
+                ref["path"], "identity artifact path"
+            )
+            artifact_path = Path(raw_artifact_path)
+            if not artifact_path.is_absolute():
+                raise SchemaError("identity artifact path must be absolute")
+            if ".." in artifact_path.parts or raw_artifact_path != str(artifact_path):
+                raise SchemaError("identity artifact path must be canonical")
+            _sha256(ref["sha256"], "identity artifact sha256")
+            normalized_paths.append(artifact_path)
+        if len(set(normalized_paths)) != len(normalized_paths):
+            raise SchemaError("identity source artifacts must be unique")
+        if identity_namespace == CALIBRATION_IDENTITY_NAMESPACE:
+            if artifacts != [{"path": path, "sha256": payload["source_manifest_sha256"]}]:
+                raise SchemaError("calibration identity must derive from the frozen pool manifest")
+        else:
+            if (
+                not normalized_paths
+                or not normalized_paths[0].is_relative_to(Path(PHASE1_RUN_ROOT))
+                or normalized_paths[0].name != "results.json"
+                or any(
+                    path.parent != normalized_paths[0].parent
+                    or not path.name.startswith("samples_")
+                    or path.suffix != ".jsonl"
+                    for path in normalized_paths[1:]
+                )
+                or normalized_paths[1:] != sorted(normalized_paths[1:])
+            ):
+                raise SchemaError(
+                    "full identity artifacts must be baseline results.json followed by sorted sample sidecars"
+                )
+    elif any(
+        payload[key] is not None
+        for key in ("source_manifest_path", "source_manifest_sha256", "renderer_subset_sha256")
+    ):
+        raise SchemaError("unverified source digests must remain null pending Gate B")
+    elif payload["identity_artifacts"] != []:
+        raise SchemaError("unverified identity artifacts must remain empty pending Gate B")
+
+
+def verify_live_source_provenance(
+    payload: Mapping[str, Any],
+    identity_namespace: str,
+    expected_identities: Optional[Sequence[Mapping[str, Any]]] = None,
+) -> Mapping[str, Any]:
+    """Read the declared immutable Phase 1 manifest and verify its live binding."""
+
+    validate_source_provenance(payload, identity_namespace, require_live=True)
+    path = Path(payload["source_manifest_path"])
+    try:
+        source = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise SchemaError("live Phase 1 source manifest is unreadable") from exc
+    if not isinstance(source, Mapping):
+        raise SchemaError("live Phase 1 source manifest must contain an object")
+    verify_manifest_sha256(source)
+    if source.get("manifest_sha256") != payload["source_manifest_sha256"]:
+        raise SchemaError("live Phase 1 source manifest hash differs from identity provenance")
+    if identity_namespace == CALIBRATION_IDENTITY_NAMESPACE:
+        if (
+            source.get("source") != "cais/mmlu@%s" % MMLU_DATASET_REVISION
+            or source.get("split") != "validation"
+            or source.get("count") != 512
+            or source.get("seed") != 20260710
+            or source.get("task_group") != "mmlu"
+            or source.get("num_fewshot") != 5
+            or source.get("uses_target_gold_labels") is not False
+            or not isinstance(source.get("renderer"), Mapping)
+            or source["renderer"].get("dataset_revision") != MMLU_DATASET_REVISION
+            or source.get("render_contract_subset_sha256")
+            != payload["renderer_subset_sha256"]
+        ):
+            raise SchemaError("live Phase 1 calibration pool provenance differs")
+    else:
+        recipe = source.get("frozen_recipe")
+        pool = source.get("inputs", {}).get("probe_pool") if isinstance(source.get("inputs"), Mapping) else None
+        if (
+            not isinstance(recipe, Mapping)
+            or not isinstance(pool, Mapping)
+            or recipe.get("repo_id") != "Qwen/Qwen3-1.7B-Base"
+            or recipe.get("revision") != "ea980cb0a6c2ae4b936e82123acc929f1cec04c1"
+            or recipe.get("task") != "mmlu"
+            or recipe.get("num_fewshot") != 5
+            or recipe.get("dtype") != "float16"
+            or source.get("run_root") != PHASE1_RUN_ROOT
+            or pool.get("count") != 512
+            or pool.get("render_contract_subset_sha256")
+            != payload["renderer_subset_sha256"]
+        ):
+            raise SchemaError("live Phase 1 full run provenance differs")
+        stages = source.get("stages")
+        full_stage = stages.get("gate-e-full") if isinstance(stages, Mapping) else None
+        jobs = full_stage.get("jobs") if isinstance(full_stage, Mapping) else None
+        if not isinstance(jobs, list):
+            raise SchemaError("live Phase 1 manifest lacks Gate E full jobs")
+        baseline_jobs = [
+            job for job in jobs
+            if isinstance(job, Mapping) and job.get("job_id") == "baseline-full"
+        ]
+        if len(baseline_jobs) != 1:
+            raise SchemaError("live Phase 1 manifest must contain one baseline-full job")
+        baseline = baseline_jobs[0]
+        expected_output = Path(str(baseline.get("output_dir", "")))
+        expected_results = expected_output / "results.json"
+        artifact_paths = [Path(ref["path"]) for ref in payload["identity_artifacts"]]
+        if (
+            not expected_results.is_absolute()
+            or not expected_results.is_relative_to(Path(PHASE1_RUN_ROOT))
+            or artifact_paths[0] != expected_results
+            or any(path.parent != expected_output for path in artifact_paths[1:])
+        ):
+            raise SchemaError(
+                "full identity artifact differs from the frozen baseline-full results"
+            )
+    derived = _derive_live_source_identities(payload, identity_namespace, source)
+    expected_count = 512 if identity_namespace == CALIBRATION_IDENTITY_NAMESPACE else 14042
+    if len(derived) != expected_count:
+        raise SchemaError("live Phase 1 identity artifact count differs from the frozen scale")
+    if len({(row["task"], row["doc_id"], row["doc_hash"]) for row in derived}) != len(derived):
+        raise SchemaError("live Phase 1 identity artifacts contain duplicate identities")
+    if expected_identities is not None:
+        expected = [_validate_identity(value) for value in expected_identities]
+        if derived != expected:
+            raise SchemaError("canonical identities do not derive from the live Phase 1 source")
+    return source
+
+
+def _derive_live_source_identities(
+    payload: Mapping[str, Any], identity_namespace: str, source: Mapping[str, Any]
+) -> List[Dict[str, str]]:
+    if identity_namespace == CALIBRATION_IDENTITY_NAMESPACE:
+        records = source.get("rendering_records")
+        if not isinstance(records, list):
+            raise SchemaError("Phase 1 pool manifest lacks rendering_records identity source")
+        result = []
+        for record in records:
+            if not isinstance(record, Mapping):
+                raise SchemaError("Phase 1 rendering identity record must be an object")
+            result.append(
+                stable_sample_identity(
+                    record.get("task_name"),
+                    record.get("target_doc_id"),
+                    record.get("target_doc_sha256"),
+                )
+            )
+        return result
+    refs = payload["identity_artifacts"]
+    ref = refs[0]
+    artifact_path = Path(ref["path"])
+    resolved_run_root = Path(PHASE1_RUN_ROOT).resolve()
+    resolved_artifact = artifact_path.resolve()
+    if not resolved_artifact.is_relative_to(resolved_run_root):
+        raise SchemaError("Phase 1 identity artifact resolves outside the immutable run root")
+    try:
+        raw = resolved_artifact.read_bytes()
+    except OSError as exc:
+        raise SchemaError("Phase 1 baseline results artifact is unreadable") from exc
+    if hashlib.sha256(raw).hexdigest() != ref["sha256"]:
+        raise SchemaError("Phase 1 baseline results file hash differs")
+    try:
+        results = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise SchemaError("Phase 1 baseline results JSON is malformed") from exc
+    if not isinstance(results, Mapping):
+        raise SchemaError("Phase 1 baseline results must contain an object")
+    if "samples" in results:
+        samples = results["samples"]
+        if not isinstance(samples, Mapping) or not samples:
+            raise SchemaError(
+                "present Phase 1 results.samples must be a non-empty mapping"
+            )
+        if len(refs) != 1:
+            raise SchemaError(
+                "embedded logged samples must use results.json as the sole identity artifact"
+            )
+    else:
+        task_results = results.get("results")
+        task_names = [str(name) for name in task_results] if isinstance(task_results, Mapping) else []
+        actual_sidecars = sorted(artifact_path.parent.glob("samples_*.jsonl"))
+        declared_sidecars = [Path(value["path"]) for value in refs[1:]]
+        if not actual_sidecars or declared_sidecars != actual_sidecars:
+            raise SchemaError(
+                "declared Phase 1 sample sidecars differ from the exact baseline directory set"
+            )
+        samples = {}
+        for sidecar_ref, sidecar_path in zip(refs[1:], actual_sidecars):
+            resolved_sidecar = sidecar_path.resolve()
+            if not resolved_sidecar.is_relative_to(resolved_run_root):
+                raise SchemaError("Phase 1 sample sidecar resolves outside the run root")
+            try:
+                sidecar_raw = resolved_sidecar.read_bytes()
+            except OSError as exc:
+                raise SchemaError("Phase 1 sample sidecar is unreadable") from exc
+            if hashlib.sha256(sidecar_raw).hexdigest() != sidecar_ref["sha256"]:
+                raise SchemaError("Phase 1 sample sidecar file hash differs")
+            raw_namespace = sidecar_path.stem[len("samples_") :]
+            matching_names = [
+                name for name in task_names
+                if raw_namespace == name or raw_namespace.startswith(name + "_")
+            ]
+            namespace = max(matching_names, key=len) if matching_names else raw_namespace
+            if namespace in samples:
+                raise SchemaError("Phase 1 sample sidecars map to a duplicate task namespace")
+            rows = []
+            try:
+                sidecar_lines = sidecar_raw.decode("utf-8").splitlines()
+            except UnicodeDecodeError as exc:
+                raise SchemaError("Phase 1 sample sidecar is not UTF-8") from exc
+            for line in sidecar_lines:
+                if not line.strip():
+                    continue
+                try:
+                    row = json.loads(line)
+                except ValueError as exc:
+                    raise SchemaError("Phase 1 sample sidecar JSONL is malformed") from exc
+                if not isinstance(row, Mapping):
+                    raise SchemaError("Phase 1 sample sidecar row must be an object")
+                rows.append(row)
+            samples[namespace] = rows
+    result = []
+    for task in sorted(samples):
+        rows = samples[task]
+        if not isinstance(task, str) or not task or not isinstance(rows, list):
+            raise SchemaError("Phase 1 baseline samples mapping is malformed")
+        for row_index, row in enumerate(rows):
+            if not isinstance(row, Mapping):
+                raise SchemaError("Phase 1 baseline logged sample must be an object")
+            if "task" in row and row["task"] != task:
+                raise SchemaError("Phase 1 logged sample task differs from its task bucket")
+            try:
+                result.append(
+                    stable_sample_identity(task, row.get("doc_id"), row.get("doc_hash"))
+                )
+            except SchemaError as exc:
+                raise SchemaError(
+                    "Phase 1 baseline task %s row %d lacks doc_id/doc_hash"
+                    % (task, row_index)
+                ) from exc
+    return result
+
+
 def validate_identity_against_manifest(
     observed: Sequence[Mapping[str, Any]], manifest: Mapping[str, Any], card: Mapping[str, Any]
 ) -> None:
@@ -307,6 +834,25 @@ def validate_identity_against_manifest(
         raise SchemaError("observed identity order/content differs from canonical manifest")
     if ordered_identity_sha256(normalized) != manifest["ordered_identity_sha256"]:
         raise SchemaError("observed ordered identity hash differs from canonical manifest")
+
+
+def validate_phase2_workspace_output_path(
+    value: Any, card: Mapping[str, Any], *, context: str
+) -> Path:
+    """Reject legacy roots and symlink escapes for every new Phase 2 artifact."""
+
+    validate_phase2_card(card)
+    declared = card["write_once_contract"]["workspace_root"]
+    if declared != PHASE2_WORKSPACE_ROOT:
+        raise SchemaError("Phase 2 card workspace root differs from project governance")
+    raw = Path(_nonempty_string(str(value), context))
+    if not raw.is_absolute():
+        raise SchemaError("%s must be absolute" % context)
+    resolved_root = Path(declared).resolve(strict=False)
+    resolved = raw.resolve(strict=False)
+    if resolved == resolved_root or not resolved.is_relative_to(resolved_root):
+        raise SchemaError("%s is outside the independent LoopScope workspace" % context)
+    return resolved
 
 
 def validate_ordered_identity(
@@ -420,23 +966,7 @@ def validate_phase2_card(card: Mapping[str, Any]) -> None:
         "quantile_method": "linear_interpolation_n_minus_1",
         "unit": "percentage_points",
     })
-    _exact_mapping(card, "decision_rules", {
-        "h1_priority": [
-            "PERTURBATION", "REFINEMENT_SUPPORTED", "TRANSIENT_ONLY", "SUGGESTIVE", "INCONCLUSIVE"
-        ],
-        "nca_priority": [
-            "NCA_INCONCLUSIVE", "NCA_NATIVE_FIDELITY_ONLY", "NCA_DIRECTION_SUPPORTED", "NCA_NONDISCRIMINATIVE"
-        ],
-        "significance_comparison": "adjusted_p_strictly_less_than_0.05",
-        "nca_valid_fraction_min": 0.95,
-        "native_fidelity_min_valid_per_subgroup": 10,
-        "wrong_overconfidence": {
-            "condition": "entropy_decreases_and_raw_top_margin_increases",
-            "denominator": "final_wrong_pairs=wrong_to_wrong+right_to_wrong",
-            "subgroups_reported": ["wrong_to_wrong", "right_to_wrong"],
-            "role": "mechanism_diagnostic_not_H1_decision_rule",
-        },
-    })
+    _exact_mapping(card, "decision_rules", frozen_decision_rules())
     _exact_mapping(card, "tolerances", {
         "k1_scores_atol": 1e-4,
         "k1_scores_rtol": 1e-5,
@@ -451,7 +981,7 @@ def validate_phase2_card(card: Mapping[str, Any]) -> None:
         "k2_full_rerun_authorized": False,
     })
     _exact_mapping(card, "write_once_contract", {
-        "workspace_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope",
+        "workspace_root": PHASE2_WORKSPACE_ROOT,
         "sidecar_only": True,
         "analysis_output_create": "same_directory_atomic_exclusive_create_fsync",
         "native_continuation_lifetime": "same_process_memory_only",
@@ -932,7 +1462,7 @@ def validate_trajectory_sample(
         "stash_pass": 1,
         "identity_forward": 3,
     }
-    if dict(counts) != expected_counts:
+    if not strict_frozen_equal(dict(counts), expected_counts):
         raise SchemaError("trajectory event counts differ from the frozen wrapper timeline")
     validate_final_output_sample(
         sample["final_output"],
@@ -1312,16 +1842,27 @@ def _validate_cell(cell: Mapping[str, Any], *, allow_baseline: bool) -> None:
 def _validate_producer(
     producer: Mapping[str, Any], *, allowed_kinds: Optional[Iterable[str]] = None
 ) -> None:
-    _exact_keys(producer, _PRODUCER_KEYS, "producer provenance")
+    if not isinstance(producer, Mapping):
+        raise SchemaError("producer provenance must be an object")
+    keys = (
+        _FULL_ADAPTER_PRODUCER_KEYS
+        if producer.get("producer_kind") == "lm_eval_logged_samples_adapter"
+        else _PRODUCER_KEYS
+    )
+    _exact_keys(producer, keys, "producer provenance")
     kind = _nonempty_string(producer["producer_kind"], "producer_kind")
     if allowed_kinds is not None and kind not in set(allowed_kinds):
         raise SchemaError("producer_kind is not allowed for this artifact")
-    for key in _PRODUCER_KEYS - {"producer_kind"}:
+    for key in keys - {"producer_kind"}:
         _sha256(producer[key], "producer.%s" % key)
 
 
 def _reject_calibration_gold_fields(payload: Any, path: str = "root") -> None:
-    forbidden = {"gold", "gold_index", "target", "correctness", "correct_margin_raw", "evaluator_acc_none"}
+    # ``target`` is a legitimate label-free renderer provenance object
+    # (source/split/subject) in the immutable Phase 1 pool.  Closed-world
+    # rendering validation owns that one exception; every scientific sealed
+    # object still rejects label-bearing target/gold/correctness fields.
+    forbidden = {"gold", "gold_index", "correctness", "correct_margin_raw", "evaluator_acc_none"}
     if isinstance(payload, Mapping):
         for key, value in payload.items():
             if str(key).lower() in forbidden:
@@ -1330,6 +1871,12 @@ def _reject_calibration_gold_fields(payload: Any, path: str = "root") -> None:
     elif isinstance(payload, (list, tuple)):
         for index, value in enumerate(payload):
             _reject_calibration_gold_fields(value, "%s[%d]" % (path, index))
+
+
+def validate_sealed_no_gold_fields(payload: Any) -> None:
+    """Public recursive guard shared by every sealed calibration root."""
+
+    _reject_calibration_gold_fields(payload)
 
 
 def _scale_for_namespace(namespace: str) -> str:
@@ -1349,8 +1896,28 @@ def _validate_identity(value: Mapping[str, Any]) -> Dict[str, str]:
 
 def _exact_mapping(payload: Mapping[str, Any], key: str, expected: Mapping[str, Any]) -> None:
     actual = _mapping(payload, key)
-    if actual != expected:
+    if not strict_frozen_equal(actual, expected):
         raise SchemaError("%s differs from the exact frozen contract" % key)
+
+
+def strict_frozen_equal(actual: Any, expected: Any) -> bool:
+    """JSON-tree equality that never treats bool as numeric 0/1."""
+
+    if isinstance(expected, Mapping):
+        return (
+            isinstance(actual, Mapping)
+            and set(actual) == set(expected)
+            and all(strict_frozen_equal(actual[key], expected[key]) for key in expected)
+        )
+    if isinstance(expected, list):
+        return (
+            isinstance(actual, list)
+            and len(actual) == len(expected)
+            and all(strict_frozen_equal(left, right) for left, right in zip(actual, expected))
+        )
+    if type(actual) is not type(expected):
+        return False
+    return bool(actual == expected)
 
 
 def _exact_keys(payload: Mapping[str, Any], expected: Iterable[str], context: str) -> None:
@@ -1440,11 +2007,12 @@ def _unique_sha256_list(values: Sequence[str], context: str) -> List[str]:
 
 def _utc_timestamp(value: Any, context: str) -> str:
     text = _nonempty_string(value, context)
-    if len(text) != 20 or text[4] != "-" or text[7] != "-" or text[10] != "T" or text[13] != ":" or text[16] != ":" or not text.endswith("Z"):
-        raise SchemaError("%s must use YYYY-MM-DDTHH:MM:SSZ" % context)
-    digits = text.replace("-", "").replace("T", "").replace(":", "").replace("Z", "")
-    if not digits.isdigit():
-        raise SchemaError("%s must use numeric UTC fields" % context)
+    try:
+        parsed = datetime.strptime(text, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError as exc:
+        raise SchemaError("%s must be a real YYYY-MM-DDTHH:MM:SSZ UTC time" % context) from exc
+    if parsed.utcoffset() != timezone.utc.utcoffset(parsed):
+        raise SchemaError("%s must use UTC" % context)
     return text
 
 
@@ -1492,6 +2060,10 @@ __all__ = [
     "FIXED_HORIZON_CONTRAST_IDS",
     "FULL_IDENTITY_NAMESPACE",
     "FULL_LM_EVAL_SCORE_SOURCE",
+    "MMLU_DATASET_REVISION",
+    "PHASE1_INPUT_ROOT",
+    "PHASE1_RUN_ROOT",
+    "PHASE2_WORKSPACE_ROOT",
     "IMPLEMENTATION_FILES",
     "PHASE2_ANALYSIS_INPUT_SCHEMA_VERSION",
     "PHASE2_ANALYSIS_SCHEMA_VERSION",
@@ -1511,18 +2083,21 @@ __all__ = [
     "b2_logical_cells",
     "canonical_json_bytes",
     "file_sha256",
+    "frozen_decision_rules",
     "make_calibration_cell_envelope",
     "make_calibration_baseline_envelope",
     "make_calibration_label_sidecar",
     "make_full_final_output_envelope",
     "make_hashed_manifest",
     "make_identity_manifest",
+    "make_source_provenance",
     "make_unseal_authorization",
     "make_unseal_receipt",
     "manifest_sha256",
     "ordered_identity_sha256",
     "protocol_cell_id",
     "stable_sample_identity",
+    "strict_frozen_equal",
     "validate_calibration_cell_envelope",
     "validate_calibration_baseline_envelope",
     "validate_calibration_baseline_sample",
@@ -1534,9 +2109,13 @@ __all__ = [
     "validate_no_persisted_vectors",
     "validate_ordered_identity",
     "validate_phase2_card",
+    "validate_phase2_workspace_output_path",
     "validate_producer_provenance",
     "validate_protocol_cell",
     "validate_scalar_sidecar",
+    "validate_sealed_no_gold_fields",
+    "validate_source_provenance",
+    "verify_live_source_provenance",
     "validate_trajectory_sample",
     "validate_unseal_authorization",
     "validate_unseal_receipt",

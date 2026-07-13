@@ -9,6 +9,9 @@ from __future__ import annotations
 
 import math
 import json
+import hashlib
+import time
+from datetime import datetime, timezone
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,11 +21,17 @@ from tflt.loopscope.phase2_schema import (
     CALIBRATION_IDENTITY_NAMESPACE,
     CHOICE_LABELS,
     DIRECT_PROBE_SCORE_SOURCE,
+    MMLU_DATASET_REVISION,
+    PHASE1_INPUT_ROOT,
+    PHASE1_RUN_ROOT,
+    SchemaError,
     atomic_write_new_json,
     protocol_cell_id,
     stable_sample_identity,
+    strict_frozen_equal,
     validate_no_persisted_vectors,
     validate_phase2_card,
+    validate_phase2_workspace_output_path,
     validate_calibration_baseline_sample,
     validate_final_output_sample,
     validate_producer_provenance,
@@ -31,8 +40,12 @@ from tflt.loopscope.phase2_schema import (
     make_calibration_baseline_envelope,
     make_calibration_cell_envelope,
     make_identity_manifest,
+    make_source_provenance,
     make_hashed_manifest,
+    ordered_identity_sha256,
     file_sha256,
+    validate_sealed_no_gold_fields,
+    verify_live_source_provenance,
 )
 
 
@@ -372,12 +385,17 @@ def cmd_probe_phase2_trajectory(args: Any) -> int:
     """Run the controlled 1+15 calibration design in one loaded-model session."""
 
     from tflt.loopscope.probe import _write_failure, environment_snapshot, serializable_args
-    from tflt.loopscope.schema import ensure_new_directory, write_new_json
+    from tflt.loopscope.schema import ensure_new_directory
 
-    output_dir = ensure_new_directory(Path(args.output_dir))
+    card = json.loads(Path(args.card).read_text(encoding="utf-8"))
+    output_dir = validate_phase2_workspace_output_path(
+        args.output_dir, card, context="Phase 2 probe output directory"
+    )
+    _load_probe_control_manifests(args, card, output_dir)
+    output_dir = ensure_new_directory(output_dir)
     try:
-        write_new_json(output_dir / "command_args.json", serializable_args(args))
-        write_new_json(output_dir / "env.json", environment_snapshot())
+        atomic_write_new_json(output_dir / "command_args.json", serializable_args(args))
+        atomic_write_new_json(output_dir / "env.json", environment_snapshot())
         result = run_phase2_trajectory_probe(args)
         report = materialize_phase2_probe_artifacts(output_dir, args, result)
     except Exception as exc:
@@ -396,10 +414,14 @@ def materialize_phase2_probe_artifacts(
 
     card = result["card"]
     validate_phase2_card(card)
-    attempt = json.loads(Path(args.attempt_manifest).read_text(encoding="utf-8"))
-    receipt = json.loads(Path(args.receipt_manifest).read_text(encoding="utf-8"))
-    verify_manifest_sha256(attempt)
-    verify_manifest_sha256(receipt)
+    resolved_output = validate_phase2_workspace_output_path(
+        output_dir, card, context="Phase 2 probe artifact root"
+    )
+    if Path(output_dir).resolve() != resolved_output:
+        raise TrajectoryError("Phase 2 probe artifact root resolution differs")
+    control = _load_probe_control_manifests(args, card, resolved_output)
+    attempt = control["attempt"]
+    receipt = control["receipt"]
     revision_evidence = make_hashed_manifest(
         {
             "schema_version": "loopscope.phase2-probe-revision-evidence.v1",
@@ -409,6 +431,23 @@ def materialize_phase2_probe_artifacts(
         }
     )
     atomic_write_new_json(output_dir / "revision_evidence.json", revision_evidence)
+    producer_evidence = {
+        "attempt_manifest": control["attempt_ref"],
+        "receipt_manifest": control["receipt_ref"],
+        "input_manifest": control["input_ref"],
+        "command_args": {
+            "path": str((output_dir / "command_args.json").resolve()),
+            "sha256": file_sha256(output_dir / "command_args.json"),
+        },
+        "environment": {
+            "path": str((output_dir / "env.json").resolve()),
+            "sha256": file_sha256(output_dir / "env.json"),
+        },
+        "revision_report": {
+            "path": str((output_dir / "revision_evidence.json").resolve()),
+            "sha256": revision_evidence["manifest_sha256"],
+        },
+    }
     producer = {
         "producer_kind": (
             "gate_b_remote_b1_smoke_probe"
@@ -422,13 +461,17 @@ def materialize_phase2_probe_artifacts(
         "revision_report_sha256": revision_evidence["manifest_sha256"],
     }
     if result["probe_mode"] == "b1-smoke":
-        proof = result["b1_admission_proof"]
+        proof = _bind_b1_admission_proof(
+            card, result["b1_admission_core"], result["pool"], producer,
+            producer_evidence=producer_evidence,
+        )
         validate_b1_admission_proof(proof, card)
         atomic_write_new_json(output_dir / "b1_admission_proof.json", proof)
         report = make_hashed_manifest(
             {
-                "schema_version": "loopscope.phase2-b1-smoke-aggregate.v1",
+                "schema_version": "loopscope.phase2-b1-smoke-aggregate.v3",
                 "artifact_kind": "b1_smoke_scalar_aggregate",
+                "artifact_root": str(output_dir.resolve()),
                 "card_manifest_sha256": card["manifest_sha256"],
                 "revision": card["science"]["revision"],
                 "sample_count": 4,
@@ -437,22 +480,47 @@ def materialize_phase2_probe_artifacts(
                 "session_contract": result["session_contract"],
                 "baseline_examples": result["baseline_examples"],
                 "loop_cells": result["loop_cells"],
-                "b1_admission_proof_sha256": proof["manifest_sha256"],
+                "b1_admission_proof": {
+                    "path": "b1_admission_proof.json",
+                    "sha256": proof["manifest_sha256"],
+                },
+                "resource_usage": result["resource_usage"],
+                "restore_proof": result["restore_proof"],
                 "producer": producer,
+                "producer_evidence": producer_evidence,
                 "vectors_persisted": False,
             }
         )
         validate_no_persisted_vectors(report)
-        validate_probe_aggregate(report, card, b1_proof=proof)
+        validate_probe_aggregate(
+            report,
+            card,
+            b1_proof=proof,
+            aggregate_path=output_dir / "phase2_probe_manifest.json",
+        )
         atomic_write_new_json(output_dir / "phase2_probe_manifest.json", report)
         return report
 
     identities = [_record_identity(record) for record in result["records"]]
+    source_manifest_path = str(Path(args.input_manifest).resolve())
+    source_provenance = make_source_provenance(
+        identity_namespace=CALIBRATION_IDENTITY_NAMESPACE,
+        verification_status="live_verified",
+        source_manifest_path=source_manifest_path,
+        source_manifest_sha256=result["pool"]["source_manifest_sha256"],
+        renderer_subset_sha256=result["pool"][
+            "source_render_contract_subset_sha256"
+        ],
+    )
+    verify_live_source_provenance(
+        source_provenance, CALIBRATION_IDENTITY_NAMESPACE, identities
+    )
     identity_manifest = make_identity_manifest(
         card,
         identity_namespace=CALIBRATION_IDENTITY_NAMESPACE,
         split="phase1_frozen_validation",
         identities=identities,
+        source_provenance=source_provenance,
     )
     atomic_write_new_json(output_dir / "calibration_identity_manifest.json", identity_manifest)
     baseline = make_calibration_baseline_envelope(
@@ -463,6 +531,7 @@ def materialize_phase2_probe_artifacts(
     )
     atomic_write_new_json(output_dir / "calibration_baseline.json", baseline)
     cell_refs = []
+    cell_envelopes = {}
     cells_dir = output_dir / "cells"
     cells_dir.mkdir(parents=False, exist_ok=False)
     for raw in result["loop_cells"]:
@@ -475,6 +544,7 @@ def materialize_phase2_probe_artifacts(
         )
         relative = Path("cells") / (raw["cell"]["cell_id"] + ".json")
         atomic_write_new_json(output_dir / relative, envelope)
+        cell_envelopes[raw["cell"]["cell_id"]] = envelope
         cell_refs.append(
             {
                 "cell_id": raw["cell"]["cell_id"],
@@ -484,10 +554,14 @@ def materialize_phase2_probe_artifacts(
         )
     report = make_hashed_manifest(
         {
-            "schema_version": "loopscope.phase2-calibration-aggregate.v1",
+            "schema_version": "loopscope.phase2-calibration-aggregate.v3",
             "artifact_kind": "sealed_calibration_512_scalar_aggregate",
+            "artifact_root": str(output_dir.resolve()),
             "card_manifest_sha256": card["manifest_sha256"],
-            "identity_manifest_sha256": identity_manifest["manifest_sha256"],
+            "identity_manifest": {
+                "path": "calibration_identity_manifest.json",
+                "sha256": identity_manifest["manifest_sha256"],
+            },
             "ordered_identity_sha256": identity_manifest["ordered_identity_sha256"],
             "revision": card["science"]["revision"],
             "label_state": "sealed",
@@ -500,15 +574,133 @@ def materialize_phase2_probe_artifacts(
                 "sha256": baseline["manifest_sha256"],
             },
             "cells": cell_refs,
-            "prior_b1_admission_proof_sha256": result["prior_b1_admission_proof_sha256"],
+            "prior_b1_admission_proof": {
+                "path": str(Path(args.b1_admission_proof).resolve()),
+                "sha256": result["prior_b1_admission_proof"]["manifest_sha256"],
+            },
+            "resource_usage": result["resource_usage"],
+            "restore_proof": result["restore_proof"],
             "producer": producer,
+            "producer_evidence": producer_evidence,
             "vectors_persisted": False,
         }
     )
     validate_no_persisted_vectors(report)
-    validate_probe_aggregate(report, card)
+    validate_probe_aggregate(
+        report,
+        card,
+        b1_proof=result["prior_b1_admission_proof"],
+        identity_manifest=identity_manifest,
+        baseline=baseline,
+        cells=cell_envelopes,
+        aggregate_path=output_dir / "phase2_probe_manifest.json",
+    )
     atomic_write_new_json(output_dir / "phase2_probe_manifest.json", report)
     return report
+
+
+def _load_probe_control_manifests(
+    args: Any, card: Mapping[str, Any], output_dir: Path
+) -> Dict[str, Any]:
+    """Load and bind the real B1/B2 attempt, receipt, input, and output root."""
+
+    from tflt.loopscope.schema import verify_manifest_sha256
+
+    validate_phase2_card(card)
+    mode = str(args.probe_mode)
+    if mode not in {"b1-smoke", "b2-calibration"}:
+        raise TrajectoryError("unsupported Phase 2 probe mode")
+    resolved_output = validate_phase2_workspace_output_path(
+        output_dir, card, context="Phase 2 probe output directory"
+    )
+    attempt_path = Path(args.attempt_manifest).resolve()
+    receipt_path = Path(args.receipt_manifest).resolve()
+    input_path = Path(args.input_manifest).resolve()
+    try:
+        attempt = json.loads(attempt_path.read_text(encoding="utf-8"))
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        input_manifest = json.loads(input_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise TrajectoryError("probe control/input manifest is unreadable") from exc
+    for payload in (attempt, receipt, input_manifest):
+        if not isinstance(payload, Mapping):
+            raise TrajectoryError("probe control/input manifest must be an object")
+        verify_manifest_sha256(payload)
+    input_ref = {"path": str(input_path), "sha256": input_manifest["manifest_sha256"]}
+    _validate_probe_control_packets(
+        attempt,
+        receipt,
+        card=card,
+        probe_mode=mode,
+        output_root=resolved_output,
+        input_ref=input_ref,
+    )
+    return {
+        "attempt": attempt,
+        "receipt": receipt,
+        "attempt_ref": {"path": str(attempt_path), "sha256": attempt["manifest_sha256"]},
+        "receipt_ref": {"path": str(receipt_path), "sha256": receipt["manifest_sha256"]},
+        "input_ref": input_ref,
+    }
+
+
+def _validate_probe_control_packets(
+    attempt: Mapping[str, Any],
+    receipt: Mapping[str, Any],
+    *,
+    card: Mapping[str, Any],
+    probe_mode: str,
+    output_root: Path,
+    input_ref: Mapping[str, Any],
+) -> None:
+    attempt_keys = {
+        "schema_version", "artifact_kind", "card_manifest_sha256", "probe_mode",
+        "evidence_scale", "identity_namespace", "revision", "input_manifest",
+        "output_root", "executor_thread_id", "created_at_utc", "manifest_sha256",
+    }
+    receipt_keys = attempt_keys | {"attempt_manifest_sha256"}
+    _trajectory_exact_keys(attempt, attempt_keys, "probe attempt manifest")
+    _trajectory_exact_keys(receipt, receipt_keys, "probe receipt manifest")
+    expected_scale = "calibration_smoke_4" if probe_mode == "b1-smoke" else "calibration_512"
+    expected_kind = "phase2_b1_smoke" if probe_mode == "b1-smoke" else "phase2_b2_calibration"
+    if (
+        attempt["schema_version"] != "loopscope.phase2-probe-attempt.v1"
+        or attempt["artifact_kind"] != "%s_attempt" % expected_kind
+        or receipt["schema_version"] != "loopscope.phase2-probe-receipt.v1"
+        or receipt["artifact_kind"] != "%s_execution_receipt" % expected_kind
+    ):
+        raise TrajectoryError("unsupported probe attempt/receipt schema")
+    expected = {
+        "card_manifest_sha256": card["manifest_sha256"],
+        "probe_mode": probe_mode,
+        "evidence_scale": expected_scale,
+        "identity_namespace": CALIBRATION_IDENTITY_NAMESPACE,
+        "revision": card["science"]["revision"],
+        "input_manifest": dict(input_ref),
+        "output_root": str(Path(output_root).resolve()),
+    }
+    for packet in (attempt, receipt):
+        for key, value in expected.items():
+            if not strict_frozen_equal(packet[key], value):
+                raise TrajectoryError("probe attempt/receipt %s binding differs" % key)
+        if not isinstance(packet["executor_thread_id"], str) or not packet["executor_thread_id"].strip():
+            raise TrajectoryError("probe executor thread must be non-empty")
+        _parse_probe_utc(packet["created_at_utc"])
+    if receipt["attempt_manifest_sha256"] != attempt["manifest_sha256"]:
+        raise TrajectoryError("probe receipt is bound to a different attempt")
+    if receipt["executor_thread_id"] != attempt["executor_thread_id"]:
+        raise TrajectoryError("probe attempt/receipt executor differs")
+    if _parse_probe_utc(receipt["created_at_utc"]) < _parse_probe_utc(attempt["created_at_utc"]):
+        raise TrajectoryError("probe receipt predates its attempt")
+
+
+def _parse_probe_utc(value: Any) -> datetime:
+    if not isinstance(value, str):
+        raise TrajectoryError("probe timestamp must be text")
+    try:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError as exc:
+        raise TrajectoryError("probe timestamp must be a real UTC timestamp") from exc
 
 
 def validate_probe_aggregate(
@@ -516,6 +708,10 @@ def validate_probe_aggregate(
     card: Mapping[str, Any],
     *,
     b1_proof: Optional[Mapping[str, Any]] = None,
+    identity_manifest: Optional[Mapping[str, Any]] = None,
+    baseline: Optional[Mapping[str, Any]] = None,
+    cells: Optional[Mapping[str, Mapping[str, Any]]] = None,
+    aggregate_path: Optional[Path] = None,
 ) -> None:
     """Closed-world validation for the B1 or B2 aggregate routing envelope."""
 
@@ -524,14 +720,16 @@ def validate_probe_aggregate(
     validate_phase2_card(card)
     verify_manifest_sha256(report)
     schema = report.get("schema_version")
-    if schema == "loopscope.phase2-b1-smoke-aggregate.v1":
+    if schema == "loopscope.phase2-b1-smoke-aggregate.v3":
         _trajectory_exact_keys(
             report,
             {
-                "schema_version", "artifact_kind", "card_manifest_sha256", "revision",
+                "schema_version", "artifact_kind", "artifact_root",
+                "card_manifest_sha256", "revision",
                 "sample_count", "probe_pool", "warnings", "session_contract",
-                "baseline_examples", "loop_cells", "b1_admission_proof_sha256",
-                "producer", "vectors_persisted", "manifest_sha256",
+                "baseline_examples", "loop_cells", "b1_admission_proof",
+                "resource_usage", "restore_proof",
+                "producer", "producer_evidence", "vectors_persisted", "manifest_sha256",
             },
             "B1 aggregate",
         )
@@ -539,9 +737,26 @@ def validate_probe_aggregate(
             raise TrajectoryError("B1 aggregate kind/count differs")
         if b1_proof is None:
             raise TrajectoryError("B1 aggregate validation requires the independent proof")
-        validate_b1_admission_proof(b1_proof, card)
-        if report["b1_admission_proof_sha256"] != b1_proof["manifest_sha256"]:
+        validate_b1_admission_proof(
+            b1_proof,
+            card,
+            proof_path=(
+                Path(aggregate_path).resolve().parent / report["b1_admission_proof"]["path"]
+                if aggregate_path is not None
+                else None
+            ),
+        )
+        _trajectory_ref(report["b1_admission_proof"], "B1 proof ref")
+        if (
+            report["b1_admission_proof"]
+            != {"path": "b1_admission_proof.json", "sha256": b1_proof["manifest_sha256"]}
+        ):
             raise TrajectoryError("B1 aggregate proof hash differs")
+        validate_phase2_probe_pool(report["probe_pool"], expected_count=4)
+        if report["probe_pool"]["selected_subset_sha256"] != b1_proof["probe_pool_binding"]["selected_subset_sha256"]:
+            raise TrajectoryError("B1 aggregate pool differs from admission proof")
+        if report["producer"] != b1_proof["producer"] or report["producer_evidence"] != b1_proof["producer_evidence"]:
+            raise TrajectoryError("B1 aggregate producer differs from admission proof")
         if len(report["baseline_examples"]) != 4 or len(report["loop_cells"]) != 15:
             raise TrajectoryError("B1 aggregate scalar matrix is incomplete")
         proof_identities = b1_proof["ordered_sample_identity"]
@@ -574,22 +789,32 @@ def validate_probe_aggregate(
             "k1_admission_cell_count": 3,
             "native_vectors_persisted": False,
         }
+        _validate_resource_and_restore(
+            report["resource_usage"], report["restore_proof"], card, include_k1=True
+        )
         allowed_producer_kinds = {"gate_b_remote_b1_smoke_probe"}
-    elif schema == "loopscope.phase2-calibration-aggregate.v1":
+    elif schema == "loopscope.phase2-calibration-aggregate.v3":
         _trajectory_exact_keys(
             report,
             {
-                "schema_version", "artifact_kind", "card_manifest_sha256",
-                "identity_manifest_sha256", "ordered_identity_sha256", "revision",
+                "schema_version", "artifact_kind", "artifact_root", "card_manifest_sha256",
+                "identity_manifest", "ordered_identity_sha256", "revision",
                 "label_state", "sample_count", "probe_pool", "warnings", "session_contract",
-                "baseline", "cells", "prior_b1_admission_proof_sha256", "producer",
+                "baseline", "cells", "prior_b1_admission_proof", "resource_usage",
+                "restore_proof", "producer", "producer_evidence",
                 "vectors_persisted", "manifest_sha256",
             },
             "B2 aggregate",
         )
         if report["artifact_kind"] != "sealed_calibration_512_scalar_aggregate" or report["label_state"] != "sealed" or report["sample_count"] != 512:
             raise TrajectoryError("B2 aggregate kind/seal/count differs")
+        validate_phase2_probe_pool(report["probe_pool"], expected_count=512)
+        _trajectory_ref(report["identity_manifest"], "B2 identity-manifest ref")
         _trajectory_ref(report["baseline"], "B2 baseline ref")
+        if report["identity_manifest"]["path"] != "calibration_identity_manifest.json":
+            raise TrajectoryError("B2 identity-manifest path differs from write-once root")
+        if report["baseline"]["path"] != "calibration_baseline.json":
+            raise TrajectoryError("B2 baseline path differs from write-once root")
         expected_ids = [cell["cell_id"] for cell in b2_logical_cells(card)]
         refs = report["cells"]
         if not isinstance(refs, list) or [ref.get("cell_id") for ref in refs] != expected_ids:
@@ -597,9 +822,64 @@ def validate_probe_aggregate(
         for ref in refs:
             _trajectory_exact_keys(ref, {"cell_id", "path", "sha256"}, "B2 cell ref")
             _trajectory_ref({"path": ref["path"], "sha256": ref["sha256"]}, "B2 cell ref")
-        _trajectory_sha256(report["prior_b1_admission_proof_sha256"], "prior B1 proof")
-        _trajectory_sha256(report["identity_manifest_sha256"], "B2 identity manifest")
+            if ref["path"] != "cells/%s.json" % ref["cell_id"]:
+                raise TrajectoryError("B2 cell path differs from write-once root")
+        _trajectory_ref(report["prior_b1_admission_proof"], "prior B1 proof ref")
+        if not Path(report["prior_b1_admission_proof"]["path"]).is_absolute():
+            raise TrajectoryError("prior B1 proof path must be absolute")
         _trajectory_sha256(report["ordered_identity_sha256"], "B2 ordered identity")
+        if b1_proof is None:
+            raise TrajectoryError("B2 aggregate validation requires the prior B1 proof")
+        validate_b1_admission_proof(
+            b1_proof,
+            card,
+            proof_path=(
+                Path(report["prior_b1_admission_proof"]["path"])
+                if aggregate_path is not None
+                else None
+            ),
+        )
+        if report["prior_b1_admission_proof"]["sha256"] != b1_proof["manifest_sha256"]:
+            raise TrajectoryError("B2 aggregate prior-proof hash differs")
+        binding = b1_proof["probe_pool_binding"]
+        projected = _project_probe_pool_prefix(report["probe_pool"], 4)
+        if (
+            binding["source_manifest_sha256"] != report["probe_pool"]["source_manifest_sha256"]
+            or binding["source_render_contract_subset_sha256"]
+            != report["probe_pool"]["source_render_contract_subset_sha256"]
+            or binding["probe_pool_sample_ids"] != report["probe_pool"]["sample_ids"][:4]
+            or binding["selected_subset_sha256"] != projected["selected_subset_sha256"]
+            or binding["selected_render_contract_subset_sha256"]
+            != projected["selected_render_contract_subset_sha256"]
+        ):
+            raise TrajectoryError("B2 aggregate is not admitted by the same frozen B1 root")
+        _validate_resource_and_restore(
+            report["resource_usage"], report["restore_proof"], card, include_k1=False
+        )
+        if identity_manifest is not None:
+            from tflt.loopscope.phase2_schema import validate_identity_manifest
+
+            validate_identity_manifest(identity_manifest, card)
+            if (
+                report["identity_manifest"]["sha256"] != identity_manifest["manifest_sha256"]
+                or report["ordered_identity_sha256"] != identity_manifest["ordered_identity_sha256"]
+                or b1_proof["ordered_sample_identity"]
+                != identity_manifest["ordered_sample_identity"][:4]
+            ):
+                raise TrajectoryError("B2 identity root differs from aggregate/B1 proof")
+        if baseline is not None:
+            if report["baseline"]["sha256"] != baseline.get("manifest_sha256"):
+                raise TrajectoryError("B2 baseline ref differs from loaded artifact")
+            if baseline.get("producer") != report["producer"]:
+                raise TrajectoryError("B2 baseline producer differs from aggregate producer")
+        if cells is not None:
+            if set(cells) != set(expected_ids):
+                raise TrajectoryError("B2 loaded cell set differs")
+            for ref in refs:
+                if ref["sha256"] != cells[ref["cell_id"]].get("manifest_sha256"):
+                    raise TrajectoryError("B2 cell ref differs from loaded artifact")
+                if cells[ref["cell_id"]].get("producer") != report["producer"]:
+                    raise TrajectoryError("B2 cell producer differs from aggregate producer")
         expected_session = {
             "model_load_count": 1,
             "no_loop_boundary_passes_per_sample": 1,
@@ -616,12 +896,38 @@ def validate_probe_aggregate(
         raise TrajectoryError("probe aggregate session contract differs")
     if report["vectors_persisted"] is not False:
         raise TrajectoryError("probe aggregate cannot persist vectors")
+    root = Path(report.get("artifact_root", ""))
+    if not root.is_absolute():
+        raise TrajectoryError("probe aggregate artifact_root must be absolute")
+    if aggregate_path is not None and root != Path(aggregate_path).resolve().parent:
+        raise TrajectoryError("probe aggregate artifact_root differs from its actual parent")
+    try:
+        governed_root = validate_phase2_workspace_output_path(
+            root, card, context="probe aggregate artifact_root"
+        )
+    except SchemaError as exc:
+        raise TrajectoryError(str(exc)) from exc
+    if root.resolve() != governed_root:
+        raise TrajectoryError("probe aggregate artifact_root escapes the governed workspace")
     if not isinstance(report["probe_pool"], Mapping) or not isinstance(report["warnings"], list):
         raise TrajectoryError("probe aggregate pool/warnings are malformed")
+    if any(not isinstance(value, str) for value in report["warnings"]):
+        raise TrajectoryError("probe aggregate warnings must be strings")
     validate_producer_provenance(
         report["producer"], allowed_kinds=allowed_producer_kinds
     )
+    _validate_probe_producer_evidence(
+        report["producer_evidence"],
+        report["producer"],
+        card=card,
+        probe_mode=("b1-smoke" if schema.endswith("b1-smoke-aggregate.v3") else "b2-calibration"),
+        output_root=root,
+        load_files=aggregate_path is not None,
+    )
+    if report["producer_evidence"]["input_manifest"]["sha256"] != report["probe_pool"]["source_manifest_sha256"]:
+        raise TrajectoryError("probe producer input manifest differs from aggregate pool")
     validate_no_persisted_vectors(report)
+    validate_sealed_no_gold_fields(report)
 
 
 def _trajectory_exact_keys(value: Any, expected: Sequence[str], context: str) -> None:
@@ -642,6 +948,372 @@ def _trajectory_ref(value: Any, context: str) -> None:
     if not isinstance(value["path"], str) or not value["path"]:
         raise TrajectoryError("%s path must be non-empty" % context)
     _trajectory_sha256(value["sha256"], "%s hash" % context)
+
+
+def _validate_probe_producer_evidence(
+    evidence: Any,
+    producer: Mapping[str, Any],
+    *,
+    card: Mapping[str, Any],
+    probe_mode: str,
+    output_root: Path,
+    load_files: bool,
+) -> None:
+    keys = {
+        "attempt_manifest", "receipt_manifest", "input_manifest", "command_args",
+        "environment", "revision_report",
+    }
+    _trajectory_exact_keys(evidence, keys, "probe producer evidence")
+    for key in keys:
+        _trajectory_ref(evidence[key], "probe producer evidence.%s" % key)
+        if not Path(evidence[key]["path"]).is_absolute():
+            raise TrajectoryError("probe producer evidence paths must be absolute")
+    expected_hashes = {
+        "attempt_manifest": producer["attempt_manifest_sha256"],
+        "receipt_manifest": producer["receipt_manifest_sha256"],
+        "command_args": producer["command_sha256"],
+        "environment": producer["environment_sha256"],
+        "revision_report": producer["revision_report_sha256"],
+    }
+    for key, digest in expected_hashes.items():
+        if evidence[key]["sha256"] != digest:
+            raise TrajectoryError("probe producer evidence hash differs from producer")
+    if not load_files:
+        return
+    loaded: Dict[str, Any] = {}
+    for key, ref in evidence.items():
+        path = Path(ref["path"])
+        try:
+            raw = path.read_bytes()
+        except OSError as exc:
+            raise TrajectoryError("probe producer evidence file is unreadable: %s" % key) from exc
+        if key in {"command_args", "environment"}:
+            if hashlib.sha256(raw).hexdigest() != ref["sha256"]:
+                raise TrajectoryError("probe producer evidence file hash differs: %s" % key)
+        try:
+            payload = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, ValueError) as exc:
+            raise TrajectoryError("probe producer evidence JSON is malformed: %s" % key) from exc
+        if not isinstance(payload, Mapping):
+            raise TrajectoryError("probe producer evidence must contain objects")
+        if key not in {"command_args", "environment"}:
+            from tflt.loopscope.schema import verify_manifest_sha256
+
+            verify_manifest_sha256(payload)
+            if payload["manifest_sha256"] != ref["sha256"]:
+                raise TrajectoryError("probe producer manifest hash differs: %s" % key)
+        loaded[key] = payload
+    _validate_probe_control_packets(
+        loaded["attempt_manifest"],
+        loaded["receipt_manifest"],
+        card=card,
+        probe_mode=probe_mode,
+        output_root=Path(output_root),
+        input_ref=evidence["input_manifest"],
+    )
+    command = loaded["command_args"]
+    expected_command = {
+        "probe_mode": probe_mode,
+        "model": "qwen3-1.7b-base",
+        "revision": card["science"]["revision"],
+        "dtype": card["science"]["dtype"],
+        "output_dir": str(Path(output_root).resolve()),
+        "input_manifest": evidence["input_manifest"]["path"],
+        "attempt_manifest": evidence["attempt_manifest"]["path"],
+        "receipt_manifest": evidence["receipt_manifest"]["path"],
+    }
+    for key, expected in expected_command.items():
+        if command.get(key) != expected:
+            raise TrajectoryError("probe command_args.%s differs from actual binding" % key)
+    if probe_mode == "b1-smoke":
+        if command.get("max_examples") != 4 or command.get("b1_admission_proof") is not None:
+            raise TrajectoryError("B1 command scale/admission differs")
+    elif command.get("max_examples") is not None or not command.get("b1_admission_proof"):
+        raise TrajectoryError("B2 command scale/admission differs")
+    revision = loaded["revision_report"]
+    _trajectory_exact_keys(
+        revision,
+        {
+            "schema_version", "card_manifest_sha256", "manifest_revision",
+            "revision_closure", "manifest_sha256",
+        },
+        "probe revision evidence",
+    )
+    closure = revision["revision_closure"]
+    if (
+        revision["schema_version"] != "loopscope.phase2-probe-revision-evidence.v1"
+        or revision["card_manifest_sha256"] != card["manifest_sha256"]
+        or revision["manifest_revision"] != card["science"]["revision"]
+        or not isinstance(closure, Mapping)
+        or closure.get("manifest_commit") != card["science"]["revision"]
+        or closure.get("model_commit") != card["science"]["revision"]
+        or closure.get("tokenizer_commit") != card["science"]["revision"]
+        or closure.get("match") is not True
+    ):
+        raise TrajectoryError("probe revision closure differs from the card")
+
+
+_PROBE_POOL_KEYS = {
+    "source", "split", "count", "seed", "manifest_sha256",
+    "source_manifest_sha256", "selected_subset_sha256",
+    "source_manifest_count", "sample_ids", "records", "task_group",
+    "num_fewshot", "uses_target_gold_labels", "fewshot_answers_present",
+    "renderer", "render_contract_sha256", "rendering_records",
+    "source_render_contract_subset_sha256",
+    "selected_render_contract_subset_sha256",
+}
+_RENDERER_KEYS = {
+    "renderer_entrypoint", "lm_eval_version", "renderer_source_sha256",
+    "source_files_sha256", "template_sha256", "task_configs_sha256",
+    "render_contract_sha256", "dataset_revision",
+    "dataset_fingerprint_sha256", "source_projection_sha256",
+    "render_sha256", "renderer_manifest_sha256",
+}
+
+
+def validate_phase2_probe_pool(pool: Mapping[str, Any], *, expected_count: int) -> None:
+    """Validate the exact frozen Phase 1 validation-pool projection."""
+
+    from tflt.loopscope.schema import canonical_json_bytes, manifest_sha256
+
+    _trajectory_exact_keys(pool, _PROBE_POOL_KEYS, "Phase 2 probe_pool")
+    validate_sealed_no_gold_fields(pool)
+    if (
+        pool["source"] != "cais/mmlu@%s" % MMLU_DATASET_REVISION
+        or pool["split"] != "validation"
+        or pool["task_group"] != "mmlu"
+        or pool["num_fewshot"] != 5
+        or pool["uses_target_gold_labels"] is not False
+        or pool["fewshot_answers_present"] is not True
+    ):
+        raise TrajectoryError("probe_pool science/source contract differs")
+    for key, expected in (
+        ("count", expected_count),
+        ("source_manifest_count", 512),
+        ("seed", 20260710),
+    ):
+        if isinstance(pool[key], bool) or not isinstance(pool[key], int) or pool[key] != expected:
+            raise TrajectoryError("probe_pool.%s differs from the frozen value" % key)
+    for key in (
+        "manifest_sha256", "source_manifest_sha256", "selected_subset_sha256",
+        "source_render_contract_subset_sha256",
+        "selected_render_contract_subset_sha256", "render_contract_sha256",
+    ):
+        _trajectory_sha256(pool[key], "probe_pool.%s" % key)
+    if pool["manifest_sha256"] != pool["selected_subset_sha256"]:
+        raise TrajectoryError("probe_pool manifest and selected-subset hashes differ")
+    sample_ids = pool["sample_ids"]
+    records = pool["records"]
+    rendering = pool["rendering_records"]
+    if not isinstance(sample_ids, list) or len(sample_ids) != expected_count:
+        raise TrajectoryError("probe_pool sample_ids count differs")
+    if len({str(value) for value in sample_ids}) != expected_count:
+        raise TrajectoryError("probe_pool sample_ids must be unique")
+    if not isinstance(records, list) or len(records) != expected_count:
+        raise TrajectoryError("probe_pool records count differs")
+    record_ids = []
+    for record in records:
+        _trajectory_exact_keys(record, {"id", "prompt_sha256"}, "probe_pool record")
+        record_ids.append(str(record["id"]))
+        _trajectory_sha256(record["prompt_sha256"], "probe_pool prompt hash")
+    if record_ids != [str(value) for value in sample_ids]:
+        raise TrajectoryError("probe_pool record order differs from sample_ids")
+    if not isinstance(rendering, list) or len(rendering) != expected_count:
+        raise TrajectoryError("probe_pool rendering-record count differs")
+    for index, rendered in enumerate(rendering):
+        _validate_rendering_record(
+            rendered,
+            expected_id=str(sample_ids[index]),
+            expected_prompt_sha256=records[index]["prompt_sha256"],
+        )
+    rendered_hash = hashlib.sha256(canonical_json_bytes(rendering)).hexdigest()
+    if rendered_hash != pool["selected_render_contract_subset_sha256"]:
+        raise TrajectoryError("probe_pool rendering subset hash differs")
+    renderer = pool["renderer"]
+    _trajectory_exact_keys(renderer, _RENDERER_KEYS, "probe_pool renderer")
+    if (
+        renderer["lm_eval_version"] != "0.4.11"
+        or renderer["dataset_revision"] != MMLU_DATASET_REVISION
+        or renderer["renderer_source_sha256"] != renderer["source_files_sha256"]
+        or renderer["template_sha256"] != renderer["task_configs_sha256"]
+        or renderer["render_contract_sha256"] != pool["render_contract_sha256"]
+    ):
+        raise TrajectoryError("probe_pool renderer provenance differs")
+    if not isinstance(renderer["renderer_entrypoint"], str) or not renderer["renderer_entrypoint"]:
+        raise TrajectoryError("probe_pool renderer entrypoint is empty")
+    for key in _RENDERER_KEYS - {"renderer_entrypoint", "lm_eval_version", "dataset_revision"}:
+        _trajectory_sha256(renderer[key], "probe_pool.renderer.%s" % key)
+    selected = {
+        "schema_version": "loopscope.probe-pool-selection.v1",
+        "source": pool["source"],
+        "split": pool["split"],
+        "count": pool["count"],
+        "seed": pool["seed"],
+        "sample_ids": sample_ids,
+        "records": records,
+        "task_group": "mmlu",
+        "num_fewshot": 5,
+        "uses_target_gold_labels": False,
+        "fewshot_answers_present": True,
+        "renderer": renderer,
+        "render_contract_sha256": pool["render_contract_sha256"],
+        "rendering_records": rendering,
+        "render_contract_subset_sha256": pool["selected_render_contract_subset_sha256"],
+        "source_manifest_sha256": pool["source_manifest_sha256"],
+    }
+    if manifest_sha256(selected) != pool["selected_subset_sha256"]:
+        raise TrajectoryError("probe_pool selected-subset hash does not match content")
+
+
+def _validate_rendering_record(
+    value: Mapping[str, Any], *, expected_id: str, expected_prompt_sha256: str
+) -> None:
+    """Validate the real label-free Phase 1 renderer projection exactly.
+
+    The nested ``target`` object is provenance only.  It may contain exactly
+    source/split/subject, never a target answer or gold label.
+    """
+
+    keys = {
+        "id", "target", "task_group", "task_name", "target_doc_id",
+        "target_doc_index", "target_doc_sha256", "dataset_fingerprint",
+        "num_fewshot", "uses_target_gold_labels", "fewshot_answers_present",
+        "renderer", "fewshot_sample_ids", "demonstrations", "prompt_sha256",
+    }
+    _trajectory_exact_keys(value, keys, "probe_pool rendering record")
+    target = value["target"]
+    _trajectory_exact_keys(target, {"source", "split", "subject"}, "renderer target provenance")
+    if (
+        str(value["id"]) != expected_id
+        or value["task_group"] != "mmlu"
+        or not isinstance(value["task_name"], str)
+        or not value["task_name"].startswith("mmlu_")
+        or not isinstance(value["target_doc_id"], str)
+        or not value["target_doc_id"]
+        or isinstance(value["target_doc_index"], bool)
+        or not isinstance(value["target_doc_index"], int)
+        or value["target_doc_index"] < 0
+        or value["num_fewshot"] != 5
+        or value["uses_target_gold_labels"] is not False
+        or value["fewshot_answers_present"] is not True
+        or target["split"] != "validation"
+        or not all(isinstance(target[key], str) and target[key] for key in target)
+        or value["prompt_sha256"] != expected_prompt_sha256
+    ):
+        raise TrajectoryError("probe_pool rendering science/identity contract differs")
+    for key in ("target_doc_sha256", "dataset_fingerprint", "prompt_sha256"):
+        _trajectory_sha256(value[key], "rendering record %s" % key)
+    renderer = value["renderer"]
+    _trajectory_exact_keys(renderer, _RENDERER_KEYS, "rendering record renderer")
+    for key in _RENDERER_KEYS - {"renderer_entrypoint", "lm_eval_version", "dataset_revision"}:
+        _trajectory_sha256(renderer[key], "rendering record renderer.%s" % key)
+    if (
+        renderer["lm_eval_version"] != "0.4.11"
+        or renderer["dataset_revision"] != MMLU_DATASET_REVISION
+        or renderer["render_sha256"] != expected_prompt_sha256
+        or not isinstance(renderer["renderer_entrypoint"], str)
+        or not renderer["renderer_entrypoint"]
+    ):
+        raise TrajectoryError("rendering record renderer provenance differs")
+    ids = value["fewshot_sample_ids"]
+    demonstrations = value["demonstrations"]
+    if not isinstance(ids, list) or not isinstance(demonstrations, list) or len(ids) != 5 or len(demonstrations) != 5:
+        raise TrajectoryError("rendering record requires exactly five demonstrations")
+    normalized_ids = []
+    demo_keys = {
+        "id", "doc_index", "source", "split", "subject", "doc_sha256",
+        "rendered_sha256", "gold_sha256",
+    }
+    for demo in demonstrations:
+        _trajectory_exact_keys(demo, demo_keys, "rendering demonstration provenance")
+        if (
+            isinstance(demo["doc_index"], bool)
+            or not isinstance(demo["doc_index"], int)
+            or demo["doc_index"] < 0
+            or demo["split"] != "dev"
+            or demo["subject"] != target["subject"]
+            or not all(isinstance(demo[key], str) and demo[key] for key in ("id", "source", "subject"))
+        ):
+            raise TrajectoryError("rendering demonstration provenance differs")
+        for key in ("doc_sha256", "rendered_sha256", "gold_sha256"):
+            _trajectory_sha256(demo[key], "rendering demonstration %s" % key)
+        normalized_ids.append(demo["id"])
+    if normalized_ids != ids or len(set(normalized_ids)) != 5 or value["target_doc_id"] in ids:
+        raise TrajectoryError("rendering demonstration identity/order differs")
+
+
+def _k1_resource_cell_ids(card: Mapping[str, Any]) -> List[str]:
+    return [
+        protocol_cell_id("fixed_horizon", window, 1, 1.0)
+        for window in card["science"]["windows"]
+    ]
+
+
+def _validate_resource_and_restore(
+    resource: Mapping[str, Any],
+    restore: Mapping[str, Any],
+    card: Mapping[str, Any],
+    *,
+    include_k1: bool,
+) -> None:
+    baseline_id = protocol_cell_id("baseline_no_loop", "none", 1, 1.0)
+    loop_ids = [cell["cell_id"] for cell in b2_logical_cells(card)]
+    k1_ids = _k1_resource_cell_ids(card) if include_k1 else []
+    _trajectory_exact_keys(
+        resource, {"schema_version", "baseline", "loop_cells", "k1_cells"},
+        "probe resource usage",
+    )
+    if resource["schema_version"] != "loopscope.phase2-probe-resource-usage.v1":
+        raise TrajectoryError("unsupported probe resource schema")
+    expected_groups = (([baseline_id], [resource["baseline"]]), (loop_ids, resource["loop_cells"]), (k1_ids, resource["k1_cells"]))
+    for expected_ids, records in expected_groups:
+        if not isinstance(records, list) or [row.get("cell_id") for row in records] != expected_ids:
+            raise TrajectoryError("resource usage cell order differs")
+        for row in records:
+            _trajectory_exact_keys(
+                row, {"cell_id", "wall_clock_seconds", "peak_gpu_memory_bytes"},
+                "resource usage cell",
+            )
+            wall = row["wall_clock_seconds"]
+            peak = row["peak_gpu_memory_bytes"]
+            if isinstance(wall, bool) or not isinstance(wall, (int, float)) or not math.isfinite(float(wall)) or wall < 0:
+                raise TrajectoryError("resource wall-clock value is invalid")
+            if isinstance(peak, bool) or not isinstance(peak, int) or peak < 0:
+                raise TrajectoryError("resource peak-memory value is invalid")
+    _trajectory_exact_keys(
+        restore, {"schema_version", "loop_cells", "k1_cells"}, "restore proof"
+    )
+    if restore["schema_version"] != "loopscope.phase2-wrapper-restore-proof.v1":
+        raise TrajectoryError("unsupported restore-proof schema")
+    for expected_ids, records in ((loop_ids, restore["loop_cells"]), (k1_ids, restore["k1_cells"])):
+        if not isinstance(records, list) or [row.get("cell_id") for row in records] != expected_ids:
+            raise TrajectoryError("restore-proof cell order differs")
+        for row in records:
+            _trajectory_exact_keys(
+                row, {"cell_id", "restore_called", "restore_completed"},
+                "restore proof cell",
+            )
+            if row["restore_called"] is not True or row["restore_completed"] is not True:
+                raise TrajectoryError("wrapper restore was not proven complete")
+
+
+def _resource_start(torch: Any, device: Any) -> float:
+    if getattr(device, "type", str(device).split(":", 1)[0]) == "cuda":
+        torch.cuda.synchronize(device)
+        torch.cuda.reset_peak_memory_stats(device)
+    return time.perf_counter()
+
+
+def _resource_finish(torch: Any, device: Any, started: float, cell_id: str) -> Dict[str, Any]:
+    peak = 0
+    if getattr(device, "type", str(device).split(":", 1)[0]) == "cuda":
+        torch.cuda.synchronize(device)
+        peak = int(torch.cuda.max_memory_allocated(device))
+    return {
+        "cell_id": cell_id,
+        "wall_clock_seconds": float(time.perf_counter() - started),
+        "peak_gpu_memory_bytes": peak,
+    }
 
 
 def run_phase2_trajectory_probe(args: Any) -> Dict[str, Any]:
@@ -686,13 +1358,20 @@ def run_phase2_trajectory_probe(args: Any) -> Dict[str, Any]:
         if args.b1_admission_proof is not None:
             raise TrajectoryError("B1 smoke cannot consume a prior B1 proof")
         prior_b1_proof = None
+        validate_phase2_probe_pool(pool_metadata, expected_count=4)
     else:
         if args.max_examples is not None or len(records) != card["science"]["calibration_count"]:
             raise TrajectoryError("B2 calibration requires the full frozen 512 records")
         if not args.b1_admission_proof:
             raise TrajectoryError("B2 calibration requires an audited B1 admission proof")
         prior_b1_proof = json.loads(Path(args.b1_admission_proof).read_text(encoding="utf-8"))
-        validate_b1_admission_proof(prior_b1_proof, card)
+        validate_b1_admission_for_b2(
+            prior_b1_proof,
+            card,
+            pool_metadata,
+            records,
+            proof_path=Path(args.b1_admission_proof),
+        )
         if not prior_b1_proof["k1_equivalence"]["all_match"] or not prior_b1_proof["fixed_step_prefix_consistency"]["all_match"]:
             raise TrajectoryError("B2 admission proof contains a failed K1/prefix check")
     model_info = resolve_model(args.model)
@@ -715,6 +1394,7 @@ def run_phase2_trajectory_probe(args: Any) -> Dict[str, Any]:
 
     native_store: Dict[Tuple[str, str], Any] = {}
     baseline_examples = []
+    baseline_started = _resource_start(torch, device)
     with torch.inference_mode():
         for record in records:
             encoded = tokenizer(record["text"], return_tensors="pt")
@@ -763,10 +1443,19 @@ def run_phase2_trajectory_probe(args: Any) -> Dict[str, Any]:
                 }
             )
             del outputs, boundaries, inputs, encoded
+    baseline_resource = _resource_finish(
+        torch,
+        device,
+        baseline_started,
+        protocol_cell_id("baseline_no_loop", "none", 1, 1.0),
+    )
 
     cell_reports = []
+    loop_resource = []
+    loop_restore = []
     prefix_captures_by_cell: Dict[str, List[Dict[str, Any]]] = {}
     for cell in b2_logical_cells(card):
+        cell_started = _resource_start(torch, device)
         collector = Phase2TrajectoryCollector(window_width=4, expected_k=cell["k"])
         config = LoopConfig.from_window_string(
             model_alias=args.model,
@@ -812,6 +1501,16 @@ def run_phase2_trajectory_probe(args: Any) -> Dict[str, Any]:
                     del outputs, inputs, encoded
         finally:
             handle.restore()
+            loop_restore.append(
+                {
+                    "cell_id": cell["cell_id"],
+                    "restore_called": True,
+                    "restore_completed": True,
+                }
+            )
+        loop_resource.append(
+            _resource_finish(torch, device, cell_started, cell["cell_id"])
+        )
         cell_reports.append(
             {
                 "cell": cell,
@@ -819,10 +1518,14 @@ def run_phase2_trajectory_probe(args: Any) -> Dict[str, Any]:
                 "trajectory_samples": collector.samples,
             }
         )
-    b1_proof = None
+    b1_admission_core = None
+    k1_resource = []
+    k1_restore = []
     if probe_mode == "b1-smoke":
         k1_outputs_by_window: Dict[str, List[Dict[str, Any]]] = {}
         for window in windows:
+            k1_cell_id = protocol_cell_id("fixed_horizon", window, 1, 1.0)
+            k1_started = _resource_start(torch, device)
             collector = Phase2TrajectoryCollector(window_width=4, expected_k=1)
             config = LoopConfig.from_window_string(
                 model_alias=args.model,
@@ -866,8 +1569,18 @@ def run_phase2_trajectory_probe(args: Any) -> Dict[str, Any]:
                         del outputs, inputs, encoded
             finally:
                 handle.restore()
+                k1_restore.append(
+                    {
+                        "cell_id": k1_cell_id,
+                        "restore_called": True,
+                        "restore_completed": True,
+                    }
+                )
+            k1_resource.append(
+                _resource_finish(torch, device, k1_started, k1_cell_id)
+            )
             k1_outputs_by_window[window] = rows
-        b1_proof = build_b1_admission_proof(
+        b1_admission_core = _build_b1_admission_core(
             card,
             [row["final_output"] for row in baseline_examples],
             k1_outputs_by_window,
@@ -891,16 +1604,31 @@ def run_phase2_trajectory_probe(args: Any) -> Dict[str, Any]:
         },
         "baseline_examples": baseline_examples,
         "loop_cells": cell_reports,
-        "b1_admission_proof": b1_proof,
-        "prior_b1_admission_proof_sha256": (
-            prior_b1_proof["manifest_sha256"] if prior_b1_proof is not None else None
-        ),
+        "b1_admission_core": b1_admission_core,
+        "prior_b1_admission_proof": prior_b1_proof,
+        "resource_usage": {
+            "schema_version": "loopscope.phase2-probe-resource-usage.v1",
+            "baseline": baseline_resource,
+            "loop_cells": loop_resource,
+            "k1_cells": k1_resource,
+        },
+        "restore_proof": {
+            "schema_version": "loopscope.phase2-wrapper-restore-proof.v1",
+            "loop_cells": loop_restore,
+            "k1_cells": k1_restore,
+        },
     }
+    _validate_resource_and_restore(
+        result["resource_usage"],
+        result["restore_proof"],
+        card,
+        include_k1=probe_mode == "b1-smoke",
+    )
     validate_no_persisted_vectors(
         {
             "baseline_examples": baseline_examples,
             "loop_cells": cell_reports,
-            "b1_admission_proof": b1_proof,
+            "b1_admission_core": b1_admission_core,
         }
     )
     return result
@@ -990,13 +1718,13 @@ def prefix_consistent(
     return {"match": True, "max_abs": max_abs, "atol": atol, "rtol": rtol}
 
 
-def build_b1_admission_proof(
+def _build_b1_admission_core(
     card: Mapping[str, Any],
     baseline_outputs: Sequence[Mapping[str, Any]],
     k1_outputs_by_window: Mapping[str, Sequence[Mapping[str, Any]]],
     prefix_captures_by_cell: Mapping[str, Sequence[Mapping[str, Any]]],
 ) -> Dict[str, Any]:
-    """Derive B1 K1 and cross-K proofs from ephemeral in-memory vectors.
+    """Derive scalar B1 checks from ephemeral in-memory vectors.
 
     The inputs may contain vectors because this function executes inside the
     controlled model process.  The returned proof contains scalar maxima and
@@ -1108,28 +1836,67 @@ def build_b1_admission_proof(
             )
         prefix_windows.append({"window": window, "comparisons": comparisons})
 
+    return {
+        "ordered_sample_identity": identities,
+        "tolerances": dict(tolerances),
+        "k1_equivalence": {
+            "windows": k1_windows,
+            "all_match": all(row["all_match"] for row in k1_windows),
+        },
+        "fixed_step_prefix_consistency": {
+            "windows": prefix_windows,
+            "all_match": all(
+                comparison["all_match"]
+                for row in prefix_windows
+                for comparison in row["comparisons"]
+            ),
+        },
+    }
+
+
+def _bind_b1_admission_proof(
+    card: Mapping[str, Any],
+    core: Mapping[str, Any],
+    probe_pool: Mapping[str, Any],
+    producer: Mapping[str, Any],
+    *,
+    producer_evidence: Mapping[str, Any],
+) -> Dict[str, Any]:
+    validate_phase2_probe_pool(probe_pool, expected_count=4)
+    validate_producer_provenance(
+        producer, allowed_kinds={"gate_b_remote_b1_smoke_probe"}
+    )
+    identities = list(core["ordered_sample_identity"])
     proof = make_hashed_manifest(
         {
-            "schema_version": "loopscope.phase2-b1-admission-proof.v1",
+            "schema_version": "loopscope.phase2-b1-admission-proof.v3",
             "artifact_kind": "b1_k1_and_fixed_step_prefix_proof",
             "card_id": card["card_id"],
             "card_manifest_sha256": card["manifest_sha256"],
             "revision": card["science"]["revision"],
             "sample_count": 4,
             "ordered_sample_identity": identities,
-            "tolerances": dict(tolerances),
-            "k1_equivalence": {
-                "windows": k1_windows,
-                "all_match": all(row["all_match"] for row in k1_windows),
-            },
-            "fixed_step_prefix_consistency": {
-                "windows": prefix_windows,
-                "all_match": all(
-                    comparison["all_match"]
-                    for row in prefix_windows
-                    for comparison in row["comparisons"]
+            "probe_pool_binding": {
+                "source_manifest_sha256": probe_pool["source_manifest_sha256"],
+                "source_manifest_count": probe_pool["source_manifest_count"],
+                "selected_subset_sha256": probe_pool["selected_subset_sha256"],
+                "source_render_contract_subset_sha256": probe_pool[
+                    "source_render_contract_subset_sha256"
+                ],
+                "selected_render_contract_subset_sha256": probe_pool[
+                    "selected_render_contract_subset_sha256"
+                ],
+                "probe_pool_sample_ids": list(probe_pool["sample_ids"]),
+                "ordered_identity_sha256": ordered_identity_sha256(identities),
+                "deterministic_subset_rule": (
+                    "first_four_records_of_phase1_frozen_validation_manifest_in_natural_order"
                 ),
             },
+            "producer": dict(producer),
+            "producer_evidence": dict(producer_evidence),
+            "tolerances": dict(core["tolerances"]),
+            "k1_equivalence": dict(core["k1_equivalence"]),
+            "fixed_step_prefix_consistency": dict(core["fixed_step_prefix_consistency"]),
             "vectors_persisted": False,
         }
     )
@@ -1137,19 +1904,47 @@ def build_b1_admission_proof(
     return proof
 
 
-def validate_b1_admission_proof(proof: Mapping[str, Any], card: Mapping[str, Any]) -> None:
+def build_b1_admission_proof(
+    card: Mapping[str, Any],
+    baseline_outputs: Sequence[Mapping[str, Any]],
+    k1_outputs_by_window: Mapping[str, Sequence[Mapping[str, Any]]],
+    prefix_captures_by_cell: Mapping[str, Sequence[Mapping[str, Any]]],
+    *,
+    probe_pool: Mapping[str, Any],
+    producer: Mapping[str, Any],
+    producer_evidence: Mapping[str, Any],
+) -> Dict[str, Any]:
+    """Build the final pool- and producer-bound B1 admission proof."""
+
+    core = _build_b1_admission_core(
+        card, baseline_outputs, k1_outputs_by_window, prefix_captures_by_cell
+    )
+    return _bind_b1_admission_proof(
+        card,
+        core,
+        probe_pool,
+        producer,
+        producer_evidence=producer_evidence,
+    )
+
+
+def validate_b1_admission_proof(
+    proof: Mapping[str, Any], card: Mapping[str, Any], *, proof_path: Optional[Path] = None
+) -> None:
     from tflt.loopscope.schema import verify_manifest_sha256
 
     validate_phase2_card(card)
     expected_keys = {
         "schema_version", "artifact_kind", "card_id", "card_manifest_sha256", "revision",
-        "sample_count", "ordered_sample_identity", "tolerances", "k1_equivalence",
+        "sample_count", "ordered_sample_identity", "probe_pool_binding", "producer",
+        "producer_evidence",
+        "tolerances", "k1_equivalence",
         "fixed_step_prefix_consistency", "vectors_persisted", "manifest_sha256",
     }
     if not isinstance(proof, Mapping) or set(proof) != expected_keys:
         raise TrajectoryError("B1 proof exact-key contract differs")
     verify_manifest_sha256(proof)
-    if proof["schema_version"] != "loopscope.phase2-b1-admission-proof.v1" or proof["artifact_kind"] != "b1_k1_and_fixed_step_prefix_proof":
+    if proof["schema_version"] != "loopscope.phase2-b1-admission-proof.v3" or proof["artifact_kind"] != "b1_k1_and_fixed_step_prefix_proof":
         raise TrajectoryError("unsupported B1 admission-proof schema")
     if proof["card_id"] != card["card_id"] or proof["card_manifest_sha256"] != card["manifest_sha256"]:
         raise TrajectoryError("B1 proof is bound to a different card")
@@ -1160,6 +1955,46 @@ def validate_b1_admission_proof(proof: Mapping[str, Any], card: Mapping[str, Any
     identities = [_proof_identity({"sample_identity": value}) for value in proof["ordered_sample_identity"]]
     if len(identities) != 4 or len({_identity_key(value) for value in identities}) != 4:
         raise TrajectoryError("B1 proof identities are incomplete or duplicated")
+    binding = proof["probe_pool_binding"]
+    _trajectory_exact_keys(
+        binding,
+        {
+            "source_manifest_sha256", "source_manifest_count",
+            "selected_subset_sha256", "source_render_contract_subset_sha256",
+            "selected_render_contract_subset_sha256", "probe_pool_sample_ids",
+            "ordered_identity_sha256", "deterministic_subset_rule",
+        },
+        "B1 probe-pool binding",
+    )
+    for key in (
+        "source_manifest_sha256", "selected_subset_sha256",
+        "source_render_contract_subset_sha256",
+        "selected_render_contract_subset_sha256", "ordered_identity_sha256",
+    ):
+        _trajectory_sha256(binding[key], "B1 pool binding %s" % key)
+    if (
+        binding["source_manifest_count"] != 512
+        or not isinstance(binding["probe_pool_sample_ids"], list)
+        or len(binding["probe_pool_sample_ids"]) != 4
+        or len({str(value) for value in binding["probe_pool_sample_ids"]}) != 4
+        or binding["ordered_identity_sha256"] != ordered_identity_sha256(identities)
+        or binding["deterministic_subset_rule"]
+        != "first_four_records_of_phase1_frozen_validation_manifest_in_natural_order"
+    ):
+        raise TrajectoryError("B1 deterministic pool/identity binding differs")
+    validate_producer_provenance(
+        proof["producer"], allowed_kinds={"gate_b_remote_b1_smoke_probe"}
+    )
+    _validate_probe_producer_evidence(
+        proof["producer_evidence"],
+        proof["producer"],
+        card=card,
+        probe_mode="b1-smoke",
+        output_root=Path(proof["producer_evidence"]["command_args"]["path"]).parent,
+        load_files=proof_path is not None,
+    )
+    if proof["producer_evidence"]["input_manifest"]["sha256"] != binding["source_manifest_sha256"]:
+        raise TrajectoryError("B1 producer input manifest differs from the bound pool")
     k1 = proof["k1_equivalence"]
     if not isinstance(k1, Mapping) or set(k1) != {"windows", "all_match"}:
         raise TrajectoryError("B1 K1 proof envelope differs")
@@ -1243,6 +2078,67 @@ def validate_b1_admission_proof(proof: Mapping[str, Any], card: Mapping[str, Any
     if prefix["all_match"] is not prefix_all:
         raise TrajectoryError("B1 prefix global summary disagrees with comparisons")
     validate_no_persisted_vectors(proof)
+
+
+def validate_b1_admission_for_b2(
+    proof: Mapping[str, Any],
+    card: Mapping[str, Any],
+    b2_pool: Mapping[str, Any],
+    b2_records: Sequence[Mapping[str, Any]],
+    *,
+    proof_path: Optional[Path] = None,
+) -> None:
+    """Prove B2 consumes the same frozen 512 root and its deterministic first four."""
+
+    validate_b1_admission_proof(proof, card, proof_path=proof_path)
+    validate_phase2_probe_pool(b2_pool, expected_count=512)
+    binding = proof["probe_pool_binding"]
+    projected = _project_probe_pool_prefix(b2_pool, 4)
+    if (
+        binding["source_manifest_sha256"] != b2_pool["source_manifest_sha256"]
+        or binding["source_manifest_count"] != b2_pool["source_manifest_count"]
+        or binding["source_render_contract_subset_sha256"]
+        != b2_pool["source_render_contract_subset_sha256"]
+        or binding["probe_pool_sample_ids"] != list(b2_pool["sample_ids"][:4])
+        or binding["selected_subset_sha256"] != projected["selected_subset_sha256"]
+        or binding["selected_render_contract_subset_sha256"]
+        != projected["selected_render_contract_subset_sha256"]
+    ):
+        raise TrajectoryError("B1 proof does not bind the current frozen B2 pool root")
+    first_four = [_record_identity(record) for record in b2_records[:4]]
+    if first_four != proof["ordered_sample_identity"]:
+        raise TrajectoryError("B1 proof identities are not the deterministic first four B2 samples")
+
+
+def _project_probe_pool_prefix(pool: Mapping[str, Any], count: int) -> Dict[str, str]:
+    """Recompute the exact Phase 1 selection projection for a natural-order prefix."""
+
+    from tflt.loopscope.schema import canonical_json_bytes, manifest_sha256
+
+    rendering = list(pool["rendering_records"][:count])
+    render_hash = hashlib.sha256(canonical_json_bytes(rendering)).hexdigest()
+    selected = {
+        "schema_version": "loopscope.probe-pool-selection.v1",
+        "source": pool["source"],
+        "split": pool["split"],
+        "count": count,
+        "seed": pool["seed"],
+        "sample_ids": list(pool["sample_ids"][:count]),
+        "records": list(pool["records"][:count]),
+        "task_group": "mmlu",
+        "num_fewshot": 5,
+        "uses_target_gold_labels": False,
+        "fewshot_answers_present": True,
+        "renderer": pool["renderer"],
+        "render_contract_sha256": pool["render_contract_sha256"],
+        "rendering_records": rendering,
+        "render_contract_subset_sha256": render_hash,
+        "source_manifest_sha256": pool["source_manifest_sha256"],
+    }
+    return {
+        "selected_subset_sha256": manifest_sha256(selected),
+        "selected_render_contract_subset_sha256": render_hash,
+    }
 
 
 def _proof_identity(row: Mapping[str, Any]) -> Dict[str, str]:
@@ -1404,5 +2300,7 @@ __all__ = [
     "prefix_consistent",
     "run_phase2_trajectory_probe",
     "validate_b1_admission_proof",
+    "validate_b1_admission_for_b2",
+    "validate_phase2_probe_pool",
     "validate_probe_aggregate",
 ]

@@ -1,6 +1,7 @@
 import math
 import json
 import unittest
+import tempfile
 from pathlib import Path
 from unittest import mock
 
@@ -23,16 +24,19 @@ from tflt.loopscope.phase2_analysis import (
     summarize_nca_cell,
     transition_counts,
     wrong_overconfidence,
+    verify_phase2_analysis_report,
     required_calibration_cell_ids,
     required_full_cell_ids,
 )
 from tflt.loopscope.phase2_schema import (
     CALIBRATION_IDENTITY_NAMESPACE,
     DIRECT_PROBE_SCORE_SOURCE,
+    FIXED_HORIZON_CONTRAST_IDS,
     FULL_IDENTITY_NAMESPACE,
     FULL_LM_EVAL_SCORE_SOURCE,
     PRIMARY_CONTRAST_IDS,
     b2_logical_cells,
+    make_source_provenance,
     protocol_cell_id,
 )
 
@@ -46,6 +50,35 @@ def identity(index):
 
 def record(index, correct):
     return {"sample_identity": identity(index), "correctness": bool(correct)}
+
+
+def live_source(namespace):
+    if namespace == CALIBRATION_IDENTITY_NAMESPACE:
+        path = (
+            "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/inputs/"
+            "loopscope-qwen17-mmlu-phase1-20260711-043615/probe_pool_manifest.json"
+        )
+    else:
+        path = (
+            "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/"
+            "loopscope-qwen17-mmlu-phase1-20260711-053022/control/phase1_run_manifest.json"
+        )
+    identity_artifacts = [] if namespace == CALIBRATION_IDENTITY_NAMESPACE else [{
+        "path": (
+            "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/"
+            "loopscope-qwen17-mmlu-phase1-20260711-053022/gate-e-full/"
+            "baseline-full/results.json"
+        ),
+        "sha256": "c" * 64,
+    }]
+    return make_source_provenance(
+        identity_namespace=namespace,
+        verification_status="live_verified",
+        source_manifest_path=path,
+        source_manifest_sha256="1" * 64,
+        renderer_subset_sha256="2" * 64,
+        identity_artifacts=identity_artifacts,
+    )
 
 
 def primary_family(default_delta=0.0, default_p=1.0):
@@ -102,6 +135,44 @@ class Phase2AnalysisTests(unittest.TestCase):
         closed = apply_primary_holm(family)
         self.assertEqual(set(closed), set(PRIMARY_CONTRAST_IDS))
         self.assertTrue(all("holm_adjusted_p" in cell for cell in closed.values()))
+
+    def test_fixed_horizon_family_excludes_k1_equivalence_context(self):
+        self.assertEqual(
+            FIXED_HORIZON_CONTRAST_IDS,
+            ("fh_12_15_k2_k3", "fh_12_15_k3_k4"),
+        )
+
+    def test_card_structures_complete_h1_and_nca_decision_contract(self):
+        card = json.loads(
+            (ROOT / "configs/loopscope/qwen17_mmlu_phase2_h1_v2.json").read_text()
+        )
+        rules = card["decision_rules"]
+        self.assertEqual(
+            rules["h1"]["perturbation"]["target_contrast_ids"],
+            ["fs_12_15_k2_k3", "fs_12_15_k3_k4"],
+        )
+        self.assertEqual(
+            rules["h1"]["transient_only"]["d24_interval_endpoint"], "upper"
+        )
+        self.assertEqual(
+            rules["h1"]["saturation"]["positive_label"], "still_improving_at_k4"
+        )
+        self.assertEqual(rules["nca"]["primary_cell_count"], 9)
+        self.assertEqual(rules["nca"]["paired_cell_count"], 3)
+        self.assertEqual(rules["nca"]["target_positive_required_count"], 3)
+        self.assertEqual(rules["nca"]["direction_positive_required_count"], 2)
+        self.assertEqual(rules["nca"]["native_supported_required_count"], 2)
+        self.assertEqual(rules["multiplicity"]["fixed_horizon_family"], list(FIXED_HORIZON_CONTRAST_IDS))
+        forged_rules = json.loads(json.dumps(rules))
+        forged_rules["h1"]["perturbation"]["delta_threshold_pp"] = False
+        with self.assertRaises(Phase2AnalysisError):
+            classify_h1(
+                primary_family(),
+                d24_12_15_pp=0.0,
+                d24_12_15_ci_pp=[-1.0, 1.0],
+                phase1_k2_vs_baseline_pp=0.0,
+                decision_rules=forged_rules,
+            )
 
     def test_paired_identity_and_bootstrap(self):
         left = [record(i, value) for i, value in enumerate([False, True, False, True])]
@@ -306,6 +377,7 @@ class Phase2AnalysisTests(unittest.TestCase):
                 "sample_count": 512,
                 "natural_order": "canonical_manifest_list_order_zero_based",
                 "ordered_sample_identity": calibration_identities,
+                "source_provenance": live_source(CALIBRATION_IDENTITY_NAMESPACE),
             },
             "full_identity": {
                 "identity_namespace": FULL_IDENTITY_NAMESPACE,
@@ -313,11 +385,13 @@ class Phase2AnalysisTests(unittest.TestCase):
                 "ordered_identity_sha256": "b" * 64,
                 "sample_count": 14042,
                 "natural_order": "canonical_manifest_list_order_zero_based",
+                "source_provenance": live_source(FULL_IDENTITY_NAMESPACE),
             },
             "calibration_baseline": {
                 "samples": baseline_samples,
                 "manifest_sha256": "c" * 64,
             },
+            "calibration_aggregate": {"manifest_sha256": "0" * 64},
             "calibration_cells": calibration_cells,
             "full_cells": full_cells,
             "labels": {
@@ -382,6 +456,44 @@ class Phase2AnalysisTests(unittest.TestCase):
         self.assertEqual(contrast["delta_acc_pp"], 25.0)
         self.assertEqual(contrast["mcnemar_raw_p"], 1.0)
         self.assertNotIn("primary_contrasts", evidence["request"])
+
+    def test_source_aware_verifier_recomputes_and_rejects_structurally_plausible_forge(self):
+        expected = {"schema_version": "test", "value": 1, "manifest_sha256": "a" * 64}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            input_path = root / "input.json"
+            report_path = root / "report.json"
+            input_path.write_text("{}", encoding="utf-8")
+            report_path.write_text(json.dumps(expected), encoding="utf-8")
+            with mock.patch(
+                "tflt.loopscope.phase2_analysis.load_phase2_analysis_evidence",
+                return_value={"card": {"card_id": "test"}},
+            ) as loader, mock.patch(
+                "tflt.loopscope.phase2_analysis.analyze_phase2_evidence",
+                return_value=expected,
+            ) as analyzer, mock.patch(
+                "tflt.loopscope.phase2_analysis.derive_analysis_execution_provenance",
+                return_value={
+                    "authorization_manifest_sha256": "1" * 64,
+                    "attempt_manifest_sha256": "2" * 64,
+                    "receipt_manifest_sha256": "3" * 64,
+                    "executor_thread_id": "executor",
+                    "command_sha256": "4" * 64,
+                    "environment_sha256": "5" * 64,
+                },
+            ), mock.patch(
+                "tflt.loopscope.phase2_analysis.validate_analysis_report"
+            ):
+                self.assertEqual(
+                    verify_phase2_analysis_report(input_path, report_path), expected
+                )
+                forged = dict(expected)
+                forged["value"] = 2
+                report_path.write_text(json.dumps(forged), encoding="utf-8")
+                with self.assertRaises(Exception):
+                    verify_phase2_analysis_report(input_path, report_path)
+                self.assertEqual(loader.call_count, 2)
+                self.assertEqual(analyzer.call_count, 2)
 
 
 if __name__ == "__main__":

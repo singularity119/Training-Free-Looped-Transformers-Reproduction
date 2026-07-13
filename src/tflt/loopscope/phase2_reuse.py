@@ -21,8 +21,8 @@ def build_phase1_reuse_matrix() -> Dict[str, Any]:
     entries: List[Dict[str, Any]] = [
         _entry(
             "calibration_pool_identity",
-            "local_schema_confirmed",
-            "Phase 1 probe-pool schema binds ordered sample IDs, prompt hashes, validation split, 512 count, and target-label exclusion.",
+            "requires_gate_b_live_check",
+            "Local schema defines the Phase 1 pool identity projection; Gate B must live-read the immutable 512-record manifest and derive the ordered identities.",
         ),
         _entry(
             "inclusive_boundary_and_k2_activity",
@@ -45,9 +45,14 @@ def build_phase1_reuse_matrix() -> Dict[str, Any]:
             "Local Phase 1 analysis accepts doc_id correctness but does not prove ordered task/doc_id/doc_hash closure.",
         ),
         _entry(
-            "k2_per_step_nca_and_final_choice",
+            "phase1_k2_per_step_nca_absence",
+            "local_schema_confirmed",
+            "The Phase 1 window-probe schema does not persist the Phase 2 repeated-step NCA trajectory.",
+        ),
+        _entry(
+            "phase1_k2_raw_final_choice_availability",
             "requires_gate_b_live_check",
-            "Phase 1 window probe does not persist repeated-step NCA or final raw choice scores.",
+            "Gate B must inspect immutable Phase 1 logged-sample artifacts for four raw choice scores and evaluator identity before any K2 reuse decision.",
         ),
         _entry(
             "logged_sample_exact_identity_and_raw_choice_join",
