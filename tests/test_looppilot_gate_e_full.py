@@ -18,6 +18,7 @@ from scripts.looppilot.analyze_gate_e import _cluster_ci, _random_null
 from scripts.looppilot.analyze_gate_e import main as analyze_main
 from scripts.looppilot.verify_gate_e_final import main as verify_final_main
 from scripts.looppilot.prepare_gate_e_full import _expand_group
+from scripts.looppilot.verify_gate_e_shards import main as verify_shards_main
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -86,6 +87,14 @@ def signals(key="k0"):
 
 
 class GateEManifestTest(unittest.TestCase):
+    def test_shard_verifier_builds_paths_before_missing_shard_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / "shards_verified.json"
+            with self.assertRaisesRegex(RuntimeError, "missing Gate E shard 0"):
+                verify_shards_main(["--run-root", str(root), "--output", str(output)])
+            self.assertFalse(output.exists())
+
     def test_authoritative_tag_expansion_and_fail_closed_inputs(self):
         class NoYaml:
             @staticmethod

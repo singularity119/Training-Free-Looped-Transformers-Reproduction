@@ -28,7 +28,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     reports = []
     all_keys = set()
     for shard_id in range(8):
-        shard = root / "shards/shard-%d" % shard_id
+        shard = root / ("shards/shard-%d" % shard_id)
         if not shard.is_dir():
             raise RuntimeError("missing Gate E shard %d" % shard_id)
         missing = [name for name in REQUIRED if not (shard / name).is_file()]
