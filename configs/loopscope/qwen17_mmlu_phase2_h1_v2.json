@@ -186,11 +186,11 @@
     "src/tflt/eval_runner.py": "7eb1d4e4c32b4fd355378330aa18531e0efaf1b5da462ec4de2ccbb4abccaad7",
     "src/tflt/loopscope/__init__.py": "98065275bbec2833a131fce7ef982ea1e2d90059c5d79ba16def75dc937112cd",
     "src/tflt/loopscope/phase2_analysis.py": "817b24ec50658c39ab1f9610bb1c005491e251faf98cdd2757d5d2d0788a232b",
-    "src/tflt/loopscope/phase2_reuse.py": "7a4e6f53662e9c9c8a0af478bb693cdd5a7bb95497523a2dba3519a4ab14d086",
+    "src/tflt/loopscope/phase2_reuse.py": "641cfb4b344ad161d2e6075d1368eaabd7adc4abfd37ec9fdfa3a837645207a7",
     "src/tflt/loopscope/phase2_schema.py": "1846ced72d35b678c8bcc9e8047a7680bb12593eab663a41a16dfaa15f91c8b8",
     "src/tflt/loopscope/phase2_trajectory.py": "b7898c4e83ad71b80eef6f80527aab6dc398dc42f1460fee88529b0f8b515841"
   },
-  "manifest_sha256": "7d682e8e5ddc9e66b8e07770eaa3a8e83f95ba0161ae3a8d34e629b744fc82be",
+  "manifest_sha256": "0efb773621f1df7a9e19d86216590934f2ce87f6789153d50fc299224ad30e18",
   "measurement": {
     "actual_loop_nca_steps": "t=1..K-1_only",
     "calibration_choice_score_source": "direct_probe_next_token_log_probability_over_frozen_choice_token_ids",

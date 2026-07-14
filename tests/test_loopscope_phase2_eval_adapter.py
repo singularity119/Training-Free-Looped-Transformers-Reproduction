@@ -332,6 +332,24 @@ class Phase2EvalAdapterTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "extra=1"):
             eval_runner._join_phase2_logged_samples(extra, [first, second])
 
+    def test_exact_join_accepts_lm_eval_0_4_11_logged_acc_shape(self):
+        expected = identity(1)
+        sample = logged_sample(expected, [4, 1, 0, -1], 0)
+        sample["metrics"] = ["acc"]
+        sample["acc"] = 1.0
+
+        rows = eval_runner._join_phase2_logged_samples(
+            {"samples": {"mmlu_x": [sample]}}, [expected]
+        )
+        self.assertTrue(rows[0]["evaluator_acc_none"])
+
+        ambiguous = dict(sample)
+        ambiguous["metrics"] = ["acc", "other"]
+        with self.assertRaisesRegex(ValueError, "raw choice/evaluator correctness"):
+            eval_runner._join_phase2_logged_samples(
+                {"samples": {"mmlu_x": [ambiguous]}}, [expected]
+            )
+
     def test_exact_join_rejects_duplicate_and_missing_four_scores(self):
         expected = [identity(1)]
         sample = logged_sample(expected[0], [4, 1, 0, -1], 0)

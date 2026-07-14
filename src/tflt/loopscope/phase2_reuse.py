@@ -153,7 +153,16 @@ def extract_four_raw_choice_scores(sample: Mapping[str, Any]) -> List[float]:
 
 def extract_sample_acc_none(sample: Mapping[str, Any]) -> bool:
     metrics = sample.get("metrics")
-    value = metrics.get("acc,none") if isinstance(metrics, Mapping) else sample.get("acc,none")
+    if isinstance(metrics, Mapping):
+        value = metrics.get("acc,none")
+    elif metrics == ["acc"] and "acc,none" not in sample:
+        # lm-eval 0.4.11 serializes the per-sample default-filter metric as
+        # metrics=["acc"] plus a top-level binary ``acc`` value, while the
+        # corresponding task aggregate remains ``acc,none``.  Accept only
+        # that exact unambiguous logged-sample shape.
+        value = sample.get("acc")
+    else:
+        value = sample.get("acc,none")
     if value not in (0, 1, False, True):
         raise Phase2ReuseError("lm-eval sample lacks binary acc,none")
     return bool(value)
