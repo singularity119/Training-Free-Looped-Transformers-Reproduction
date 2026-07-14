@@ -446,6 +446,23 @@ class Phase2PipelineRegressionTests(unittest.TestCase):
             with self.assertRaises(SchemaError):
                 validate_analysis_input_manifest(self._rehash(candidate), self.card)
 
+    def test_analysis_cell_ref_loader_preserves_cell_id_only_for_routing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            payload = make_hashed_manifest({
+                "schema_version": "loopscope.test-cell-source.v1",
+                "value": 1,
+            })
+            atomic_write_new_json(root / "cell.json", payload)
+            ref = {
+                "cell_id": "test_cell",
+                "path": "cell.json",
+                "sha256": payload["manifest_sha256"],
+            }
+            self.assertEqual(
+                p2a._load_cell_ref(ref, root, "test calibration cell"), payload
+            )
+
     def test_analysis_route_reloads_real_control_packets_and_rejects_forged_source_binding(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

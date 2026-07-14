@@ -365,7 +365,7 @@ def load_phase2_analysis_evidence(input_path: Path) -> Dict[str, Any]:
 
     calibration_cells: Dict[str, Mapping[str, Any]] = {}
     for ref in sources["calibration_cells"]:
-        cell = _load_ref(ref, base, "calibration cell %s" % ref["cell_id"])
+        cell = _load_cell_ref(ref, base, "calibration cell %s" % ref["cell_id"])
         if cell.get("cell", {}).get("cell_id") != ref["cell_id"]:
             raise SchemaError("calibration cell ref and artifact cell_id disagree")
         validate_calibration_cell_envelope(cell, card, calibration_identity)
@@ -1630,6 +1630,17 @@ def _load_ref(ref: Mapping[str, Any], base: Path, context: str) -> Mapping[str, 
     if payload.get("manifest_sha256") != ref["sha256"]:
         raise SchemaError("%s source hash differs from the analysis request" % context)
     return payload
+
+
+def _load_cell_ref(
+    ref: Mapping[str, Any], base: Path, context: str
+) -> Mapping[str, Any]:
+    """Load a routed cell after removing its routing-only cell_id field."""
+
+    _analysis_exact_keys(ref, {"cell_id", "path", "sha256"}, context)
+    return _load_ref(
+        {"path": ref["path"], "sha256": ref["sha256"]}, base, context
+    )
 
 
 def _load_verified_full_cell(
