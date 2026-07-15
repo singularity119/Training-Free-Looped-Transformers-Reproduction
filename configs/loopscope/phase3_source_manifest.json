@@ -1,0 +1,110 @@
+{
+  "artifact_role": "p3a_validation1531_source_contract",
+  "card_sha256": "5b5cb333d0bb191ab8da1db23b7d4b36f9f4e9ccc97c16dc46c5e7aeb2ca4825",
+  "content_hash_contract": {
+    "canonical_object_shape": "{'choices':[normalized_choice_0,normalized_choice_1,normalized_choice_2,normalized_choice_3],'question':normalized_question}",
+    "digest": "SHA256 lowercase hexadecimal",
+    "excluded": [
+      "subject",
+      "split",
+      "task",
+      "doc_id",
+      "doc_hash",
+      "gold",
+      "label",
+      "answer",
+      "correctness"
+    ],
+    "inputs": [
+      "question",
+      "ordered_choices_A_B_C_D"
+    ],
+    "normalize_each_string": "Unicode NFC, strip leading/trailing whitespace, collapse every Unicode whitespace run to one ASCII space",
+    "serialization": "json.dumps(object, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8')",
+    "trajectory_outcome_hash_intersection_required": 0
+  },
+  "dataset": {
+    "fewshot_split": "dev",
+    "num_fewshot": 5,
+    "repo": "cais/mmlu",
+    "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+    "split": "validation",
+    "task_group": "mmlu"
+  },
+  "external_actions_performed": [],
+  "identity_contract": {
+    "canonical_record_order": [
+      "subject_lexicographic",
+      "task_lexicographic",
+      "doc_id_lexicographic",
+      "doc_hash_lexicographic"
+    ],
+    "canonical_tuple": [
+      "task",
+      "doc_id",
+      "doc_hash"
+    ],
+    "doc_hash_normalization": "str(value).strip().lower(); exactly 64 lowercase hexadecimal characters",
+    "doc_id_normalization": "str(value).strip()",
+    "source_set_rule": "exact equality to the planning-signed source manifest; no missing, duplicate, or extra identity",
+    "subject_normalization": "str(value).strip()",
+    "task_normalization": "str(value).strip()",
+    "trajectory_outcome_identity_intersection_required": 0
+  },
+  "input_artifact_allowlist": [
+    "frozen_phase3_card",
+    "p3a_synthetic_fixture",
+    "planning_signed_validation_source_manifest",
+    "test14042_identity_content_metadata_only",
+    "validation1531_no_loop_trajectory",
+    "validation1531_pool"
+  ],
+  "live_source_bindings": {
+    "ordered_identity_sha256": null,
+    "renderer_manifest_sha256": null,
+    "source_projection_sha256": null,
+    "status": "UNMATERIALIZED_UNTIL_SEPARATELY_AUTHORIZED_P3B"
+  },
+  "manifest_sha256": "f4ca02036f61a15006582981829d030d0be3b848bdb439751110e2f336aba73d",
+  "population": {
+    "formal_records_per_identity": 1,
+    "record_count": 1531,
+    "sampling": "none",
+    "subject_count": 57
+  },
+  "schema_version": "loopscope.phase3.source-contract.v1",
+  "selector_boundary": {
+    "allowed_fields": [
+      "identity",
+      "subject",
+      "split",
+      "prompt_sha256",
+      "renderer_provenance",
+      "boundary_id",
+      "choice_distribution",
+      "choice_entropy",
+      "kl_to_final",
+      "cross_entropy_to_final",
+      "top1_to_final_agreement"
+    ],
+    "forbidden_field_tokens": [
+      "target",
+      "gold",
+      "label",
+      "correct",
+      "accuracy",
+      "acc",
+      "loop_residual",
+      "residual",
+      "r",
+      "q",
+      "nca",
+      "answer_flip",
+      "k2_outcome",
+      "full_outcome",
+      "test_outcome"
+    ],
+    "unknown_fields": "reject"
+  },
+  "status": "CONTRACT_ONLY_NO_LIVE_RECORDS"
+}

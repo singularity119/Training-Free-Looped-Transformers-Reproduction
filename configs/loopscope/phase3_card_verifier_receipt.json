@@ -1,0 +1,58 @@
+{
+  "artifact_role": "p3a_card_and_producer_contract_verifier_receipt",
+  "card": {
+    "byte_sha256": "5b5cb333d0bb191ab8da1db23b7d4b36f9f4e9ccc97c16dc46c5e7aeb2ca4825",
+    "relative_path": "configs/loopscope/phase3_card.json",
+    "semantic_sha256": "ca9fa5cf9b2be7ddb5d4ce598636dd5c5a5b2ec665770993e14e279214c586b6"
+  },
+  "checks": {
+    "b0_through_b28_recomputed": true,
+    "card_byte_frozen": true,
+    "decision_critical_tampers_rejected": true,
+    "h_kl_ce_identity_recomputed": true,
+    "joint_bootstrap_analysis_recomputed": true,
+    "raw_logits_removed_from_selector_artifact": true,
+    "source_contract_closed_world": true,
+    "synthetic_1531_57_source_pool_closure": true,
+    "torch_transformers_lm_eval_imports_required": false
+  },
+  "contract_artifacts": {
+    "configs/loopscope/phase3_pool_schema.json": {
+      "file_sha256": "26b400217def8bed9e8da1c399cf5a24567c11ecf1ef3f6a79773d780d7eaf93"
+    },
+    "configs/loopscope/phase3_source_manifest.json": {
+      "file_sha256": "cc5eb099d7636121cd7ae8cf78f787ba1ad4abaf3ae6ff01f2bf3d4cad4e3b8a",
+      "manifest_sha256": "f4ca02036f61a15006582981829d030d0be3b848bdb439751110e2f336aba73d"
+    },
+    "configs/loopscope/phase3_trajectory_schema.json": {
+      "file_sha256": "b9da06efa2cb1de3f329287f82f4afca49c7ff76acc9a509623d96a27c4d3db7"
+    }
+  },
+  "external_actions_performed": [],
+  "implementation_sha256": {
+    "scripts/loopscope/prepare_qwen17_phase3.py": "15af222298a25712f50909ab66f07cad16fea4966a8f73581b615f138da71228",
+    "src/tflt/loopscope/phase3_analysis.py": "b00faea6d32ae272f2432742ebed480778c637efcd2f651e6ea1b083bf53de01",
+    "src/tflt/loopscope/phase3_pool.py": "42137e87c9235907fef81f4139b32a625fe1187ebc2484f85c58631dc1d3f7e8",
+    "src/tflt/loopscope/phase3_schema.py": "0df8666a4f759a95e0447c78d309abcbd8d2b9fea5cd2d85d088c9a8f11a7f53",
+    "src/tflt/loopscope/phase3_verifier.py": "2d9e0d01da78a5dde3b7c93bbdbf4d5e1192cf7ed133a9360d8c0a5c4e6153c0"
+  },
+  "manifest_sha256": "38081a189456c296e6e8be8e2910e184bf430b3fb4ae0ba637d070e492225d96",
+  "schema_version": "loopscope.phase3.card-verifier-receipt.v1",
+  "synthetic_fixture": {
+    "analysis_fixture_only_not_scientific_output": true,
+    "analysis_fixture_replicates": 31,
+    "analysis_fixture_seed": 20260716,
+    "analysis_input_sha256": "a176f64bc4ed8e95aeb0fa929844bd85b289b5ec7e47f6ce38b57131ef199269",
+    "analysis_report_sha256": "7385155d15dc62ad7e7e654ee77a49f9f264c99fdae8996f84ba3bb6ef2594b0",
+    "analysis_score_tamper_rejected": true,
+    "boundary_metric_tamper_rejected": true,
+    "contains_real_data": false,
+    "pool_manifest_sha256": "367d238ebc3ff6c412742ad600a8ccf503a0c5a6120f5e57b671c48afcd347b0",
+    "raw_boundary_recomputation": true,
+    "raw_trajectory_sha256": "30d59342349d15b2eb3172f9fafbb4972a42438b2b692b7e1e825191b732c5ab",
+    "record_count": 1531,
+    "source_manifest_sha256": "0953ad2b0a733b49e5a925a40b9904cf5c967c837f5f07db6f4aeea6d0e278cc",
+    "subject_count": 57,
+    "version": "loopscope.phase3.p3a-deterministic-fixture.v1"
+  }
+}

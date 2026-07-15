@@ -1,0 +1,129 @@
+{
+  "$id": "loopscope.phase3.pool-record.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "identity": {
+      "additionalProperties": false,
+      "properties": {
+        "doc_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "doc_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "task": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "task",
+        "doc_id",
+        "doc_hash"
+      ],
+      "type": "object"
+    },
+    "ordered_choices": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    },
+    "prompt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "rendered_prompt": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "renderer_provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "dataset_repo": {
+          "const": "cais/mmlu"
+        },
+        "dataset_revision": {
+          "const": "c30699e8356da336a370243923dbaf21066bb9fe"
+        },
+        "fewshot_split": {
+          "const": "dev"
+        },
+        "num_fewshot": {
+          "const": 5
+        },
+        "render_contract_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "render_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "renderer_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "renderer_source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source_projection_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "task_group": {
+          "const": "mmlu"
+        }
+      },
+      "required": [
+        "dataset_repo",
+        "dataset_revision",
+        "fewshot_split",
+        "num_fewshot",
+        "render_contract_sha256",
+        "render_sha256",
+        "renderer_id",
+        "renderer_source_sha256",
+        "source_projection_sha256",
+        "task_group"
+      ],
+      "type": "object"
+    },
+    "sanitized_content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "loopscope.phase3.pool-record.v1"
+    },
+    "split": {
+      "const": "validation"
+    },
+    "subject": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "identity",
+    "ordered_choices",
+    "prompt_sha256",
+    "question",
+    "rendered_prompt",
+    "renderer_provenance",
+    "sanitized_content_sha256",
+    "schema_version",
+    "split",
+    "subject"
+  ],
+  "type": "object"
+}
