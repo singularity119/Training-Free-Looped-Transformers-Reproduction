@@ -324,6 +324,8 @@ nca_role=prospective_secondary_direction_proxy; never selector in H1
 
 Gate 终态经规划/审计线程判定后，只撤销该 executor 对 Git、数据、网络、GPU、Slurm、repair 和后续 Gate 的全部执行权限，不归档、不关闭其线程；完成、作废或 `BLOCK` 的 executor 均保留在项目下作为只读 provenance，且不得复用为下一 Gate executor。线程保留不等于继续授权；除非规划/审计线程明确要求补充终态说明，否则该 executor 不得继续执行、轮询、修复或写入。
 
+凡当前 Gate executor 已提交 HPC2/GPU/Slurm 作业，且作业在一次提交确认后仍需较长时间排队或运行，executor 必须停止人工轮询、shell sleep、循环 `squeue/sacct` 或为了维持 thread active 而空转，改为在自己的执行线程中创建真实的 Codex automation/heartbeat。默认按预计时长采用约 10 分钟、30 分钟或 60 分钟 cadence；等待中的 executor 显示 idle 是正常状态。每次 automation 唤醒只允许执行一次有界、只读状态检查（例如带 `BatchMode=yes`、`ConnectTimeout` 与 `ClearAllForwardings=yes` 的 SSH，加一次 `squeue/sacct`、必要的短日志尾部和预期工件存在性检查），然后立即结束本次唤醒；状态未发生材料变化时不打扰用户。automation 不获得提交、重试、requeue、取消、改参、改 throttle、修复、写工件或科学裁决权限；这些动作仍须来自该 Gate 原有 handoff 或新的明确授权。遇到 terminal success、terminal failure、SSH trust 异常或其他材料性 blocker 时，automation 只把证据送回原 executor；executor 恢复后先暂停/删除该 monitor，再按 Gate 协议继续验证或发送唯一终态事件。planning/audit 线程不替 executor 做 heartbeat 轮询。
+
 ## 12. 第三阶段稳定科学与治理边界
 
 - 第三阶段 primary selector source 是 MMLU validation 全部 1,531 条唯一样本的一次普通 no-loop forward；Phase 1 validation-512 只作 secondary robustness，不参与 variant 选择。
