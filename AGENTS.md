@@ -13,7 +13,7 @@
 ## 0. 计划与信息源
 
 - `AGENTS.md` 只保存长期稳定的项目边界、工程规则和 Gate 验收标准，不记录临时进度、当前执行线程或逐次工具日志。
-- `../.planning/loopscope_phase1_control.md` 是已关闭第一阶段的历史控制面；`../.planning/loopscope_phase2_control.md` 是第二阶段唯一的可变全局计划与控制文件。当前 Gate、Gate 决策、线程分配、已审计 commit、下一步授权条件均以当前阶段 control 为准。
+- `../.planning/loopscope_phase1_control.md` 与 `../.planning/loopscope_phase2_control.md` 分别是已关闭第一、第二阶段的历史控制面；`../.planning/loopscope_phase3_control.md` 是第三阶段当前唯一的可变全局控制文件。当前 Gate、Gate 决策、线程分配、已审计 commit、下一步授权条件均以 Phase 3 control 为准。
 - 旧工作区 `.planning/` 包、历史 handoff、线程聊天和 Codex memory 只作历史证据或辅助回忆；如果与当前代码或控制文件冲突，不得据此覆盖当前事实。
 - 单线程内的临时步骤优先使用 Codex 原生 plan/goal，不把每一步复制到项目文件。
 - 不得自动调用 `planning-with-files` skill。只有用户在当前请求中明确点名或明确要求启用该工作流时才可使用。
@@ -29,6 +29,7 @@
 - 第一阶段任务：`mmlu`，5-shot。
 - 第一阶段目标：验证免训练内部信号能否预测不同 loop window 的真实收益；不提前宣称已经得到通用自动选窗器。
 - 第二阶段目标：围绕第一阶段局部结果验证“可迭代精炼区”机制——区分持续有益修正、短暂最优、无益扰动和错误过度自信；先用小范围 `k` 轨迹与逐样本分析理解机制，只有机制得到支持后才讨论无标签选窗或跨模型扩展。
+- 第三阶段目标：固定 Qwen3-1.7B × MMLU × K=2 配方，只利用 validation 全量 1,531 条样本的一次 no-loop 层级 choice trajectory，检验局部 entropy–KL 双重反转能否在同一 model-task cell 内恢复、富集或排除 loop windows；测试/full outcome 不得进入 selector。
 - 基础复现分支 `main` 是固定对照，不接受 LoopScope 功能提交。
 - 新 clone 的默认 `main` 也只作只读引用；clone 后首次工作分支必须是从固定基点新建的 `loopscope`。
 
@@ -320,3 +321,12 @@ nca_role=prospective_secondary_direction_proxy; never selector in H1
 完整的全窗口 NCA 排名、top-3 shortlist、唯一胜者/no-loop verifier、window-identity permutation 和固定部署协议不属于 H1，也不构成 Gate C admission；它们只可在 Gate C 审计后作为独立 H2 card 冻结。旧版 16/17-window grid、三模型×两任务、depth-controlled signal competition、10k-token eRank 和生成任务继续保留为 optional backlog。
 
 每一 Gate 使用独立执行线程；规划/审计线程不亲自执行、不轮询、不预建未来 Gate 执行线程。执行线程只在终态主动发送一次结构化 `GATE_X_FINAL_AUDIT` 或 `BLOCK`，规划/审计线程收到后重新读取 live Git、Slurm 和不可变工件再决定。
+
+## 12. 第三阶段稳定科学与治理边界
+
+- 第三阶段 primary selector source 是 MMLU validation 全部 1,531 条唯一样本的一次普通 no-loop forward；Phase 1 validation-512 只作 secondary robustness，不参与 variant 选择。
+- selector 只读取逐层四选项 choice distribution、entropy、KL-to-final、CE 及其局部 SHIFT/FLANK/CONSENSUS 结构；target gold、correctness、loop residual、full accuracy 与答案翻转均禁止进入 selector producer。
+- 正式 loop outcome 固定使用与 validation-1531 样本级不相交的 MMLU test-14042 paired evidence；历史 13 窗只作 development，尚未查看 outcome 的 12 窗才承担 width-4 blind completion。
+- 核心 loop 配方继续冻结为 `K=2、block、damped_euler、alpha=1、beta=0、cache_strategy=last、decode_mode=bypass`；任何 K、alpha、strategy、model 或 task 变化必须另立科学卡。
+- Phase 3 Gate 名称和当前状态以 `../.planning/loopscope_phase3_control.md` 为准；本文件第 9 节 A–E 是 Phase 1 历史门，不得用来推断 Phase 3 当前授权。
+- 第三阶段不设置 GPU 数量、GPU-hours 或墙钟硬上限。GPU Gate 只有在明确授权、科学矩阵冻结并满足 admission 后，才能按 HPC 空闲资源合理并行并尽快提交；资源变化不得改变样本、窗口、配方、统计或 retry 语义。
