@@ -322,6 +322,8 @@ nca_role=prospective_secondary_direction_proxy; never selector in H1
 
 每一 Gate 使用独立执行线程；规划/审计线程不亲自执行、不轮询、不预建未来 Gate 执行线程。执行线程只在终态主动发送一次结构化 `GATE_X_FINAL_AUDIT` 或 `BLOCK`，规划/审计线程收到后重新读取 live Git、Slurm 和不可变工件再决定。
 
+Gate 终态经规划/审计线程判定后，只撤销该 executor 对 Git、数据、网络、GPU、Slurm、repair 和后续 Gate 的全部执行权限，不归档、不关闭其线程；完成、作废或 `BLOCK` 的 executor 均保留在项目下作为只读 provenance，且不得复用为下一 Gate executor。线程保留不等于继续授权；除非规划/审计线程明确要求补充终态说明，否则该 executor 不得继续执行、轮询、修复或写入。
+
 ## 12. 第三阶段稳定科学与治理边界
 
 - 第三阶段 primary selector source 是 MMLU validation 全部 1,531 条唯一样本的一次普通 no-loop forward；Phase 1 validation-512 只作 secondary robustness，不参与 variant 选择。
