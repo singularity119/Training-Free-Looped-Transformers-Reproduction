@@ -1,0 +1,87 @@
+{
+  "schema_version": "loopscope.h2-fixed-horizon-stepwise-card.v1",
+  "card_id": "H2_FIXED_HORIZON_STEPWISE_PROFILE_V1",
+  "role": "post_hoc_exploratory_mechanism_profile",
+  "control_sha256": "ce7034b6274e7ae6d561f22eee515a093c3965a84ddcb6916edb64df71a6f7c7",
+  "executor_thread_id": "019f668f-e98d-7033-a28a-36d55d0cf5ac",
+  "science": {
+    "model_alias": "qwen3-1.7b-base",
+    "model_repo": "Qwen/Qwen3-1.7B-Base",
+    "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "task": "mmlu",
+    "num_fewshot": 5,
+    "dtype": "float16",
+    "window": "12:15",
+    "window_inclusive_width": 4,
+    "protocol": "fixed_horizon",
+    "iteration_mode": "block",
+    "strategy": "damped_euler",
+    "k_values": [1, 2, 3, 4],
+    "alpha": 1.0,
+    "beta": 0.0,
+    "cache_strategy": "last",
+    "decode_mode": "bypass",
+    "total_horizon": 1.0,
+    "calibration_count": 512,
+    "maximum_new_full_run_count": 0,
+    "gpu_count": 1,
+    "gpu_type": "A40"
+  },
+  "measurement": {
+    "body_call_indexing": "zero_based_t=0..K-1",
+    "step_size": "h=alpha/K=1/K",
+    "tau": {"entry": "t/K", "applied": "(t+1)/K"},
+    "raw_update": "u_t=G(x_t)-x_t",
+    "applied_state": "x_(t+1)=x_t+(1/K)u_t",
+    "raw_activity_direction": ["raw_residual_norm", "raw_relative_activity", "q", "adjacent_cosine", "repeated_step_nca_validity"],
+    "applied_update": ["h_scaled_norm", "h_scaled_relative_magnitude", "per_step_path", "cumulative_path", "cumulative_displacement"],
+    "intermediate_lens": "frozen_final_norm_plus_A_B_C_D_output_weights",
+    "choice_score_source": "direct_probe_next_token_log_probability_over_frozen_choice_token_ids",
+    "full_score_source": "lm_eval_acc_none_raw_per_choice_loglikelihood",
+    "entropy_drops": ["H(entry)-H(raw_exit)", "H(entry)-H(applied_state)"],
+    "flatness": "-population_std([H(x_t),H(L12),H(L13),H(L14),H(z_t)])",
+    "kl_reference": "same_sample_native_no_loop_final_direct_probe_choice_distribution",
+    "kl_orientation": "KL(stage_choice_distribution || native_no_loop_reference)",
+    "effective_rank": "unit_normalize_center_across_samples_squared_singular_values_shannon_erank_v2",
+    "vector_persistence": false,
+    "k1_repeated_q_cos_nca": "null_not_applicable"
+  },
+  "statistics": {
+    "new_scalar_bootstrap": {"replicates": 2000, "seed": 20260716, "confidence": 0.95, "method": "percentile"},
+    "nca_bootstrap": {"replicates": 10000, "seed": 0},
+    "full_paired_bootstrap": {"replicates": 2000, "seed": 20260710},
+    "effective_rank": {"estimator_version": 2, "interval": "point_estimate_only"}
+  },
+  "source_namespaces": {
+    "calibration": "phase1_frozen_validation_512_direct_probe",
+    "full": "phase1_gatec_full_14042_lm_eval",
+    "cross_namespace_sample_join": false
+  },
+  "write_once_contract": {
+    "workspace_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope",
+    "d1_max_fresh_attempts": 2,
+    "d2_scientific_attempts": 1,
+    "d4_analysis_executions": 1,
+    "d4_verifier_executions": 1,
+    "offline_required": true,
+    "hidden_residual_native_vectors_persisted": false
+  },
+  "tolerances": {
+    "k1_choice_atol": 0.0001,
+    "k1_choice_rtol": 0.00001,
+    "b2_core_atol": 0.0001,
+    "b2_core_rtol": 0.001,
+    "hook_residual_atol": 0.001,
+    "hook_residual_rtol": 0.0001
+  },
+  "implementation": {
+    "files": {
+      "src/tflt/loopscope/phase2_fixed_horizon.py": "d7f19c33bb2512a9fb44f6aac337ae87435ebc4c8baa0ea07b62403883ba2f56",
+      "src/tflt/loopscope/phase2_fixed_horizon_analysis.py": "92d44998cd457c971fc1cd26c56c6bbec9edb00254bb48a126d6afaa8687a912",
+      "scripts/loopscope/run_fixed_horizon_stepwise.py": "2cc4c235e39ac17b5ee51cf76489c966a5f4ce6fc92632ae252830fc00ce514c"
+    },
+    "protected_h1_files_modified": false,
+    "lm_eval_modified": false
+  },
+  "manifest_sha256": "5ff663d175937d9aa5de5c07f306a8b251aa2bad5ef90a866a114c63e21513ba"
+}

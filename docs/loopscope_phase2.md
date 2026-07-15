@@ -485,3 +485,97 @@ deliberately not executed:
 ```
 
 执行线程不自宣 PASS。规划线程收到终态事件后重新读取 live Git、Slurm 与工件，再决定 `PASS / PASS_WITH_FIXES / BLOCK`。
+
+## 11. Gate D — 12:15 fixed-horizon K1–K4 逐步机制图谱
+
+本节只适用于 control 10.12 授权的
+`H2_FIXED_HORIZON_STEPWISE_PROFILE_V1`。它不恢复 selector，不修改 H1 card，也不新增 full MMLU。
+
+版本化 card：
+
+```text
+configs/loopscope/qwen17_mmlu_h2_fixed_horizon_stepwise_v1.json
+```
+
+独立入口：
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
+python -m tflt.loopscope.phase2_fixed_horizon --help
+
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
+python -m tflt.loopscope.phase2_fixed_horizon_analysis --help
+```
+
+所有模型/数据命令必须在提交作业前设置：
+
+```bash
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+export HF_DATASETS_OFFLINE=1
+unset HF_ENDPOINT
+```
+
+D1 与 D2 共用同一 producer；D2 只有在 D1 noninterference proof 为 pass-ready 后才 admission：
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
+python -m tflt.loopscope.phase2_fixed_horizon probe \
+  --mode d1-smoke \
+  --card configs/loopscope/qwen17_mmlu_h2_fixed_horizon_stepwise_v1.json \
+  --input-jsonl <phase1-frozen-validation.jsonl> \
+  --input-manifest <phase1-probe-pool-manifest.json> \
+  --output-dir <new-run-root>/d1-smoke-attempt-1 --device cuda
+
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
+python -m tflt.loopscope.phase2_fixed_horizon compare-d1 \
+  --d1-manifest <new-run-root>/d1-smoke-attempt-1/fixed_horizon_probe_manifest.json \
+  --gate-b-aggregate <gate-b-root>/b2-calibration/phase2_probe_manifest.json \
+  --output <new-run-root>/d1-smoke-attempt-1/d1_noninterference.json
+
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
+python -m tflt.loopscope.phase2_fixed_horizon probe \
+  --mode d2-profile \
+  --card configs/loopscope/qwen17_mmlu_h2_fixed_horizon_stepwise_v1.json \
+  --input-jsonl <phase1-frozen-validation.jsonl> \
+  --input-manifest <phase1-probe-pool-manifest.json> \
+  --d1-noninterference <new-run-root>/d1-smoke-attempt-1/d1_noninterference.json \
+  --output-dir <new-run-root>/d2-profile-attempt-1 --device cuda
+```
+
+每个 K cell 在一个已加载模型 session 内按 K1→K4 执行。临时 hooks 只观察
+`x_t,L12,L13,L14,z_t` 五个边界；cell 结束后先移除全部 5 个 handles，再恢复 wrapper。
+工件只保存 scalar/choice/validity 与 cohort eRank summary；eRank 输入、hidden、raw residual 和 native
+continuation vectors 只驻留进程内存。
+
+D3 从既有 Gate C analysis input 解析并绑定 full K1–K4、Gate B calibration、512 label sidecar、unseal
+证据与 Phase 1 selection report，写一份新的 source manifest；不修改任何旧工件。D4 只运行一次 atlas 和
+一次 verifier：
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
+python -m tflt.loopscope.phase2_fixed_horizon_analysis source-manifest \
+  --card configs/loopscope/qwen17_mmlu_h2_fixed_horizon_stepwise_v1.json \
+  --profile-manifest <new-run-root>/d2-profile-attempt-1/fixed_horizon_probe_manifest.json \
+  --gate-c-analysis-input <gate-c-complete-analysis-input.json> \
+  --gate-c-report <gate-c-phase2-h1-analysis.json> \
+  --phase1-selection-report <phase1-selection-report.json> \
+  --output <new-run-root>/d3-source-closure/source_manifest.json
+
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
+python -m tflt.loopscope.phase2_fixed_horizon_analysis atlas \
+  --card configs/loopscope/qwen17_mmlu_h2_fixed_horizon_stepwise_v1.json \
+  --source-manifest <new-run-root>/d3-source-closure/source_manifest.json \
+  --output-dir <new-run-root>/d4-atlas
+
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
+python -m tflt.loopscope.phase2_fixed_horizon_analysis verify \
+  --output-dir <new-run-root>/d4-atlas
+```
+
+必须闭合的输出包括 `calibration_stepwise_samples/k1.json` 至 `k4.json`、
+`calibration_stepwise_summary.json`、`source_manifest.json`、`kwise_latent_trajectory.json`、
+`kwise_absolute_full_summary.json`、`adjacent_full_contrasts.json`、
+`fixed_horizon_trajectory_atlas.json`、中文 `fixed_horizon_trajectory_atlas.md` 与
+`verifier_receipt.json`。validation-512 correctness/flip 必须标记为 development diagnostic；full-14042
+结果保持 lm-eval score namespace，两者禁止逐样本 join。
