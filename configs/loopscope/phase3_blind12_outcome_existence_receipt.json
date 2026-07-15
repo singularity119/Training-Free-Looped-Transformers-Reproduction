@@ -1,0 +1,46 @@
+{
+  "schema_version": "loopscope.phase3.blind12_outcome_existence_receipt.v1",
+  "checked_at_utc": "2026-07-15T21:32:59Z",
+  "check_mode": "read_only_non_numeric_metadata_only",
+  "remote_alias": "hpc2-hkustgz",
+  "observed_login_node": "mgmt-6",
+  "search_root": "/hpc2hdd/home/xhuang225/workspaces",
+  "searched_metadata": [
+    "exact window values in command_args.json",
+    "results.json path names containing window-<start>-<end>"
+  ],
+  "outcome_values_read": false,
+  "blind_windows": {
+    "0:3": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "1:4": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "2:5": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "3:6": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "5:8": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "7:10": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "10:13": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "16:19": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "19:22": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "21:24": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "23:26": {"command_args_occurrences": 0, "path_results_occurrences": 0},
+    "24:27": {"command_args_occurrences": 0, "path_results_occurrences": 0}
+  },
+  "historical_windows": [
+    "4:7",
+    "6:9",
+    "8:11",
+    "9:12",
+    "11:14",
+    "12:15",
+    "13:16",
+    "14:17",
+    "15:18",
+    "17:20",
+    "18:21",
+    "20:23",
+    "22:25"
+  ],
+  "historical_canonical_full_results_count_per_window": 1,
+  "local_history_check": "No blind-window outcome record was found in Phase 1/2 controls, reports, or runbooks; synthetic test fixtures are not outcome evidence.",
+  "decision": "BLIND12_METADATA_CLOSURE_PASS",
+  "scope_note": "This receipt proves absence from the authoritative project workspaces and project records inspected; it does not claim knowledge of untracked external copies."
+}

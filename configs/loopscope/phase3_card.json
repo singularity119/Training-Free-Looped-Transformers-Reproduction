@@ -1,0 +1,257 @@
+{
+  "schema_version": "loopscope.phase3.h3_card.v1",
+  "card": "H3_BASELINE_LOCAL_REVERSAL_WINDOW_RECOVERY_V1",
+  "status": "PLANNING_FROZEN",
+  "frozen_at_utc": "2026-07-15T21:34:18Z",
+  "frozen_by_planning_thread": "019f670d-24ca-7ad0-b92e-64438aa04ef1",
+  "claim_scope": "within_cell_feasibility_only",
+  "model": {
+    "repo": "Qwen/Qwen3-1.7B-Base",
+    "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "decoder_layers": 28,
+    "dtype": "float16"
+  },
+  "task": {
+    "dataset": "cais/mmlu",
+    "dataset_revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+    "task_group": "mmlu",
+    "num_fewshot": 5,
+    "fewshot_split": "dev",
+    "trajectory_split": "validation",
+    "trajectory_sample_count": 1531,
+    "trajectory_subject_count": 57,
+    "trajectory_sampling": "none",
+    "outcome_split": "test",
+    "outcome_sample_count": 14042
+  },
+  "loop_outcome_recipe": {
+    "k": 2,
+    "fixed_horizon": true,
+    "iteration_mode": "block",
+    "strategy": "damped_euler",
+    "alpha": 1.0,
+    "beta": 0.0,
+    "step_size_formula": "alpha/k",
+    "step_size": 0.5,
+    "total_horizon": 1.0,
+    "cache_strategy": "last",
+    "decode_mode": "bypass",
+    "window_width": 4,
+    "window_starts": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    "only_window_may_vary": true
+  },
+  "trajectory": {
+    "forward_type": "native_no_loop",
+    "formal_forward_count_per_identity": 1,
+    "loop_insertions": 0,
+    "answer_position": "final_pre_answer_prompt_token",
+    "projection": "raw_direct_logit_lens_through_frozen_final_norm_and_lm_head",
+    "boundaries": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+    "boundary_semantics": "B_0 is embedding output; B_j is output after decoder layer j for j=1..28",
+    "final_boundary": 28,
+    "choice_order": ["A", "B", "C", "D"],
+    "top1_tie_order": ["A", "B", "C", "D"],
+    "allowed_selector_fields": [
+      "identity",
+      "subject",
+      "split",
+      "prompt_sha256",
+      "renderer_provenance",
+      "boundary_id",
+      "choice_distribution",
+      "choice_entropy",
+      "kl_to_final",
+      "cross_entropy_to_final",
+      "top1_to_final_agreement"
+    ],
+    "forbidden_selector_field_tokens": [
+      "target",
+      "gold",
+      "label",
+      "correct",
+      "accuracy",
+      "acc",
+      "loop_residual",
+      "residual",
+      "r",
+      "q",
+      "nca",
+      "answer_flip",
+      "k2_outcome",
+      "full_outcome",
+      "test_outcome"
+    ],
+    "closed_world_unknown_fields": "reject"
+  },
+  "identity": {
+    "canonical_tuple": ["task", "doc_id", "doc_hash"],
+    "task_normalization": "str(value).strip()",
+    "doc_id_normalization": "str(value).strip()",
+    "doc_hash_normalization": "str(value).strip().lower(); exactly 64 lowercase hexadecimal characters",
+    "subject_normalization": "str(value).strip()",
+    "canonical_record_order": ["subject_lexicographic", "task_lexicographic", "doc_id_lexicographic", "doc_hash_lexicographic"],
+    "source_set_rule": "exact equality to the planning-signed source manifest; no missing, duplicate, or extra identity",
+    "trajectory_outcome_identity_intersection_required": 0
+  },
+  "sanitized_content_hash": {
+    "inputs": ["question", "ordered_choices_A_B_C_D"],
+    "excluded": ["subject", "split", "task", "doc_id", "doc_hash", "gold", "label", "answer", "correctness"],
+    "normalize_each_string": "Unicode NFC, strip leading/trailing whitespace, collapse every Unicode whitespace run to one ASCII space",
+    "canonical_object_shape": "{'choices':[normalized_choice_0,normalized_choice_1,normalized_choice_2,normalized_choice_3],'question':normalized_question}",
+    "serialization": "json.dumps(object, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8')",
+    "digest": "SHA256 lowercase hexadecimal",
+    "trajectory_outcome_hash_intersection_required": 0
+  },
+  "numeric_contract": {
+    "analysis_dtype": "float64",
+    "log_base": "natural",
+    "choice_probability_rule": "stable four-choice log-softmax after casting projected logits to float64",
+    "choice_probability_each": "finite and strictly greater than 0",
+    "choice_probability_sum_abs_tolerance": 1e-08,
+    "recomputed_scalar_abs_tolerance": 1e-10,
+    "recomputed_scalar_rel_tolerance": 1e-10,
+    "non_finite_policy": "fail_fast"
+  },
+  "metrics": {
+    "H": "H_(i,j)=-sum_c p_(i,j,c)*ln(p_(i,j,c))",
+    "D": "D_(i,j)=KL(p_(i,j)||p_(i,28))",
+    "C": "C_(i,j)=H_(i,j)+D_(i,j)=CE(p_(i,j),p_(i,28))",
+    "E": "E(s,w)=mean_i[H_(i,s)-H_(i,s+w)]",
+    "K": "K(s,w)=mean_i[D_(i,s+w)-D_(i,s)]",
+    "CEdrop": "CEdrop(s,w)=E(s,w)-K(s,w)",
+    "O_H": "O_H(s,w)=E(s,w)-0.5*(E(s-1,w)+E(s+1,w))",
+    "O_K": "O_K(s,w)=K(s,w)-0.5*(K(s-1,w)+K(s+1,w))",
+    "F_H": "F_H(s,w)=E(s,w)-0.5*(E(s-w,w)+E(s+w,w))",
+    "F_K": "F_K(s,w)=K(s,w)-0.5*(K(s-w,w)+K(s+w,w))",
+    "ce_role": "mandatory reported identity check; never a third independent vote"
+  },
+  "variants": {
+    "SHIFT": {
+      "support_starts": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+      "comparison_starts": ["s-1", "s+1"],
+      "contrasts": ["O_H", "O_K"],
+      "score": "min(z_O_H,z_O_K)"
+    },
+    "FLANK": {
+      "support_starts": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "comparison_starts": ["s-w", "s+w"],
+      "contrasts": ["F_H", "F_K"],
+      "score": "min(z_F_H,z_F_K)"
+    },
+    "CONSENSUS": {
+      "support_starts": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "comparison_starts": ["s-1", "s+1", "s-w", "s+w"],
+      "contrasts": ["O_H", "O_K", "F_H", "F_K"],
+      "score": "min(z_O_H,z_O_K,z_F_H,z_F_K)"
+    },
+    "outside_support": "UNSCORABLE_ABSTAIN",
+    "outside_support_fill_or_interpolation": false
+  },
+  "eligibility": {
+    "center_point_conditions": ["E(s,w)>0", "K(s,w)>0"],
+    "comparison_point_conditions": ["every corresponding comparison segment has E<0", "every corresponding comparison segment has K<0"],
+    "contrast_condition": "percentile bootstrap lower 95% CI is strictly greater than 0 for every variant contrast",
+    "equality_at_zero": "fail",
+    "point_eligible_only": true
+  },
+  "bootstrap": {
+    "trajectory_primary": {
+      "method": "subject_stratified_joint_sample_bootstrap",
+      "replicates": 2000,
+      "seed": 20260716,
+      "prng": "python_stdlib_random.Random",
+      "random_api": "randrange(n_s)",
+      "stream_count": 1,
+      "iteration_order": "replicate-major, canonical subject order, draw-major",
+      "within_subject_order": "canonical_record_order",
+      "draws_per_subject": "n_s with replacement",
+      "subjects_preserved_per_replicate": 57,
+      "joint_index_reuse": "the identical replicate index map is reused for every window, metric, contrast, and variant"
+    },
+    "outcome_primary": {
+      "method": "joint_paired_sample_bootstrap",
+      "replicates": 2000,
+      "seed": 20260710,
+      "prng": "python_stdlib_random.Random",
+      "random_api": "randrange(14042)",
+      "stream_count": 1,
+      "iteration_order": "replicate-major then draw-major over canonical test identity order",
+      "draws_per_replicate": 14042,
+      "joint_index_reuse": "the identical replicate indices are reused for every window and contrast"
+    },
+    "standard_error": "sample standard deviation of the 2000 bootstrap estimates with ddof=1",
+    "percentile_interval": "sort ascending and linearly interpolate at q*(R-1) for q=0.025 and q=0.975",
+    "secondary_only": ["pooled_validation1531_ordinary_bootstrap", "legacy_validation512_nested_subset"]
+  },
+  "ranking": {
+    "z": "point_contrast/max(bootstrap_standard_error,1e-12)",
+    "score_all_supported_windows": true,
+    "eligibility_is_separate_from_scorability": true,
+    "selection_candidates": "point-eligible windows only",
+    "published_rank_order": ["score_descending", "start_ascending"],
+    "point_top_tie": {
+      "rel_tolerance": 1e-12,
+      "abs_tolerance": 1e-12,
+      "result": "ABSTAIN_NO_UNIQUE_TOP1"
+    },
+    "selection_frequency": {
+      "candidate_set": "fixed point-eligible set within the requested ranking scope",
+      "replicate_score": "recompute each contrast on the replicate and divide by the original full-sample bootstrap SE denominator",
+      "replicate_tie_break": "start ascending",
+      "definition": "fraction of 2000 replicates in which the point top-1 is replicate top-1",
+      "threshold": 0.8,
+      "threshold_equality_passes": true
+    },
+    "abstain_if": ["no point-eligible window", "point top score is tied", "selection_frequency<0.80"],
+    "scope": {
+      "retrospective": "variant support intersect historical-13",
+      "deployment": "entire variant support over starts 0..24",
+      "blind_enrichment": "variant support intersect blind-12; rank every scorable window even when point-ineligible"
+    }
+  },
+  "partition": {
+    "historical_13": ["4:7", "6:9", "8:11", "9:12", "11:14", "12:15", "13:16", "14:17", "15:18", "17:20", "18:21", "20:23", "22:25"],
+    "blind_12": ["0:3", "1:4", "2:5", "3:6", "5:8", "7:10", "10:13", "16:19", "19:22", "21:24", "23:26", "24:27"],
+    "closure": "disjoint union equals all 25 width-4 windows",
+    "blind_metadata_receipt": "configs/loopscope/phase3_blind12_outcome_existence_receipt.json",
+    "blind_metadata_receipt_sha256": "05e80be4c3576b768111418084d9a955d0187283eaab1aedcd5308a6f46a54f4"
+  },
+  "retrospective_selection": {
+    "baseline_rank_freeze_before_any_outcome_value": true,
+    "required_historical_top1": "12:15",
+    "required_selection_frequency_minimum": 0.8,
+    "must_be_ineligible": ["4:7", "6:9"],
+    "variant_priority": ["CONSENSUS", "FLANK", "SHIFT"],
+    "success_label": "RETROSPECTIVE_TOP1_RECOVERY",
+    "failure_labels": ["RETROSPECTIVE_SHORTLIST_ONLY", "RETROSPECTIVE_NOT_SUPPORTED", "RETROSPECTIVE_INCONCLUSIVE"],
+    "failure_action": "stop H3 without changing formula, threshold, support, or partition"
+  },
+  "blind_primary_endpoint": {
+    "n": "number of selected-variant scorable blind-12 windows",
+    "m": "ceil(n/3)",
+    "top_m": "highest frozen baseline-only scores among all scorable blind windows",
+    "bottom_m": "lowest frozen baseline-only scores among all scorable blind windows",
+    "tie_break": "start ascending",
+    "G_blind": "mean test paired delta_accuracy(top_m)-mean test paired delta_accuracy(bottom_m)",
+    "supported": "lower95CI(G_blind)>0",
+    "refuted": "upper95CI(G_blind)<0",
+    "inconclusive": "otherwise"
+  },
+  "outcome_analysis": {
+    "paired_delta_accuracy_unit": "fraction internally; percentage points for display",
+    "exact_mcnemar": "two-sided exact binomial p=2*BinomCDF(min(wrong_to_right,right_to_wrong); n=discordant,p=0.5), capped at 1; p=1 when discordant=0",
+    "secondary_family": "Holm step-down over all 25 window-vs-baseline exact McNemar p-values at family-wise alpha=0.05",
+    "partial_blind_outcome_viewing": false,
+    "valid_science_retry_after_output": false
+  },
+  "width4_label_priority": [
+    "WIDTH4_INCONCLUSIVE",
+    "WIDTH4_HARMFUL_SELECTION",
+    "WIDTH4_COVERAGE_FAILURE",
+    "WIDTH4_WITHIN_CELL_FEASIBILITY_SUPPORTED",
+    "WIDTH4_RANKING_SIGNAL_ONLY",
+    "WIDTH4_RETROSPECTIVE_RECOVERY_ONLY",
+    "WIDTH4_NOT_SUPPORTED"
+  ],
+  "legacy_validation512_role": "secondary robustness only; never selects a variant or replaces or joins the validation-1531 primary population"
+}
