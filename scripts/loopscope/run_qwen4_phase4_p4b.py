@@ -90,6 +90,11 @@ CONTROL_BYTE_SHA256 = "d33dd0fd0c064bfd3e49f56aac49f92ee18d80ef9da88d91f24e2e26b
 RECEIPT_BYTE_SHA256 = "fdf7c21c6ea31fa83c082e8f694daea95e2fd1a97bdc6e8a338ee6768956e63b"
 NON_REUSE_BYTE_SHA256 = "725d13e2465f8a6abcffd1a8074b569335c6b408426c48ab781d47bb39795a2e"
 DATASET_FINGERPRINT = "32dc8126417ec7ecd00c98b5ce877ad6e56df5560330c71f4b599e2f5c1d45a2"
+DATASET_FINGERPRINT_COMPONENTS = {
+    "dataset_info_sha256": "ce81f7ec00c6701dc737889a3171a9dd32d2521914bc1e5029a3f8bb28df9aab",
+    "test_arrow_sha256": "4c741944e3b53719b433be6e7916e4ab9e8ff33f70e9c365614b4e317c0476bb",
+    "validation_arrow_sha256": "5730c2a9cd07a1ee5f70f4cd1940e43da1df7602c21977b7dc7ef51d496bdf00",
+}
 RENDERER_SHA256 = "74ab409c4e4c96e4351fbe6122d519f64dd3e11381a676957631e858923cc9fc"
 REMOTE_REPO = Path(
     "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope"
@@ -97,6 +102,11 @@ REMOTE_REPO = Path(
 AUDITED_VENV = REMOTE_REPO / ".venv-loopscope-cu121-20260711"
 HF_HOME = Path("/hpc2hdd/home/xhuang225/shared/hf_home")
 HF_DATASETS_CACHE = Path("/hpc2hdd/home/xhuang225/shared/datasets")
+DATASET_CACHE_SNAPSHOT = (
+    HF_DATASETS_CACHE
+    / "TIGER-Lab___mmlu-pro/default/0.0.0/b189ec765aa7ed75c8acfea42df31fdae71f97be"
+)
+_DATASET_CLOSURE_VERIFIED = False
 
 
 class P4BError(Phase4RuntimeError):
@@ -178,7 +188,23 @@ def _load_renderer() -> Any:
 
 
 def _load_dataset(card: Mapping[str, Any], split: str) -> Any:
+    global _DATASET_CLOSURE_VERIFIED
+
     from datasets import DownloadMode, load_dataset
+
+    if not _DATASET_CLOSURE_VERIFIED:
+        observed_components = {
+            "dataset_info_sha256": file_sha256(DATASET_CACHE_SNAPSHOT / "dataset_info.json"),
+            "test_arrow_sha256": file_sha256(DATASET_CACHE_SNAPSHOT / "mmlu-pro-test.arrow"),
+            "validation_arrow_sha256": file_sha256(
+                DATASET_CACHE_SNAPSHOT / "mmlu-pro-validation.arrow"
+            ),
+        }
+        if observed_components != DATASET_FINGERPRINT_COMPONENTS:
+            raise P4BError("cached dataset snapshot component hash differs")
+        if semantic_sha256(observed_components) != DATASET_FINGERPRINT:
+            raise P4BError("cached dataset snapshot composite fingerprint differs")
+        _DATASET_CLOSURE_VERIFIED = True
 
     value = load_dataset(
         card["task"]["dataset"],
@@ -187,8 +213,10 @@ def _load_dataset(card: Mapping[str, Any], split: str) -> Any:
         cache_dir=str(HF_DATASETS_CACHE),
         download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS,
     )
-    if split == "test" and str(getattr(value, "_fingerprint", "")) != DATASET_FINGERPRINT:
-        raise P4BError("cached test dataset fingerprint differs")
+    if split == "test" and len(value) != 12032:
+        raise P4BError("cached test dataset population count differs")
+    if split == "validation" and len(value) != 70:
+        raise P4BError("cached validation demonstration count differs")
     return value
 
 
@@ -419,6 +447,10 @@ def prepare_source(
         "control_sha256": CONTROL_BYTE_SHA256,
         "dataset_revision": card["task"]["dataset_revision"],
         "dataset_fingerprint": DATASET_FINGERPRINT,
+        "dataset_fingerprint_components": dict(DATASET_FINGERPRINT_COMPONENTS),
+        "datasets_runtime_projected_fingerprint": str(
+            getattr(projected, "_fingerprint", "")
+        ),
         "model_repo": card["model"]["repo"],
         "model_revision": card["model"]["revision"],
         "tokenizer_revision": card["model"]["tokenizer_revision"],
