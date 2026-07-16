@@ -13,7 +13,9 @@ from unittest.mock import patch
 from tflt.loopscope.phase3_acquisition import (
     AUTHORIZED_RUN_ROOT,
     P3BAcquisitionError,
+    _closed_artifact_git_commit,
     _default_dataset_loader,
+    _require_artifact_commit_ancestor,
     build_safe_validation_pool,
     build_shard_manifest,
     build_smoke_manifest,
@@ -330,6 +332,32 @@ class Phase3AcquisitionTests(unittest.TestCase):
         self.assertEqual(parsed[0]["JobIDRaw"], "987654")
         self.assertEqual(parsed[0]["State"], "COMPLETED")
         self.assertEqual(parsed[0]["ElapsedRaw"], "120")
+
+    def test_resource_accounting_accepts_only_closed_ancestor_lineage(self):
+        producer = "a" * 40
+        accounting = "b" * 40
+        receipt = {
+            "git": {
+                "commit": producer,
+                "origin_loopscope": producer,
+                "dirty": False,
+            }
+        }
+        self.assertEqual(
+            _closed_artifact_git_commit(receipt, "fixture receipt"), producer
+        )
+        dirty = copy.deepcopy(receipt)
+        dirty["git"]["dirty"] = True
+        with self.assertRaises(P3BAcquisitionError):
+            _closed_artifact_git_commit(dirty, "fixture receipt")
+        with patch("tflt.loopscope.phase3_acquisition.subprocess.run") as run:
+            run.return_value = types.SimpleNamespace(returncode=0)
+            _require_artifact_commit_ancestor(producer, accounting)
+            command = run.call_args.args[0]
+            self.assertEqual(command[-2:], [producer, accounting])
+            run.return_value = types.SimpleNamespace(returncode=1)
+            with self.assertRaises(P3BAcquisitionError):
+                _require_artifact_commit_ancestor(producer, accounting)
 
 
 if __name__ == "__main__":

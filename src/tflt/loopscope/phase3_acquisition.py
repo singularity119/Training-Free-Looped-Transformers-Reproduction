@@ -2434,6 +2434,38 @@ def _load_monitor_lifecycle_receipts(
     return receipts
 
 
+def _closed_artifact_git_commit(receipt: Mapping[str, Any], context: str) -> str:
+    git = receipt.get("git")
+    if not isinstance(git, Mapping):
+        raise P3BAcquisitionError("%s Git provenance is missing" % context)
+    commit = _exact_commit(git.get("commit"), "%s Git commit" % context)
+    if git.get("origin_loopscope") != commit or git.get("dirty") is not False:
+        raise P3BAcquisitionError("%s Git provenance is not closed" % context)
+    return commit
+
+
+def _require_artifact_commit_ancestor(artifact_commit: str, accounting_commit: str) -> None:
+    command = [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        _exact_commit(artifact_commit, "scientific artifact commit"),
+        _exact_commit(accounting_commit, "resource accounting commit"),
+    ]
+    result = subprocess.run(
+        command,
+        cwd=str(repository_root()),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise P3BAcquisitionError(
+            "scientific artifact commit is not an ancestor of resource accounting commit"
+        )
+
+
 def write_resource_accounting(
     *,
     card_path: Path,
@@ -2451,8 +2483,14 @@ def write_resource_accounting(
     smoke_manifest = load_strict_json(Path(run_root) / "smoke/smoke_manifest.json")
     validate_membership_manifest(shard_manifest, pool, source, pool_manifest, card)
     validate_membership_manifest(smoke_manifest, pool, source, pool_manifest, card)
+    smoke_receipt = load_strict_json(
+        Path(run_root) / str(smoke_manifest["output_relative"]) / "receipt.json"
+    )
+    verify_manifest_sha256(smoke_receipt)
+    artifact_commit = _closed_artifact_git_commit(smoke_receipt, "B2 smoke receipt")
+    _require_artifact_commit_ancestor(artifact_commit, git["commit"])
     smoke_report = validate_completed_smoke(
-        Path(run_root), card, pool, source, pool_manifest, expected_commit
+        Path(run_root), card, pool, source, pool_manifest, artifact_commit
     )
     if shard_manifest.get("smoke_report_sha256") != smoke_report["manifest_sha256"]:
         raise P3BAcquisitionError("resource accounting lacks exact B2 smoke binding")
@@ -2465,6 +2503,13 @@ def write_resource_accounting(
         Path(run_root), shard_manifest, pool, source, pool_manifest, card
     )
     for shard in primary_shard_evidence:
+        shard_receipt = load_strict_json(Path(shard["receipt"]))
+        verify_manifest_sha256(shard_receipt)
+        if (
+            _closed_artifact_git_commit(shard_receipt, "primary shard receipt")
+            != artifact_commit
+        ):
+            raise P3BAcquisitionError("scientific shard producer commit mismatch")
         slurm = shard.get("slurm")
         if not isinstance(slurm, Mapping):
             raise P3BAcquisitionError("primary shard lacks Slurm receipt evidence")
@@ -2533,6 +2578,11 @@ def write_resource_accounting(
         "created_at_utc": utc_now(),
         "run_root": str(AUTHORIZED_RUN_ROOT),
         "git": git,
+        "git_lineage": {
+            "scientific_artifact_commit": artifact_commit,
+            "resource_accounting_commit": git["commit"],
+            "artifact_commit_is_ancestor": True,
+        },
         "card_sha256": PHASE3_CARD_BYTE_SHA256,
         "source_manifest_sha256": source["manifest_sha256"],
         "pool_manifest_sha256": pool_manifest["manifest_sha256"],
