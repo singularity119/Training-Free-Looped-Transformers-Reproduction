@@ -23,6 +23,7 @@ from tflt.loopscope.phase4_schema import (
     source_record_json_schema,
     trajectory_record_json_schema,
     validate_shared_identity_contract,
+    validate_provenance_evidence,
     validate_source_record,
 )
 from tflt.loopscope.phase4_selector import analyze_selector, build_outcome_panel
@@ -50,6 +51,20 @@ def build_verifier_receipt(card_path: Path, repo_root: Optional[Path] = None) ->
     )
     if provenance_closed == provenance_fail_fast:
         raise Phase4ContractError("provenance closure/fail-fast state is inconsistent")
+
+    provenance_evidence: Optional[Dict[str, Any]] = None
+    if provenance_closed:
+        evidence_ref = card["provenance_closure"].get("evidence_artifact")
+        if not isinstance(evidence_ref, Mapping):
+            raise Phase4ContractError("closed card is missing provenance evidence reference")
+        evidence_relative = evidence_ref.get("relative_path")
+        if not isinstance(evidence_relative, str):
+            raise Phase4ContractError("Phase 4 provenance evidence path is missing")
+        evidence_path = root / evidence_relative
+        if evidence_ref.get("file_sha256") != file_sha256(evidence_path):
+            raise Phase4ContractError("Phase 4 provenance evidence file SHA256 mismatch")
+        provenance_evidence = load_json_object(evidence_path)
+        validate_provenance_evidence(card, provenance_evidence)
 
     source_schema_path = root / SOURCE_SCHEMA_RELATIVE
     trajectory_schema_path = root / TRAJECTORY_SCHEMA_RELATIVE
@@ -141,6 +156,18 @@ def build_verifier_receipt(card_path: Path, repo_root: Optional[Path] = None) ->
         raise Phase4ContractError("forbidden normal-path field did not fail closed")
 
     implementations = {relative: file_sha256(root / relative) for relative in IMPLEMENTATION_RELATIVES}
+    contract_artifacts = {
+        SOURCE_SCHEMA_RELATIVE: {"file_sha256": file_sha256(source_schema_path)},
+        TRAJECTORY_SCHEMA_RELATIVE: {"file_sha256": file_sha256(trajectory_schema_path)},
+        SHARED_CONTRACT_RELATIVE: {"file_sha256": file_sha256(root / SHARED_CONTRACT_RELATIVE)},
+    }
+    if provenance_evidence is not None:
+        evidence_relative = card["provenance_closure"]["evidence_artifact"]["relative_path"]
+        contract_artifacts[evidence_relative] = {
+            "file_sha256": file_sha256(root / evidence_relative),
+            "closure_mode": provenance_evidence["closure_mode"],
+        }
+
     payload: Dict[str, Any] = {
         "schema_version": RECEIPT_SCHEMA_VERSION,
         "artifact_role": "p4a_local_contract_verifier_receipt",
@@ -151,11 +178,7 @@ def build_verifier_receipt(card_path: Path, repo_root: Optional[Path] = None) ->
             "provenance_closed": provenance_closed,
             "normal_verify_fails_closed": provenance_fail_fast,
         },
-        "contract_artifacts": {
-            SOURCE_SCHEMA_RELATIVE: {"file_sha256": file_sha256(source_schema_path)},
-            TRAJECTORY_SCHEMA_RELATIVE: {"file_sha256": file_sha256(trajectory_schema_path)},
-            SHARED_CONTRACT_RELATIVE: {"file_sha256": file_sha256(root / SHARED_CONTRACT_RELATIVE)},
-        },
+        "contract_artifacts": contract_artifacts,
         "checks": {
             "shared_identity_contract": identity_checks,
             "forbidden_field_normal_path": forbidden_checks,
@@ -169,6 +192,18 @@ def build_verifier_receipt(card_path: Path, repo_root: Optional[Path] = None) ->
             "variable_width_edge_count": 224,
             "width4_compatibility_verified": True,
             "panel_known_outcome_exclusion_verified": "15:18" not in panel["blind_high3"] + panel["blind_low3"],
+            "provenance_closure_mode": (
+                provenance_evidence["closure_mode"] if provenance_evidence is not None else None
+            ),
+            "provenance_branch_validated": provenance_evidence is not None,
+            "historical_artifacts_reused": (
+                provenance_evidence is not None
+                and provenance_evidence["closure_mode"] == "REUSE_CLOSED"
+            ),
+            "p4c_fresh_baseline_and_15_18_required": (
+                provenance_evidence is not None
+                and provenance_evidence["closure_mode"] == "NOT_REUSABLE_FRESH_REQUIRED"
+            ),
             "torch_transformers_lm_eval_imports_required": False,
         },
         "synthetic_fixture": {
@@ -184,7 +219,11 @@ def build_verifier_receipt(card_path: Path, repo_root: Optional[Path] = None) ->
             "observed_abstain": selector_report["width4_primary"]["abstain"],
         },
         "implementation_sha256": implementations,
-        "external_actions_performed": [],
+        "external_actions_performed": (
+            provenance_evidence["collection"]["external_actions"]
+            if provenance_evidence is not None
+            else []
+        ),
         "blocking_condition": None if provenance_closed else card["provenance_closure"]["blocker"],
     }
     payload["manifest_sha256"] = hashlib.sha256(canonical_json_bytes(payload)).hexdigest()

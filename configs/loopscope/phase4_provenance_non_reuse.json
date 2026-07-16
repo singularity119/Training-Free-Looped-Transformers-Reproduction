@@ -1,0 +1,233 @@
+{
+  "schema_version": "loopscope.phase4.provenance-closure.v1",
+  "artifact_role": "p4a_outcome_free_provenance_closure",
+  "card": "H4_PV_EK_TRS_QWEN4B_MMLUPRO_V1",
+  "closure_mode": "NOT_REUSABLE_FRESH_REQUIRED",
+  "provenance_closed": true,
+  "collection": {
+    "host": "mgmt-6",
+    "ssh_shape": "BatchMode=yes,ConnectTimeout=10,ClearAllForwardings=yes",
+    "exact_historical_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838",
+    "canonical_historical_root": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_reproduction/runs/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838",
+    "outcome_content_displayed": false,
+    "external_actions": [
+      "exact-root path enumeration and stat/readlink/sha256sum",
+      "safe command/config/env/manifest/source/YAML/tokenizer metadata reads",
+      "dedicated clone git fetch origin loopscope and merge --ff-only origin/loopscope"
+    ]
+  },
+  "prospective_fresh_contract": {
+    "contract_role": "prospective_fresh_contract",
+    "p4b_renderer_smoke_required": true,
+    "dataset_fingerprint_components": {
+      "dataset_info_sha256": "ce81f7ec00c6701dc737889a3171a9dd32d2521914bc1e5029a3f8bb28df9aab",
+      "test_arrow_sha256": "4c741944e3b53719b433be6e7916e4ab9e8ff33f70e9c365614b4e317c0476bb",
+      "validation_arrow_sha256": "5730c2a9cd07a1ee5f70f4cd1940e43da1df7602c21977b7dc7ef51d496bdf00"
+    },
+    "dataset_fingerprint": "32dc8126417ec7ecd00c98b5ce877ad6e56df5560330c71f4b599e2f5c1d45a2",
+    "category_yaml_sha256": {
+      "mmlu_pro_biology.yaml": "71dc96ee3c684c68dbd4447d2f10f2971ae6291eb9d3ee78c20e8fc163e5f1c4",
+      "mmlu_pro_business.yaml": "2d53801203698aa59a976eba4d73f29305dfed4158747e2da92026f3709efe28",
+      "mmlu_pro_chemistry.yaml": "0fa839a646acc1f9699d141920a37a270ec8c3febd980aff4bbb2626f13510a2",
+      "mmlu_pro_computer_science.yaml": "a01f0c410aa31b28f431f649bc0c3ba28f6d77d4b41e62df06c3f5afb12c7aff",
+      "mmlu_pro_economics.yaml": "2e3e9a34ff6eda511c28c94d406be6da4b6dbd780f226429c2cf99508ca0796d",
+      "mmlu_pro_engineering.yaml": "35bbf42a23518c5aec8ae6f123a0f8260b83b73f63289294617cc80aed4efc53",
+      "mmlu_pro_health.yaml": "e76c20cb43f2baba3b70d8dc180e2df7ddbef40b77b72dcec28bc9ac7dc993aa",
+      "mmlu_pro_history.yaml": "f886129cfd559ad7f9f3cf1b445f942dc35b25ed4e8694ca9737134b1d11f884",
+      "mmlu_pro_law.yaml": "9fa02d2309ddb74a3b3a532a06f8a324b61088bc0535c07c1ab8b0919fcf5cec",
+      "mmlu_pro_math.yaml": "7994ac90a800ea0d906172dd920e1e60df56c44e42f7aa087693b85eda879964",
+      "mmlu_pro_other.yaml": "146e6506f6ff1869d9b2feaae29dd979db59ec0d0d17cb5aac5603d1f2c4ba88",
+      "mmlu_pro_philosophy.yaml": "63c23b850a6168060d97acbabcb787b15b2aa49e64945644b013a589c90c41fa",
+      "mmlu_pro_physics.yaml": "25a05b69e5effa5b1c786b57cec29704331045a1c3a73f017d39c161b889409b",
+      "mmlu_pro_psychology.yaml": "ba2b68f401149ebb592c50403c7b2710979ed6eb7b1ead7d4170d3749c8d9189"
+    },
+    "rendered_prefix_contract": {
+      "schema_version": "loopscope.phase4.rendered-prefix-contract.v1",
+      "contract_role": "prospective_fresh_contract",
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+      "apply_chat_template": false,
+      "lm_eval_version": "0.4.11",
+      "task_alias": "mmlu_pro",
+      "group_yaml_sha256": "0271e3fdbbb0e8df5b6909786600c1292da29842086b521a1181954941156f94",
+      "default_template_yaml_sha256": "356e937a958288fafd8f07b03da7fd4825977e9bb3d62136931c9f649b600647",
+      "category_yaml_bundle_sha256": "b6e115024c7876ce80291b36b0010bbbf9fa013ba21d0eb753b3ad1335de8c25",
+      "renderer_source_sha256": "74ab409c4e4c96e4351fbe6122d519f64dd3e11381a676957631e858923cc9fc",
+      "test_split": "test",
+      "fewshot_split": "validation",
+      "num_fewshot": 5,
+      "fewshot_sampler": "first_n",
+      "doc_to_text": "utils.doc_to_text",
+      "fewshot_doc_to_text": "utils.fewshot_to_text",
+      "fewshot_delimiter": "\\n\\n",
+      "target_generated_token_count_before_selector": 0
+    },
+    "rendered_prefix_contract_sha256": "d29b27fe0877daa08973d835b0fcd24cd2e7bf103cd13dd6fb1d7648fa528a38",
+    "generation_kwargs": {
+      "until": ["Question:"],
+      "max_gen_toks": 2048,
+      "do_sample": false,
+      "temperature": 0.0
+    },
+    "primary_metric_name": "exact_match,custom-extract"
+  },
+  "historical_run": {
+    "reuse_status": "NOT_REUSABLE",
+    "source_commit_evidence": {
+      "value": "4f59bd9",
+      "completeness": "abbreviated_only"
+    },
+    "recipe_identity": {
+      "baseline": {"loop": false, "model": "qwen3-4b-instruct-2507", "tasks": "mmlu_pro", "num_fewshot": 5, "batch_size": "64", "dtype": "bfloat16"},
+      "fixed_15_18": {"loop": true, "window": "15:18", "k": 3, "iteration_mode": "block", "strategy": "euler", "alpha": 1.0, "beta": 0.0, "cache_strategy": "first", "decode_mode": "full", "model": "qwen3-4b-instruct-2507", "tasks": "mmlu_pro", "num_fewshot": 5, "batch_size": "64", "dtype": "bfloat16"}
+    },
+    "shared_population_evidence": {
+      "required_count": 12032,
+      "identity_order_prompt_hash_manifest_present": false,
+      "per_sample_baseline_artifact_present": false,
+      "per_sample_15_18_artifact_present": false,
+      "proof": "complete max-depth-4 exact-root path enumeration contained only aggregate results and safe provenance sidecars"
+    },
+    "historical_baseline_identity": {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838",
+      "cell": "baseline_no_loop",
+      "artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/baseline/results.json",
+      "artifact_sha256": "97ec44c3cf197db9fbafef06d2b70766cb18f283a36ac2c2189d4ee654eb9862",
+      "artifact_size_bytes": 94567815,
+      "command_args_sha256": "31a12059882a7022a9f4bd7a0abee96fa243b0aedd0be923c5cfe58bba129b6a",
+      "env_sha256": "3adeb95fc2eb0c3f56d511be53a69199032c85a11f9a4d10009e45b16f708c19",
+      "model_revision_sha256": "ca5d80210369f47567293ef7b28899f7bb586168f7e1cb157f30605e8b8f0c62"
+    },
+    "historical_baseline_identity_sha256": "50cd5c322b6483c14338c4fc493f6ea394376652b408d1edca55f305263ccf18",
+    "historical_15_18_identity": {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838",
+      "cell": "fixed_15_18",
+      "window": "15:18",
+      "artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/loop/results.json",
+      "artifact_sha256": "f303db0eab5c073d05d63b2fc85dea22100057f2df30df99d8c051d9b7fa3023",
+      "artifact_size_bytes": 93313957,
+      "command_args_sha256": "2824db97c3b7d35033d08bffa3a6f004bb9d4e6a613a98924b90f0a53be1de2a",
+      "env_sha256": "3adeb95fc2eb0c3f56d511be53a69199032c85a11f9a4d10009e45b16f708c19",
+      "model_revision_sha256": "ca5d80210369f47567293ef7b28899f7bb586168f7e1cb157f30605e8b8f0c62"
+    },
+    "historical_15_18_identity_sha256": "4dee3eaf3eb65bad35ba72a9b7587031c3be64af335470cbe501442c4f786c0a",
+    "known_outcome_registry": [
+      {
+        "window": "15:18",
+        "artifact_identity_sha256": "4dee3eaf3eb65bad35ba72a9b7587031c3be64af335470cbe501442c4f786c0a",
+        "artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/loop/results.json",
+        "outcome_value_recorded": false
+      }
+    ],
+    "reuse_requirements": {
+      "current_checkpoint_model_tokenizer_revision": false,
+      "dataset_revision_and_fingerprint": false,
+      "task_renderer_chat_prefix_contract": false,
+      "generation_metric_dtype_recipe": false,
+      "baseline_and_15_18_artifact_identity": true,
+      "shared_12032_identity_order_prompt_hashes": false,
+      "per_sample_availability": false
+    },
+    "non_reuse_reasons": [
+      "historical tokenizer revision is not recorded",
+      "historical dataset revision and content fingerprint are not recorded",
+      "historical task YAML renderer chat-template and rendered-prefix hashes are not recorded",
+      "historical effective generation and primary-metric binding is not recorded in an immutable manifest",
+      "historical source commit is recorded only as abbreviated 4f59bd9",
+      "no shared-12032 identity/order/prompt-hash manifest exists under the exact run root",
+      "no per-sample baseline or 15:18 artifact exists under the exact run root"
+    ],
+    "p4c_fallback": {
+      "baseline": "FRESH_ACQUISITION_REQUIRED",
+      "fixed_15_18": "FRESH_ACQUISITION_REQUIRED"
+    }
+  },
+  "field_evidence": {
+    "model_revision": {
+      "value": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/models--Qwen--Qwen3-4B-Instruct-2507/snapshots/cdbee75f17c01a7cc42f958dc650907174af0554/config.json", "sha256": "5beea1a4a34c62782bfb2f911c606741a3bab8f92d80a118fa053c28af12e8ba", "access": "safe_model_config_hash", "outcome_content_displayed": false}]
+    },
+    "tokenizer_revision": {
+      "value": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/models--Qwen--Qwen3-4B-Instruct-2507/snapshots/cdbee75f17c01a7cc42f958dc650907174af0554/tokenizer_config.json", "sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3", "access": "safe_tokenizer_metadata_hash", "outcome_content_displayed": false}]
+    },
+    "dataset_revision": {
+      "value": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/shared/datasets/TIGER-Lab___mmlu-pro/default/0.0.0/b189ec765aa7ed75c8acfea42df31fdae71f97be/dataset_info.json", "sha256": "ce81f7ec00c6701dc737889a3171a9dd32d2521914bc1e5029a3f8bb28df9aab", "access": "safe_dataset_metadata_hash", "outcome_content_displayed": false}]
+    },
+    "dataset_fingerprint": {
+      "value": "32dc8126417ec7ecd00c98b5ce877ad6e56df5560330c71f4b599e2f5c1d45a2",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/shared/datasets/TIGER-Lab___mmlu-pro/default/0.0.0/b189ec765aa7ed75c8acfea42df31fdae71f97be/mmlu-pro-test.arrow", "sha256": "4c741944e3b53719b433be6e7916e4ab9e8ff33f70e9c365614b4e317c0476bb", "access": "path_stat_sha256_only", "outcome_content_displayed": false}, {"path": "/hpc2hdd/home/xhuang225/shared/datasets/TIGER-Lab___mmlu-pro/default/0.0.0/b189ec765aa7ed75c8acfea42df31fdae71f97be/mmlu-pro-validation.arrow", "sha256": "5730c2a9cd07a1ee5f70f4cd1940e43da1df7602c21977b7dc7ef51d496bdf00", "access": "path_stat_sha256_only", "outcome_content_displayed": false}]
+    },
+    "lm_eval_version": {
+      "value": "0.4.11",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/lib/python3.11/site-packages/lm_eval-0.4.11.dist-info/METADATA", "sha256": "c483ec7336d8b85636b4d1975fe25567e4f9cc0652ea6ff2591eff4fd3309b59", "access": "safe_package_metadata_hash", "outcome_content_displayed": false}]
+    },
+    "mmlu_pro_task_yaml_sha256": {
+      "value": "0271e3fdbbb0e8df5b6909786600c1292da29842086b521a1181954941156f94",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/lib/python3.11/site-packages/lm_eval/tasks/mmlu_pro/_mmlu_pro.yaml", "sha256": "0271e3fdbbb0e8df5b6909786600c1292da29842086b521a1181954941156f94", "access": "safe_task_yaml_read_and_hash", "outcome_content_displayed": false}]
+    },
+    "renderer_source_sha256": {
+      "value": "74ab409c4e4c96e4351fbe6122d519f64dd3e11381a676957631e858923cc9fc",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/lib/python3.11/site-packages/lm_eval/tasks/mmlu_pro/utils.py", "sha256": "74ab409c4e4c96e4351fbe6122d519f64dd3e11381a676957631e858923cc9fc", "access": "safe_renderer_source_read_and_hash", "outcome_content_displayed": false}]
+    },
+    "chat_template_sha256": {
+      "value": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+      "role": "prospective_fresh_contract_available_template_apply_false",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/models--Qwen--Qwen3-4B-Instruct-2507/snapshots/cdbee75f17c01a7cc42f958dc650907174af0554/tokenizer_config.json#chat_template", "sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326", "access": "safe_metadata_field_hash_only", "outcome_content_displayed": false}]
+    },
+    "rendered_prefix_contract_sha256": {
+      "value": "d29b27fe0877daa08973d835b0fcd24cd2e7bf103cd13dd6fb1d7648fa528a38",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/lib/python3.11/site-packages/lm_eval/tasks/mmlu_pro/_default_template_yaml", "sha256": "356e937a958288fafd8f07b03da7fd4825977e9bb3d62136931c9f649b600647", "access": "safe_task_yaml_read_and_hash", "outcome_content_displayed": false}, {"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/lib/python3.11/site-packages/lm_eval/tasks/mmlu_pro/utils.py", "sha256": "74ab409c4e4c96e4351fbe6122d519f64dd3e11381a676957631e858923cc9fc", "access": "safe_renderer_source_read_and_hash", "outcome_content_displayed": false}]
+    },
+    "generation_kwargs": {
+      "value": {"until": ["Question:"], "max_gen_toks": 2048, "do_sample": false, "temperature": 0.0},
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/lib/python3.11/site-packages/lm_eval/tasks/mmlu_pro/_default_template_yaml", "sha256": "356e937a958288fafd8f07b03da7fd4825977e9bb3d62136931c9f649b600647", "access": "safe_task_yaml_read_and_hash", "outcome_content_displayed": false}]
+    },
+    "primary_metric_name": {
+      "value": "exact_match,custom-extract",
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/lib/python3.11/site-packages/lm_eval/tasks/mmlu_pro/_mmlu_pro.yaml", "sha256": "0271e3fdbbb0e8df5b6909786600c1292da29842086b521a1181954941156f94", "access": "safe_task_yaml_read_and_hash", "outcome_content_displayed": false}]
+    },
+    "historical_baseline_identity": {
+      "value": {"artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/baseline/results.json", "artifact_sha256": "97ec44c3cf197db9fbafef06d2b70766cb18f283a36ac2c2189d4ee654eb9862", "identity_sha256": "50cd5c322b6483c14338c4fc493f6ea394376652b408d1edca55f305263ccf18", "reuse_status": "NOT_REUSABLE"},
+      "role": "historical_artifact_identity_not_reusable",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/baseline/results.json", "sha256": "97ec44c3cf197db9fbafef06d2b70766cb18f283a36ac2c2189d4ee654eb9862", "access": "path_stat_sha256_only", "outcome_content_displayed": false}]
+    },
+    "historical_15_18_identity": {
+      "value": {"window": "15:18", "artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/loop/results.json", "artifact_sha256": "f303db0eab5c073d05d63b2fc85dea22100057f2df30df99d8c051d9b7fa3023", "identity_sha256": "4dee3eaf3eb65bad35ba72a9b7587031c3be64af335470cbe501442c4f786c0a", "reuse_status": "NOT_REUSABLE"},
+      "role": "historical_artifact_identity_not_reusable_fixed_comparator",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/loop/results.json", "sha256": "f303db0eab5c073d05d63b2fc85dea22100057f2df30df99d8c051d9b7fa3023", "access": "path_stat_sha256_only", "outcome_content_displayed": false}]
+    },
+    "known_outcome_registry": {
+      "value": [{"window": "15:18", "artifact_identity_sha256": "4dee3eaf3eb65bad35ba72a9b7587031c3be64af335470cbe501442c4f786c0a", "artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/loop/results.json", "outcome_value_recorded": false}],
+      "role": "blind_panel_exclusion_identity_only",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/loop/results.json", "sha256": "f303db0eab5c073d05d63b2fc85dea22100057f2df30df99d8c051d9b7fa3023", "access": "path_stat_sha256_only", "outcome_content_displayed": false}]
+    },
+    "remote_environment_identity": {
+      "value": {"venv": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711", "python": "3.11.9", "lm_eval": "0.4.11", "transformers": "4.51.3", "tokenizers": "0.21.4", "datasets": "5.0.0", "torch": "2.3.1+cu121", "accelerate": "1.14.0", "pyvenv_cfg_sha256": "7723d6a020c3d9001973cc52f2b47947ed9f727399bd332b2ff413ec350e638d"},
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/pyvenv.cfg", "sha256": "7723d6a020c3d9001973cc52f2b47947ed9f727399bd332b2ff413ec350e638d", "access": "safe_environment_metadata_hash", "outcome_content_displayed": false}]
+    },
+    "remote_cache_identity": {
+      "value": {"model_snapshot": "cdbee75f17c01a7cc42f958dc650907174af0554", "model_config_sha256": "5beea1a4a34c62782bfb2f911c606741a3bab8f92d80a118fa053c28af12e8ba", "tokenizer_config_sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3", "tokenizer_json_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4", "dataset_snapshot": "b189ec765aa7ed75c8acfea42df31fdae71f97be", "dataset_fingerprint": "32dc8126417ec7ecd00c98b5ce877ad6e56df5560330c71f4b599e2f5c1d45a2"},
+      "role": "prospective_fresh_contract",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/models--Qwen--Qwen3-4B-Instruct-2507/snapshots/cdbee75f17c01a7cc42f958dc650907174af0554/config.json", "sha256": "5beea1a4a34c62782bfb2f911c606741a3bab8f92d80a118fa053c28af12e8ba", "access": "safe_cache_metadata_hash", "outcome_content_displayed": false}, {"path": "/hpc2hdd/home/xhuang225/shared/datasets/TIGER-Lab___mmlu-pro/default/0.0.0/b189ec765aa7ed75c8acfea42df31fdae71f97be/dataset_info.json", "sha256": "ce81f7ec00c6701dc737889a3171a9dd32d2521914bc1e5029a3f8bb28df9aab", "access": "safe_dataset_metadata_hash", "outcome_content_displayed": false}]
+    },
+    "remote_source_clone_identity": {
+      "value": {"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope", "branch": "loopscope", "head": "32e942597f8a745ed04cc7dc1c93d6448d6a436d", "tree": "15a2836bb8d4ad791e9aafba607e1380fb9ecf6b", "origin": "git@github.com:singularity119/Training-Free-Looped-Transformers-Reproduction.git", "dirty": false},
+      "role": "prospective_fresh_contract_source_at_p4a_authorized_base",
+      "sources": [{"path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.git", "git_object": "32e942597f8a745ed04cc7dc1c93d6448d6a436d", "access": "read_only_git_provenance_after_ff_only_sync", "outcome_content_displayed": false}]
+    }
+  }
+}

@@ -1,19 +1,19 @@
 {
   "schema_version": "loopscope.phase4.pv-ek-trs-card.v1",
   "card": "H4_PV_EK_TRS_QWEN4B_MMLUPRO_V1",
-  "status": "BLOCKED_PROVENANCE",
+  "status": "P4A_PROVENANCE_CLOSED",
   "claim_scope": "same_population_outcome_blind_transductive_current_checkpoint",
   "model": {
     "repo": "Qwen/Qwen3-4B-Instruct-2507",
-    "revision": "UNRESOLVED_LOCAL_EVIDENCE",
-    "tokenizer_revision": "UNRESOLVED_LOCAL_EVIDENCE",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
     "decoder_layers": 36,
     "dtype": "bfloat16"
   },
   "task": {
     "dataset": "TIGER-Lab/MMLU-Pro",
-    "dataset_revision": "UNRESOLVED_LOCAL_EVIDENCE",
-    "dataset_fingerprint": "UNRESOLVED_LOCAL_EVIDENCE",
+    "dataset_revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+    "dataset_fingerprint": "32dc8126417ec7ecd00c98b5ce877ad6e56df5560330c71f4b599e2f5c1d45a2",
     "task_alias": "mmlu_pro",
     "num_fewshot": 5,
     "fewshot_split": "validation",
@@ -90,7 +90,12 @@
     "diagnostics_never_enter_selector_score": true
   },
   "provenance_closure": {
-    "state": "UNRESOLVED_LOCAL_EVIDENCE",
+    "state": "CLOSED",
+    "closure_mode": "NOT_REUSABLE_FRESH_REQUIRED",
+    "evidence_artifact": {
+      "relative_path": "configs/loopscope/phase4_provenance_non_reuse.json",
+      "file_sha256": "725d13e2465f8a6abcffd1a8074b569335c6b408426c48ab781d47bb39795a2e"
+    },
     "required_exact_fields": [
       "model_revision",
       "tokenizer_revision",
@@ -111,24 +116,71 @@
       "remote_source_clone_identity"
     ],
     "values": {
-      "model_revision": "UNRESOLVED_LOCAL_EVIDENCE",
-      "tokenizer_revision": "UNRESOLVED_LOCAL_EVIDENCE",
-      "dataset_revision": "UNRESOLVED_LOCAL_EVIDENCE",
-      "dataset_fingerprint": "UNRESOLVED_LOCAL_EVIDENCE",
-      "lm_eval_version": "UNRESOLVED_LOCAL_EVIDENCE",
-      "mmlu_pro_task_yaml_sha256": "UNRESOLVED_LOCAL_EVIDENCE",
-      "renderer_source_sha256": "UNRESOLVED_LOCAL_EVIDENCE",
-      "chat_template_sha256": "UNRESOLVED_LOCAL_EVIDENCE",
-      "rendered_prefix_contract_sha256": "UNRESOLVED_LOCAL_EVIDENCE",
-      "generation_kwargs": "UNRESOLVED_LOCAL_EVIDENCE",
-      "primary_metric_name": "UNRESOLVED_LOCAL_EVIDENCE",
-      "historical_baseline_identity": "UNRESOLVED_LOCAL_EVIDENCE",
-      "historical_15_18_identity": "UNRESOLVED_LOCAL_EVIDENCE",
-      "known_outcome_registry": "UNRESOLVED_LOCAL_EVIDENCE",
-      "remote_environment_identity": "UNRESOLVED_LOCAL_EVIDENCE",
-      "remote_cache_identity": "UNRESOLVED_LOCAL_EVIDENCE",
-      "remote_source_clone_identity": "UNRESOLVED_LOCAL_EVIDENCE"
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "dataset_revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+      "dataset_fingerprint": "32dc8126417ec7ecd00c98b5ce877ad6e56df5560330c71f4b599e2f5c1d45a2",
+      "lm_eval_version": "0.4.11",
+      "mmlu_pro_task_yaml_sha256": "0271e3fdbbb0e8df5b6909786600c1292da29842086b521a1181954941156f94",
+      "renderer_source_sha256": "74ab409c4e4c96e4351fbe6122d519f64dd3e11381a676957631e858923cc9fc",
+      "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+      "rendered_prefix_contract_sha256": "d29b27fe0877daa08973d835b0fcd24cd2e7bf103cd13dd6fb1d7648fa528a38",
+      "generation_kwargs": {
+        "until": ["Question:"],
+        "max_gen_toks": 2048,
+        "do_sample": false,
+        "temperature": 0.0
+      },
+      "primary_metric_name": "exact_match,custom-extract",
+      "historical_baseline_identity": {
+        "artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/baseline/results.json",
+        "artifact_sha256": "97ec44c3cf197db9fbafef06d2b70766cb18f283a36ac2c2189d4ee654eb9862",
+        "identity_sha256": "50cd5c322b6483c14338c4fc493f6ea394376652b408d1edca55f305263ccf18",
+        "reuse_status": "NOT_REUSABLE"
+      },
+      "historical_15_18_identity": {
+        "window": "15:18",
+        "artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/loop/results.json",
+        "artifact_sha256": "f303db0eab5c073d05d63b2fc85dea22100057f2df30df99d8c051d9b7fa3023",
+        "identity_sha256": "4dee3eaf3eb65bad35ba72a9b7587031c3be64af335470cbe501442c4f786c0a",
+        "reuse_status": "NOT_REUSABLE"
+      },
+      "known_outcome_registry": [
+        {
+          "window": "15:18",
+          "artifact_identity_sha256": "4dee3eaf3eb65bad35ba72a9b7587031c3be64af335470cbe501442c4f786c0a",
+          "artifact_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs.legacy-project-symlink-20260701-031953/phase3-qwen4b-instruct2507-mmlupro-bs64-bs64-20260701-164838/stage-b-full/loop/results.json",
+          "outcome_value_recorded": false
+        }
+      ],
+      "remote_environment_identity": {
+        "venv": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711",
+        "python": "3.11.9",
+        "lm_eval": "0.4.11",
+        "transformers": "4.51.3",
+        "tokenizers": "0.21.4",
+        "datasets": "5.0.0",
+        "torch": "2.3.1+cu121",
+        "accelerate": "1.14.0",
+        "pyvenv_cfg_sha256": "7723d6a020c3d9001973cc52f2b47947ed9f727399bd332b2ff413ec350e638d"
+      },
+      "remote_cache_identity": {
+        "model_snapshot": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "model_config_sha256": "5beea1a4a34c62782bfb2f911c606741a3bab8f92d80a118fa053c28af12e8ba",
+        "tokenizer_config_sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+        "tokenizer_json_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "dataset_snapshot": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+        "dataset_fingerprint": "32dc8126417ec7ecd00c98b5ce877ad6e56df5560330c71f4b599e2f5c1d45a2"
+      },
+      "remote_source_clone_identity": {
+        "path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope",
+        "branch": "loopscope",
+        "head": "32e942597f8a745ed04cc7dc1c93d6448d6a436d",
+        "tree": "15a2836bb8d4ad791e9aafba607e1380fb9ecf6b",
+        "origin": "git@github.com:singularity119/Training-Free-Looped-Transformers-Reproduction.git",
+        "dirty": false
+      }
     },
-    "blocker": "No allowed local immutable 4B MMLU-Pro baseline/comparator provenance bundle is present; revisions must not be guessed or fetched from latest state."
+    "blocker": null
   }
 }

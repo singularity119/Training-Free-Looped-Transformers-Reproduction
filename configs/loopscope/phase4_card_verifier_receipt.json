@@ -1,12 +1,12 @@
 {
   "artifact_role": "p4a_local_contract_verifier_receipt",
-  "blocking_condition": "No allowed local immutable 4B MMLU-Pro baseline/comparator provenance bundle is present; revisions must not be guessed or fetched from latest state.",
+  "blocking_condition": null,
   "card": {
-    "byte_sha256": "6c6d3f39892c83018da85dc0830ca7486ea7b50ce76386ed78ec80da16e07a8d",
-    "normal_verify_fails_closed": true,
-    "provenance_closed": false,
+    "byte_sha256": "980955386907a1865699808219da1379031c1395d9cdb77029585cf266f160f8",
+    "normal_verify_fails_closed": false,
+    "provenance_closed": true,
     "relative_path": "configs/loopscope/phase4_pv_ek_trs_card.json",
-    "semantic_sha256": "0dd4418aea8d99ccb0e0106f1e70ddf652df1c14486e6181c8eafe9c78f4469a"
+    "semantic_sha256": "9da9735838281b736e5103efdd9eef765d1334eed06f215a5e599848da0d2259"
   },
   "checks": {
     "d36_abs_value": 0.0,
@@ -16,9 +16,13 @@
       "nested_trajectory_logits_rejected": true,
       "non_json_tensor_payload_rejected": true
     },
+    "historical_artifacts_reused": false,
     "non_finite_rejected": true,
+    "p4c_fresh_baseline_and_15_18_required": true,
     "panel_known_outcome_exclusion_verified": true,
     "persisted_logits_or_tensors": false,
+    "provenance_branch_validated": true,
+    "provenance_closure_mode": "NOT_REUSABLE_FRESH_REQUIRED",
     "shared_identity_contract": {
       "duplicate_rejected": true,
       "extra_rejected": true,
@@ -34,6 +38,10 @@
     "width4_consensus_count": 25
   },
   "contract_artifacts": {
+    "configs/loopscope/phase4_provenance_non_reuse.json": {
+      "closure_mode": "NOT_REUSABLE_FRESH_REQUIRED",
+      "file_sha256": "725d13e2465f8a6abcffd1a8074b569335c6b408426c48ab781d47bb39795a2e"
+    },
     "configs/loopscope/phase4_shared12032_contract.json": {
       "file_sha256": "f854e0b20617491768224760e9c0bfeda8cddf2e594a361ef76c9c7afe46113c"
     },
@@ -44,15 +52,19 @@
       "file_sha256": "764a109855a7ac86b6b6a152be8d351e82e764f8c1582c7e5a6f67dfd254a911"
     }
   },
-  "external_actions_performed": [],
+  "external_actions_performed": [
+    "exact-root path enumeration and stat/readlink/sha256sum",
+    "safe command/config/env/manifest/source/YAML/tokenizer metadata reads",
+    "dedicated clone git fetch origin loopscope and merge --ff-only origin/loopscope"
+  ],
   "implementation_sha256": {
     "scripts/loopscope/prepare_qwen4_phase4.py": "15300c855a76be1304bb13d572d52e1d1d70902b9e478a031eab9f0c083f2fec",
     "src/tflt/loopscope/phase4_scalars.py": "7d01236f34958bacd361fa036ee0501ea49165be8cf6f34d63e08c4007e03c7b",
-    "src/tflt/loopscope/phase4_schema.py": "7dcf9db9b7d76bf8ad2943adf87fa639e292ad4ec55c4489706af47daa4206fe",
+    "src/tflt/loopscope/phase4_schema.py": "9ecb2c5fcabdf65c4ed9c3ecba15bc09a0744905f84379f214c464e601d222cf",
     "src/tflt/loopscope/phase4_selector.py": "db12b602b51bc1d3d7652e71df4ce0f15e052166ed293ad66d78f38c2be58393",
-    "src/tflt/loopscope/phase4_verifier.py": "f6930c2ca0f9f9b46f59719e401baf0160c378b2e323c6a4b72c3d089c9aae95"
+    "src/tflt/loopscope/phase4_verifier.py": "e01c8142589ca32c6a31b45a012753b793f9631901df18d1c247892d5475011a"
   },
-  "manifest_sha256": "2da3881d78ec5248ecaf0eff479de71297e647ac49347ae79c76d6aa693c2994",
+  "manifest_sha256": "a78b58cf1c54eae6133ab0bd1833c641b281be02cf0c3b62ecbb47eb113906a8",
   "schema_version": "loopscope.phase4.card-verifier-receipt.v1",
   "synthetic_fixture": {
     "contains_real_data_or_outcome": false,

@@ -7,6 +7,7 @@ from pathlib import Path
 from tflt.loopscope.phase4_schema import (
     Phase4ContractError,
     load_phase4_card,
+    validate_phase4_card,
     validate_shared_identity_contract,
     validate_source_record,
 )
@@ -18,14 +19,25 @@ CARD = ROOT / "configs/loopscope/phase4_pv_ek_trs_card.json"
 
 
 class Phase4ContractTests(unittest.TestCase):
-    def test_card_freezes_science_but_normal_mode_rejects_unresolved_provenance(self) -> None:
-        card = load_phase4_card(CARD, require_provenance_closed=False)
+    def test_card_freezes_science_and_unresolved_copy_still_fails_closed(self) -> None:
+        card = load_phase4_card(CARD)
         self.assertEqual(card["selector"]["width4_start_count"], 33)
         self.assertEqual(card["selector"]["width4_consensus_count"], 25)
         self.assertEqual(card["selector"]["secondary_strict_count"], 154)
         self.assertEqual(card["selector"]["secondary_edge_count"], 224)
+        self.assertEqual(
+            card["provenance_closure"]["closure_mode"],
+            "NOT_REUSABLE_FRESH_REQUIRED",
+        )
+        unresolved = copy.deepcopy(card)
+        unresolved["status"] = "BLOCKED_PROVENANCE"
+        unresolved["provenance_closure"]["state"] = "UNRESOLVED_LOCAL_EVIDENCE"
+        unresolved["provenance_closure"]["values"]["model_revision"] = (
+            "UNRESOLVED_LOCAL_EVIDENCE"
+        )
+        validate_phase4_card(unresolved, require_provenance_closed=False)
         with self.assertRaisesRegex(Phase4ContractError, "exact immutable provenance"):
-            load_phase4_card(CARD)
+            validate_phase4_card(unresolved)
 
     def test_shared_identity_missing_extra_reordered_duplicate_fail_fast(self) -> None:
         expected = [_synthetic_source_record(index) for index in range(8)]
