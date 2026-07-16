@@ -686,6 +686,7 @@ def record_submission(
 
 
 SACCT_FIELDS = (
+    "JobID",
     "JobIDRaw",
     "State",
     "ExitCode",
@@ -705,6 +706,7 @@ def query_sacct(job_id: str) -> List[Dict[str, str]]:
             "/opt/slurm/bin/sacct",
             "-j",
             str(job_id),
+            "--array",
             "--noheader",
             "--parsable2",
             "-o",
@@ -738,8 +740,10 @@ def validate_sealed_scheduler_rows(
     task_pattern = re.compile(r"^%s_([0-9]+)$" % re.escape(str(job_id)))
     tasks = {}
     for raw in rows:
-        raw_id = str(raw.get("JobIDRaw", ""))
-        match = task_pattern.fullmatch(raw_id)
+        # HPC2 assigns a separate numeric JobIDRaw to most array tasks.  The
+        # formatted JobID is the stable array identity (e.g. 9989919_4).
+        formatted_id = str(raw.get("JobID", ""))
+        match = task_pattern.fullmatch(formatted_id)
         if not match:
             continue
         index = int(match.group(1))

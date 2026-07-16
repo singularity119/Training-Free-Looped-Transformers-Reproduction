@@ -23,7 +23,8 @@ def scheduler_rows(job_id="123"):
     for index in range(12):
         rows.append(
             {
-                "JobIDRaw": "%s_%d" % (job_id, index),
+                "JobID": "%s_%d" % (job_id, index),
+                "JobIDRaw": str(1000 + index),
                 "State": "COMPLETED",
                 "ExitCode": "0:0",
                 "Partition": "p",
@@ -76,7 +77,7 @@ class Phase3P3ETests(unittest.TestCase):
     def test_partial_or_failed_12_cell_scheduler_set_cannot_unseal(self):
         rows = scheduler_rows()
         accepted = validate_sealed_scheduler_rows(rows, "123")
-        self.assertEqual([row["JobIDRaw"] for row in accepted], ["123_%d" % i for i in range(12)])
+        self.assertEqual([row["JobID"] for row in accepted], ["123_%d" % i for i in range(12)])
         with self.assertRaisesRegex(P3EError, "exact 12"):
             validate_sealed_scheduler_rows(rows[:-1], "123")
         failed = copy.deepcopy(rows)
