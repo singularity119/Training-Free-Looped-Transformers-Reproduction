@@ -309,6 +309,7 @@ class Phase3AcquisitionTests(unittest.TestCase):
         row = "|".join(
             [
                 "123_0",
+                "987654",
                 "p3b",
                 "gpu3",
                 "normal",
@@ -325,6 +326,8 @@ class Phase3AcquisitionTests(unittest.TestCase):
             ]
         ) + "|\n"
         parsed = parse_sacct_rows(row)
+        self.assertEqual(parsed[0]["JobID"], "123_0")
+        self.assertEqual(parsed[0]["JobIDRaw"], "987654")
         self.assertEqual(parsed[0]["State"], "COMPLETED")
         self.assertEqual(parsed[0]["ElapsedRaw"], "120")
 

@@ -2194,6 +2194,7 @@ def verify_primary(
 
 
 SACCT_FIELDS = (
+    "JobID",
     "JobIDRaw",
     "JobName",
     "Partition",
@@ -2473,18 +2474,18 @@ def write_resource_accounting(
             raise P3BAcquisitionError("primary shard array task ID mismatch")
     smoke_command, smoke_rows = _query_sacct(smoke_job_id)
     primary_command, primary_rows = _query_sacct(primary_job_id)
-    smoke_selected = [row for row in smoke_rows if row["JobIDRaw"] == str(smoke_job_id)]
+    smoke_selected = [row for row in smoke_rows if row["JobID"] == str(smoke_job_id)]
     primary_selected = [
         row
         for row in primary_rows
-        if re.fullmatch(re.escape(str(primary_job_id)) + r"_[0-9]+", row["JobIDRaw"])
+        if re.fullmatch(re.escape(str(primary_job_id)) + r"_[0-9]+", row["JobID"])
     ]
     if len(smoke_selected) != 1:
         raise P3BAcquisitionError("smoke sacct evidence lacks one parent job row")
     if len(primary_selected) != int(shard_manifest["shard_count"]):
         raise P3BAcquisitionError("primary sacct task count differs from frozen shards")
     selected = smoke_selected + sorted(
-        primary_selected, key=lambda row: int(row["JobIDRaw"].split("_", 1)[1])
+        primary_selected, key=lambda row: int(row["JobID"].split("_", 1)[1])
     )
     if any(row["State"] != "COMPLETED" or row["ExitCode"] != "0:0" for row in selected):
         raise P3BAcquisitionError("Slurm jobs are not all COMPLETED/0:0")
@@ -2496,10 +2497,10 @@ def write_resource_accounting(
         requested_gpus = _tres_gpu_count(row["ReqTRES"])
         total_gpu_seconds += elapsed * allocated_gpus
         normalized = dict(row)
-        if row["JobIDRaw"] == str(smoke_job_id):
+        if row["JobID"] == str(smoke_job_id):
             log_stem = "p3b-smoke-%s" % smoke_job_id
         else:
-            task_id = row["JobIDRaw"].split("_", 1)[1]
+            task_id = row["JobID"].split("_", 1)[1]
             log_stem = "p3b-primary-%s_%s" % (primary_job_id, task_id)
         stdout_path = Path(run_root) / ("slurm/%s.out" % log_stem)
         stderr_path = Path(run_root) / ("slurm/%s.err" % log_stem)
