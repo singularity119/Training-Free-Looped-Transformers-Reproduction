@@ -1,0 +1,154 @@
+{
+  "schema_version": "loopscope.post_phase3.x4_layer15_k234_card.v1",
+  "card": "POST_PHASE3_X4_LAYER15_K234_V1",
+  "status": "PLANNING_HANDOFF_MATERIALIZED",
+  "frozen_at_utc": "2026-07-17T00:12:49Z",
+  "authorized_executor_thread": "019f6bb3-8f65-7ea1-a2f9-425a7959680f",
+  "planning_audit_thread": "019f670d-24ca-7ad0-b92e-64438aa04efc1",
+  "authorized_base_commit": "684aff7a58bd62b6dd893e24689f3bfb4833f075",
+  "fixed_ancestor_commit": "4f59bd93eca4da3cbf458a93508f91c5b23912bc",
+  "question": "Does the sharp no-loop B14-to-B15 event become beneficial when decoder layer 15 alone is repeated as the loop body, and how does the outcome change at K=2,3,4?",
+  "no_loop_boundary_observation": {
+    "boundary": "B14_to_B15",
+    "mean_delta_entropy": -0.5113,
+    "mean_delta_kl_to_final": 0.5438,
+    "role": "post_phase3_mechanism_motivation_only"
+  },
+  "frozen_cells": {
+    "window": "15:15",
+    "window_semantics": "inclusive decoder-layer range",
+    "single_decoder_layer_body": true,
+    "ordered_k": [2, 3, 4],
+    "cell_count": 3,
+    "no_substitution_reordering_or_addition": true
+  },
+  "model_task_recipe": {
+    "model": "Qwen/Qwen3-1.7B-Base",
+    "model_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "tokenizer_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "dataset": "cais/mmlu",
+    "dataset_revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+    "task_group": "mmlu",
+    "split": "test",
+    "ordered_sample_count": 14042,
+    "subject_count": 57,
+    "num_fewshot": 5,
+    "fewshot_split": "dev",
+    "dtype": "float16",
+    "fixed_horizon": true,
+    "iteration_mode": "block",
+    "strategy": "damped_euler",
+    "alpha": 1.0,
+    "beta": 0.0,
+    "step_size_rule": "alpha_divided_by_k",
+    "total_horizon": 1.0,
+    "cache_strategy": "last",
+    "decode_mode": "bypass",
+    "only_k_may_vary": true,
+    "full_limit": null
+  },
+  "comparators": {
+    "baseline": {
+      "role": "primary_ordinary_no_loop_comparator",
+      "results_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-20260711-053022/gate-e-full/baseline-full/results.json",
+      "results_sha256": "b390880ae8f85d655c86b7b81a138bc12b99b61cf26d22520a8d372bdeafcc25",
+      "known_accuracy_percent": 62.7118644068
+    },
+    "context_12_15_k2": {
+      "role": "contextual_comparator",
+      "results_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-20260711-053022/gate-e-full/window-12-15-full/results.json",
+      "results_sha256": "bbcb5940fbefd9ec24402fd3269cf31763c13fa73661c1137c16f372544036d1",
+      "known_accuracy_percent": 63.1249109813
+    },
+    "rerun_comparators": false
+  },
+  "identity": {
+    "ordered_sample_count": 14042,
+    "subject_count": 57,
+    "phase1_legacy_ordered_identity_sha256": "872c9f6bd7f40e3c6fa40b13cc862033379ac0a9cbc439a1593653945f3d521d",
+    "gold_free_canonical_ordered_identity_sha256": "2c4557079fca1a7c071460f779ed714805fc96c3391560825cd34386d4051532",
+    "required_rule": "all three K cells and both comparators have the exact same 14042 ordered identities"
+  },
+  "execution": {
+    "remote_host": "hpc2-hkustgz",
+    "repo": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope",
+    "venv": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711",
+    "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase3-posthoc-x4-layer15-k234-20260717T001249Z",
+    "cache_policy": "offline existing caches only; no download or mutation",
+    "scheduler": {
+      "preferred_partition": "emergency_gpua40",
+      "array_throttle_max": 3,
+      "gpu_per_cell": 1,
+      "cpu_per_cell": 8,
+      "memory_per_cell": "64G",
+      "no_requeue": true,
+      "resource_hard_cap": null
+    },
+    "stages": [
+      "targeted tests and metadata dry-run",
+      "one limit=5 structural smoke over all three K cells without scientific metric inspection",
+      "one full no-limit three-cell array",
+      "after exact three-of-three terminal and identity closure, one analysis and one independent verifier"
+    ],
+    "valid_science_retry_after_output": false
+  },
+  "analysis": {
+    "primary_question": "whether any layer-15 K cell exceeds the ordinary no-loop baseline",
+    "k_rank_order": ["accuracy_descending", "k_ascending"],
+    "paired_delta_units": "fraction internally and percentage points for display",
+    "bootstrap": {
+      "method": "joint_paired_sample_bootstrap",
+      "replicates": 2000,
+      "seed": 20260710,
+      "prng": "python_stdlib_random.Random",
+      "random_api": "randrange(14042)",
+      "iteration_order": "replicate-major then draw-major over canonical test identity order",
+      "joint_index_reuse": "one identical index stream for all K-versus-baseline, K-versus-12:15, and pairwise-K contrasts",
+      "percentile_interval": "linear interpolation at q*(R-1) for q=0.025 and 0.975"
+    },
+    "exact_mcnemar": "two-sided exact binomial on paired correctness",
+    "holm_family": "three K-versus-baseline exact McNemar tests; step-down family-wise alpha=0.05",
+    "always_report": [
+      "accuracy and delta percentage points versus baseline for each K",
+      "paired bootstrap 95 percent interval versus baseline",
+      "paired flip counts and exact McNemar p versus baseline",
+      "Holm-adjusted p across K2,K3,K4 versus baseline",
+      "contextual delta percentage points versus 12:15@K2",
+      "pairwise K ordering and aligned paired contrasts",
+      "observed best K and whether any K exceeds either comparator"
+    ]
+  },
+  "information_boundary": {
+    "smoke_accuracy_is_not_a_scientific_endpoint": true,
+    "partial_full_outcome_viewing": false,
+    "no_outcome_before_three_of_three_terminal_and_identity_recipe_closure": true,
+    "no_post_outcome_code_or_science_change": true,
+    "no_favorable_result_rerun": true
+  },
+  "protected": [
+    "AGENTS.md",
+    ".planning controls",
+    "scientific reports",
+    "src/tflt/wrapper.py",
+    "src/tflt/strategies.py",
+    "src/tflt/cache.py",
+    "src/tflt/config.py",
+    "lm-eval source/task/renderer",
+    "prior run roots",
+    "comparator results"
+  ],
+  "non_objectives": [
+    "other windows or K values",
+    "selector retuning",
+    "rerunning baseline or 12:15",
+    "cross-model or cross-task evaluation",
+    "X5 or any subsequent Gate"
+  ],
+  "terminal": {
+    "gate": "POST_P3_X4",
+    "success_packet": "GATE_POST_P3_X4_FINAL_AUDIT",
+    "failure_packet": "BLOCK",
+    "planning_recipient": "019f670d-24ca-7ad0-b92e-64438aa04efc1",
+    "executor_disposition": "RETAIN_VISIBLE_UNARCHIVED"
+  }
+}
