@@ -15,7 +15,9 @@ from tflt.loopscope.phase3_acquisition import (
     P3BAcquisitionError,
     _closed_artifact_git_commit,
     _default_dataset_loader,
+    _implementation_hashes_at_ancestor_commit,
     _require_artifact_commit_ancestor,
+    _require_smoke_producer_implementation_hashes,
     build_safe_validation_pool,
     build_shard_manifest,
     build_smoke_manifest,
@@ -24,6 +26,7 @@ from tflt.loopscope.phase3_acquisition import (
     safe_dataset_fields,
     safe_target_doc_sha256,
     trajectory_renderer_provenance,
+    implementation_hashes,
     validate_membership_manifest,
     write_new_json,
     write_new_jsonl,
@@ -358,6 +361,63 @@ class Phase3AcquisitionTests(unittest.TestCase):
             run.return_value = types.SimpleNamespace(returncode=1)
             with self.assertRaises(P3BAcquisitionError):
                 _require_artifact_commit_ancestor(producer, accounting)
+
+    def test_historical_smoke_hashes_are_derived_from_closed_git_blobs(self):
+        artifact_commit = "44ae277c869eb18ba1486e27c121484d52a6fca0"
+        accounting_commit = "a519091f83a2b1ee4556a7761415905b958ca05d"
+        historical_hashes = {
+            "src/tflt/loopscope/phase3_acquisition.py": (
+                "92a6c407f87a104d4a8a381f3e55258b4f0d7e076068ddee219b3130569cf7fd"
+            ),
+            "scripts/loopscope/run_qwen17_phase3_p3b.py": (
+                "522921e13d12ae7acd1540e9189551a37065fa90ccb54d27726440e0ebc05496"
+            ),
+        }
+        self.assertEqual(
+            _implementation_hashes_at_ancestor_commit(
+                artifact_commit, accounting_commit
+            ),
+            historical_hashes,
+        )
+        receipt = {"producer": {"implementation_sha256": historical_hashes}}
+        _require_smoke_producer_implementation_hashes(
+            receipt,
+            scientific_artifact_commit=artifact_commit,
+            resource_accounting_commit=accounting_commit,
+        )
+
+        tampered = copy.deepcopy(receipt)
+        tampered["producer"]["implementation_sha256"][
+            "src/tflt/loopscope/phase3_acquisition.py"
+        ] = "0" * 64
+        with self.assertRaises(P3BAcquisitionError):
+            _require_smoke_producer_implementation_hashes(
+                tampered,
+                scientific_artifact_commit=artifact_commit,
+                resource_accounting_commit=accounting_commit,
+            )
+        with self.assertRaises(P3BAcquisitionError):
+            _require_smoke_producer_implementation_hashes(
+                receipt,
+                scientific_artifact_commit=accounting_commit,
+                resource_accounting_commit=accounting_commit,
+            )
+        with self.assertRaises(P3BAcquisitionError):
+            _require_smoke_producer_implementation_hashes(
+                receipt,
+                scientific_artifact_commit="f" * 40,
+                resource_accounting_commit=accounting_commit,
+            )
+
+    def test_live_smoke_hash_validation_still_uses_current_files(self):
+        receipt = {"producer": {"implementation_sha256": implementation_hashes()}}
+        _require_smoke_producer_implementation_hashes(receipt)
+        tampered = copy.deepcopy(receipt)
+        tampered["producer"]["implementation_sha256"][
+            "src/tflt/loopscope/phase3_acquisition.py"
+        ] = "0" * 64
+        with self.assertRaises(P3BAcquisitionError):
+            _require_smoke_producer_implementation_hashes(tampered)
 
 
 if __name__ == "__main__":

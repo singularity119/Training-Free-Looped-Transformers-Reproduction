@@ -133,6 +133,11 @@ VERIFIER_RECEIPT_SCHEMA = "loopscope.phase3.p3b-probe-verifier-receipt.v1"
 RESOURCE_RECEIPT_SCHEMA = "loopscope.phase3.p3b-resource-accounting.v1"
 MONITOR_RECEIPT_SCHEMA = "loopscope.phase3.p3b-monitor-lifecycle.v1"
 
+IMPLEMENTATION_RELATIVE_PATHS = (
+    "src/tflt/loopscope/phase3_acquisition.py",
+    "scripts/loopscope/run_qwen17_phase3_p3b.py",
+)
+
 
 class P3BAcquisitionError(ValueError):
     """Fail-closed P3-B contract violation."""
@@ -150,17 +155,70 @@ def repository_root() -> Path:
 
 def implementation_hashes() -> Dict[str, str]:
     root = repository_root()
-    relatives = (
-        "src/tflt/loopscope/phase3_acquisition.py",
-        "scripts/loopscope/run_qwen17_phase3_p3b.py",
-    )
     result = {}
-    for relative in relatives:
+    for relative in IMPLEMENTATION_RELATIVE_PATHS:
         path = root / relative
         if not path.is_file():
             raise P3BAcquisitionError("P3-B implementation path is missing: %s" % relative)
         result[relative] = file_sha256(path)
     return result
+
+
+def _implementation_hashes_at_ancestor_commit(
+    scientific_artifact_commit: str, resource_accounting_commit: str
+) -> Dict[str, str]:
+    """Hash exact implementation blobs from a closed ancestor commit."""
+
+    artifact_commit = _exact_commit(
+        scientific_artifact_commit, "scientific artifact commit"
+    )
+    accounting_commit = _exact_commit(
+        resource_accounting_commit, "resource accounting commit"
+    )
+    _require_artifact_commit_ancestor(artifact_commit, accounting_commit)
+    root = repository_root()
+    result = {}
+    for relative in IMPLEMENTATION_RELATIVE_PATHS:
+        completed = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(root),
+                "cat-file",
+                "blob",
+                "%s:%s" % (artifact_commit, relative),
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        if completed.returncode != 0:
+            raise P3BAcquisitionError(
+                "scientific artifact implementation blob is unavailable: %s" % relative
+            )
+        result[relative] = hashlib.sha256(completed.stdout).hexdigest()
+    return result
+
+
+def _require_smoke_producer_implementation_hashes(
+    receipt: Mapping[str, Any],
+    *,
+    scientific_artifact_commit: Optional[str] = None,
+    resource_accounting_commit: Optional[str] = None,
+) -> None:
+    historical = scientific_artifact_commit is not None or resource_accounting_commit is not None
+    if historical:
+        if scientific_artifact_commit is None or resource_accounting_commit is None:
+            raise P3BAcquisitionError(
+                "historical producer validation requires both closed Git commits"
+            )
+        expected = _implementation_hashes_at_ancestor_commit(
+            scientific_artifact_commit, resource_accounting_commit
+        )
+    else:
+        expected = implementation_hashes()
+    if receipt.get("producer", {}).get("implementation_sha256") != expected:
+        raise P3BAcquisitionError("B2 smoke producer implementation hashes drifted")
 
 
 def git_provenance(expected_commit: Optional[str] = None, *, remote: bool = False) -> Dict[str, Any]:
@@ -1008,6 +1066,8 @@ def validate_completed_smoke(
     source: Mapping[str, Any],
     pool_manifest: Mapping[str, Any],
     expected_commit: str,
+    *,
+    resource_accounting_commit: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Revalidate the isolated four-record B2 gate before any B3 action."""
 
@@ -1096,8 +1156,14 @@ def validate_completed_smoke(
         raise P3BAcquisitionError("B2 smoke choice-token mapping is not A/B/C/D")
     if not isinstance(ids, list) or len(ids) != 4 or len(set(ids)) != 4:
         raise P3BAcquisitionError("B2 smoke choice-token IDs are not four unique tokens")
-    if receipt.get("producer", {}).get("implementation_sha256") != implementation_hashes():
-        raise P3BAcquisitionError("B2 smoke producer implementation hashes drifted")
+    if resource_accounting_commit is None:
+        _require_smoke_producer_implementation_hashes(receipt)
+    else:
+        _require_smoke_producer_implementation_hashes(
+            receipt,
+            scientific_artifact_commit=expected_commit,
+            resource_accounting_commit=resource_accounting_commit,
+        )
     slurm = receipt.get("slurm")
     if not isinstance(slurm, Mapping) or not re.fullmatch(
         r"[0-9]+", str(slurm.get("job_id") or "")
@@ -2490,7 +2556,13 @@ def write_resource_accounting(
     artifact_commit = _closed_artifact_git_commit(smoke_receipt, "B2 smoke receipt")
     _require_artifact_commit_ancestor(artifact_commit, git["commit"])
     smoke_report = validate_completed_smoke(
-        Path(run_root), card, pool, source, pool_manifest, artifact_commit
+        Path(run_root),
+        card,
+        pool,
+        source,
+        pool_manifest,
+        artifact_commit,
+        resource_accounting_commit=git["commit"],
     )
     if shard_manifest.get("smoke_report_sha256") != smoke_report["manifest_sha256"]:
         raise P3BAcquisitionError("resource accounting lacks exact B2 smoke binding")
