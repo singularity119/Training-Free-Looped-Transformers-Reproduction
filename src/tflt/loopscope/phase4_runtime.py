@@ -96,8 +96,8 @@ def project_target_row(row: Mapping[str, Any]) -> Dict[str, Any]:
     scan_forbidden_fields(value)
     if value["category"] not in CATEGORIES:
         raise Phase4RuntimeError("target category is outside the frozen 14 categories")
-    if len(value["ordered_options"]) != 10:
-        raise Phase4RuntimeError("MMLU-Pro target must contain exactly ten ordered options")
+    if not 2 <= len(value["ordered_options"]) <= 10:
+        raise Phase4RuntimeError("MMLU-Pro target must contain 2..10 ordered options")
     if not all(isinstance(item, str) for item in value["ordered_options"]):
         raise Phase4RuntimeError("MMLU-Pro target options must be strings")
     return value

@@ -29,13 +29,13 @@ class _Renderer:
         )
 
 
-def _safe_target():
+def _safe_target(option_count=10):
     return {
         "question_id": 7,
         "category": "biology",
         "src": "fixture",
         "question": "safe question",
-        "ordered_options": ["option-%d" % index for index in range(10)],
+        "ordered_options": ["option-%d" % index for index in range(option_count)],
     }
 
 
@@ -48,7 +48,12 @@ class Phase4RuntimeTests(unittest.TestCase):
             "question": "safe question",
             "options": ["option-%d" % index for index in range(10)],
         }
-        self.assertEqual(project_target_row(projected)["ordered_options"], projected["options"])
+        for option_count in (3, 4, 10):
+            candidate = dict(
+                projected,
+                options=["option-%d" % index for index in range(option_count)],
+            )
+            self.assertEqual(project_target_row(candidate)["ordered_options"], candidate["options"])
         raw = dict(projected, answer="A", cot_content="sealed")
         with self.assertRaisesRegex(Phase4RuntimeError, "allowlist"):
             project_target_row(raw)
@@ -75,11 +80,17 @@ class Phase4RuntimeTests(unittest.TestCase):
         counts = {category: 100 for category in CATEGORIES}
         quotas = proportional_category_quotas(counts, 512)
         self.assertEqual(sum(quotas.values()), 512)
-        first = deterministic_option_permutation("identity")
-        self.assertEqual(first, deterministic_option_permutation("identity"))
-        self.assertNotEqual(first, list(range(10)))
-        permuted = permute_safe_target(_safe_target(), first)
-        self.assertCountEqual(permuted["ordered_options"], _safe_target()["ordered_options"])
+        for option_count in (3, 4, 10):
+            first = deterministic_option_permutation("identity", option_count=option_count)
+            self.assertEqual(
+                first,
+                deterministic_option_permutation("identity", option_count=option_count),
+            )
+            self.assertNotEqual(first, list(range(option_count)))
+            self.assertEqual(sorted(first), list(range(option_count)))
+            target = _safe_target(option_count)
+            permuted = permute_safe_target(target, first)
+            self.assertCountEqual(permuted["ordered_options"], target["ordered_options"])
         with self.assertRaisesRegex(Phase4RuntimeError, "exceeds"):
             proportional_category_quotas(counts, 2000)
 

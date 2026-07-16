@@ -86,7 +86,7 @@ from tflt.loopscope.phase4_selector import (
 
 EXECUTOR_THREAD_ID = "019f6ca9-ef16-7a53-8949-e47d89fd2dc2"
 CARD_BYTE_SHA256 = "980955386907a1865699808219da1379031c1395d9cdb77029585cf266f160f8"
-CONTROL_BYTE_SHA256 = "d33dd0fd0c064bfd3e49f56aac49f92ee18d80ef9da88d91f24e2e26b891932b"
+CONTROL_BYTE_SHA256 = "20699d1b645b3f107122846b3913e687666440d5e8ead925460cc5fa0de0969e"
 RECEIPT_BYTE_SHA256 = "fdf7c21c6ea31fa83c082e8f694daea95e2fd1a97bdc6e8a338ee6768956e63b"
 NON_REUSE_BYTE_SHA256 = "725d13e2465f8a6abcffd1a8074b569335c6b408426c48ab781d47bb39795a2e"
 DATASET_FINGERPRINT = "32dc8126417ec7ecd00c98b5ce877ad6e56df5560330c71f4b599e2f5c1d45a2"
@@ -362,7 +362,9 @@ def prepare_source(
             key: source[key]
             for key in ("question_id", "category", "src", "question", "ordered_options")
         }
-        permutation = deterministic_option_permutation(source["canonical_identity"])
+        permutation = deterministic_option_permutation(
+            source["canonical_identity"], option_count=len(target["ordered_options"])
+        )
         target = permute_safe_target(target, permutation)
         prefix = render_exact_prefix(target, demos[target["category"]], renderer)
         option_records.append(
@@ -406,7 +408,9 @@ def prepare_source(
             key: source[key]
             for key in ("question_id", "category", "src", "question", "ordered_options")
         }
-        permutation = deterministic_option_permutation(source["canonical_identity"])
+        permutation = deterministic_option_permutation(
+            source["canonical_identity"], option_count=len(target["ordered_options"])
+        )
         target = permute_safe_target(target, permutation)
         prefix = render_exact_prefix(target, demos[target["category"]], renderer)
         smoke_options.append(
