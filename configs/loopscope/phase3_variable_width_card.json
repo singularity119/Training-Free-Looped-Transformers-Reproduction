@@ -1,0 +1,206 @@
+{
+  "schema_version": "loopscope.phase3.variable_width_card.v1",
+  "card": "H3_VARIABLE_WIDTH_CONSENSUS_TABLE_V1",
+  "status": "PLANNING_FROZEN",
+  "frozen_at_utc": "2026-07-16T11:56:23Z",
+  "frozen_by_planning_thread": "019f670d-24ca-7ad0-b92e-64438aa04ef1",
+  "user_decision": "explicitly_accept_WIDTH4_RANKING_SIGNAL_ONLY_and_continue_variable_width_outcome_blind_scoring",
+  "claim_scope": "within_cell_outcome_blind_cross_width_ranking_only",
+  "parent": {
+    "phase3_card": "configs/loopscope/phase3_card.json",
+    "phase3_card_sha256": "5b5cb333d0bb191ab8da1db23b7d4b36f9f4e9ccc97c16dc46c5e7aeb2ca4825",
+    "selected_variant": "CONSENSUS",
+    "selector_freeze_sha256": "8e0737d68cdf3c4cdb59a6f28df1e25932a156d0c944c2caa2e33ce63f8b2eef",
+    "width4_science_label": "WIDTH4_RANKING_SIGNAL_ONLY"
+  },
+  "model": {
+    "repo": "Qwen/Qwen3-1.7B-Base",
+    "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "decoder_layers": 28,
+    "boundaries": 29
+  },
+  "trajectory_source": {
+    "split": "MMLU validation",
+    "sample_count": 1531,
+    "subject_count": 57,
+    "sampling": "none",
+    "formal_forward_count_per_identity": 1,
+    "loop_insertions": 0,
+    "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase3-p3b-20260715T223304Z",
+    "records": "validation1531_no_loop_trajectories.jsonl",
+    "records_sha256": "fb7ae66a1a2696f46727c7ca5069ade2e2f9d6e181db03ed1d005cb2eed1525f",
+    "manifest_sha256": "75a568c6f6595f74d34d1e86efc0f716934e3a2a1cf972daab7874e4afe89cf0",
+    "manifest_internal_sha256": "f3928b964198f6252c567cdc3c5b452d2397b5135838aaf2e0741d69524beec1",
+    "verifier_sha256": "cd5fb473930a045e5875c5bbd1e2565282f1763da61951226c64775b4c40def0",
+    "outcome_fields_consumed": false
+  },
+  "width_universe": {
+    "widths": [2, 3, 4, 5, 6, 7, 8],
+    "window_semantics": "inclusive W(s,w)=[s,s+w-1] over decoder layers 0..27",
+    "all_start_rule": "s in 0..28-w inclusive",
+    "all_candidate_count_by_width": {
+      "2": 27,
+      "3": 26,
+      "4": 25,
+      "5": 24,
+      "6": 23,
+      "7": 22,
+      "8": 21
+    },
+    "all_candidate_count": 168,
+    "consensus_support_rule": "s in w..28-2w inclusive",
+    "consensus_scorable_count_by_width": {
+      "2": 23,
+      "3": 20,
+      "4": 17,
+      "5": 14,
+      "6": 11,
+      "7": 8,
+      "8": 5
+    },
+    "consensus_scorable_count": 98,
+    "outside_support_count": 70,
+    "outside_support_result": "UNSCORABLE_ABSTAIN",
+    "outside_support_fill_or_interpolation": false
+  },
+  "metrics": {
+    "H": "H_(i,j)=-sum_c p_(i,j,c)*ln(p_(i,j,c))",
+    "D": "D_(i,j)=KL(p_(i,j)||p_(i,28))",
+    "C": "C_(i,j)=H_(i,j)+D_(i,j)",
+    "E_raw": "E(s,w)=mean_i[H_(i,s)-H_(i,s+w)]",
+    "K_raw": "K(s,w)=mean_i[D_(i,s+w)-D_(i,s)]",
+    "CEdrop_raw": "CEdrop(s,w)=E(s,w)-K(s,w)",
+    "E_rate": "E_raw(s,w)/w",
+    "K_rate": "K_raw(s,w)/w",
+    "CEdrop_rate": "CEdrop_raw(s,w)/w=E_rate(s,w)-K_rate(s,w)",
+    "score_metric_basis": "E_rate,K_rate; division by the common positive width preserves signs and each point/SE z-score while making reported magnitudes comparable",
+    "O_H": "E_rate(s,w)-0.5*(E_rate(s-1,w)+E_rate(s+1,w))",
+    "O_K": "K_rate(s,w)-0.5*(K_rate(s-1,w)+K_rate(s+1,w))",
+    "F_H": "E_rate(s,w)-0.5*(E_rate(s-w,w)+E_rate(s+w,w))",
+    "F_K": "K_rate(s,w)-0.5*(K_rate(s-w,w)+K_rate(s+w,w))"
+  },
+  "consensus": {
+    "comparison_starts": ["s-1", "s+1", "s-w", "s+w"],
+    "contrasts": ["O_H", "O_K", "F_H", "F_K"],
+    "z": "point_contrast/max(bootstrap_standard_error,1e-12)",
+    "score": "min(z_O_H,z_O_K,z_F_H,z_F_K)",
+    "center_point_conditions": ["E_rate(s,w)>0", "K_rate(s,w)>0"],
+    "comparison_point_conditions": [
+      "E_rate<0 for every comparison start",
+      "K_rate<0 for every comparison start"
+    ],
+    "contrast_condition": "percentile bootstrap lower 95% CI is strictly greater than 0 for O_H,O_K,F_H,F_K",
+    "equality_at_zero": "fail",
+    "point_eligible_only": true
+  },
+  "bootstrap": {
+    "method": "subject_stratified_joint_sample_bootstrap",
+    "replicates": 2000,
+    "seed": 20260716,
+    "prng": "python_stdlib_random.Random",
+    "random_api": "randrange(n_s)",
+    "stream_count": 1,
+    "iteration_order": "replicate-major, canonical subject order, draw-major",
+    "within_subject_order": "canonical_record_order",
+    "draws_per_subject": "n_s with replacement",
+    "subjects_preserved_per_replicate": 57,
+    "joint_index_reuse": "one identical replicate index map is reused for every width, start, metric, and contrast",
+    "expected_existing_width4_stream_sha256": "4563c9c8f7ef4d8abfcefaf7eedf23de2ccd9b44eb850bb95214ae8ea04653b8",
+    "standard_error": "sample standard deviation of the 2000 bootstrap estimates with ddof=1",
+    "percentile_interval": "sort ascending and linearly interpolate at q*(R-1) for q=0.025 and q=0.975"
+  },
+  "ranking": {
+    "scope": "all 98 CONSENSUS-scorable (width,start) pairs in one global ranking",
+    "published_rank_order": ["score_descending", "width_ascending", "start_ascending"],
+    "selection_candidates": "point-eligible pairs only",
+    "point_top_tie": {
+      "rel_tolerance": 1e-12,
+      "abs_tolerance": 1e-12,
+      "result": "ABSTAIN_NO_UNIQUE_TOP1"
+    },
+    "selection_frequency": {
+      "candidate_set": "fixed global point-eligible pair set",
+      "replicate_score": "recompute every contrast on the replicate and divide by the original full-sample bootstrap SE denominator",
+      "replicate_tie_break": ["width_ascending", "start_ascending"],
+      "threshold": 0.8,
+      "threshold_equality_passes": true
+    },
+    "abstain_if": [
+      "no point-eligible pair",
+      "point top score is tied",
+      "selection_frequency<0.80"
+    ]
+  },
+  "backward_compatibility": {
+    "required": true,
+    "reference_scope": "the 17 width-4 CONSENSUS rows from the frozen P3-C selector",
+    "reference_12_15_score": 35.83923516567705,
+    "absolute_tolerance": 1e-10,
+    "required_width4_point_eligible": ["12:15"],
+    "required_width4_selection_frequency": 1.0
+  },
+  "outputs": {
+    "write_once_run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase3-p3f-20260716T115623Z",
+    "required_artifacts": [
+      "variable_width_all168_table.json",
+      "variable_width_all168_table.csv",
+      "variable_width_global_ranking.json",
+      "variable_width_analysis_verifier_receipt.json"
+    ],
+    "all168_required_fields": [
+      "width",
+      "start",
+      "window",
+      "scorable",
+      "E_raw",
+      "K_raw",
+      "CEdrop_raw",
+      "E_rate",
+      "K_rate",
+      "CEdrop_rate",
+      "O_H",
+      "O_K",
+      "F_H",
+      "F_K",
+      "z_O_H",
+      "z_O_K",
+      "z_F_H",
+      "z_F_K",
+      "consensus_score",
+      "point_eligible",
+      "eligibility_failures",
+      "global_rank"
+    ],
+    "table_order": ["width_ascending", "start_ascending"],
+    "global_ranking_count": 98,
+    "selection_summary": [
+      "point_top1",
+      "point_eligible_pairs",
+      "selection_frequency",
+      "window_decision",
+      "top10_scorable"
+    ]
+  },
+  "information_boundary": {
+    "allowed": [
+      "frozen Phase 3 card and variable-width card",
+      "P3-B validation1531 no-loop trajectories and manifests",
+      "P3-C selector freeze only for width-4 backward-compatibility values",
+      "code, tests, Git metadata, and runtime versions"
+    ],
+    "forbidden": [
+      "target or gold labels",
+      "correctness, accuracy, answer flips, or any loop outcome",
+      "P3-E all-25 outcome analysis as an analyzer input",
+      "new model or dataset forward",
+      "GPU, Slurm, K=2 loop evaluation, or P3-G action"
+    ],
+    "outcome_values_consumed": false
+  },
+  "gate_terminal": {
+    "gate": "P3-F",
+    "success": "the four artifacts exist, contain exactly 168/98 rows as frozen, reproduce width-4, and independently recompute from the raw no-loop trajectories",
+    "next_gate_authorized": false,
+    "terminal_packets": ["GATE_P3F_FINAL_AUDIT", "BLOCK"]
+  }
+}
