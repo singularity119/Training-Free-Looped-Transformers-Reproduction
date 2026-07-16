@@ -1,0 +1,69 @@
+{
+  "artifact_role": "p4a_local_contract_verifier_receipt",
+  "blocking_condition": "No allowed local immutable 4B MMLU-Pro baseline/comparator provenance bundle is present; revisions must not be guessed or fetched from latest state.",
+  "card": {
+    "byte_sha256": "6c6d3f39892c83018da85dc0830ca7486ea7b50ce76386ed78ec80da16e07a8d",
+    "normal_verify_fails_closed": true,
+    "provenance_closed": false,
+    "relative_path": "configs/loopscope/phase4_pv_ek_trs_card.json",
+    "semantic_sha256": "0dd4418aea8d99ccb0e0106f1e70ddf652df1c14486e6181c8eafe9c78f4469a"
+  },
+  "checks": {
+    "d36_abs_value": 0.0,
+    "float32_stable_log_softmax_recomputed": true,
+    "forbidden_field_normal_path": {
+      "nested_source_target_cot_rejected": true,
+      "nested_trajectory_logits_rejected": true,
+      "non_json_tensor_payload_rejected": true
+    },
+    "non_finite_rejected": true,
+    "panel_known_outcome_exclusion_verified": true,
+    "persisted_logits_or_tensors": false,
+    "shared_identity_contract": {
+      "duplicate_rejected": true,
+      "extra_rejected": true,
+      "missing_rejected": true,
+      "prompt_hash_mismatch_rejected": true,
+      "reordered_rejected": true
+    },
+    "torch_transformers_lm_eval_imports_required": false,
+    "variable_width_edge_count": 224,
+    "variable_width_strict_count": 154,
+    "width4_candidate_count": 33,
+    "width4_compatibility_verified": true,
+    "width4_consensus_count": 25
+  },
+  "contract_artifacts": {
+    "configs/loopscope/phase4_shared12032_contract.json": {
+      "file_sha256": "f854e0b20617491768224760e9c0bfeda8cddf2e594a361ef76c9c7afe46113c"
+    },
+    "configs/loopscope/phase4_shared_source_schema.json": {
+      "file_sha256": "a59401d88503db142c781f7709af75797593b8513e0e409a0b4a0417290560bc"
+    },
+    "configs/loopscope/phase4_trajectory_schema.json": {
+      "file_sha256": "764a109855a7ac86b6b6a152be8d351e82e764f8c1582c7e5a6f67dfd254a911"
+    }
+  },
+  "external_actions_performed": [],
+  "implementation_sha256": {
+    "scripts/loopscope/prepare_qwen4_phase4.py": "15300c855a76be1304bb13d572d52e1d1d70902b9e478a031eab9f0c083f2fec",
+    "src/tflt/loopscope/phase4_scalars.py": "7d01236f34958bacd361fa036ee0501ea49165be8cf6f34d63e08c4007e03c7b",
+    "src/tflt/loopscope/phase4_schema.py": "7dcf9db9b7d76bf8ad2943adf87fa639e292ad4ec55c4489706af47daa4206fe",
+    "src/tflt/loopscope/phase4_selector.py": "db12b602b51bc1d3d7652e71df4ce0f15e052166ed293ad66d78f38c2be58393",
+    "src/tflt/loopscope/phase4_verifier.py": "f6930c2ca0f9f9b46f59719e401baf0160c378b2e323c6a4b72c3d089c9aae95"
+  },
+  "manifest_sha256": "2da3881d78ec5248ecaf0eff479de71297e647ac49347ae79c76d6aa693c2994",
+  "schema_version": "loopscope.phase4.card-verifier-receipt.v1",
+  "synthetic_fixture": {
+    "contains_real_data_or_outcome": false,
+    "observed_abstain": false,
+    "observed_selected_window": "12:15",
+    "panel_sha256": "f1b59e2a19617f6ff6d80e92d386d828886fc125f6c801f2fd530f07d9265c06",
+    "scalar_record_sha256": "8435bc0031e26d2638cf5345a0251715f29fce5a876fde6811866a5caf174ef1",
+    "selector_count": 24,
+    "selector_replicates": 64,
+    "selector_report_sha256": "4a358ca018f50f533c2fa992ba7b82df071ae511830b9600c48d0b7acbd4b40d",
+    "source_count": 8,
+    "source_sha256": "783309d19218aa4425e98d617cc05bd36bb81ef1164783ada9c7c5318c4b9376"
+  }
+}

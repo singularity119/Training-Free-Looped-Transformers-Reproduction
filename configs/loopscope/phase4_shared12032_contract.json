@@ -1,0 +1,20 @@
+{
+  "schema_version": "loopscope.phase4.shared12032-contract.v1",
+  "expected_count": 12032,
+  "split": "test",
+  "canonical_identity_inputs": ["question_id", "category", "src", "question", "ordered_options"],
+  "canonical_order": ["numeric_question_id_ascending", "sanitized_content_sha256_ascending"],
+  "exact_closure": ["no_missing", "no_extra", "no_duplicate", "no_reorder"],
+  "selector_and_outcome_use_identical_manifest_bytes": true,
+  "isolation": "information_and_chronology_not_identity",
+  "claim_scope": "same_population_outcome_blind_transductive",
+  "forbidden_before_selector_freeze": [
+    "target_cot_content",
+    "gold_or_answer",
+    "correctness",
+    "generated_target_tokens_or_answer",
+    "teacher_forcing",
+    "baseline_or_loop_outcome",
+    "persisted_logits_probabilities_log_probabilities_hidden_or_residual_tensors"
+  ]
+}

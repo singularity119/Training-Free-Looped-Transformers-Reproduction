@@ -1,0 +1,134 @@
+{
+  "schema_version": "loopscope.phase4.pv-ek-trs-card.v1",
+  "card": "H4_PV_EK_TRS_QWEN4B_MMLUPRO_V1",
+  "status": "BLOCKED_PROVENANCE",
+  "claim_scope": "same_population_outcome_blind_transductive_current_checkpoint",
+  "model": {
+    "repo": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "UNRESOLVED_LOCAL_EVIDENCE",
+    "tokenizer_revision": "UNRESOLVED_LOCAL_EVIDENCE",
+    "decoder_layers": 36,
+    "dtype": "bfloat16"
+  },
+  "task": {
+    "dataset": "TIGER-Lab/MMLU-Pro",
+    "dataset_revision": "UNRESOLVED_LOCAL_EVIDENCE",
+    "dataset_fingerprint": "UNRESOLVED_LOCAL_EVIDENCE",
+    "task_alias": "mmlu_pro",
+    "num_fewshot": 5,
+    "fewshot_split": "validation",
+    "selector_split": "test",
+    "shared_population_count": 12032
+  },
+  "selector": {
+    "forward_type": "one_native_no_loop_prefix_forward",
+    "generated_target_token_count": 0,
+    "position": "last_effective_prefix_token",
+    "projection": "frozen_final_norm_and_lm_head_full_vocabulary",
+    "boundaries": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36],
+    "primary_width": 4,
+    "width4_start_count": 33,
+    "width4_consensus_count": 25,
+    "secondary_widths": [2, 3, 4, 5, 6, 7, 8],
+    "secondary_strict_count": 154,
+    "secondary_edge_count": 224,
+    "variable_width_outcome_authorized": false
+  },
+  "numeric_contract": {
+    "logits_dtype_before_reduction": "float32",
+    "log_probability": "stable_log_softmax",
+    "entropy_name": "full_vocabulary_next_token_entropy",
+    "kl": "KL(p_l||p_36)",
+    "d36_abs_tolerance": 1e-06,
+    "non_finite_policy": "fail_fast",
+    "persisted_tensor_policy": "forbid_logits_probabilities_log_probabilities_hidden_or_residual_tensors"
+  },
+  "formal_outcome_recipe": {
+    "window_width": 4,
+    "k": 3,
+    "iteration_mode": "block",
+    "strategy": "euler",
+    "step_size": 0.3333333333333333,
+    "total_horizon": 1,
+    "cache_strategy": "first",
+    "decode_mode": "full"
+  },
+  "bootstrap": {
+    "selector_method": "category_stratified_joint_sample_bootstrap",
+    "selector_replicates": 2000,
+    "selector_seed": 20260717,
+    "standard_error": "sample_sd_ddof_1",
+    "percentile_interval": "linear_interpolation_at_q_times_R_minus_1"
+  },
+  "eligibility": {
+    "center": "E>0 and K>0",
+    "comparisons": "s_plus_minus_1_and_s_plus_minus_4_each_E<0_and_K<0",
+    "contrast_lower95": "all_four_strictly_greater_than_zero",
+    "equality_at_zero": "fail",
+    "ranking_separate_from_eligibility": true
+  },
+  "ranking": {
+    "consensus_score": "min(z_OH,z_OK,z_FH,z_FK)",
+    "primary_tie_break": "score_desc_start_asc",
+    "cross_width_tie_break": "score_desc_width_asc_start_asc",
+    "top_tie_abs_rel_tolerance": 1e-12,
+    "abstain_if": ["no_eligible", "top_tie", "selection_frequency_below_0.80"]
+  },
+  "panel": {
+    "baseline": "no-loop",
+    "fixed_comparator": "15:18",
+    "blind_high_count": 3,
+    "blind_low_count": 3,
+    "exclude_known_outcomes": true,
+    "selection_frequency_threshold": 0.8,
+    "competitiveness_margin_percentage_points": 0.3
+  },
+  "controls": {
+    "template_only_count": 14,
+    "option_permutation_count": 512,
+    "option_permutation_rule": "category_stratified_deterministic_by_identity_sha256",
+    "diagnostics_never_enter_selector_score": true
+  },
+  "provenance_closure": {
+    "state": "UNRESOLVED_LOCAL_EVIDENCE",
+    "required_exact_fields": [
+      "model_revision",
+      "tokenizer_revision",
+      "dataset_revision",
+      "dataset_fingerprint",
+      "lm_eval_version",
+      "mmlu_pro_task_yaml_sha256",
+      "renderer_source_sha256",
+      "chat_template_sha256",
+      "rendered_prefix_contract_sha256",
+      "generation_kwargs",
+      "primary_metric_name",
+      "historical_baseline_identity",
+      "historical_15_18_identity",
+      "known_outcome_registry",
+      "remote_environment_identity",
+      "remote_cache_identity",
+      "remote_source_clone_identity"
+    ],
+    "values": {
+      "model_revision": "UNRESOLVED_LOCAL_EVIDENCE",
+      "tokenizer_revision": "UNRESOLVED_LOCAL_EVIDENCE",
+      "dataset_revision": "UNRESOLVED_LOCAL_EVIDENCE",
+      "dataset_fingerprint": "UNRESOLVED_LOCAL_EVIDENCE",
+      "lm_eval_version": "UNRESOLVED_LOCAL_EVIDENCE",
+      "mmlu_pro_task_yaml_sha256": "UNRESOLVED_LOCAL_EVIDENCE",
+      "renderer_source_sha256": "UNRESOLVED_LOCAL_EVIDENCE",
+      "chat_template_sha256": "UNRESOLVED_LOCAL_EVIDENCE",
+      "rendered_prefix_contract_sha256": "UNRESOLVED_LOCAL_EVIDENCE",
+      "generation_kwargs": "UNRESOLVED_LOCAL_EVIDENCE",
+      "primary_metric_name": "UNRESOLVED_LOCAL_EVIDENCE",
+      "historical_baseline_identity": "UNRESOLVED_LOCAL_EVIDENCE",
+      "historical_15_18_identity": "UNRESOLVED_LOCAL_EVIDENCE",
+      "known_outcome_registry": "UNRESOLVED_LOCAL_EVIDENCE",
+      "remote_environment_identity": "UNRESOLVED_LOCAL_EVIDENCE",
+      "remote_cache_identity": "UNRESOLVED_LOCAL_EVIDENCE",
+      "remote_source_clone_identity": "UNRESOLVED_LOCAL_EVIDENCE"
+    },
+    "blocker": "No allowed local immutable 4B MMLU-Pro baseline/comparator provenance bundle is present; revisions must not be guessed or fetched from latest state."
+  }
+}

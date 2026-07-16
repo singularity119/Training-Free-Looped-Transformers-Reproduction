@@ -1,0 +1,24 @@
+{
+  "$id": "loopscope.phase4.shared-source-record.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attention_mask_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "canonical_identity": {"minLength": 1, "type": "string"},
+    "category": {"minLength": 1, "type": "string"},
+    "dataset_revision": {"pattern": "^[0-9a-f]{40,64}$", "type": "string"},
+    "last_effective_prefix_token_index": {"minimum": 0, "type": "integer"},
+    "ordered_options": {"items": {"type": "string"}, "minItems": 2, "type": "array"},
+    "question": {"type": "string"},
+    "question_id": {"oneOf": [{"minimum": 0, "type": "integer"}, {"pattern": "^[0-9]+$", "type": "string"}]},
+    "rendered_prefix_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "rendered_token_ids_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "renderer_provenance": {"type": "object"},
+    "sanitized_content_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "schema_version": {"const": "loopscope.phase4.shared-source-record.v1"},
+    "split": {"const": "test"},
+    "src": {"minLength": 1, "type": "string"}
+  },
+  "required": ["attention_mask_sha256", "canonical_identity", "category", "dataset_revision", "last_effective_prefix_token_index", "ordered_options", "question", "question_id", "rendered_prefix_sha256", "rendered_token_ids_sha256", "renderer_provenance", "sanitized_content_sha256", "schema_version", "split", "src"],
+  "type": "object"
+}

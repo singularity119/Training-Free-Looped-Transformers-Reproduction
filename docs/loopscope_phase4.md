@@ -3,9 +3,10 @@
 This runbook operationalizes `H4_PV_EK_TRS_QWEN4B_MMLUPRO_V1` for
 `Qwen/Qwen3-4B-Instruct-2507 × MMLU-Pro 5-shot CoT`.
 
-It is a planning artifact, not an execution handoff. No Phase 4 script or card exists yet, and
-the command names below are proposed P4-A interfaces. This file does not authorize code
-implementation, Git mutation, model/dataset access, SSH, HPC2, GPU, Slurm, or outcome reads.
+It is a runbook, not an execution handoff. P4-A materializes the local sidecar interfaces and an
+explicitly provenance-blocked card; only a future authorized repair may replace unresolved fields
+with exact immutable evidence. This file does not authorize model/dataset access, SSH, HPC2, GPU,
+Slurm, outcome reads, or execution beyond the current exact Gate handoff.
 
 Authoritative layers:
 
@@ -443,9 +444,8 @@ card/manifest/input hashes, exact argv/config, producer namespace, run root/job 
 
 ## 10. Proposed P4-A command interfaces
 
-These commands are interface targets, not currently executable instructions. P4-A may implement
-equivalent narrow commands, but the final names and exact argv must be frozen in its handoff and
-committed runbook before P4-B.
+P4-A implements the following narrow local-only interfaces. They import NumPy but never import
+torch, transformers, lm-eval, a model, a dataset, or an outcome artifact.
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/loopscope/prepare_qwen4_phase4.py \
@@ -460,6 +460,23 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m tflt.loopscope.phase4_verifi
 
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m tflt.cli --help
 git diff --check
+```
+
+The normal verifier and prepare command fail closed until every exact provenance field in the
+card is bound from an allowed immutable 4B MMLU-Pro baseline/comparator bundle. For bounded P4-A
+engineering verification while that explicit blocker is preserved, append
+`--allow-unresolved-provenance`. This flag does not close provenance, authorize P4-B, or permit a
+model/data/network/outcome access; the receipt records `provenance_closed=false` and the normal
+command remains non-zero.
+
+Committed P4-A local artifacts are:
+
+```text
+configs/loopscope/phase4_pv_ek_trs_card.json
+configs/loopscope/phase4_shared12032_contract.json
+configs/loopscope/phase4_shared_source_schema.json
+configs/loopscope/phase4_trajectory_schema.json
+configs/loopscope/phase4_card_verifier_receipt.json
 ```
 
 Proposed remote stages:

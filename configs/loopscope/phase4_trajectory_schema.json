@@ -1,0 +1,34 @@
+{
+  "$id": "loopscope.phase4.prefix-trajectory-record.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "boundaries": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "boundary_id": {"maximum": 36, "minimum": 0, "type": "integer"},
+          "finite": {"const": true},
+          "full_vocabulary_entropy": {"type": "number"},
+          "kl_to_final": {"type": "number"},
+          "logit_rms": {"type": "number"},
+          "normalized_entropy": {"type": "number"},
+          "top100_probability_mass": {"type": "number"},
+          "top10_probability_mass": {"type": "number"},
+          "top1_probability_mass": {"type": "number"}
+        },
+        "required": ["boundary_id", "finite", "full_vocabulary_entropy", "kl_to_final", "logit_rms", "normalized_entropy", "top100_probability_mass", "top10_probability_mass", "top1_probability_mass"],
+        "type": "object"
+      },
+      "maxItems": 37,
+      "minItems": 37,
+      "type": "array"
+    },
+    "canonical_identity": {"minLength": 1, "type": "string"},
+    "category": {"minLength": 1, "type": "string"},
+    "producer_provenance": {"type": "object"},
+    "schema_version": {"const": "loopscope.phase4.prefix-trajectory-record.v1"}
+  },
+  "required": ["boundaries", "canonical_identity", "category", "producer_provenance", "schema_version"],
+  "type": "object"
+}
