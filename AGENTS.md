@@ -13,7 +13,7 @@
 ## 0. 计划与信息源
 
 - `AGENTS.md` 只保存长期稳定的项目边界、工程规则和 Gate 验收标准，不记录临时进度、当前执行线程或逐次工具日志。
-- `../.planning/loopscope_phase1_control.md` 与 `../.planning/loopscope_phase2_control.md` 分别是已关闭第一、第二阶段的历史控制面；`../.planning/loopscope_phase3_control.md` 是第三阶段当前唯一的可变全局控制文件。当前 Gate、Gate 决策、线程分配、已审计 commit、下一步授权条件均以 Phase 3 control 为准。
+- `../.planning/loopscope_phase1_control.md`、`../.planning/loopscope_phase2_control.md` 与 `../.planning/loopscope_phase3_control.md` 是已关闭第一至第三阶段的历史控制面；`../.planning/loopscope_phase4_control.md` 是第四阶段当前唯一的可变全局控制文件。当前 Gate、Gate 决策、线程分配、已审计 commit、下一步授权条件均以 Phase 4 control 为准。
 - 旧工作区 `.planning/` 包、历史 handoff、线程聊天和 Codex memory 只作历史证据或辅助回忆；如果与当前代码或控制文件冲突，不得据此覆盖当前事实。
 - 单线程内的临时步骤优先使用 Codex 原生 plan/goal，不把每一步复制到项目文件。
 - 不得自动调用 `planning-with-files` skill。只有用户在当前请求中明确点名或明确要求启用该工作流时才可使用。
@@ -30,6 +30,7 @@
 - 第一阶段目标：验证免训练内部信号能否预测不同 loop window 的真实收益；不提前宣称已经得到通用自动选窗器。
 - 第二阶段目标：围绕第一阶段局部结果验证“可迭代精炼区”机制——区分持续有益修正、短暂最优、无益扰动和错误过度自信；先用小范围 `k` 轨迹与逐样本分析理解机制，只有机制得到支持后才讨论无标签选窗或跨模型扩展。
 - 第三阶段目标：固定 Qwen3-1.7B × MMLU × K=2 配方，只利用 validation 全量 1,531 条样本的一次 no-loop 层级 choice trajectory，检验局部 entropy–KL 双重反转能否在同一 model-task cell 内恢复、富集或排除 loop windows；测试/full outcome 不得进入 selector。
+- 第四阶段目标：直接在 Qwen3-4B-Instruct-2507 × MMLU-Pro 5-shot CoT 上检验，能否仅凭生成首 token 前的一次普通 no-loop prefix forward 全词表 entropy–KL trajectory，前瞻性预测完整 CoT decoding 的 width-4 loop window；同一 12,032 test identity 总体可同时承担 outcome-blind selector 与后续 outcome，但必须按时间和字段严格隔离。
 - 基础复现分支 `main` 是固定对照，不接受 LoopScope 功能提交。
 - 新 clone 的默认 `main` 也只作只读引用；clone 后首次工作分支必须是从固定基点新建的 `loopscope`。
 
@@ -169,6 +170,7 @@ wheelhouse=/hpc2hdd/home/xhuang225/shared/wheelhouse/tflt-cu121
 - 工程 smoke 可以使用极小固定 prompt 集，但不能据此判断指标优劣。
 - 正式 probe pool 必须记录来源、split、样本 ID/hash、生成 seed、prompt 模板和数量。
 - 正式测试集样本不得进入 window 选择或阈值调节。
+- 上一条是 Phase 1–3 的默认边界。Phase 4 的唯一例外由本文件第 13 节和 `../.planning/loopscope_phase4_control.md` 冻结：允许同一 MMLU-Pro test-12032 identity 总体用于无标签 prefix selector 与后续 outcome，但 selector freeze 前不得读取 target `cot_content`、gold/answer、生成 token/答案、correctness 或任何 baseline/loop outcome。
 - 推荐从非测试 split 构建 500–1000 条多选格式校准池；如果找不到可证明隔离的 split，停止并报告，不得静默改用 MMLU test。
 - probe 报告不得依赖 gold label；gold label 只允许在冻结选择规则后的收益评估中使用。
 
@@ -334,3 +336,13 @@ Gate 终态经规划/审计线程判定后，只撤销该 executor 对 Git、数
 - 核心 loop 配方继续冻结为 `K=2、block、damped_euler、alpha=1、beta=0、cache_strategy=last、decode_mode=bypass`；任何 K、alpha、strategy、model 或 task 变化必须另立科学卡。
 - Phase 3 Gate 名称和当前状态以 `../.planning/loopscope_phase3_control.md` 为准；本文件第 9 节 A–E 是 Phase 1 历史门，不得用来推断 Phase 3 当前授权。
 - 第三阶段不设置 GPU 数量、GPU-hours 或墙钟硬上限。GPU Gate 只有在明确授权、科学矩阵冻结并满足 admission 后，才能按 HPC 空闲资源合理并行并尽快提交；资源变化不得改变样本、窗口、配方、统计或 retry 语义。
+
+## 13. 第四阶段稳定科学与治理边界
+
+- Phase 4 使用 current-checkpoint reproduction：`Qwen/Qwen3-4B-Instruct-2507 × mmlu_pro 5-shot CoT`，不是原论文 checkpoint 的 bit-exact 复现。
+- selector 检测段只允许生成首 token 前的一次普通 no-loop prefix forward；读取 `B_0..B_36` 最后一个有效 prefix token，经 frozen final norm 与 LM head 得到完整词表的逐层 entropy 和 `KL(p_l || p_36)`。完整词表 entropy 不得称为 Choice Entropy。
+- 正式 outcome 配方冻结为 `window_width=4、K=3、block、Euler、step_size=1/3、total_horizon=1、cache_strategy=first、decode_mode=full`；只有 width-4 window 可变。
+- width-4 主组覆盖 33 个候选、其中 25 个具备严格 CONSENSUS 支持，并独占 selected、blind high3/low3 与 Phase 4 outcome。width `2..8` 的 strict-154 与 edge-aware-224 仅作 outcome-blind 次要排名；不得自动进入 Phase 4 full-decode outcome。
+- selector 与 outcome 共用一个 canonical MMLU-Pro test-12032 identity manifest。隔离对象是信息与时间而非样本身份；任何正结论都必须限定为 `same-population outcome-blind transductive`，不得声称 unseen-sample generalization。
+- Phase 4 Gate 顺序固定为 P4-A 本地最小实现、P4-B 真实 prefix acquisition/selector freeze、P4-C width-4 frozen panel outcome acquisition、P4-D 一次性 unseal/analysis/phase-end audit。每 Gate 一个独立 executor；只有 planning/audit thread 可以裁决并授权下一 Gate。
+- Phase 4 的动态状态、exact executor、commit/run identity、权限和 admission 只以 `../.planning/loopscope_phase4_control.md` 为准；详细命令与工件合同见 `docs/loopscope_phase4.md`。
