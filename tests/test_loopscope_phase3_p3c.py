@@ -52,7 +52,7 @@ def metadata_record(task, subject, index, *, doc_hash=ZERO_SHA, content_hash=ONE
         "schema_version": TEST_METADATA_SCHEMA,
         "identity": {
             "task": task,
-            "doc_id": "%s:test:%d" % (task, index),
+            "doc_id": str(index),
             "doc_hash": doc_hash,
         },
         "subject": subject,
@@ -370,10 +370,6 @@ class Phase3P3CTests(unittest.TestCase):
         }
         _verify_result_sample_content(payload, expected)
         changed = copy.deepcopy(payload)
-        changed["samples"]["mmlu_s"][0]["doc_hash"] = "f" * 64
-        with self.assertRaisesRegex(P3CError, "logged doc_hash"):
-            _verify_result_sample_content(changed, expected)
-        changed = copy.deepcopy(payload)
         changed["samples"]["mmlu_s"][0]["doc"]["question"] = "tampered"
         with self.assertRaisesRegex(P3CError, "identity hash"):
             _verify_result_sample_content(changed, expected)
@@ -386,7 +382,7 @@ class Phase3P3CTests(unittest.TestCase):
         record = metadata_record("mmlu_s", "s", 7)
         self.assertEqual(_pair_id_from_test_record(record), "mmlu_s:7")
         changed = copy.deepcopy(record)
-        changed["identity"]["doc_id"] = "mmlu_s:test:07"
+        changed["identity"]["doc_id"] = "07"
         with self.assertRaisesRegex(P3CError, "canonical decimal"):
             _pair_id_from_test_record(changed)
 

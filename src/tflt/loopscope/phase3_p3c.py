@@ -336,7 +336,7 @@ def make_test_metadata_record(
     row_index: int,
     safe_row: Mapping[str, Any],
 ) -> Dict[str, Any]:
-    doc_id = "%s:test:%d" % (task_name, row_index)
+    doc_id = str(row_index)
     return {
         "schema_version": TEST_METADATA_SCHEMA,
         "identity": {
@@ -357,7 +357,7 @@ def validate_test_metadata_records(
     card: Mapping[str, Any],
     *,
     enforce_frozen_counts: bool = True,
-    expected_ordered_identity_sha256: Optional[str] = EXPECTED_TEST_ORDERED_IDENTITY_SHA256,
+    expected_ordered_identity_sha256: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     normalized = []
     for raw in records:
@@ -855,7 +855,12 @@ def materialize_c0(
         },
         "checks": {
             "test14042_exact": True,
-            "ordered_test_identity_sha256": EXPECTED_TEST_ORDERED_IDENTITY_SHA256,
+            "gold_free_ordered_test_identity_sha256": test_manifest[
+                "ordered_identity_sha256"
+            ],
+            "phase1_legacy_ordered_identity_sha256_deferred_to_c2": (
+                EXPECTED_TEST_ORDERED_IDENTITY_SHA256
+            ),
             "validation_test_identity_intersection_zero": True,
             "validation_test_content_intersection_zero": True,
             "phase1_mapping_exact_baseline_plus_historical13": True,
@@ -1135,8 +1140,10 @@ def _validate_c0_artifact_contract(
         checks.get(key) is not False for key in required_false
     ):
         raise P3CError("C0 receipt isolation/closure checks differ")
-    if checks.get("ordered_test_identity_sha256") != EXPECTED_TEST_ORDERED_IDENTITY_SHA256:
-        raise P3CError("C0 receipt ordered test identity hash differs")
+    if checks.get("phase1_legacy_ordered_identity_sha256_deferred_to_c2") != (
+        EXPECTED_TEST_ORDERED_IDENTITY_SHA256
+    ):
+        raise P3CError("C0 receipt does not preserve the deferred Phase 1 identity hash")
 
     if test_manifest.get("schema_version") != TEST_MANIFEST_SCHEMA:
         raise P3CError("test metadata manifest schema differs")
@@ -1147,10 +1154,9 @@ def _validate_c0_artifact_contract(
     computed_ordered = ordered_identity_sha256(
         [record["identity"] for record in test_records]
     )
-    if (
-        computed_ordered != EXPECTED_TEST_ORDERED_IDENTITY_SHA256
-        or test_manifest.get("ordered_identity_sha256") != computed_ordered
-    ):
+    if test_manifest.get("ordered_identity_sha256") != computed_ordered or checks.get(
+        "gold_free_ordered_test_identity_sha256"
+    ) != computed_ordered:
         raise P3CError("test metadata manifest ordered identity hash differs")
     dataset = test_manifest.get("dataset")
     if dataset != {
@@ -1877,7 +1883,7 @@ def verify_retrospective_outputs(
     if (
         not isinstance(baseline, Mapping)
         or baseline.get("sample_count") != 14042
-        or baseline.get("ordered_identity_sha256")
+        or baseline.get("phase1_ordered_sample_identity_sha256")
         != EXPECTED_TEST_ORDERED_IDENTITY_SHA256
         or baseline.get("model_revision") != MODEL_REVISION
         or baseline.get("k") != 2
@@ -1891,7 +1897,7 @@ def verify_retrospective_outputs(
         summary = outcomes[window]
         if (
             summary.get("sample_count") != 14042
-            or summary.get("ordered_identity_sha256")
+            or summary.get("phase1_ordered_sample_identity_sha256")
             != EXPECTED_TEST_ORDERED_IDENTITY_SHA256
             or summary.get("model_revision") != MODEL_REVISION
             or summary.get("k") != 2
@@ -2003,6 +2009,9 @@ def _load_outcome_cell(
             raise P3CError("historical sample sidecar hash changed after C0")
 
     payload = load_strict_json(results_path)
+    legacy_identity = _phase1_ordered_sample_identity(payload)
+    if legacy_identity["ordered_identity_sha256"] != EXPECTED_TEST_ORDERED_IDENTITY_SHA256:
+        raise P3CError("historical Phase 1 ordered sample identity SHA256 differs")
     try:
         raw_correctness = extract_correctness_samples(payload, task="mmlu", metric="acc,none")
         aggregate_accuracy = extract_accuracy(payload, task="mmlu", metric="acc,none")
@@ -2032,6 +2041,9 @@ def _load_outcome_cell(
         },
         "sample_count": len(correctness),
         "ordered_identity_sha256": test_manifest["ordered_identity_sha256"],
+        "phase1_ordered_sample_identity_sha256": legacy_identity[
+            "ordered_identity_sha256"
+        ],
         "accuracy_fraction": sample_accuracy,
         "identity_intersection_fallback_used": False,
         "model_revision": MODEL_REVISION,
@@ -2066,10 +2078,6 @@ def _verify_result_sample_content(
             if expected is None or pair_id in seen:
                 raise P3CError("historical sample identity is missing/extra/duplicate")
             seen.add(pair_id)
-            if str(row.get("doc_hash", "")).strip().lower() != expected["identity"][
-                "doc_hash"
-            ]:
-                raise P3CError("historical sample logged doc_hash differs from C0")
             doc = row.get("doc")
             if not isinstance(doc, Mapping):
                 raise P3CError("historical sample lacks its exact source doc")
@@ -2082,6 +2090,42 @@ def _verify_result_sample_content(
                 raise P3CError("historical sample sanitized content hash differs from C0")
     if seen != set(expected_by_pair_id):
         raise P3CError("historical sample content scan did not close all test identities")
+
+
+def _phase1_ordered_sample_identity(payload: Mapping[str, Any]) -> Dict[str, Any]:
+    """Reproduce the frozen Phase 1 legacy [(doc_id, doc_hash)] digest."""
+
+    raw_samples = payload.get("samples")
+    if not isinstance(raw_samples, Mapping):
+        raise P3CError("historical results lacks inline task samples")
+    task_names = sorted(
+        str(name)
+        for name in raw_samples
+        if str(name) == "mmlu" or str(name).startswith("mmlu_")
+    )
+    identities = []
+    for task in task_names:
+        rows = raw_samples[task]
+        if not isinstance(rows, list):
+            raise P3CError("historical sample task payload must be a list")
+        for row in rows:
+            if not isinstance(row, Mapping):
+                raise P3CError("historical sample row must be an object")
+            doc_id = str(row.get("doc_id", ""))
+            if not doc_id.isdigit() or str(int(doc_id)) != doc_id:
+                raise P3CError("historical Phase 1 doc_id is not canonical decimal")
+            doc_hash = _sha256(row.get("doc_hash"), "historical Phase 1 doc_hash")
+            identities.append((doc_id, doc_hash))
+    if len(task_names) != 57 or len(identities) != 14042:
+        raise P3CError("historical Phase 1 identity does not close 57/14,042")
+    digest = hashlib.sha256(
+        json.dumps(identities, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    return {
+        "task_count": len(task_names),
+        "sample_count": len(identities),
+        "ordered_identity_sha256": digest,
+    }
 
 
 def _expected_pair_id_map(
@@ -2098,10 +2142,7 @@ def _expected_pair_id_map(
 
 def _pair_id_from_test_record(record: Mapping[str, Any]) -> str:
     identity = canonical_identity(record["identity"])
-    prefix = "%s:test:" % identity["task"]
-    if not identity["doc_id"].startswith(prefix):
-        raise P3CError("test identity doc_id differs from canonical task:test:index")
-    raw_id = identity["doc_id"][len(prefix) :]
+    raw_id = identity["doc_id"]
     if not raw_id.isdigit() or str(int(raw_id)) != raw_id:
         raise P3CError("test identity row index is not canonical decimal")
     return "%s:%s" % (identity["task"], raw_id)
