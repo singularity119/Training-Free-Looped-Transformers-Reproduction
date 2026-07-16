@@ -37,7 +37,6 @@ from tflt.loopscope.phase3_pool import (
     validate_pool_manifest,
     validate_source_manifest,
     validate_trajectory_manifest,
-    verify_population_disjointness,
 )
 from tflt.loopscope.phase3_schema import (
     PHASE3_CARD_BYTE_SHA256,
@@ -52,7 +51,7 @@ from tflt.loopscope.phase3_schema import (
     sanitized_content_sha256,
     verify_manifest_sha256,
 )
-from tflt.loopscope.schema import SchemaError, manifest_sha256
+from tflt.loopscope.schema import manifest_sha256
 
 
 GATE = "P3-C"
@@ -131,6 +130,7 @@ BLIND_WINDOWS = (
     "24:27",
 )
 VARIANT_PRIORITY = ("CONSENSUS", "FLANK", "SHIFT")
+CONTENT_OVERLAP_POLICY = "P3C_CONTENT_OVERLAP_POLICY_V2"
 
 TEST_METADATA_NAME = "test14042_identity_content_metadata.jsonl"
 TEST_MANIFEST_NAME = "test14042_identity_content_manifest.json"
@@ -394,6 +394,147 @@ def validate_test_metadata_records(
     if expected_ordered_identity_sha256 is not None and digest != expected_ordered_identity_sha256:
         raise P3CError("ordered test identity SHA256 differs from the planning freeze")
     return normalized
+
+
+def describe_population_overlap(
+    validation_records: Sequence[Mapping[str, Any]],
+    test_metadata_records: Sequence[Mapping[str, Any]],
+    card: Mapping[str, Any],
+    *,
+    enforce_frozen_counts: bool = True,
+) -> Dict[str, Any]:
+    """Hard-fail identity overlap while recording gold-free content overlap."""
+
+    def normalize(records: Sequence[Mapping[str, Any]], split: str) -> List[Dict[str, Any]]:
+        normalized = []
+        for value in records:
+            _exact_keys(
+                value,
+                ("identity", "split", "sanitized_content_sha256"),
+                "%s population-overlap record" % split,
+            )
+            if value["split"] != split:
+                raise P3CError("population-overlap record uses the wrong split")
+            normalized.append(
+                {
+                    "identity": canonical_identity(value["identity"]),
+                    "sanitized_content_sha256": _sha256(
+                        value["sanitized_content_sha256"], "population-overlap hash"
+                    ),
+                }
+            )
+        return normalized
+
+    validation = normalize(validation_records, "validation")
+    test = normalize(test_metadata_records, "test")
+    if enforce_frozen_counts:
+        if len(validation) != int(card["task"]["trajectory_sample_count"]):
+            raise P3CError("validation overlap input must contain exactly 1,531 records")
+        if len(test) != int(card["task"]["outcome_sample_count"]):
+            raise P3CError("test overlap input must contain exactly 14,042 records")
+
+    validation_ids = [identity_tuple(value["identity"]) for value in validation]
+    test_ids = [identity_tuple(value["identity"]) for value in test]
+    if len(set(validation_ids)) != len(validation_ids) or len(set(test_ids)) != len(test_ids):
+        raise P3CError("population overlap metadata contains duplicate identities")
+    if set(validation_ids) & set(test_ids):
+        raise P3CError("validation/test canonical identity intersection is non-zero")
+
+    validation_by_content: Dict[str, List[Dict[str, str]]] = {}
+    test_by_content: Dict[str, List[Dict[str, str]]] = {}
+    for value in validation:
+        validation_by_content.setdefault(value["sanitized_content_sha256"], []).append(
+            value["identity"]
+        )
+    for value in test:
+        test_by_content.setdefault(value["sanitized_content_sha256"], []).append(
+            value["identity"]
+        )
+    overlap_hashes = sorted(set(validation_by_content) & set(test_by_content))
+    overlaps = []
+    for digest in overlap_hashes:
+        overlaps.append(
+            {
+                "sanitized_content_sha256": digest,
+                "validation_identities": sorted(
+                    validation_by_content[digest], key=identity_tuple
+                ),
+                "test_identities": sorted(test_by_content[digest], key=identity_tuple),
+            }
+        )
+    return {
+        "validation_count": len(validation),
+        "test_count": len(test),
+        "identity_intersection_count": 0,
+        "sanitized_content_intersection_count": len(overlap_hashes),
+        "sanitized_content_overlap_validation_record_count": sum(
+            len(validation_by_content[digest]) for digest in overlap_hashes
+        ),
+        "sanitized_content_overlap_test_record_count": sum(
+            len(test_by_content[digest]) for digest in overlap_hashes
+        ),
+        "sanitized_content_overlap_hashes": overlap_hashes,
+        "sanitized_content_overlaps": overlaps,
+        "content_overlap_policy": CONTENT_OVERLAP_POLICY,
+        "content_overlap_is_descriptive_only": True,
+        "validation_identity_sha256": hashlib.sha256(
+            canonical_json_bytes([value["identity"] for value in validation])
+        ).hexdigest(),
+        "test_identity_sha256": hashlib.sha256(
+            canonical_json_bytes([value["identity"] for value in test])
+        ).hexdigest(),
+    }
+
+
+def _validate_descriptive_overlap_closure(
+    closure: Mapping[str, Any],
+    *,
+    expected_validation_count: int = 1531,
+    expected_test_count: int = 14042,
+) -> int:
+    if (
+        closure.get("validation_count") != expected_validation_count
+        or closure.get("test_count") != expected_test_count
+        or closure.get("identity_intersection_count") != 0
+        or closure.get("content_overlap_policy") != CONTENT_OVERLAP_POLICY
+        or closure.get("content_overlap_is_descriptive_only") is not True
+    ):
+        raise P3CError("validation/test descriptive overlap closure differs")
+    _sha256(closure.get("validation_identity_sha256"), "validation identity closure")
+    _sha256(closure.get("test_identity_sha256"), "test identity closure")
+
+    count = closure.get("sanitized_content_intersection_count")
+    hashes = closure.get("sanitized_content_overlap_hashes")
+    overlaps = closure.get("sanitized_content_overlaps")
+    if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+        raise P3CError("descriptive content-overlap count is invalid")
+    if not isinstance(hashes, list) or not isinstance(overlaps, list):
+        raise P3CError("descriptive content-overlap details are missing")
+    hashes = [_sha256(value, "descriptive content-overlap hash") for value in hashes]
+    if hashes != sorted(set(hashes)) or len(hashes) != count or len(overlaps) != count:
+        raise P3CError("descriptive content-overlap detail closure differs")
+
+    validation_ids: List[Tuple[str, str, str]] = []
+    test_ids: List[Tuple[str, str, str]] = []
+    for digest, item in zip(hashes, overlaps):
+        if not isinstance(item, Mapping) or item.get("sanitized_content_sha256") != digest:
+            raise P3CError("descriptive content-overlap row/hash order differs")
+        for key, target in (
+            ("validation_identities", validation_ids),
+            ("test_identities", test_ids),
+        ):
+            raw_identities = item.get(key)
+            if not isinstance(raw_identities, list) or not raw_identities:
+                raise P3CError("descriptive content-overlap row lacks identities")
+            target.extend(identity_tuple(canonical_identity(value)) for value in raw_identities)
+    if set(validation_ids) & set(test_ids):
+        raise P3CError("validation/test canonical identity intersection is non-zero")
+    if (
+        closure.get("sanitized_content_overlap_validation_record_count") != len(validation_ids)
+        or closure.get("sanitized_content_overlap_test_record_count") != len(test_ids)
+    ):
+        raise P3CError("descriptive content-overlap record counts differ")
+    return count
 
 
 def assert_offline_metadata_environment() -> None:
@@ -764,7 +905,7 @@ def materialize_c0(
     test_records, dataset_evidence = build_safe_test_metadata(
         source_manifest, card, dataset_loader=dataset_loader
     )
-    disjointness = verify_population_disjointness(
+    disjointness = describe_population_overlap(
         [
             {
                 "identity": record["identity"],
@@ -862,7 +1003,13 @@ def materialize_c0(
                 EXPECTED_TEST_ORDERED_IDENTITY_SHA256
             ),
             "validation_test_identity_intersection_zero": True,
-            "validation_test_content_intersection_zero": True,
+            "validation_test_content_intersection_zero": (
+                disjointness["sanitized_content_intersection_count"] == 0
+            ),
+            "validation_test_content_overlap_descriptive_only": True,
+            "validation_test_content_intersection_count": disjointness[
+                "sanitized_content_intersection_count"
+            ],
             "phase1_mapping_exact_baseline_plus_historical13": True,
             "blind12_existence_zero": True,
             "results_json_content_parsed": False,
@@ -1125,7 +1272,7 @@ def _validate_c0_artifact_contract(
     required_true = {
         "test14042_exact",
         "validation_test_identity_intersection_zero",
-        "validation_test_content_intersection_zero",
+        "validation_test_content_overlap_descriptive_only",
         "phase1_mapping_exact_baseline_plus_historical13",
         "blind12_existence_zero",
     }
@@ -1201,16 +1348,16 @@ def _validate_c0_artifact_contract(
 
     disjointness = load_strict_json(root / DISJOINTNESS_NAME)
     closure = disjointness.get("closure")
-    if not isinstance(closure, Mapping) or any(
-        closure.get(key) != expected
-        for key, expected in {
-            "validation_count": 1531,
-            "test_count": 14042,
-            "identity_intersection_count": 0,
-            "sanitized_content_intersection_count": 0,
-        }.items()
+    if not isinstance(closure, Mapping):
+        raise P3CError("validation/test overlap receipt closure is missing")
+    content_overlap_count = _validate_descriptive_overlap_closure(closure)
+    if (
+        checks.get("validation_test_content_intersection_count")
+        != content_overlap_count
+        or checks.get("validation_test_content_intersection_zero")
+        is not (content_overlap_count == 0)
     ):
-        raise P3CError("validation/test disjointness receipt closure differs")
+        raise P3CError("C0 receipt descriptive content-overlap checks differ")
     if disjointness.get("outcome_values_read") is not False:
         raise P3CError("disjointness receipt reports outcome access")
 

@@ -13,10 +13,12 @@ from tflt.loopscope.phase3_p3c import (
     HISTORICAL_WINDOWS,
     P3CError,
     TEST_METADATA_SCHEMA,
+    _validate_descriptive_overlap_closure,
     _expected_pair_id_map,
     _pair_id_from_test_record,
     _validate_allowlist_for_c2,
     _verify_result_sample_content,
+    describe_population_overlap,
     exact_paired_comparison,
     make_historical_alignment,
     make_missing12_predictions,
@@ -29,10 +31,8 @@ from tflt.loopscope.phase3_p3c import (
     validate_test_metadata_records,
     write_new_json,
 )
-from tflt.loopscope.phase3_pool import verify_population_disjointness
 from tflt.loopscope.phase3_schema import canonical_record_key, load_phase3_card
 from tflt.loopscope.phase3_verifier import synthetic_signal_records
-from tflt.loopscope.schema import SchemaError
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -181,7 +181,7 @@ class Phase3P3CTests(unittest.TestCase):
                 expected_ordered_identity_sha256="f" * 64,
             )
 
-    def test_identity_and_sanitized_content_intersections_fail_closed(self):
+    def test_identity_overlap_fails_and_content_overlap_is_descriptive(self):
         validation = [
             {
                 "identity": {"task": "mmlu_s", "doc_id": "v", "doc_hash": ZERO_SHA},
@@ -196,23 +196,57 @@ class Phase3P3CTests(unittest.TestCase):
                 "sanitized_content_sha256": ONE_SHA,
             }
         ]
-        receipt = verify_population_disjointness(
+        receipt = describe_population_overlap(
             validation, test, self.card, enforce_frozen_counts=False
         )
         self.assertEqual(receipt["identity_intersection_count"], 0)
         self.assertEqual(receipt["sanitized_content_intersection_count"], 0)
         same_identity = copy.deepcopy(test)
         same_identity[0]["identity"] = copy.deepcopy(validation[0]["identity"])
-        with self.assertRaisesRegex(SchemaError, "identity intersection"):
-            verify_population_disjointness(
+        with self.assertRaisesRegex(P3CError, "identity intersection"):
+            describe_population_overlap(
                 validation, same_identity, self.card, enforce_frozen_counts=False
             )
         same_content = copy.deepcopy(test)
         same_content[0]["sanitized_content_sha256"] = ZERO_SHA
-        with self.assertRaisesRegex(SchemaError, "content intersection"):
-            verify_population_disjointness(
-                validation, same_content, self.card, enforce_frozen_counts=False
-            )
+        descriptive = describe_population_overlap(
+            validation, same_content, self.card, enforce_frozen_counts=False
+        )
+        self.assertEqual(descriptive["sanitized_content_intersection_count"], 1)
+        self.assertEqual(descriptive["sanitized_content_overlap_hashes"], [ZERO_SHA])
+        self.assertEqual(
+            descriptive["sanitized_content_overlaps"][0]["validation_identities"],
+            [validation[0]["identity"]],
+        )
+        self.assertEqual(
+            descriptive["sanitized_content_overlaps"][0]["test_identities"],
+            [same_content[0]["identity"]],
+        )
+
+    def test_c1_c0_validator_accepts_descriptive_content_overlap(self):
+        validation = [
+            {
+                "identity": {"task": "mmlu_s", "doc_id": "v", "doc_hash": ZERO_SHA},
+                "split": "validation",
+                "sanitized_content_sha256": ZERO_SHA,
+            }
+        ]
+        test = [
+            {
+                "identity": {"task": "mmlu_t", "doc_id": "t", "doc_hash": ONE_SHA},
+                "split": "test",
+                "sanitized_content_sha256": ZERO_SHA,
+            }
+        ]
+        closure = describe_population_overlap(
+            validation, test, self.card, enforce_frozen_counts=False
+        )
+        self.assertEqual(
+            _validate_descriptive_overlap_closure(
+                closure, expected_validation_count=1, expected_test_count=1
+            ),
+            1,
+        )
 
     def test_blind_scan_uses_existence_metadata_and_rejects_any_value_root(self):
         with tempfile.TemporaryDirectory() as tmp:
