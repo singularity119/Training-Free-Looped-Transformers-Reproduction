@@ -1,0 +1,165 @@
+{
+  "schema_version": "loopscope.phase3.variable_width_targeted_full_card.v1",
+  "card": "H3_VARIABLE_WIDTH_TARGETED_FULL_V1",
+  "status": "PLANNING_FROZEN",
+  "frozen_at_utc": "2026-07-16T13:01:32Z",
+  "frozen_by_planning_thread": "019f670d-24ca-7ad0-b92e-64438aa04ef1",
+  "authorized_by_user_message": "开始gate G",
+  "claim_scope": "qwen3_1.7b_mmlu_targeted_variable_width_feasibility_only",
+  "parent": {
+    "phase3_card_sha256": "5b5cb333d0bb191ab8da1db23b7d4b36f9f4e9ccc97c16dc46c5e7aeb2ca4825",
+    "variable_width_dual_card_sha256": "b99352c415d9aa041f90d6d8c5b7cffd3771c549b348db36f10740998ec23612",
+    "p3f_dual_rankings_sha256": "b118bac946bdf6a262fab0c52394ad0b777bb58438843b8314d999ea829c6739",
+    "p3f_verifier_sha256": "23551a389ce60091ff615b378b809a35bd58620106a96e68784e99d9686dc045",
+    "p3f_verifier_internal_sha256": "0afaef483ff194e249316f9fdbadc1c803a8b7c05b73930d0a9ebc57dc3de9dd",
+    "p3f_audit_decision": "PASS"
+  },
+  "targeted_cells": {
+    "ordered_windows": ["7:9", "2:9", "13:15", "3:7"],
+    "count": 4,
+    "window_semantics": "inclusive decoder-layer range; width=end-start+1",
+    "selection_frozen_before_any_new_loop_outcome": true,
+    "selection_rationale": {
+      "7:9": "strict rank 1 and edge-aware rank 2; strongest cross-rule candidate",
+      "2:9": "edge-aware rank 1; width-8 edge candidate",
+      "13:15": "strict rank 3 and edge-aware rank 6; second cross-rule high candidate",
+      "3:7": "edge-aware rank 3; edge-only boundary candidate outside strict support"
+    },
+    "no_substitution_or_reordering_after_outcome": true
+  },
+  "model_task_recipe": {
+    "model": "Qwen/Qwen3-1.7B-Base",
+    "model_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "tokenizer_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "dataset": "cais/mmlu",
+    "dataset_revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+    "task_group": "mmlu",
+    "split": "test",
+    "ordered_sample_count": 14042,
+    "subject_count": 57,
+    "num_fewshot": 5,
+    "fewshot_split": "dev",
+    "dtype": "float16",
+    "k": 2,
+    "fixed_horizon": true,
+    "iteration_mode": "block",
+    "strategy": "damped_euler",
+    "alpha": 1.0,
+    "beta": 0.0,
+    "step_size": 0.5,
+    "total_horizon": 1.0,
+    "cache_strategy": "last",
+    "decode_mode": "bypass",
+    "only_window_may_vary": true,
+    "full_limit": null
+  },
+  "comparators": {
+    "baseline": {
+      "role": "ordinary_no_loop_forward",
+      "results_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-20260711-053022/gate-e-full/baseline-full/results.json",
+      "results_sha256": "b390880ae8f85d655c86b7b81a138bc12b99b61cf26d22520a8d372bdeafcc25",
+      "known_accuracy_percent": 62.7118644068
+    },
+    "current_best_12_15": {
+      "role": "primary_comparator",
+      "results_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers/runs/loopscope-qwen17-mmlu-phase1-20260711-053022/gate-e-full/window-12-15-full/results.json",
+      "results_sha256": "bbcb5940fbefd9ec24402fd3269cf31763c13fa73661c1137c16f372544036d1",
+      "known_accuracy_percent": 63.1249109813
+    },
+    "rerun_comparators": false
+  },
+  "identity": {
+    "ordered_sample_count": 14042,
+    "subject_count": 57,
+    "phase1_legacy_ordered_identity_sha256": "872c9f6bd7f40e3c6fa40b13cc862033379ac0a9cbc439a1593653945f3d521d",
+    "gold_free_canonical_ordered_identity_sha256": "2c4557079fca1a7c071460f779ed714805fc96c3391560825cd34386d4051532",
+    "required_rule": "every candidate and both comparators have the exact same ordered identities with no missing, duplicate, or extra samples"
+  },
+  "execution": {
+    "remote_host": "hpc2-hkustgz",
+    "repo": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope",
+    "venv": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711",
+    "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase3-p3g-20260716T130132Z",
+    "cache_policy": "offline existing caches only; no download or mutation",
+    "scheduler": {
+      "preferred_partition": "emergency_gpua40",
+      "array_throttle_max": 4,
+      "gpu_per_cell": 1,
+      "cpu_per_cell": 8,
+      "memory_per_cell": "64G",
+      "no_requeue": true,
+      "resource_hard_cap": null
+    },
+    "stages": [
+      "targeted tests and metadata dry-run",
+      "one limit=5 structural smoke over all four cells without scientific metric inspection",
+      "one full no-limit four-cell array",
+      "after exact four-of-four terminal and identity closure, one analysis and one verifier"
+    ],
+    "valid_science_retry_after_output": false
+  },
+  "analysis": {
+    "primary_question": "does any outcome-blind variable-width candidate exceed the current best 12:15 on the exact MMLU test population",
+    "candidate_rank_order": ["accuracy_descending", "card_order_ascending"],
+    "paired_delta_units": "fraction internally and percentage points for display",
+    "bootstrap": {
+      "method": "joint_paired_sample_bootstrap",
+      "replicates": 2000,
+      "seed": 20260710,
+      "prng": "python_stdlib_random.Random",
+      "random_api": "randrange(14042)",
+      "iteration_order": "replicate-major then draw-major over canonical test identity order",
+      "joint_index_reuse": "one identical index stream for every candidate-minus-12:15 and candidate-minus-baseline contrast",
+      "percentile_interval": "linear interpolation at q*(R-1) for q=0.025 and 0.975"
+    },
+    "exact_mcnemar": "two-sided exact binomial on paired candidate versus 12:15 correctness",
+    "holm_family": "four candidate-versus-12:15 exact McNemar tests; step-down family-wise alpha=0.05",
+    "always_report": [
+      "accuracy for each candidate",
+      "paired delta and 95% CI versus baseline",
+      "paired delta and 95% CI versus 12:15",
+      "wrong-to-right and right-to-wrong counts versus 12:15",
+      "raw and Holm-adjusted McNemar p-values",
+      "observed candidate ranking and regret to observed candidate oracle"
+    ],
+    "label_priority": [
+      "TARGETED_VARIABLE_WIDTH_STRONG_IMPROVEMENT",
+      "TARGETED_VARIABLE_WIDTH_POINT_IMPROVEMENT",
+      "TARGETED_VARIABLE_WIDTH_NO_IMPROVEMENT"
+    ],
+    "labels": {
+      "TARGETED_VARIABLE_WIDTH_STRONG_IMPROVEMENT": "best candidate delta versus 12:15 is positive, its paired-bootstrap lower 95% bound is greater than 0, and its Holm-adjusted McNemar p is below 0.05",
+      "TARGETED_VARIABLE_WIDTH_POINT_IMPROVEMENT": "best candidate point accuracy exceeds 12:15 but the strong criterion is not satisfied",
+      "TARGETED_VARIABLE_WIDTH_NO_IMPROVEMENT": "no candidate point accuracy exceeds 12:15"
+    }
+  },
+  "outputs": {
+    "required_summary_artifacts": [
+      "p3g_manifest.json",
+      "p3g_targeted_full_analysis.json",
+      "p3g_verifier_receipt.json"
+    ],
+    "raw_cell_outputs": "one isolated smoke and one isolated full namespace per ordered candidate",
+    "write_once": true
+  },
+  "information_boundary": {
+    "partial_full_outcome_viewing": false,
+    "no_outcome_before_four_of_four_terminal_and_identity_closure": true,
+    "no_candidate_drop_or_substitution": true,
+    "no_formula_threshold_or_label_change_after_outcome": true,
+    "no_post_outcome_code_repair_or_scientific_rerun": true
+  },
+  "non_objectives": [
+    "exhaustive full evaluation of all 168 windows",
+    "claiming a global optimum over every width or model-task cell",
+    "changing K, fixed horizon, model, dataset, renderer, cache, decode, or loop strategy",
+    "tuning selector scores from P3-G outcomes",
+    "P3-H, cross-model, cross-task, or adaptive per-input selection"
+  ],
+  "gate_terminal": {
+    "gate": "P3-G",
+    "phase_terminal_if_complete": true,
+    "success": "all four frozen full cells complete on exact identities and recipe, analysis and verifier agree, and the frozen science label is reported honestly",
+    "terminal_packets": ["GATE_P3G_FINAL_AUDIT", "BLOCK"]
+  }
+}
