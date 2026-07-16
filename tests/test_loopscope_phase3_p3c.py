@@ -267,6 +267,21 @@ class Phase3P3CTests(unittest.TestCase):
                 with self.assertRaisesRegex(P3CError, "blind-12"):
                     scan_blind_outcome_existence(root)
 
+    def test_blind_scan_ignores_list_valued_window_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "command_args.json").write_text(
+                json.dumps({"window": [0, 3]}), encoding="utf-8"
+            )
+            with patch("tflt.loopscope.phase3_p3c.BLIND_SEARCH_ROOT", root.resolve()):
+                receipt = scan_blind_outcome_existence(root)
+        self.assertTrue(
+            all(
+                counts["command_args_occurrences"] == 0
+                for counts in receipt["blind_windows"].values()
+            )
+        )
+
     def test_c1_entry_point_has_no_historical_or_outcome_root_argument(self):
         signature = inspect.signature(materialize_c1)
         self.assertNotIn("phase1_root", signature.parameters)

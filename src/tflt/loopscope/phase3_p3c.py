@@ -852,8 +852,8 @@ def scan_blind_outcome_existence(search_root: Path) -> Dict[str, Any]:
             command_files_scanned += 1
             command = load_strict_json(current / "command_args.json")
             raw_window = command.get("window")
-            if raw_window in counters:
-                counters[str(raw_window)]["command_args_occurrences"] += 1
+            if isinstance(raw_window, str) and raw_window in counters:
+                counters[raw_window]["command_args_occurrences"] += 1
     if any(
         value["command_args_occurrences"] or value["path_results_occurrences"]
         for value in counters.values()
