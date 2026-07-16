@@ -1,0 +1,188 @@
+{
+  "schema_version": "loopscope.phase3.variable_width_dual_card.v1",
+  "card": "H3_VARIABLE_WIDTH_DUAL_RANKING_V1",
+  "status": "PLANNING_FROZEN",
+  "frozen_at_utc": "2026-07-16T12:14:30Z",
+  "frozen_by_planning_thread": "019f670d-24ca-7ad0-b92e-64438aa04ef1",
+  "supersedes_for_execution": {
+    "card": "configs/loopscope/phase3_variable_width_card.json",
+    "sha256": "a793a320830c5527823ca18fa3798d54cda691c530c8358adfc88a536696a490",
+    "reason": "user requested first the original 98 scored windows and then a separately redefined rule scoring all 168 windows"
+  },
+  "claim_scope": "within_cell_outcome_blind_dual_variable_width_ranking",
+  "parent": {
+    "phase3_card_sha256": "5b5cb333d0bb191ab8da1db23b7d4b36f9f4e9ccc97c16dc46c5e7aeb2ca4825",
+    "width4_selector_freeze_sha256": "8e0737d68cdf3c4cdb59a6f28df1e25932a156d0c944c2caa2e33ce63f8b2eef",
+    "selected_width4_variant": "CONSENSUS",
+    "width4_science_label": "WIDTH4_RANKING_SIGNAL_ONLY"
+  },
+  "trajectory_source": {
+    "model": "Qwen/Qwen3-1.7B-Base",
+    "model_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "decoder_layers": 28,
+    "split": "MMLU validation",
+    "sample_count": 1531,
+    "subject_count": 57,
+    "sampling": "none",
+    "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase3-p3b-20260715T223304Z",
+    "records": "validation1531_no_loop_trajectories.jsonl",
+    "records_sha256": "fb7ae66a1a2696f46727c7ca5069ade2e2f9d6e181db03ed1d005cb2eed1525f",
+    "manifest_sha256": "75a568c6f6595f74d34d1e86efc0f716934e3a2a1cf972daab7874e4afe89cf0",
+    "formal_forward_count_per_identity": 1,
+    "loop_insertions": 0,
+    "outcome_values_consumed": false
+  },
+  "universe": {
+    "widths": [2, 3, 4, 5, 6, 7, 8],
+    "window": "W(s,w)=[s,s+w-1] inclusive over layers 0..27",
+    "start_rule": "s in 0..28-w inclusive",
+    "candidate_count_by_width": {
+      "2": 27,
+      "3": 26,
+      "4": 25,
+      "5": 24,
+      "6": 23,
+      "7": 22,
+      "8": 21
+    },
+    "candidate_count": 168
+  },
+  "base_metrics": {
+    "E_raw": "mean_i[H_(i,s)-H_(i,s+w)]",
+    "K_raw": "mean_i[D_(i,s+w)-D_(i,s)]",
+    "CEdrop_raw": "E_raw-K_raw",
+    "E_rate": "E_raw/w",
+    "K_rate": "K_raw/w",
+    "CEdrop_rate": "CEdrop_raw/w=E_rate-K_rate",
+    "analysis_dtype": "float64",
+    "non_finite_policy": "fail_fast"
+  },
+  "strict_consensus_98": {
+    "role": "original_rule_primary",
+    "support_rule": "s in w..28-2w inclusive",
+    "scored_count_by_width": {
+      "2": 23,
+      "3": 20,
+      "4": 17,
+      "5": 14,
+      "6": 11,
+      "7": 8,
+      "8": 5
+    },
+    "scored_count": 98,
+    "comparison_starts": ["s-1", "s+1", "s-w", "s+w"],
+    "O_H": "E_rate(s,w)-0.5*(E_rate(s-1,w)+E_rate(s+1,w))",
+    "O_K": "K_rate(s,w)-0.5*(K_rate(s-1,w)+K_rate(s+1,w))",
+    "F_H": "E_rate(s,w)-0.5*(E_rate(s-w,w)+E_rate(s+w,w))",
+    "F_K": "K_rate(s,w)-0.5*(K_rate(s-w,w)+K_rate(s+w,w))",
+    "score": "min(z_O_H,z_O_K,z_F_H,z_F_K)",
+    "published_rank_order": ["score_descending", "width_ascending", "start_ascending"],
+    "outside_support_rows": "omitted_from_strict_table_not_labeled_or_filled",
+    "backward_compatibility": {
+      "width4_scored_count": 17,
+      "reference_12_15_score": 35.83923516567705,
+      "required_width4_point_eligible": ["12:15"],
+      "required_width4_selection_frequency": 1.0,
+      "absolute_tolerance": 1e-10
+    }
+  },
+  "edge_aware_168": {
+    "role": "exploratory_full_coverage_secondary",
+    "support_rule": "every one of the 168 pairs is scored",
+    "reference_set": "R(s,w)=sorted unique valid starts from [s-1,s+1,s-w,s+w] intersect 0..28-w",
+    "reference_count_min": 2,
+    "reference_count_max": 4,
+    "A_H": "E_rate(s,w)-mean_{r in R(s,w)} E_rate(r,w)",
+    "A_K": "K_rate(s,w)-mean_{r in R(s,w)} K_rate(r,w)",
+    "score": "min(z_A_H,z_A_K)",
+    "score_defined_for_all_rows": true,
+    "missing_reference_fill_or_interpolation": false,
+    "coverage_fields": ["reference_starts", "reference_count"],
+    "published_rank_order": ["score_descending", "width_ascending", "start_ascending"],
+    "interpretation": "not the original CONSENSUS score; a separately named availability-normalized local-reversal ranking",
+    "cross_rule_score_comparison_forbidden": true
+  },
+  "shared_eligibility": {
+    "center": ["E_rate(s,w)>0", "K_rate(s,w)>0"],
+    "strict_references": "every strict comparison start has E_rate<0 and K_rate<0",
+    "edge_aware_references": "every r in R(s,w) has E_rate<0 and K_rate<0",
+    "strict_ci": "lower95CI>0 for O_H,O_K,F_H,F_K",
+    "edge_aware_ci": "lower95CI>0 for A_H,A_K",
+    "equality_at_zero": "fail",
+    "eligibility_separate_from_score": true,
+    "every_scored_row_is_ranked_even_when_ineligible": true
+  },
+  "bootstrap": {
+    "method": "subject_stratified_joint_sample_bootstrap",
+    "replicates": 2000,
+    "seed": 20260716,
+    "prng": "python_stdlib_random.Random",
+    "random_api": "randrange(n_s)",
+    "iteration_order": "replicate-major, canonical subject order, draw-major",
+    "within_subject_order": "canonical_record_order",
+    "joint_index_reuse": "one identical replicate index map reused for both rules and every width/start/metric/contrast",
+    "expected_stream_sha256": "4563c9c8f7ef4d8abfcefaf7eedf23de2ccd9b44eb850bb95214ae8ea04653b8",
+    "standard_error": "sample standard deviation with ddof=1",
+    "percentile_interval": "linear interpolation at q*(R-1) for q=0.025 and 0.975"
+  },
+  "ranking_outputs": {
+    "strict_always_publish": ["98 scored rows", "global top10", "point-eligible pairs", "eligible top1", "selection_frequency"],
+    "edge_aware_always_publish": ["168 scored rows", "global top10", "point-eligible pairs", "score top1", "eligible top1", "selection_frequency"],
+    "selection_frequency_threshold": 0.8,
+    "point_top_tie_rel_tolerance": 1e-12,
+    "point_top_tie_abs_tolerance": 1e-12,
+    "replicate_tie_break": ["width_ascending", "start_ascending"],
+    "no_row_may_have_missing_score_in_its_own_table": true
+  },
+  "outputs": {
+    "write_once_run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase3-p3f-dual-20260716T121430Z",
+    "required_artifacts": [
+      "strict_consensus_98_table.json",
+      "strict_consensus_98_table.csv",
+      "edge_aware_168_table.json",
+      "edge_aware_168_table.csv",
+      "dual_variable_width_rankings.json",
+      "dual_variable_width_verifier_receipt.json"
+    ],
+    "strict_row_count": 98,
+    "edge_aware_row_count": 168,
+    "common_row_fields": [
+      "width",
+      "start",
+      "window",
+      "E_raw",
+      "K_raw",
+      "CEdrop_raw",
+      "E_rate",
+      "K_rate",
+      "CEdrop_rate",
+      "score",
+      "rank",
+      "point_eligible",
+      "eligibility_failures"
+    ],
+    "strict_extra_fields": ["O_H", "O_K", "F_H", "F_K", "z_O_H", "z_O_K", "z_F_H", "z_F_K"],
+    "edge_aware_extra_fields": ["reference_starts", "reference_count", "A_H", "A_K", "z_A_H", "z_A_K"]
+  },
+  "information_boundary": {
+    "allowed": [
+      "this card and its frozen parents",
+      "P3-B validation1531 no-loop trajectories",
+      "P3-C selector freeze only for width4 backward compatibility",
+      "code, targeted tests, Git/runtime metadata"
+    ],
+    "forbidden": [
+      "accuracy, correctness, answer flips, gold, labels, or any loop outcome",
+      "P3-E all-25 analysis as analyzer/verifier input",
+      "model, tokenizer, dataset, or cache access",
+      "new forward, GPU, Slurm, loop evaluation, or P3-G action"
+    ],
+    "outcome_values_consumed": false
+  },
+  "gate_terminal": {
+    "gate": "P3-F",
+    "success": "both tables and rankings exist, strict 98 exactly reproduces width4, edge-aware has 168 finite scores with reference counts 2..4, and the verifier independently recomputes both from raw no-loop trajectories",
+    "next_gate_authorized": false,
+    "terminal_packets": ["GATE_P3F_FINAL_AUDIT", "BLOCK"]
+  }
+}
