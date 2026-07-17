@@ -1,0 +1,53 @@
+{
+  "schema_version": "loopscope.phase4.b2-hidden-geometry-contract.v1",
+  "gate": "B-2",
+  "executor_thread_id": "019f6ed2-1bbb-74d2-80bf-f20846137d49",
+  "planning_thread_id": "019f6bf0-d1ec-7d53-ba06-391e9db2bd88",
+  "control_sha256": "381fb0bf84cc5b25fc6eaee3a1fd48bc75c1bc8b97a7f324ad748ac5cc9f8288",
+  "card_sha256": "980955386907a1865699808219da1379031c1395d9cdb77029585cf266f160f8",
+  "isolated_base_commit": "a210da31d734d539b198d939118136e3e035a36f",
+  "branch": "loopscope-phase4-b2",
+  "remote_repo": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope_phase4_b2",
+  "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase4-b2-hidden-geometry-20260717T064424Z",
+  "p4b_run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase4-p4b-20260716T204154Z",
+  "p4b_source_manifest_file_sha256": "173aeb1f7a8663652975ec4d0faf0998d9a017e9fb4ee30e149f23dc1a2e944f",
+  "p4b_trajectory_manifest_file_sha256": "522f014ba31a5f69882a9853fe535d0758cc8e5454817c7ea22cd4c1decf8d34",
+  "p4b_merged_trajectory_file_sha256": "879d63c271bc828cec77f3dafff1661dd36218ffb50decb945ab33dd5ac4332d",
+  "p4b_original_shard_manifest_file_sha256": "201dc5a9bc175fa81d7ec4fa38abf0bc35dc11cc62029aea8fda2ec3119cc297",
+  "p4b_smoke_membership_file_sha256": "30707641105bdc42a4c8924f9b39e10b5b900e6851c556dd26d70aca48edfe54",
+  "model_repo": "Qwen/Qwen3-4B-Instruct-2507",
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "dataset_repo": "TIGER-Lab/MMLU-Pro",
+  "dataset_revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+  "record_count": 12032,
+  "shard_count": 24,
+  "boundary_ids": {"start": 0, "stop": 36, "count": 37},
+  "forward_contract": {
+    "ordinary_no_loop": true,
+    "target_generation_count": 0,
+    "use_cache": false,
+    "output_hidden_states": true,
+    "dtype": "bfloat16",
+    "position": "last_valid_prefix_token"
+  },
+  "geometry_contract": {
+    "final_norm_application": "exactly_once_per_boundary",
+    "reduction_dtype": "float32",
+    "producer_fields": ["hidden_l2_rms_to_final", "hidden_cosine_to_final"],
+    "analyzer_derived_field": "hidden_cosine_distance_to_final",
+    "epsilon": null,
+    "clamp": false,
+    "zero_norm_policy": "fail_closed",
+    "non_finite_policy": "fail_closed"
+  },
+  "tolerances": {
+    "b36_l2_abs": 1e-7,
+    "b36_cosine_abs_from_one": 1e-5,
+    "cosine_range": 1e-5,
+    "determinism_atol": 1e-6,
+    "determinism_rtol": 1e-6
+  },
+  "delta_convention": "exit_minus_entry",
+  "analysis_widths": [2, 3, 4, 5, 6, 7, 8],
+  "diagnostic_only": true
+}

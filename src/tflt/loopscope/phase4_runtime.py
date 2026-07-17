@@ -383,6 +383,7 @@ def acquire_prefix_scalar_record(
     expected_tokenization: Mapping[str, Any],
     producer_provenance: Mapping[str, Any],
     d36_tolerance: float = 1e-6,
+    include_hidden_geometry: bool = False,
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Run one native prefix forward and reduce B_0..B_36 to scalar-only JSON."""
 
@@ -418,9 +419,25 @@ def acquire_prefix_scalar_record(
         if vocabulary_size != int(getattr(runtime.model.config, "vocab_size", 0) or 0):
             raise Phase4RuntimeError("runtime vocabulary size differs from model config")
         boundaries: List[Dict[str, Any]] = []
+        geometry_scalars: List[Dict[str, float]] = []
+        final_geometry_reference = None
+        if include_hidden_geometry:
+            from tflt.loopscope.phase4_hidden_geometry import torch_hidden_geometry_scalars
+
+            final_geometry_reference = runtime.lens_space_hidden(
+                runtime.final_norm, final_hidden, 36, 36
+            ).float()
         for boundary_id, hidden in enumerate(states):
             current = hidden[:, position, :]
             lens_hidden = runtime.lens_space_hidden(runtime.final_norm, current, boundary_id, 36)
+            if include_hidden_geometry:
+                geometry_scalars.append(
+                    torch_hidden_geometry_scalars(
+                        torch,
+                        lens_hidden.float(),
+                        final_geometry_reference,
+                    )
+                )
             projection = final_projection if boundary_id == 36 else runtime.lm_head(lens_hidden).float()
             log_p = final_log_p if boundary_id == 36 else torch.log_softmax(projection, dim=-1)
             probabilities = torch.exp(log_p)
@@ -466,9 +483,19 @@ def acquire_prefix_scalar_record(
             "producer_provenance": dict(producer_provenance),
         }
         validate_trajectory_record(record, d36_tolerance=d36_tolerance)
+        if include_hidden_geometry:
+            from tflt.loopscope.phase4_hidden_geometry import (
+                B2_RECORD_SCHEMA,
+                validate_hidden_geometry_record,
+            )
+
+            for boundary, extension in zip(record["boundaries"], geometry_scalars):
+                boundary.update(extension)
+            record["schema_version"] = B2_RECORD_SCHEMA
+            validate_hidden_geometry_record(record, d36_tolerance=d36_tolerance)
     del outputs, states, inputs, encoded, final_projection, final_log_p
     _assert_no_loop_modules_loaded()
-    return record, {
+    facts = {
         "sequence_length": metadata["sequence_length"],
         "last_effective_prefix_token_index": metadata["last_effective_prefix_token_index"],
         "final_projection_max_abs_difference": closure_difference,
@@ -477,6 +504,14 @@ def acquire_prefix_scalar_record(
         "generation_performed": False,
         "target_generation_count": 0,
     }
+    if include_hidden_geometry:
+        facts.update(
+            {
+                "hidden_geometry_included": True,
+                "hidden_geometry_reduction_dtype": "float32",
+            }
+        )
+    return record, facts
 
 
 __all__ = [
