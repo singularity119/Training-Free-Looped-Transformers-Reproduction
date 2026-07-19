@@ -17,6 +17,7 @@ from tflt.loopscope.phase4_outcome_analysis import (
     linear_percentile,
     load_correctness_cell,
     scientific_phase_label,
+    validate_evaluator_order_hashes,
     validate_panel_manifest,
 )
 
@@ -79,7 +80,7 @@ class Phase4OutcomeAnalysisTests(unittest.TestCase):
                 expected_count=12, replicates=4,
             )
 
-    def test_result_identity_order_reorder_fails_closed(self):
+    def test_result_identity_order_is_restored_and_cross_cell_reorder_fails_closed(self):
         docs = [
             {
                 "question_id": index,
@@ -119,12 +120,15 @@ class Phase4OutcomeAnalysisTests(unittest.TestCase):
                 ),
                 encoding="utf-8",
             )
+            values, order_hash = load_correctness_cell(
+                path,
+                expected_identities=identities,
+                expected_categories=["a", "a"],
+            )
+            self.assertEqual(values, [False, True])
+            self.assertEqual(validate_evaluator_order_hashes([order_hash] * 8), order_hash)
             with self.assertRaises(P4DError):
-                load_correctness_cell(
-                    path,
-                    expected_identities=identities,
-                    expected_categories=["a", "a"],
-                )
+                validate_evaluator_order_hashes([order_hash] * 7 + ["different"])
 
     def test_joint_category_stratified_same_indices_and_seed_deterministic(self):
         # Category-constant rows prove every replicate preserves the exact 4/8

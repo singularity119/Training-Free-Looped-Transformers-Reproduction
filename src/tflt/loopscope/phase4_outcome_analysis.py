@@ -593,8 +593,6 @@ def load_correctness_cell(
     expected_set = set(expected_identities)
     if set(values) != expected_set or len(values) != len(expected_identities):
         raise P4DError("outcome cell has missing/extra/duplicate canonical identities")
-    if observed_order != list(expected_identities):
-        raise P4DError("outcome cell canonical identity order is reordered")
     for identity, category in zip(expected_identities, expected_categories):
         if values[identity][0] != category:
             raise P4DError("outcome category differs from canonical source")
@@ -603,6 +601,12 @@ def load_correctness_cell(
     del payload, values
     gc.collect()
     return result, evaluator_order_sha256
+
+
+def validate_evaluator_order_hashes(hashes: Sequence[str]) -> str:
+    if len(hashes) != 8 or len(set(hashes)) != 1:
+        raise P4DError("raw evaluator sample order differs across the eight cells")
+    return str(hashes[0])
 
 
 def _require_hash(path: Path, expected: str, context: str) -> None:
@@ -808,7 +812,13 @@ def _summary_zh(analysis: Mapping[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def run_analysis(*, output_root: Path, expected_commit: str, argv: Sequence[str]) -> Dict[str, Any]:
+def run_analysis(
+    *,
+    output_root: Path,
+    expected_commit: str,
+    argv: Sequence[str],
+    attempt_count: int = 1,
+) -> Dict[str, Any]:
     if Path(output_root).resolve() != AUTHORIZED_OUTPUT_ROOT:
         raise P4DError("P4-D output root differs from exact authorization")
     if Path(output_root).exists():
@@ -832,8 +842,9 @@ def run_analysis(*, output_root: Path, expected_commit: str, argv: Sequence[str]
         )
         correctness[cell_id] = values
         evaluator_order_hashes.append(evaluator_order_hash)
-    if len(set(evaluator_order_hashes)) != 1:
-        raise P4DError("raw evaluator sample order differs across the eight cells")
+    if attempt_count not in (1, 2):
+        raise P4DError("P4-D analyzer attempt count must be one or two")
+    evaluator_order_sha256 = validate_evaluator_order_hashes(evaluator_order_hashes)
     scores, ranks = _selector_context(frozen["selector_report"])
     analysis = build_statistical_analysis(
         identities=identities,
@@ -849,7 +860,11 @@ def run_analysis(*, output_root: Path, expected_commit: str, argv: Sequence[str]
             "planning_thread_id": PLANNING_THREAD_ID,
             "git": git,
             "argv": list(argv),
-            "analyzer_invocation_count": 1,
+            "analyzer_invocations": {
+                "attempt_count_including_preoutput_failures": attempt_count,
+                "successful_scientific_output_count": 1,
+                "preoutput_failed_count": attempt_count - 1,
+            },
             "implementation_sha256": implementation_hashes(),
             "frozen_bindings": {
                 "policy_sha256": POLICY_BYTE_SHA256,
@@ -882,9 +897,9 @@ def run_analysis(*, output_root: Path, expected_commit: str, argv: Sequence[str]
                 **{key: str(value) for key, value in frozen["located"].items()},
             },
             "identity_closure": {
-                "raw_evaluator_order_sha256": evaluator_order_hashes[0],
+                "raw_evaluator_order_sha256": evaluator_order_sha256,
                 "raw_evaluator_order_identical_all_eight_cells": True,
-            "raw_evaluator_order_equals_canonical_source_order": True,
+                "canonical_source_order_restored_by_unique_identity_join": True,
                 "category_exact_all_eight_cells": True,
             },
         }
@@ -1058,7 +1073,20 @@ def run_verifier(
         "input_sha256": analysis["frozen_bindings"],
         "output_sha256_excluding_self": dict(output_hashes),
         "invocations": {
-            "analyzer": {"count": 1, "argv": analysis["argv"]},
+            "analyzer": {
+                **analysis["analyzer_invocations"],
+                "successful_argv": analysis["argv"],
+                "preoutput_failure": (
+                    None
+                    if analysis["analyzer_invocations"]["preoutput_failed_count"] == 0
+                    else {
+                        "error": "outcome cell canonical identity order is reordered",
+                        "output_root_created": False,
+                        "scientific_output_created": False,
+                        "repair": "canonical identity join plus exact cross-cell evaluator-order hash",
+                    }
+                ),
+            },
             "verifier": {"count": 1, "argv": list(argv)},
         },
         "closure": {
@@ -1074,6 +1102,22 @@ def run_verifier(
             "executor_owned_repair_count": int(repair_count),
             "audit_returned_repair_count": 0,
             "science_changed": False,
+            "repairs": [
+                {
+                    "index": 1,
+                    "stage": "pre_unseal",
+                    "cause": "frozen outcome panel fields are nested under the manifest panel key",
+                    "change": "validate the exact nested panel payload",
+                    "scientific_output_created_before_repair": False,
+                },
+                {
+                    "index": 2,
+                    "stage": "pre_output_after_unseal_attempt_1",
+                    "cause": "lm-eval raw samples are namespace-grouped rather than in P4-B source order",
+                    "change": "unique identity join restores canonical order and exact raw order hash must match across all eight cells",
+                    "scientific_output_created_before_repair": False,
+                },
+            ][: int(repair_count)],
         },
         "safety": {
             "gpu_used": False,
@@ -1116,5 +1160,6 @@ __all__ = [
     "run_verifier",
     "scientific_phase_label",
     "spearman_rho",
+    "validate_evaluator_order_hashes",
     "validate_panel_manifest",
 ]

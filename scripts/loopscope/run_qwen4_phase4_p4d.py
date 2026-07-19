@@ -20,6 +20,7 @@ def parser() -> argparse.ArgumentParser:
     analyze = subparsers.add_parser("analyze", help="unseal and analyze the frozen eight cells once")
     analyze.add_argument("--output-root", type=Path, default=AUTHORIZED_OUTPUT_ROOT)
     analyze.add_argument("--expected-commit", required=True)
+    analyze.add_argument("--attempt-count", type=int, default=1)
     verify = subparsers.add_parser("verify", help="verify compact aggregate artifacts and close receipts")
     verify.add_argument("--output-root", type=Path, default=AUTHORIZED_OUTPUT_ROOT)
     verify.add_argument("--expected-commit", required=True)
@@ -35,6 +36,7 @@ def main(argv: list[str] | None = None) -> int:
             output_root=arguments.output_root,
             expected_commit=arguments.expected_commit,
             argv=invocation,
+            attempt_count=arguments.attempt_count,
         )
     else:
         run_verifier(
