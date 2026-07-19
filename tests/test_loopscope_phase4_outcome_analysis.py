@@ -17,6 +17,7 @@ from tflt.loopscope.phase4_outcome_analysis import (
     linear_percentile,
     load_correctness_cell,
     scientific_phase_label,
+    validate_panel_manifest,
 )
 
 
@@ -192,6 +193,27 @@ class Phase4OutcomeAnalysisTests(unittest.TestCase):
             analysis["labels"]["scientific_phase_label"],
             "PV_EK_TRS_PROSPECTIVE_SELECTION_SUPPORTED",
         )
+
+    def test_panel_manifest_wrapper_is_required(self):
+        panel = {
+            "baseline": "no-loop",
+            "fixed_comparator": "15:18",
+            "blind_high3": ["6:9", "10:13", "25:28"],
+            "blind_low3": ["4:7", "5:8", "22:25"],
+            "selected_window": None,
+            "abstain": True,
+            "variable_width_outcomes_authorized": False,
+        }
+        from tflt.loopscope.phase4_outcome_analysis import PANEL_MANIFEST_SHA256
+
+        self.assertEqual(
+            validate_panel_manifest(
+                {"manifest_sha256": PANEL_MANIFEST_SHA256, "panel": panel}
+            ),
+            panel,
+        )
+        with self.assertRaises(P4DError):
+            validate_panel_manifest({"manifest_sha256": PANEL_MANIFEST_SHA256, **panel})
 
     def test_forbidden_raw_generated_fields_are_not_persisted(self):
         analysis = self.build()

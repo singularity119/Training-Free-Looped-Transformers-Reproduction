@@ -610,6 +610,27 @@ def _require_hash(path: Path, expected: str, context: str) -> None:
         raise P4DError("%s file hash/path differs" % context)
 
 
+def validate_panel_manifest(panel_manifest: Mapping[str, Any]) -> Dict[str, Any]:
+    if panel_manifest.get("manifest_sha256") != PANEL_MANIFEST_SHA256:
+        raise P4DError("panel embedded manifest differs")
+    panel = panel_manifest.get("panel")
+    if not isinstance(panel, Mapping):
+        raise P4DError("frozen panel manifest lacks its panel payload")
+    expected_panel = {
+        "baseline": "no-loop",
+        "fixed_comparator": "15:18",
+        "blind_high3": ["6:9", "10:13", "25:28"],
+        "blind_low3": ["4:7", "5:8", "22:25"],
+        "selected_window": None,
+        "abstain": True,
+        "variable_width_outcomes_authorized": False,
+    }
+    for key, value in expected_panel.items():
+        if panel.get(key) != value:
+            raise P4DError("frozen panel field differs: %s" % key)
+    return dict(panel)
+
+
 def validate_inputs() -> Dict[str, Any]:
     fixed = {
         SOURCE_MANIFEST: SOURCE_MANIFEST_SHA256,
@@ -636,21 +657,7 @@ def validate_inputs() -> Dict[str, Any]:
     _require_hash(SOURCE_RECORDS, source_manifest.get("record_file_sha256"), "source records")
     selector_report = load_strict_json(SELECTOR_REPORT)
     verify_selector_report(selector_report)
-    panel = load_strict_json(PANEL_PATH)
-    if panel.get("manifest_sha256") != PANEL_MANIFEST_SHA256:
-        raise P4DError("panel embedded manifest differs")
-    expected_panel = {
-        "baseline": "no-loop",
-        "fixed_comparator": "15:18",
-        "blind_high3": ["6:9", "10:13", "25:28"],
-        "blind_low3": ["4:7", "5:8", "22:25"],
-        "selected_window": None,
-        "abstain": True,
-        "variable_width_outcomes_authorized": False,
-    }
-    for key, value in expected_panel.items():
-        if panel.get(key) != value:
-            raise P4DError("frozen panel field differs: %s" % key)
+    panel = validate_panel_manifest(load_strict_json(PANEL_PATH))
     completion = load_strict_json(COMPLETION_RECEIPT)
     if (
         completion.get("manifest_sha256") != P4C_COMPLETION_MANIFEST_SHA256
@@ -1109,4 +1116,5 @@ __all__ = [
     "run_verifier",
     "scientific_phase_label",
     "spearman_rho",
+    "validate_panel_manifest",
 ]
