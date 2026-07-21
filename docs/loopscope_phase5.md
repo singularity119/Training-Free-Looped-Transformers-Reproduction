@@ -1,6 +1,6 @@
 # LoopScope Phase 5 runbook
 
-> `PHASE5_ACTIVE / GATE_A_AUTHORIZED`. This runbook is procedure, not execution authority.
+> `PHASE5_ACTIVE / GATE_B_EXECUTING`. This runbook is procedure, not execution authority.
 > The controlling planning file is `../../.planning/loopscope_phase5_control.md` at the
 > parent workspace level. Only the executor and Gate named there may act; later Gates remain
 > locked until the planning/audit task issues their exact authorization.
@@ -148,6 +148,17 @@ card/source/trajectory/analysis/panel hashes
 
 Gate B must not import or open test logged samples, target gold, correctness, or any current-cell
 window outcome.
+
+The authorized Gate B entry point is:
+
+```text
+scripts/loopscope/run_qwen4base_phase5_gate_b.py
+```
+
+Its ordered commands are `admission`, `freeze-smoke`, `write-launcher --mode smoke`,
+`acquire-smoke`, `freeze-formal`, `write-launcher --mode formal`, `acquire-shard`, `merge`,
+`select`, and `verify`. Every command remains bound to the exact implementation commit and the
+write-once run root declared by the Phase 5 control and Gate B handoff.
 
 ## 5. Gate C: sealed full outcomes
 

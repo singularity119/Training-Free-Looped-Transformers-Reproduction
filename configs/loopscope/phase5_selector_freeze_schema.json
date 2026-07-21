@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "loopscope.phase5.selector-freeze.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "selector", "formal", "replicates", "seed", "selector_report_manifest_sha256", "outcome_panel_manifest_sha256", "window_decision", "selected_window", "point_top1_window", "selection_frequency", "eligible_count", "bootstrap_draw_index_sha256", "population", "bindings", "manifest_sha256"],
+  "properties": {
+    "schema_version": {"const": "loopscope.phase5.selector-freeze.v1"},
+    "selector": {"const": "ENTROPY_KL_CONSENSUS_WIDTH4_V1"},
+    "formal": {"const": true},
+    "replicates": {"const": 2000},
+    "seed": {"const": 20260722},
+    "selector_report_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "outcome_panel_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "window_decision": {"enum": ["SELECTED", "ABSTAIN_NO_POINT_ELIGIBLE", "ABSTAIN_NO_UNIQUE_TOP1", "ABSTAIN_LOW_SELECTION_FREQUENCY"]},
+    "selected_window": {"type": ["string", "null"]},
+    "point_top1_window": {"type": ["string", "null"]},
+    "selection_frequency": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "eligible_count": {"type": "integer", "minimum": 0, "maximum": 25},
+    "bootstrap_draw_index_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "population": {"type": "object"},
+    "bindings": {"type": "object"},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
