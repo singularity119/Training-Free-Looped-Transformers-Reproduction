@@ -13,7 +13,7 @@
 ## 0. 计划与信息源
 
 - `AGENTS.md` 只保存长期稳定的项目边界、工程规则和 Gate 验收标准，不记录临时进度、当前执行线程或逐次工具日志。
-- `../.planning/loopscope_phase1_control.md`、`../.planning/loopscope_phase2_control.md` 与 `../.planning/loopscope_phase3_control.md` 是已关闭第一至第三阶段的历史控制面；`../.planning/loopscope_phase4_control.md` 是第四阶段当前唯一的可变全局控制文件。当前 Gate、Gate 决策、线程分配、已审计 commit、下一步授权条件均以 Phase 4 control 为准。
+- `../.planning/loopscope_phase1_control.md` 至 `../.planning/loopscope_phase4_control.md` 是已关闭第一至第四阶段的历史控制面；`../.planning/loopscope_phase5_control.md` 是第五阶段当前唯一的可变全局控制文件。当前 Gate、Gate 决策、executor 绑定、已审计 commit/run 与下一步 admission 均以 Phase 5 control 为准。
 - 旧工作区 `.planning/` 包、历史 handoff、线程聊天和 Codex memory 只作历史证据或辅助回忆；如果与当前代码或控制文件冲突，不得据此覆盖当前事实。
 - 单线程内的临时步骤优先使用 Codex 原生 plan/goal，不把每一步复制到项目文件。
 - 不得自动调用 `planning-with-files` skill。只有用户在当前请求中明确点名或明确要求启用该工作流时才可使用。
@@ -31,6 +31,7 @@
 - 第二阶段目标：围绕第一阶段局部结果验证“可迭代精炼区”机制——区分持续有益修正、短暂最优、无益扰动和错误过度自信；先用小范围 `k` 轨迹与逐样本分析理解机制，只有机制得到支持后才讨论无标签选窗或跨模型扩展。
 - 第三阶段目标：固定 Qwen3-1.7B × MMLU × K=2 配方，只利用 validation 全量 1,531 条样本的一次 no-loop 层级 choice trajectory，检验局部 entropy–KL 双重反转能否在同一 model-task cell 内恢复、富集或排除 loop windows；测试/full outcome 不得进入 selector。
 - 第四阶段目标：直接在 Qwen3-4B-Instruct-2507 × MMLU-Pro 5-shot CoT 上检验，能否仅凭生成首 token 前的一次普通 no-loop prefix forward 全词表 entropy–KL trajectory，前瞻性预测完整 CoT decoding 的 width-4 loop window；同一 12,032 test identity 总体可同时承担 outcome-blind selector 与后续 outcome，但必须按时间和字段严格隔离。
+- 第五阶段目标：在 `Qwen3-4B-Base × MMLU 5-shot` 上填补与第三阶段同任务的尺度迁移 cell；仅用 validation-1531 一次 native no-loop choice/hidden trajectory 冻结 width-4 selector，再在与其样本级隔离的 test-14042 sealed panel 上区分 ranking enrichment、absolute gain、known-comparator competitiveness 和 `ABSTAIN`。
 - 基础复现分支 `main` 是固定对照，不接受 LoopScope 功能提交。
 - 新 clone 的默认 `main` 也只作只读引用；clone 后首次工作分支必须是从固定基点新建的 `loopscope`。
 
@@ -346,3 +347,16 @@ Gate 终态经规划/审计线程判定后，只撤销该 executor 对 Git、数
 - selector 与 outcome 共用一个 canonical MMLU-Pro test-12032 identity manifest。隔离对象是信息与时间而非样本身份；任何正结论都必须限定为 `same-population outcome-blind transductive`，不得声称 unseen-sample generalization。
 - Phase 4 Gate 顺序固定为 P4-A 本地最小实现、P4-B 真实 prefix acquisition/selector freeze、P4-C width-4 frozen panel outcome acquisition、P4-D 一次性 unseal/analysis/phase-end audit。每 Gate 一个独立 executor；只有 planning/audit thread 可以裁决并授权下一 Gate。
 - Phase 4 的动态状态、exact executor、commit/run identity、权限和 admission 只以 `../.planning/loopscope_phase4_control.md` 为准；详细命令与工件合同见 `docs/loopscope_phase4.md`。
+
+## 14. 第五阶段稳定科学与治理边界
+
+- Phase 5 冻结 model cell 为 `Qwen/Qwen3-4B-Base@906bfd4b4dc7f14ee4320094d8b41684abff8539 × cais/mmlu × 5-shot`，checkpoint config 为 36 decoder layers、hidden size 2560、bfloat16。
+- selector 只读 MMLU validation 全量 1,531 / 57 subjects 的一次 native no-loop forward；记录 `B_0..B_36` final pre-answer position 的 A/B/C/D choice entropy、`KL(p_l||p_36)` 与 final-norm hidden RMS-L2/cosine。target gold、correctness、test outcome 和 loop outcome 严禁进入 selector。
+- primary selector 是 width-4 entropy–KL `CONSENSUS`；hidden geometry 只是 diagnostic，不得加入 selector 或与 cosine distance 重复计票。selection frequency 阈值为 0.80；无 eligible、top tie 或 frequency 不足时必须 `ABSTAIN`。
+- loop outcome 冻结 `width=4、K=3、block、Euler alias=damped_euler、alpha=1、beta=0、step=1/3、horizon=1、cache=first、decode CLI=bypass / scientific N/A`，只允许 window 变化。
+- outcome panel 最多八个 unique cells：no-loop、known fixed `15:18`、registry-excluded selected-inclusive High3 和 disjoint Low3；同时保留 raw High3 metadata。baseline/`15:18` 默认 fresh acquisition，只有 bit-exact per-sample closure 才可例外复用。
+- formal outcome 使用 MMLU test 全量 14,042 canonical identities，panel 必须先 hash-close 再运行。Gate C 只见 completeness/identity/scheduler/hash，Gate D 才一次性 unseal 全 panel。
+- success 与 ranking 必须分开：selected-baseline 要求 point gain>0；selected 对 `15:18` 的 non-inferiority margin 为 0.30 pp 且 panel regret<=0.30 pp；High3−Low3 为正不得单独宣称 selection success。
+- bootstrap 冻结 2,000 replicates；trajectory seed=`20260722`，outcome seed=`20260723`。禁止 K sweep、variable-width outcome、dynamic gating、selector 调权、Orthogonal Residual、template projection、CAST、SEAL、PASTA、SADI 或其他 representation intervention。
+- Phase 5 Gate 顺序为 A 合同/provenance、B validation trajectory/selector freeze、C sealed test outcomes、D one-shot unseal/terminal analysis。每 Gate 一个独立 executor，只有 planning/audit 任务可裁决并授权下一 Gate。
+- Phase 5 动态状态、exact executor、commit/run identity、权限和 admission 只以 `../.planning/loopscope_phase5_control.md` 为准；详细命令与工件合同见 `docs/loopscope_phase5.md`。

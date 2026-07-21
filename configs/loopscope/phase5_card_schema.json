@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "loopscope.phase5.card.v1",
+  "title": "LoopScope Phase 5 frozen Gate A card",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "card",
+    "status",
+    "hypothesis",
+    "claim_scope",
+    "model",
+    "task",
+    "identity",
+    "boundary_contract",
+    "trajectory",
+    "loop_outcome_recipe",
+    "selector",
+    "panel",
+    "outcome_statistics",
+    "fail_closed",
+    "manifest_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "loopscope.phase5.card.v1"
+    },
+    "card": {
+      "const": "H5_QWEN4B_BASE_MMLU_TRAJECTORY_SELECTION_V1"
+    },
+    "status": {
+      "const": "GATE_A_CONTRACT_FROZEN"
+    },
+    "hypothesis": {
+      "const": "H5_QWEN4B_BASE_MMLU_TRAJECTORY_SELECTION_V1"
+    },
+    "claim_scope": {
+      "const": "within_cell_prospective_and_limited_cross_scale_consistency"
+    },
+    "model": {
+      "type": "object"
+    },
+    "task": {
+      "type": "object"
+    },
+    "identity": {
+      "type": "object"
+    },
+    "boundary_contract": {
+      "type": "object"
+    },
+    "trajectory": {
+      "type": "object"
+    },
+    "loop_outcome_recipe": {
+      "type": "object"
+    },
+    "selector": {
+      "type": "object"
+    },
+    "panel": {
+      "type": "object"
+    },
+    "outcome_statistics": {
+      "type": "object"
+    },
+    "fail_closed": {
+      "type": "object"
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "x_normal_path_validator": "src/tflt/loopscope/phase5_schema.py:validate_card",
+  "x_gate_b_consumption_boundary": "closed_world_trajectory_and_selector_contract",
+  "manifest_sha256": "3585c69355e266d0fb240653ba8b9822c244d96a525f84695b9acc30b1db4844"
+}

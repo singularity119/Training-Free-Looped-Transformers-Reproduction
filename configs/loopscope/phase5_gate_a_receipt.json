@@ -1,0 +1,116 @@
+{
+  "schema_version": "loopscope.phase5.gate-a-receipt.v1",
+  "gate": "A",
+  "result": "READY_FOR_PLANNING_AUDIT",
+  "execution_thread": "019f8631-3b66-7d40-8cae-d21c37ed27c1",
+  "planning_thread": "019f8604-4717-7be2-8bf8-9d4a26a3d7f7",
+  "artifacts": {
+    "card": {
+      "relative_path": "configs/loopscope/phase5_card.json",
+      "file_sha256": "8d25996f994d131ea0fd9ca78f83c90680a67c41c7c460f7e4e8b4ae5ea42a73",
+      "manifest_sha256": "75eed3e30c623f5eedd63e84e93bfd3e4de50cfb490b23f3a2d31683f9947143"
+    },
+    "schema": {
+      "relative_path": "configs/loopscope/phase5_card_schema.json",
+      "file_sha256": "958b6bccb69f54b65838e9c4541c40cf94beed93e38dbcc4c67c2c11c36bd117",
+      "manifest_sha256": "3585c69355e266d0fb240653ba8b9822c244d96a525f84695b9acc30b1db4844"
+    },
+    "registry": {
+      "relative_path": "configs/loopscope/phase5_known_outcome_registry.json",
+      "file_sha256": "714d8d253f69883d902b922e4927e3d41f20e4b5dec93df0a826c3f5e5797f7f",
+      "manifest_sha256": "8fc2010b5a4e913f62c189af5cc7b8670c7db6dd6e141ca3b7a2680e41213a8d"
+    }
+  },
+  "implementation": {
+    "src/tflt/loopscope/phase5_schema.py": "b839b2abc53a314d91715a5868592e2baa805033a374ef25a9a979f5a5bea06d",
+    "scripts/loopscope/verify_phase5_gate_a.py": "b635820e70811b7e2c6f318c8b2aed556a25537dce6d282cd729fe9249d15dff",
+    "tests/test_loopscope_phase5_gate_a.py": "d828a8ef0638794e6fafb86f33d58fb1974255f633593d8137cc94514333c838",
+    "AGENTS.md": "83e1a487305e3a24e96d6013a92ac4bc9306524907b9ab10c3a61cf6d4692b63",
+    "docs/loopscope_phase5.md": "222cb0de2445b210181bac56f3ce1767de0f64e1ffc9d6dcb49f16a31c355c02"
+  },
+  "local_verification": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests python3 -m unittest tests/test_loopscope_phase5_gate_a.py",
+      "expected_test_count": 10,
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/loopscope/verify_phase5_gate_a.py",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests python3 -m unittest test_loopscope_phase3_schema.Phase3SchemaTests.test_raw_logits_recompute_exact_b0_b28_and_ce_identity test_loopscope_phase3_schema.Phase3SchemaTests.test_top1_tie_uses_a_first test_loopscope_phase3_schema.Phase3SchemaTests.test_boundary_probability_metric_and_unknown_tampers_fail test_loopscope_phase3_schema.Phase3SchemaTests.test_nonfinite_and_softmax_underflow_fail_without_clamping test_loopscope_probe.LoopScopeProbeTest.test_choice_tokenization_reports_all_ids_and_never_truncates test_loopscope_probe.LoopScopeProbeTest.test_boundary_states_and_lens_space_are_explicit test_loopscope_phase3_acquisition.Phase3AcquisitionTests.test_trajectory_renderer_is_exact_native_no_loop",
+      "expected_test_count": 7,
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m py_compile src/tflt/loopscope/phase5_schema.py scripts/loopscope/verify_phase5_gate_a.py tests/test_loopscope_phase5_gate_a.py; git diff --check; rg forbidden-placeholder patterns over Gate A files",
+      "exit_code": 0
+    }
+  ],
+  "remote_provenance": {
+    "host_alias": "hpc2-hkustgz",
+    "observed_login_node": "mgmt-6",
+    "project_clone": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope",
+    "branch": "loopscope",
+    "head": "ee676a8d13d1bed4aa783da0606f5dd60ec8a11f",
+    "tree": "87e67dad072ff4e937061985c21e3b61b1d7a7d1",
+    "dirty_count": 0,
+    "model_snapshot": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+    "model_config_sha256": "304b2545a258d35620f1d4bf46940c0471d9baa00715ff8e77f84c2fca5057c1",
+    "tokenizer_json_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+    "validation_renderer_manifest_file_sha256": "48ba67c204249b5f2f9a6cf711f8678711b5e606398d35ba4d919d4eee70e6e7",
+    "validation_projection_sha256": "439e41113458ccfbd51d211ab7fae4e91ecc02723c7b14ad6c1969803aa61a6a",
+    "validation_count": 1531,
+    "validation_subject_count": 57,
+    "test_identity_manifest_file_sha256": "59500340aa64d91810cd5a5d40f3d96ded5618ab5508543b31eea93050e7f3e4",
+    "test_ordered_identity_sha256": "2c4557079fca1a7c071460f779ed714805fc96c3391560825cd34386d4051532",
+    "test_count": 14042,
+    "test_subject_count": 57,
+    "validation_test_disjointness_receipt_sha256": "f51ec5a9048b1ed8e615a6576e6a4ca6d2c0763ad1a4ed44a21a44d252e1fac7",
+    "validation_test_identity_intersection": 0,
+    "outcome_values_read": false,
+    "formal_model_weights_instantiated": false,
+    "model_forward_executed": false,
+    "job_ids": [],
+    "run_root": null
+  },
+  "reuse_verdict": {
+    "baseline": "FRESH_ACQUISITION_REQUIRED",
+    "15:18": "FRESH_ACQUISITION_REQUIRED"
+  },
+  "reuse_reason": "No registered exact per-sample artifact identity closes model, tokenizer, data, renderer, evaluator, recipe, and logged-sample hashes; bounded audit therefore stopped at the frozen default.",
+  "git": {
+    "repository": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/loopscope-tflt",
+    "branch": "loopscope",
+    "base_commit": "ee676a8d13d1bed4aa783da0606f5dd60ec8a11f",
+    "origin_commit_at_start": "ee676a8d13d1bed4aa783da0606f5dd60ec8a11f",
+    "protected_reference_base": "4f59bd93eca4da3cbf458a93508f91c5b23912bc",
+    "final_commit": "EXTERNAL_SELF_REFERENCE_BINDING",
+    "final_commit_binding": "GATE_A_FINAL_AUDIT_AND_PUSHED_BRANCH_HEAD",
+    "self_reference_note": "A tracked receipt cannot embed the SHA of the commit that contains itself; the terminal packet and pushed branch head bind the exact final commit."
+  },
+  "repair_loops_used": 0,
+  "deviations": [
+    "The planning runbook's stale pre-activation banner was updated under the explicit Gate A authorization.",
+    "The containing Git commit is externally bound because embedding it in this tracked receipt would be self-referential."
+  ],
+  "actions_not_taken": [
+    "formal_model_forward",
+    "formal_validation_trajectory",
+    "formal_4_identity_smoke",
+    "selector_ranking_or_panel_freeze",
+    "test_outcome_access",
+    "GPU_or_Slurm",
+    "scheduler_submit_retry_cancel_or_requeue",
+    "Gate_B_C_or_D_work",
+    "protected_implementation_path_change",
+    "Phase_1_to_4_artifact_change"
+  ],
+  "protected_state": {
+    "wrapper_strategies_cache_config_eval_runner_unmodified": true,
+    "phase1_to_phase4_cards_selectors_outcomes_reports_artifacts_unmodified": true,
+    "no_destructive_git_or_filesystem_action": true
+  },
+  "manifest_sha256": "4b25a2def6c1b704d2898545fe86d0177007f949bd1aea6528a2e3921f3ce5ea"
+}

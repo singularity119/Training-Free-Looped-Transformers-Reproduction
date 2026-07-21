@@ -1,0 +1,33 @@
+{
+  "schema_version": "loopscope.phase5.known-outcome-registry.v1",
+  "status": "KNOWN_BACKGROUND_NOT_FORMAL_RESULT",
+  "source": "user_provided_public_paper_reference",
+  "entries": [
+    {
+      "id": "baseline",
+      "window": null,
+      "accuracy_percent": 73.27,
+      "gain_percentage_points": 0.0,
+      "role": "known_background_baseline",
+      "excluded_from_blind_groups": true,
+      "exact_per_sample_closure": false,
+      "reuse_verdict": "FRESH_ACQUISITION_REQUIRED"
+    },
+    {
+      "id": "window_15_18",
+      "window": "15:18",
+      "accuracy_percent": 73.61,
+      "gain_percentage_points": 0.34,
+      "role": "known_background_fixed_comparator",
+      "excluded_from_blind_groups": true,
+      "exact_per_sample_closure": false,
+      "reuse_verdict": "FRESH_ACQUISITION_REQUIRED"
+    }
+  ],
+  "default_reuse_verdict": "FRESH_ACQUISITION_REQUIRED",
+  "blind_group_exclusion_windows": [
+    "15:18"
+  ],
+  "formal_phase5_result": false,
+  "manifest_sha256": "8fc2010b5a4e913f62c189af5cc7b8670c7db6dd6e141ca3b7a2680e41213a8d"
+}
