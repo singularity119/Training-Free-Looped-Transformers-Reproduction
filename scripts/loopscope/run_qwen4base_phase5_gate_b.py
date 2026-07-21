@@ -85,7 +85,7 @@ def _launcher_text(
         [
             "set -euo pipefail",
             "module purge",
-            "module load anaconda3 cuda/12.4",
+            "module load anaconda3 cuda/12.2",
             "source %s/bin/activate" % AUDITED_VENV,
             "export PYTHONDONTWRITEBYTECODE=1",
             "export PYTHONPATH=%s/src" % REMOTE_REPO,
@@ -100,7 +100,7 @@ def _launcher_text(
     )
     if mode == "smoke":
         command = (
-            "python %s acquire-smoke --expected-commit %s --attempt 1"
+            "python %s acquire-smoke --expected-commit %s --manifest-revision 2 --attempt 1"
             % (script, expected_commit)
         )
     else:
@@ -384,7 +384,7 @@ def verify_selector_files(
             },
             "monitor_lifecycle_receipt_sha256": monitor["manifest_sha256"],
             "implementation_sha256": implementation_hashes(),
-            "repair_loops": 1,
+            "repair_loops": 2,
             "outcome_accessed": False,
             "test_split_accessed": False,
             "gate_c_entered": False,
@@ -402,9 +402,11 @@ def build_parser() -> argparse.ArgumentParser:
     _common(admission)
     smoke = sub.add_parser("freeze-smoke")
     _common(smoke)
+    smoke.add_argument("--manifest-revision", type=int, default=1)
     acquire_smoke = sub.add_parser("acquire-smoke")
     _common(acquire_smoke)
     acquire_smoke.add_argument("--attempt", type=int, default=1)
+    acquire_smoke.add_argument("--manifest-revision", type=int, default=1)
     formal = sub.add_parser("freeze-formal")
     _common(formal)
     formal.add_argument("--shard-count", type=int, required=True)
@@ -449,13 +451,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if args.command == "admission":
         result = materialize_admission(expected_commit=args.expected_commit, argv=full_argv)
     elif args.command == "freeze-smoke":
-        result = freeze_smoke(expected_commit=args.expected_commit, argv=full_argv)
+        result = freeze_smoke(
+            expected_commit=args.expected_commit,
+            argv=full_argv,
+            manifest_revision=args.manifest_revision,
+        )
     elif args.command == "acquire-smoke":
         result = acquire_membership(
             mode="smoke",
             expected_commit=args.expected_commit,
             argv=full_argv,
             attempt=args.attempt,
+            smoke_manifest_revision=args.manifest_revision,
         )
     elif args.command == "freeze-formal":
         result = freeze_formal(

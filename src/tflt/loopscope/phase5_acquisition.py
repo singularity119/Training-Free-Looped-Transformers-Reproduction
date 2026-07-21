@@ -449,7 +449,17 @@ def _smoke_ordinals(pool: Sequence[Mapping[str, Any]]) -> List[int]:
     return sorted(by_subject[subjects[0]][:2] + by_subject[subjects[1]][:2])
 
 
-def freeze_smoke(*, expected_commit: str, argv: Sequence[str]) -> Dict[str, Any]:
+def _smoke_manifest_path(run_root: Path, manifest_revision: int) -> Path:
+    if manifest_revision == 1:
+        return run_root / "smoke/smoke_membership_manifest.json"
+    if manifest_revision in (2, 3):
+        return run_root / ("smoke/smoke_membership_manifest-repair-%04d.json" % manifest_revision)
+    raise Phase5AcquisitionError("smoke manifest revision exceeds repair budget")
+
+
+def freeze_smoke(
+    *, expected_commit: str, argv: Sequence[str], manifest_revision: int = 1
+) -> Dict[str, Any]:
     run_root = assert_authorized_run_root(AUTHORIZED_RUN_ROOT, must_exist=True)
     git = git_provenance(expected_commit)
     card = load_frozen_card()
@@ -464,6 +474,7 @@ def freeze_smoke(*, expected_commit: str, argv: Sequence[str]) -> Dict[str, Any]
             "created_at_utc": utc_now(),
             "gate": GATE,
             "mode": "smoke",
+            "manifest_revision": manifest_revision,
             "executor_thread_id": EXECUTOR_THREAD_ID,
             "run_root": str(run_root),
             "git": git,
@@ -480,7 +491,7 @@ def freeze_smoke(*, expected_commit: str, argv: Sequence[str]) -> Dict[str, Any]
             "implementation_sha256": implementation_hashes(),
         }
     )
-    write_new_json(run_root / "smoke/smoke_membership_manifest.json", payload)
+    write_new_json(_smoke_manifest_path(run_root, manifest_revision), payload)
     return payload
 
 
@@ -909,6 +920,7 @@ def acquire_membership(
     argv: Sequence[str],
     shard_id: Optional[int] = None,
     attempt: int = 1,
+    smoke_manifest_revision: int = 1,
 ) -> Dict[str, Any]:
     run_root = assert_authorized_run_root(AUTHORIZED_RUN_ROOT, must_exist=True)
     git = git_provenance(expected_commit)
@@ -919,7 +931,7 @@ def acquire_membership(
     card = load_frozen_card()
     pool, _, _ = load_phase3_gold_free_pool()
     manifest_path = (
-        run_root / "smoke/smoke_membership_manifest.json"
+        _smoke_manifest_path(run_root, smoke_manifest_revision)
         if mode == "smoke"
         else run_root / "formal/formal_shard_manifest.json"
     )
