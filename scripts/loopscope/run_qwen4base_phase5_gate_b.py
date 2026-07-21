@@ -384,7 +384,7 @@ def verify_selector_files(
             },
             "monitor_lifecycle_receipt_sha256": monitor["manifest_sha256"],
             "implementation_sha256": implementation_hashes(),
-            "repair_loops": 0,
+            "repair_loops": 1,
             "outcome_accessed": False,
             "test_split_accessed": False,
             "gate_c_entered": False,

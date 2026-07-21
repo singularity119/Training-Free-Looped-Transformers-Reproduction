@@ -287,13 +287,16 @@ def _snapshot_evidence(card: Mapping[str, Any]) -> Dict[str, Any]:
             raise Phase5AcquisitionError("model shard hash differs: %s" % name)
         observed[name] = {"sha256": digest, "size_bytes": path.stat().st_size}
     total_size = sum(value["size_bytes"] for value in observed.values())
-    if total_size != int(card["model"]["safetensors_total_size_bytes"]):
-        raise Phase5AcquisitionError("model snapshot total size differs")
+    index = load_strict_json(MODEL_SNAPSHOT / "model.safetensors.index.json")
+    declared_total_size = index.get("metadata", {}).get("total_size")
+    if declared_total_size != int(card["model"]["safetensors_total_size_bytes"]):
+        raise Phase5AcquisitionError("model snapshot index total_size differs")
     return {
         "path": str(MODEL_SNAPSHOT),
         "revision": card["model"]["revision"],
         "shards": observed,
-        "total_size_bytes": total_size,
+        "index_declared_total_size_bytes": declared_total_size,
+        "physical_shard_file_size_bytes": total_size,
     }
 
 
