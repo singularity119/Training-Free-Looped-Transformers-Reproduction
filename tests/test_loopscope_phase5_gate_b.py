@@ -6,6 +6,7 @@ import unittest
 
 from tflt.loopscope.phase5_acquisition import (
     Phase5AcquisitionError,
+    _smoke_ordinals,
     authoritative_b36_choice_logits,
     formal_retry_allowed,
     normalized_boundary_views,
@@ -264,6 +265,23 @@ class Phase5GateBSelectorTests(unittest.TestCase):
 
 
 class Phase5GateBAcquisitionTests(unittest.TestCase):
+    def test_repair_smoke_uses_exact_planning_trigger_identities(self):
+        pool = [
+            {
+                "identity": {
+                    "task": "mmlu_human_aging",
+                    "doc_id": "mmlu_human_aging:validation:18",
+                }
+            },
+            {
+                "identity": {
+                    "task": "mmlu_marketing",
+                    "doc_id": "mmlu_marketing:validation:24",
+                }
+            },
+        ]
+        self.assertEqual(_smoke_ordinals(pool), [0, 1])
+
     def test_b36_uses_native_choice_logits_and_sliced_mismatch_is_non_gating(self):
         native = [1.0, 2.0, 3.0, 4.0]
         sliced = [100.0, 200.0, 300.0, 400.0]

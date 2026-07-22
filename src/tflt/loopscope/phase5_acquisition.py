@@ -58,8 +58,8 @@ INVALID_FORMAL_MEMBERSHIP_SHA256 = (
     "e874e1a896eadc0819858bc4cc465ced6008b6945adba67a016c4dffa23a3f63"
 )
 REPAIR_SMOKE_IDENTITIES = (
-    ("mmlu_marketing", "validation:24"),
-    ("mmlu_human_aging", "validation:18"),
+    ("mmlu_marketing", "mmlu_marketing:validation:24"),
+    ("mmlu_human_aging", "mmlu_human_aging:validation:18"),
 )
 PHASE3_RUN_ROOT = WORKSPACE / "runs/phase3-p3b-20260715T223304Z"
 MODEL_SNAPSHOT = Path(
