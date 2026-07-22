@@ -228,6 +228,25 @@ repeats that closure, creates one write-once unseal marker, then performs exactl
 pass and one independent raw-payload verifier pass on the login CPU. Once the marker exists,
 the command refuses every second unseal or analysis attempt.
 
+### Gate D terminal result
+
+The one-shot HPC2 login-CPU execution completed with `unseal_count=1`, `analysis_count=1`, and an
+independent verifier `PASS`. The frozen selector remained the legal
+`ABSTAIN_NO_POINT_ELIGIBLE` (`eligible_count=0`, no selected window), yielding terminal label
+`H5_ABSTAIN_WITH_RANKING_RESULT`.
+
+High3-Low3 enrichment was `+4.156578 pp` with subject-stratified paired-bootstrap 95% CI
+`[+3.695995, +4.609980] pp`, but High3 absolute mean gain was `-12.958743 pp` with 95% CI
+`[-13.507216, -12.427005] pp`. The blind-six selector score-gain association was
+`rho=-0.314286`, exact two-sided `p=0.563889`. The fixed `15:18` comparator was the panel best at
+`73.401225%`, a paired `+0.384561 pp` over the `73.016664%` baseline, with 95% CI
+`[-0.021364, +0.797607] pp` and exact McNemar `p=0.071967`.
+
+These results preserve the distinction between relative ranking enrichment and positive absolute
+gain: Phase 5 does not claim a selected success or a universal cross-model automatic window
+selector. The canonical Chinese report is `报告/LoopScope_第五阶段实验结果与结论.md`; write-once
+analysis artifacts remain under the Gate C run root's `gate_d/` directory.
+
 ## 7. Gate terminal packet
 
 Every executor sends exactly one terminal packet:
