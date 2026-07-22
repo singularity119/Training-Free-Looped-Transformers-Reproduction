@@ -1,6 +1,6 @@
 # LoopScope Phase 5 runbook
 
-> `PHASE5_ACTIVE / GATE_B_EXECUTING`. This runbook is procedure, not execution authority.
+> `PHASE5_ACTIVE / GATE_D_AUTHORIZED`. This runbook is procedure, not execution authority.
 > The controlling planning file is `../../.planning/loopscope_phase5_control.md` at the
 > parent workspace level. Only the executor and Gate named there may act; later Gates remain
 > locked until the planning/audit task issues their exact authorization.
@@ -214,6 +214,19 @@ competitiveness and ABSTAIN distinct.
 
 Do not repair the selector, change the panel, rerun an old Gate for a more favorable result, or
 extend to another K, width, model or intervention after unseal.
+
+The authorized entry point is:
+
+```text
+scripts/loopscope/run_qwen4base_phase5_gate_d.py preflight --expected-commit <implementation-commit>
+scripts/loopscope/run_qwen4base_phase5_gate_d.py execute --expected-commit <implementation-commit>
+```
+
+`preflight` hashes and validates the card, selector, panel, test manifest, Gate C completion
+receipt, and all eight sealed result files without parsing the result payloads. `execute` first
+repeats that closure, creates one write-once unseal marker, then performs exactly one analysis
+pass and one independent raw-payload verifier pass on the login CPU. Once the marker exists,
+the command refuses every second unseal or analysis attempt.
 
 ## 7. Gate terminal packet
 
