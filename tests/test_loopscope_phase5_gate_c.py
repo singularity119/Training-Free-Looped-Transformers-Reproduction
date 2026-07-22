@@ -7,6 +7,27 @@ from pathlib import Path
 from unittest import mock
 
 from tflt.loopscope import phase5_outcome as outcome
+from tflt.loopscope.phase3_p3c import safe_test_doc_sha256
+from tflt.loopscope.phase3_schema import sanitized_content_sha256
+
+
+class OutcomeTrap(dict):
+    """Fail if identity projection touches lm-eval internal/outcome fields."""
+
+    forbidden = frozenset((
+        "doc_hash", "target", "answer", "gold", "prediction", "correctness",
+        "resps", "filtered_resps", "metrics", "accuracy",
+    ))
+
+    def __getitem__(self, key):
+        if key in self.forbidden:
+            raise AssertionError("forbidden field accessed: %s" % key)
+        return super().__getitem__(key)
+
+    def get(self, key, default=None):
+        if key in self.forbidden:
+            raise AssertionError("forbidden field accessed: %s" % key)
+        return super().get(key, default)
 
 
 class Phase5GateCContractTests(unittest.TestCase):
@@ -60,20 +81,63 @@ class Phase5GateCContractTests(unittest.TestCase):
             "mmlu_abstract_algebra,mmlu_anatomy",
         )
 
-    def test_identity_projection_accesses_only_stable_identity(self):
+    @staticmethod
+    def _record(task, doc_id, doc):
+        safe_hash = safe_test_doc_sha256(doc)
+        return {
+            "identity": {"task": task, "doc_id": str(doc_id), "doc_hash": safe_hash},
+            "subject": doc["subject"],
+            "split": "test",
+            "sanitized_content_sha256": sanitized_content_sha256(
+                doc["question"], doc["choices"]
+            ),
+        }
+
+    def test_identity_projection_recomputes_safe_hash_without_outcomes(self):
+        doc_a = {
+            "question": "Question A?", "choices": ["A0", "A1", "A2", "A3"],
+            "subject": "a",
+        }
+        doc_b = {
+            "question": "Question B?", "choices": ["B0", "B1", "B2", "B3"],
+            "subject": "b",
+        }
         records = [
-            {"identity": {"task": "mmlu_a", "doc_id": "0", "doc_hash": "a" * 64},
-             "subject": "a", "split": "test"},
-            {"identity": {"task": "mmlu_b", "doc_id": "1", "doc_hash": "b" * 64},
-             "subject": "b", "split": "test"},
+            self._record("mmlu_a", 0, doc_a),
+            self._record("mmlu_b", 1, doc_b),
         ]
         result = {"samples": {
-            "mmlu_b": [{"doc_id": 1, "doc_hash": "b" * 64, "forbidden_outcome": object()}],
-            "mmlu_a": [{"doc_id": 0, "doc_hash": "a" * 64, "accuracy": object()}],
+            "mmlu_b": [OutcomeTrap({
+                "doc_id": 1, "doc_hash": "1" * 64, "doc": doc_b,
+                "target": object(), "resps": object(), "accuracy": object(),
+            })],
+            "mmlu_a": [OutcomeTrap({
+                "doc_id": 0, "doc_hash": "2" * 64, "doc": doc_a,
+                "gold": object(), "prediction": object(), "correctness": object(),
+            })],
         }}
         projected = outcome.project_identity_only(result, records)
         self.assertEqual([row["identity"] for row in projected], [row["identity"] for row in records])
         self.assertNotIn("accuracy", projected[0])
+
+    def test_identity_projection_fails_on_safe_doc_or_membership_drift(self):
+        doc = {
+            "question": "Question?", "choices": ["A", "B", "C", "D"],
+            "subject": "subject",
+        }
+        record = self._record("mmlu_subject", 0, doc)
+        changed = dict(doc)
+        changed["question"] = "Changed?"
+        with self.assertRaisesRegex(outcome.Phase5OutcomeError, "safe canonical doc hash"):
+            outcome.project_identity_only(
+                {"samples": {"mmlu_subject": [{"doc_id": 0, "doc": changed}]}},
+                [record],
+            )
+        with self.assertRaisesRegex(outcome.Phase5OutcomeError, "missing=1 extra=1"):
+            outcome.project_identity_only(
+                {"samples": {"mmlu_subject": [{"doc_id": 1, "doc": doc}]}},
+                [record],
+            )
 
     def test_partial_or_failed_scheduler_refused(self):
         rows = [

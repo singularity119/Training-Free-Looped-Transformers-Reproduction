@@ -20,7 +20,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
-from tflt.loopscope.phase3_schema import ordered_identity_sha256
+from tflt.loopscope.phase3_p3c import (
+    P3CError,
+    safe_test_dataset_fields,
+    safe_test_doc_sha256,
+)
+from tflt.loopscope.phase3_schema import (
+    ordered_identity_sha256,
+    sanitized_content_sha256,
+)
 from tflt.loopscope.phase5_schema import canonical_json_bytes, file_sha256
 
 
@@ -35,7 +43,9 @@ AUDITED_VENV = REMOTE_REPO / ".venv-loopscope-cu121-20260711"
 WORKSPACE = Path(
     "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope"
 )
-AUTHORIZED_RUN_ROOT = WORKSPACE / "runs/phase5-gate-c-20260722T053058Z"
+AUTHORIZED_RUN_ROOT = WORKSPACE / "runs/phase5-gate-c-repair-identity-20260722T072256Z"
+INVALID_SMOKE_RUN_ROOT = WORKSPACE / "runs/phase5-gate-c-20260722T053058Z"
+INVALID_SMOKE_JOB_ID = "10032360"
 GATE_B_ROOT = WORKSPACE / "runs/phase5-gate-b-repair-b36-native-20260722T035452Z"
 PHASE3_C_ROOT = WORKSPACE / "runs/phase3-p3c-20260716T064601Z"
 
@@ -217,6 +227,7 @@ def _load_test_metadata() -> List[Dict[str, Any]]:
                 "identity": dict(row["identity"]),
                 "subject": str(row["subject"]),
                 "split": str(row["split"]),
+                "sanitized_content_sha256": str(row["sanitized_content_sha256"]),
             })
     if len(records) != 14042 or len({row["subject"] for row in records}) != 57:
         raise Phase5OutcomeError("test metadata does not close 14042/57")
@@ -379,6 +390,8 @@ def build_launch_manifest(
         "cells": cells, "cell_count": 8,
         "information_barrier": {
             "producer_identity_projection_only": True,
+            "safe_test_doc_hash_projection": True,
+            "lm_eval_internal_doc_hash_consumed_as_canonical": False,
             "sealer_results_parse_authorized": False,
             "accuracy_or_gain_computation_authorized": False,
             "gate_d_unseal_authorized": False,
@@ -540,6 +553,21 @@ def prepare_smoke(
         "launch_manifest_sha256": hashes[MANIFEST_NAMES["smoke"]],
         "launch_manifest_internal_sha256": manifest["manifest_sha256"],
         "launcher_sha256": hashes, "outcome_values_consumed": False,
+        "repair_provenance": {
+            "planning_decision": "PASS_WITH_FIXES",
+            "planning_audit_returned_repair_cycle": "1_OF_1",
+            "invalid_smoke_root": str(INVALID_SMOKE_RUN_ROOT),
+            "invalid_smoke_job_id": INVALID_SMOKE_JOB_ID,
+            "invalid_smoke_scheduler_state": "EXACT_TASKS_0_7_FAILED_1_0",
+            "invalid_smoke_failure": (
+                "Phase5OutcomeError: lm-eval identity projection is incomplete; "
+                "missing=4 extra=4"
+            ),
+            "invalidation_reason": (
+                "lm_eval_internal_doc_hash_is_not_canonical_safe_test_doc_sha256"
+            ),
+            "invalid_root_consumed": False,
+        },
         "status": "SMOKE_PREPARED",
     })
     _write_new_json(AUTHORIZED_RUN_ROOT / "phase5_gate_c_preoutcome_freeze.json", receipt)
@@ -605,27 +633,62 @@ def _identity_key(identity: Mapping[str, Any]) -> Tuple[str, str, str]:
 def project_identity_only(
     result: Mapping[str, Any], expected_records: Sequence[Mapping[str, Any]]
 ) -> List[Dict[str, Any]]:
-    """Mechanically allowlist identity fields; never access score/outcome keys."""
+    """Project canonical safe identities without reading lm-eval outcome fields."""
 
     samples = result.get("samples")
     if not isinstance(samples, Mapping):
         raise Phase5OutcomeError("lm-eval result lacks logged samples")
-    observed = set()
+    expected_by_pair: Dict[Tuple[str, str], Mapping[str, Any]] = {}
+    for record in expected_records:
+        identity = record.get("identity")
+        if not isinstance(identity, Mapping):
+            raise Phase5OutcomeError("expected canonical identity is malformed")
+        task = str(identity.get("task", ""))
+        doc_id = str(identity.get("doc_id", ""))
+        if not task or not re.fullmatch(r"0|[1-9][0-9]*", doc_id):
+            raise Phase5OutcomeError("expected canonical task/doc_id is invalid")
+        pair = (task, doc_id)
+        if pair in expected_by_pair:
+            raise Phase5OutcomeError("expected canonical task/doc_id is duplicate")
+        expected_by_pair[pair] = record
+
+    observed_pairs = set()
     for task, rows in samples.items():
         if not isinstance(task, str) or not isinstance(rows, list):
             raise Phase5OutcomeError("lm-eval sample mapping is malformed")
         for row in rows:
             if not isinstance(row, Mapping):
                 raise Phase5OutcomeError("lm-eval sample row is malformed")
-            key = (task, str(row.get("doc_id", "")), str(row.get("doc_hash", "")))
-            if not key[1] or not re.fullmatch(r"[0-9a-f]{64}", key[2]) or key in observed:
-                raise Phase5OutcomeError("lm-eval stable identity is invalid/duplicate")
-            observed.add(key)
-    expected = [_identity_key(row["identity"]) for row in expected_records]
-    if observed != set(expected) or len(observed) != len(expected):
+            doc_id = str(row.get("doc_id", "")).strip()
+            if not re.fullmatch(r"0|[1-9][0-9]*", doc_id):
+                raise Phase5OutcomeError("lm-eval decimal doc_id is invalid")
+            pair = (task, doc_id)
+            if pair in observed_pairs:
+                raise Phase5OutcomeError("lm-eval task/doc_id is duplicate")
+            observed_pairs.add(pair)
+            expected_record = expected_by_pair.get(pair)
+            if expected_record is None:
+                continue
+            try:
+                safe = safe_test_dataset_fields(row.get("doc"), expected_record["subject"])
+            except (P3CError, KeyError, TypeError) as exc:
+                raise Phase5OutcomeError("lm-eval safe identity fields are invalid") from exc
+            if safe_test_doc_sha256(safe) != expected_record["identity"]["doc_hash"]:
+                raise Phase5OutcomeError("lm-eval safe canonical doc hash differs")
+            if (
+                sanitized_content_sha256(safe["question"], safe["choices"])
+                != expected_record.get("sanitized_content_sha256")
+            ):
+                raise Phase5OutcomeError("lm-eval sanitized content hash differs")
+
+    expected_pairs = set(expected_by_pair)
+    if observed_pairs != expected_pairs or len(observed_pairs) != len(expected_records):
         raise Phase5OutcomeError(
             "lm-eval identity projection is incomplete; missing=%d extra=%d"
-            % (len(set(expected) - observed), len(observed - set(expected)))
+            % (
+                len(expected_pairs - observed_pairs),
+                len(observed_pairs - expected_pairs),
+            )
         )
     return [
         {"ordinal": index, "identity": dict(row["identity"]),
@@ -780,7 +843,10 @@ def run_cell(*, mode: str, run_root: Path, cell_index: int, expected_commit: str
         "ordered_identity_sha256": ordered_identity_sha256([row["identity"] for row in projected]),
         "records": projected, "projection_allowlist": [
             "task", "doc_id", "doc_hash", "subject", "split", "canonical_ordinal"
-        ], "outcome_fields_accessed": False, "outcome_values_consumed": False,
+        ],
+        "safe_test_doc_hash_projection": True,
+        "lm_eval_internal_doc_hash_consumed_as_canonical": False,
+        "outcome_fields_accessed": False, "outcome_values_consumed": False,
     })
     identity_path = cell_root / "identity_sidecar.json"
     _write_new_json(identity_path, identity)
