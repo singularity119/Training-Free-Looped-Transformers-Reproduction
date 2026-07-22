@@ -49,7 +49,7 @@ WORKSPACE = Path(
     "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope"
 )
 AUTHORIZED_RUN_ROOT = WORKSPACE / (
-    "runs/phase5-gate-b-repair-b36-native-20260722T034029Z"
+    "runs/phase5-gate-b-repair-b36-native-20260722T035452Z"
 )
 INVALID_RUN_ROOT = WORKSPACE / "runs/phase5-gate-b-20260721T201330Z"
 INVALID_FORMAL_JOB_ID = "10030284"
