@@ -100,7 +100,7 @@ def _launcher_text(
     )
     if mode == "smoke":
         command = (
-            "python %s acquire-smoke --expected-commit %s --manifest-revision 2 --attempt 1"
+            "python %s acquire-smoke --expected-commit %s --manifest-revision 1 --attempt 1"
             % (script, expected_commit)
         )
     else:
@@ -385,6 +385,9 @@ def verify_selector_files(
             "monitor_lifecycle_receipt_sha256": monitor["manifest_sha256"],
             "implementation_sha256": implementation_hashes(),
             "repair_loops": 2,
+            "repair_cycle_accounting": (
+                "2 executor-owned repairs + 1 planning-audit-returned repair"
+            ),
             "outcome_accessed": False,
             "test_split_accessed": False,
             "gate_c_entered": False,

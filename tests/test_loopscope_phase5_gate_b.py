@@ -6,6 +6,7 @@ import unittest
 
 from tflt.loopscope.phase5_acquisition import (
     Phase5AcquisitionError,
+    authoritative_b36_choice_logits,
     formal_retry_allowed,
     normalized_boundary_views,
     write_new_json,
@@ -15,6 +16,7 @@ from tflt.loopscope.phase5_schema import (
     Phase5ContractError,
     canonical_json_bytes,
     load_json,
+    stable_choice_probabilities,
     trajectory_record_from_inputs,
 )
 from tflt.loopscope.phase5_selector import (
@@ -262,6 +264,34 @@ class Phase5GateBSelectorTests(unittest.TestCase):
 
 
 class Phase5GateBAcquisitionTests(unittest.TestCase):
+    def test_b36_uses_native_choice_logits_and_sliced_mismatch_is_non_gating(self):
+        native = [1.0, 2.0, 3.0, 4.0]
+        sliced = [100.0, 200.0, 300.0, 400.0]
+        observed = authoritative_b36_choice_logits(
+            native,
+            sliced,
+            full_head_shape_matches=True,
+            full_head_closes=True,
+        )
+        self.assertIs(observed, native)
+        self.assertNotEqual(observed, sliced)
+        self.assertEqual(
+            stable_choice_probabilities(observed),
+            stable_choice_probabilities(native),
+        )
+        self.assertNotEqual(
+            stable_choice_probabilities(observed),
+            stable_choice_probabilities(sliced),
+        )
+
+        with self.assertRaisesRegex(Phase5AcquisitionError, "full-head logits do not close"):
+            authoritative_b36_choice_logits(
+                native,
+                sliced,
+                full_head_shape_matches=True,
+                full_head_closes=False,
+            )
+
     def test_boundary_views_apply_final_norm_once_except_native_b36(self):
         calls = []
 

@@ -48,7 +48,19 @@ REMOTE_REPO = Path(
 WORKSPACE = Path(
     "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope"
 )
-AUTHORIZED_RUN_ROOT = WORKSPACE / "runs/phase5-gate-b-20260721T201330Z"
+AUTHORIZED_RUN_ROOT = WORKSPACE / (
+    "runs/phase5-gate-b-repair-b36-native-20260722T034029Z"
+)
+INVALID_RUN_ROOT = WORKSPACE / "runs/phase5-gate-b-20260721T201330Z"
+INVALID_FORMAL_JOB_ID = "10030284"
+INVALID_IMPLEMENTATION_COMMIT = "9431688b8e1f704837b22e1370978dea59d528c0"
+INVALID_FORMAL_MEMBERSHIP_SHA256 = (
+    "e874e1a896eadc0819858bc4cc465ced6008b6945adba67a016c4dffa23a3f63"
+)
+REPAIR_SMOKE_IDENTITIES = (
+    ("mmlu_marketing", "validation:24"),
+    ("mmlu_human_aging", "validation:18"),
+)
 PHASE3_RUN_ROOT = WORKSPACE / "runs/phase3-p3b-20260715T223304Z"
 MODEL_SNAPSHOT = Path(
     "/hpc2hdd/home/xhuang225/shared/hf_home/hub/"
@@ -168,6 +180,90 @@ def assert_authorized_run_root(path: Path, *, must_exist: Optional[bool] = None)
     if must_exist is False and resolved.exists():
         raise FileExistsError("refusing to reuse Gate B run root: %s" % resolved)
     return resolved
+
+
+def _invalid_attempt_evidence() -> Dict[str, Any]:
+    """Bind the superseded partial formal attempt without consuming its records."""
+
+    root = INVALID_RUN_ROOT.resolve()
+    if not root.is_dir() or root == AUTHORIZED_RUN_ROOT.resolve():
+        raise Phase5AcquisitionError("invalid formal root is missing or aliases repair root")
+    manifest_path = root / "formal/formal_shard_manifest.json"
+    manifest = load_strict_json(manifest_path)
+    verify_manifest_sha256(manifest)
+    if manifest.get("manifest_sha256") != INVALID_FORMAL_MEMBERSHIP_SHA256:
+        raise Phase5AcquisitionError("invalid formal membership hash differs")
+    expected_counts = (194, 383, 167, 382)
+    shard_evidence = []
+    total_records = 0
+    for shard_id, expected_count in enumerate(expected_counts):
+        attempt = root / ("formal/shards/shard-%04d/attempt-0001" % shard_id)
+        records_path = attempt / "records.jsonl"
+        receipt_paths = [
+            path
+            for path in (attempt / "receipt.json", attempt / "failure_receipt.json")
+            if path.is_file()
+        ]
+        if len(receipt_paths) != 1 or not records_path.is_file():
+            raise Phase5AcquisitionError("invalid formal shard evidence is incomplete")
+        receipt_path = receipt_paths[0]
+        receipt = load_strict_json(receipt_path)
+        verify_manifest_sha256(receipt)
+        with records_path.open("rb") as handle:
+            record_count = sum(1 for line in handle if line.strip())
+        if record_count != expected_count:
+            raise Phase5AcquisitionError("invalid formal shard record count differs")
+        if receipt_path.name == "receipt.json":
+            forward_count = int(receipt.get("runtime", {}).get("forward_calls", -1))
+            if receipt.get("result") != "COMPLETED" or int(receipt.get("record_count", -1)) != record_count:
+                raise Phase5AcquisitionError("invalid formal completed receipt differs")
+            if receipt.get("git", {}).get("commit") != INVALID_IMPLEMENTATION_COMMIT:
+                raise Phase5AcquisitionError("invalid formal implementation commit differs")
+        else:
+            forward_count = int(receipt.get("forward_calls", -1))
+            if (
+                receipt.get("result") != "FAILED"
+                or int(receipt.get("records_written", -1)) != record_count
+                or receipt.get("formal_retry_eligible") is not False
+            ):
+                raise Phase5AcquisitionError("invalid formal failure receipt differs")
+        total_records += record_count
+        shard_evidence.append(
+            {
+                "shard_id": shard_id,
+                "result": receipt["result"],
+                "forward_calls": forward_count,
+                "record_count": record_count,
+                "receipt_relative_path": str(receipt_path.relative_to(root)),
+                "receipt_file_sha256": file_sha256(receipt_path),
+                "receipt_manifest_sha256": receipt["manifest_sha256"],
+                "records_relative_path": str(records_path.relative_to(root)),
+                "records_file_sha256": file_sha256(records_path),
+            }
+        )
+    if total_records != 1126:
+        raise Phase5AcquisitionError("invalid formal persisted record total differs")
+    forbidden_outputs = (
+        root / "formal/validation1531_phase5_trajectories.jsonl",
+        root / "formal/validation1531_phase5_trajectory_manifest.json",
+        root / "selector/selector_freeze.json",
+        root / "selector/outcome_panel.json",
+    )
+    if any(path.exists() for path in forbidden_outputs):
+        raise Phase5AcquisitionError("invalid formal root was merged or selected")
+    return {
+        "root": str(root),
+        "formal_job_id": INVALID_FORMAL_JOB_ID,
+        "implementation_commit": INVALID_IMPLEMENTATION_COMMIT,
+        "formal_membership_sha256": manifest["manifest_sha256"],
+        "formal_membership_file_sha256": file_sha256(manifest_path),
+        "persisted_records": total_records,
+        "missing_records": 1531 - total_records,
+        "canonical_selector_input": False,
+        "merge_or_salvage": False,
+        "invalidation_reason": "sliced-four-row-bfloat16-B36-closure-false-negative",
+        "shards": shard_evidence,
+    }
 
 
 def git_provenance(expected_commit: str) -> Dict[str, Any]:
@@ -371,6 +467,7 @@ def materialize_admission(*, expected_commit: str, argv: Sequence[str]) -> Dict[
         raise Phase5AcquisitionError("CPU admission must not expose CUDA devices")
     snapshot = _snapshot_evidence(card)
     cpu_runtime = _cpu_runtime_preflight(card)
+    invalid_attempt = _invalid_attempt_evidence()
     receipt = attach_manifest_sha256(
         {
             "schema_version": "loopscope.phase5.gate-b-admission.v1",
@@ -402,6 +499,14 @@ def materialize_admission(*, expected_commit: str, argv: Sequence[str]) -> Dict[
                 "split": "validation",
                 "test_imported": False,
                 "outcome_fields_read": False,
+            },
+            "superseded_invalid_attempt": invalid_attempt,
+            "repair_authority": {
+                "planning_decision": "PASS_WITH_FIXES",
+                "repair_cycle": "1_OF_1_PLANNING_AUDIT_RETURN",
+                "b36_authoritative_source": "outputs.logits[0,0,choice_ids]",
+                "full_head_native_closure": "same-shape-full-vocabulary-fail-closed",
+                "sliced_choice_projection_gating": False,
             },
             "implementation_sha256": implementation_hashes(),
             "result": "ADMITTED",
@@ -436,17 +541,18 @@ def _scientific_config(card: Mapping[str, Any]) -> Dict[str, Any]:
 
 
 def _smoke_ordinals(pool: Sequence[Mapping[str, Any]]) -> List[int]:
-    subjects: List[str] = []
-    by_subject: Dict[str, List[int]] = {}
-    for index, row in enumerate(pool):
-        subject = str(row["subject"])
-        if subject not in by_subject:
-            subjects.append(subject)
-            by_subject[subject] = []
-        by_subject[subject].append(index)
-    if len(subjects) < 2 or len(by_subject[subjects[0]]) < 2 or len(by_subject[subjects[1]]) < 2:
-        raise Phase5AcquisitionError("pool cannot provide deterministic two-subject smoke")
-    return sorted(by_subject[subjects[0]][:2] + by_subject[subjects[1]][:2])
+    ordinals = []
+    for task, doc_id in REPAIR_SMOKE_IDENTITIES:
+        matches = [
+            index
+            for index, row in enumerate(pool)
+            if row.get("identity", {}).get("task") == task
+            and row.get("identity", {}).get("doc_id") == doc_id
+        ]
+        if len(matches) != 1:
+            raise Phase5AcquisitionError("repair smoke identity is missing or ambiguous")
+        ordinals.append(matches[0])
+    return sorted(ordinals)
 
 
 def _smoke_manifest_path(run_root: Path, manifest_revision: int) -> Path:
@@ -482,8 +588,8 @@ def freeze_smoke(
             "source_manifest_sha256": source["manifest_sha256"],
             "pool_manifest_sha256": pool_manifest["manifest_sha256"],
             "scientific_config": _scientific_config(card),
-            "selection_rule": "first_two_canonical_records_from_each_of_first_two_canonical_subjects",
-            "record_count": 4,
+            "selection_rule": "exact_planning_authorized_b36_false_negative_trigger_identities",
+            "record_count": len(rows),
             "records": rows,
             "membership_sha256": _membership_sha256(rows),
             "output_base_relative": "smoke",
@@ -716,6 +822,28 @@ def _choice_logits(runtime: NativeRuntime, normalized_hidden: Any) -> Any:
     return runtime.torch.nn.functional.linear(normalized_hidden, weight, selected_bias)[0]
 
 
+def authoritative_b36_choice_logits(
+    native_choice_logits: Any,
+    sliced_choice_logits: Any,
+    *,
+    full_head_shape_matches: bool,
+    full_head_closes: bool,
+) -> Any:
+    """Return native B36 choices after independent full-head closure.
+
+    ``sliced_choice_logits`` is accepted only to make its diagnostic-only role
+    explicit and testable.  It must never gate or supply the recorded B36
+    distribution.
+    """
+
+    if not full_head_shape_matches:
+        raise Phase5AcquisitionError("native B36 full-head logits shape does not close")
+    if not full_head_closes:
+        raise Phase5AcquisitionError("native B36 full-head logits do not close")
+    _ = sliced_choice_logits
+    return native_choice_logits
+
+
 def normalized_boundary_views(
     states: Sequence[Any],
     *,
@@ -785,13 +913,49 @@ def acquire_one(
             final_norm=runtime.final_norm,
             lens_space_fn=runtime.lens_space_fn,
         )
-        choice_logits = []
-        for lens_hidden in normalized:
-            choice_logits.append(_choice_logits(runtime, lens_hidden))
-        native_final = outputs.logits[0, 0, runtime.choice_ids]
-        closure = float((native_final - choice_logits[-1]).detach().abs().max().float().cpu())
-        if not torch.allclose(native_final, choice_logits[-1], rtol=1e-3, atol=1e-3):
-            raise Phase5AcquisitionError("native B36 choice logits do not close")
+        choice_logits = [_choice_logits(runtime, lens_hidden) for lens_hidden in normalized[:-1]]
+        native_full_logits = outputs.logits
+        reprojected_full_logits = runtime.lm_head(normalized[-1].unsqueeze(1))
+        full_head_shape_matches = tuple(native_full_logits.shape) == tuple(
+            reprojected_full_logits.shape
+        )
+        if not full_head_shape_matches:
+            authoritative_b36_choice_logits(
+                None,
+                None,
+                full_head_shape_matches=False,
+                full_head_closes=False,
+            )
+        native_full_float = native_full_logits.float()
+        reprojected_full_float = reprojected_full_logits.float()
+        if not bool(torch.isfinite(native_full_float).all().item()) or not bool(
+            torch.isfinite(reprojected_full_float).all().item()
+        ):
+            raise Phase5AcquisitionError("native B36 full-head closure contains non-finite logits")
+        full_head_native_max_abs_difference = float(
+            (native_full_float - reprojected_full_float).detach().abs().max().double().cpu()
+        )
+        full_head_closes = bool(
+            torch.allclose(
+                native_full_float,
+                reprojected_full_float,
+                rtol=1e-3,
+                atol=1e-3,
+            )
+        )
+        native_final = native_full_logits[0, 0, runtime.choice_ids]
+        sliced_final = _choice_logits(runtime, normalized[-1])
+        sliced_native_max_abs_difference = float(
+            (native_final - sliced_final).detach().abs().max().float().cpu()
+        )
+        choice_logits.append(
+            authoritative_b36_choice_logits(
+                native_final,
+                sliced_final,
+                full_head_shape_matches=full_head_shape_matches,
+                full_head_closes=full_head_closes,
+            )
+        )
         final_hidden = normalized[-1].float()
         final_norm_sq = torch.sum(final_hidden * final_hidden, dim=-1)
         if not bool((final_norm_sq > 0).all().item()):
@@ -849,12 +1013,34 @@ def acquire_one(
         "sequence_length": position + 1,
         "answer_position": position,
         "elapsed_seconds": time.monotonic() - start,
-        "final_choice_logit_max_abs_difference": closure,
+        "final_choice_logit_max_abs_difference": full_head_native_max_abs_difference,
+        "b36_choice_logit_source": "outputs.logits[0,0,choice_ids]",
+        "b36_full_head_native_shape": list(native_full_logits.shape),
+        "b36_full_head_native_max_abs_difference": full_head_native_max_abs_difference,
+        "b36_full_head_native_allclose": full_head_closes,
+        "b36_sliced_choice_native_max_abs_difference": sliced_native_max_abs_difference,
+        "b36_sliced_choice_mismatch_gating": False,
+        "full_vocabulary_tensors_persisted": False,
         "boundary_count": len(boundaries),
         "same_forward_choice_and_geometry": True,
         "b36_double_norm_calls": 0,
     }
-    del outputs, states, normalized, choice_logits, probabilities, final_hidden, inputs, encoded
+    del (
+        outputs,
+        states,
+        normalized,
+        choice_logits,
+        probabilities,
+        final_hidden,
+        native_full_logits,
+        reprojected_full_logits,
+        native_full_float,
+        reprojected_full_float,
+        sliced_final,
+        native_final,
+        inputs,
+        encoded,
+    )
     _assert_no_loop_modules_loaded()
     return record, evidence
 
@@ -883,6 +1069,15 @@ def _runtime_evidence(runtime: NativeRuntime, facts: Sequence[Mapping[str, Any]]
         "new_loop_modules_loaded_by_producer": [],
         "peak_allocated_bytes": int(torch.cuda.max_memory_allocated(device)),
         "elapsed_seconds": math.fsum(float(row["elapsed_seconds"]) for row in facts),
+        "b36_choice_logit_source": "outputs.logits[0,0,choice_ids]",
+        "b36_full_head_native_max_abs_difference_max": max(
+            float(row["b36_full_head_native_max_abs_difference"]) for row in facts
+        ),
+        "b36_sliced_choice_native_max_abs_difference_max": max(
+            float(row["b36_sliced_choice_native_max_abs_difference"]) for row in facts
+        ),
+        "b36_sliced_choice_mismatch_gating": False,
+        "full_vocabulary_tensors_persisted": False,
         "versions": {
             "python": platform.python_version(),
             "torch": str(getattr(torch, "__version__", "")),
