@@ -1,0 +1,105 @@
+{
+  "schema_version": "loopscope.phase5.multiwidth-mid40-card.v1",
+  "card": "PHASE5_POST_TERMINAL_MULTIWIDTH_MID40_SCORE_ONLY_V1",
+  "status": "PLANNING_FROZEN_POST_TERMINAL_EXPLORATORY",
+  "parent": {
+    "phase5_card_file_sha256": "8d25996f994d131ea0fd9ca78f83c90680a67c41c7c460f7e4e8b4ae5ea42a73",
+    "source_git_commit": "f33a37a4e5c0cfc461184a3471277897c77cf83b",
+    "trajectory_file_sha256": "aa4894e632f557ddc4614e88d06ec1fc4c525463be7531aef69fa3c28671edf9",
+    "trajectory_manifest_file_sha256": "343689e4d2c4d8bf40f2237233a5333f1a7d53cef219e226e56d017d5aad21c6",
+    "width4_selector_report_file_sha256": "a6e7eb396b1da90152c2dc56a73e1866b3e98a40f044cfcc29e28091ae16beb3"
+  },
+  "population": {
+    "split": "validation",
+    "record_count": 1531,
+    "subject_count": 57,
+    "boundary_count": 37,
+    "decoder_block_count": 36
+  },
+  "candidate_universe": {
+    "central_inclusive_blocks": [
+      11,
+      24
+    ],
+    "widths": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "starts_by_width": {
+      "3": [
+        11,
+        22
+      ],
+      "4": [
+        11,
+        21
+      ],
+      "5": [
+        11,
+        20
+      ],
+      "6": [
+        11,
+        19
+      ]
+    },
+    "counts_by_width": {
+      "3": 12,
+      "4": 11,
+      "5": 10,
+      "6": 9
+    },
+    "candidate_count": 42,
+    "reference_rule": "s_minus_1_s_plus_1_s_minus_width_s_plus_width_may_leave_central_zone_but_must_be_legal"
+  },
+  "scoring": {
+    "normalization": "E_rate_equals_E_raw_div_width_and_K_rate_equals_K_raw_div_width",
+    "contrasts": [
+      "O_H",
+      "O_K",
+      "F_H",
+      "F_K"
+    ],
+    "score": "min(z_OH,z_OK,z_FH,z_FK)",
+    "eligibility": "strict_center_positive_all_four_references_negative_all_four_lower95_positive",
+    "global_order": "score_desc_width_asc_start_asc",
+    "within_width_order": "score_desc_start_asc"
+  },
+  "bootstrap": {
+    "method": "joint_subject_stratified_sample_bootstrap",
+    "replicates": 2000,
+    "seed": 20260722,
+    "standard_error_ddof": 1,
+    "percentile_method": "linear_q_times_R_minus_1",
+    "prng": "python_stdlib_random.Random",
+    "random_api": "randrange",
+    "shared_draw_stream_across_all_widths_starts_metrics": true
+  },
+  "backward_compatibility": {
+    "width": 4,
+    "starts": [
+      11,
+      21
+    ],
+    "absolute_tolerance": 1e-10,
+    "required_fields": [
+      "score",
+      "z_OH",
+      "z_OK",
+      "z_FH",
+      "z_FK",
+      "point_eligible",
+      "eligibility_failures"
+    ]
+  },
+  "information_boundary": {
+    "outcome_values_consumed": false,
+    "test_split_consumed": false,
+    "geometry_fields_consumed": false,
+    "model_or_data_loaded": false,
+    "post_terminal_exploratory_no_selection": true,
+    "selected_window_field_forbidden": true
+  }
+}
