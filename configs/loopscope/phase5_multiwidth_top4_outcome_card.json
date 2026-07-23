@@ -57,6 +57,16 @@
       "score": 11.683278605031116
     }
   ],
+  "supplemental_cell": {
+    "array_index": 0,
+    "gate_e_rank": 11,
+    "width_rank": 2,
+    "role": "gate_e_rank11_supplement",
+    "width": 5,
+    "start": 15,
+    "window": "15:19",
+    "score": 3.067738720279154
+  },
   "recipe": {
     "model_repo": "Qwen/Qwen3-4B-Base",
     "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
@@ -96,10 +106,10 @@
     "seed": 20260723,
     "standard_error_ddof": 1,
     "percentile_method": "linear_q_times_R_minus_1",
-    "shared_draw_stream_across_baseline_and_four_cells": true
+    "shared_draw_stream_across_baseline_and_five_cells": true
   },
   "claim_boundary": {
-    "label": "POST_TERMINAL_MULTIWIDTH_TOP4_OUTCOME_EXPLORATORY",
+    "label": "POST_TERMINAL_MULTIWIDTH_TOP4_PLUS_15_19_OUTCOME_EXPLORATORY",
     "prospective_selected_window_success_forbidden": true,
     "phase5_terminal_label_unchanged": "H5_ABSTAIN_WITH_RANKING_RESULT"
   }

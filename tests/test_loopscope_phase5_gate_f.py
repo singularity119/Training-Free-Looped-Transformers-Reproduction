@@ -10,7 +10,9 @@ from tflt.loopscope.phase5_variable_width_outcome import (
     Phase5GateFError,
     build_eval_argv,
     build_launch_manifest,
+    build_supplement_launch_manifest,
     build_statistical_analysis,
+    derive_supplemental_cell,
     derive_top4,
     exact_mcnemar_p,
     joint_paired_bootstrap,
@@ -18,6 +20,7 @@ from tflt.loopscope.phase5_variable_width_outcome import (
     validate_launch_manifest,
     validate_scheduler_rows,
     validate_smoke_structural_info,
+    validate_supplement_launch_manifest,
 )
 
 
@@ -26,6 +29,10 @@ CARD_PATH = ROOT / "configs/loopscope/phase5_multiwidth_top4_outcome_card.json"
 RUN_ROOT = Path(
     "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/"
     "runs/phase5-gate-f-multiwidth-top4-outcome-20260723T120000Z"
+)
+SUPPLEMENT_ROOT = Path(
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/"
+    "runs/phase5-gate-f-supplement-15-19-outcome-20260723T120000Z"
 )
 IMPLEMENTATION_COMMIT = "1" * 40
 SOURCE_COMMIT = "f33a37a4e5c0cfc461184a3471277897c77cf83b"
@@ -36,6 +43,12 @@ def _score_payload(card):
     for rank in range(1, 43):
         if rank <= 4:
             frozen = card["frozen_cells"][rank - 1]
+            width = frozen["width"]
+            start = frozen["start"]
+            window = frozen["window"]
+            score = frozen["score"]
+        elif rank == 11:
+            frozen = card["supplemental_cell"]
             width = frozen["width"]
             start = frozen["start"]
             window = frozen["window"]
@@ -52,6 +65,7 @@ def _score_payload(card):
                 "start": start,
                 "window": window,
                 "score": score,
+                "width_rank": 2 if rank == 11 else 1,
             }
         )
     return {
@@ -81,6 +95,12 @@ class Phase5GateFTests(unittest.TestCase):
         changed["rows"][-1]["score"] += 1e-9
         with self.assertRaisesRegex(Phase5GateFError, "derived top4"):
             derive_top4(changed, self.card)
+        supplement = derive_supplemental_cell(self.score, self.card)
+        self.assertEqual(supplement, self.card["supplemental_cell"])
+        changed = copy.deepcopy(self.score)
+        next(row for row in changed["rows"] if row["global_rank"] == 11)["width_rank"] = 3
+        with self.assertRaisesRegex(Phase5GateFError, "supplemental identity"):
+            derive_supplemental_cell(changed, self.card)
 
     def test_launch_is_four_cells_and_only_width_window_vary(self):
         manifest = build_launch_manifest(
@@ -119,6 +139,41 @@ class Phase5GateFTests(unittest.TestCase):
             ))
             start, end = map(int, cell["window"].split(":"))
             self.assertEqual(end - start + 1, cell["width"])
+
+    def test_supplement_is_exactly_one_full_cell(self):
+        manifest = build_supplement_launch_manifest(
+            run_root=SUPPLEMENT_ROOT,
+            implementation_commit=IMPLEMENTATION_COMMIT,
+            expected_source_commit=SOURCE_COMMIT,
+            partition="emergency_gpu",
+            gres="gpu:a800:1",
+            qos=None,
+            account=None,
+            time_limit="24:00:00",
+            batch_size="16",
+            created_at_utc="2026-07-23T00:00:00Z",
+            card=self.card,
+            score_payload=self.score,
+            implementation_sha256={
+                path: "a" * 64
+                for path in (
+                    "configs/loopscope/phase5_multiwidth_top4_outcome_card.json",
+                    "src/tflt/loopscope/phase5_variable_width_outcome.py",
+                    "scripts/loopscope/run_qwen4base_phase5_gate_f.py",
+                    "tests/test_loopscope_phase5_gate_f.py",
+                )
+            },
+        )
+        validate_supplement_launch_manifest(manifest, card=self.card)
+        self.assertEqual(manifest["cell_count"], 1)
+        self.assertEqual(manifest["scheduler"]["array"], "0-0%1")
+        self.assertEqual(manifest["cells"][0]["gate_e_rank"], 11)
+        self.assertEqual(manifest["cells"][0]["width_rank"], 2)
+        self.assertEqual(manifest["cells"][0]["window"], "15:19")
+        self.assertEqual(manifest["recipe"]["k"], 3)
+        self.assertEqual(manifest["recipe"]["operator_body_calls_per_prefill"], 3)
+        self.assertEqual(manifest["recipe"]["step_size"], 1.0 / 3.0)
+        self.assertIsNone(manifest["recipe"]["limit"])
 
     def test_smoke_recipe_and_scheduler_exactness(self):
         argv = build_eval_argv("smoke", Path("/tmp/eval"), "15:17", "16")
@@ -163,12 +218,12 @@ class Phase5GateFTests(unittest.TestCase):
     def test_joint_bootstrap_analysis_and_claim_boundary(self):
         correctness = np.asarray(
             [
-                [0, 1, 0, 1, 0],
-                [1, 1, 0, 1, 1],
-                [0, 0, 1, 1, 0],
-                [1, 0, 1, 1, 0],
-                [0, 1, 1, 0, 0],
-                [1, 1, 1, 0, 1],
+                [0, 1, 0, 1, 0, 1],
+                [1, 1, 0, 1, 1, 0],
+                [0, 0, 1, 1, 0, 1],
+                [1, 0, 1, 1, 0, 1],
+                [0, 1, 1, 0, 0, 0],
+                [1, 1, 1, 0, 1, 1],
             ],
             dtype=np.int8,
         )
@@ -176,7 +231,7 @@ class Phase5GateFTests(unittest.TestCase):
         first = joint_paired_bootstrap(correctness, subjects, replicates=41, seed=7)
         second = joint_paired_bootstrap(correctness, subjects, replicates=41, seed=7)
         self.assertEqual(first, second)
-        self.assertEqual(len(first["cell_gain_summaries"]), 4)
+        self.assertEqual(len(first["cell_gain_summaries"]), 5)
         identities = [
             {"task": "mmlu_x", "doc_id": str(index), "doc_hash": "%064x" % index}
             for index in range(6)
@@ -185,12 +240,12 @@ class Phase5GateFTests(unittest.TestCase):
             correctness=correctness,
             identities=identities,
             subjects=subjects,
-            cells=self.card["frozen_cells"],
+            cells=self.card["frozen_cells"] + [self.card["supplemental_cell"]],
             replicates=41,
             seed=7,
         )
-        self.assertEqual(analysis["population"]["matrix_shape"], [6, 5])
-        self.assertEqual(len(analysis["cells"]), 5)
+        self.assertEqual(analysis["population"]["matrix_shape"], [6, 6])
+        self.assertEqual(len(analysis["cells"]), 6)
         self.assertFalse(
             analysis["claim_boundary"]["prospective_selected_window_success_claimed"]
         )

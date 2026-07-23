@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Operate LoopScope Phase 5 Extension Gate F's frozen four-cell outcome."""
+"""Operate Gate F's frozen original four cells plus the authorized 15:19 supplement."""
 
 from __future__ import annotations
 
@@ -36,13 +36,19 @@ _install_isolated_tflt_namespace()
 
 from tflt.loopscope.phase5_variable_width_outcome import (  # noqa: E402
     build_launch_manifest,
+    build_supplement_launch_manifest,
     freeze_formal,
     implementation_hashes,
     prepare_smoke,
+    prepare_supplement_formal,
     record_submission,
+    record_supplement_submission,
     run_cell,
+    run_combined_one_shot_analysis,
     run_one_shot_analysis,
+    run_supplement_cell,
     seal_stage,
+    seal_supplement,
 )
 from tflt.loopscope.phase5_variable_width_outcome import (  # noqa: E402
     _load_card,
@@ -89,6 +95,27 @@ def build_parser() -> argparse.ArgumentParser:
     _implementation(formal)
     _scheduler(formal)
 
+    supplement_dry = sub.add_parser("supplement-dry-run")
+    _root_source(supplement_dry)
+    _implementation(supplement_dry)
+    _scheduler(supplement_dry)
+
+    supplement_prepare = sub.add_parser("prepare-supplement-formal")
+    _root_source(supplement_prepare)
+    _implementation(supplement_prepare)
+    _scheduler(supplement_prepare)
+
+    supplement_cell = sub.add_parser("run-supplement-cell")
+    _root_source(supplement_cell)
+
+    supplement_submit = sub.add_parser("record-supplement-submission")
+    supplement_submit.add_argument("--run-root", required=True, type=Path)
+    supplement_submit.add_argument("--job-id", required=True)
+
+    supplement_seal = sub.add_parser("seal-supplement")
+    _root_source(supplement_seal)
+    supplement_seal.add_argument("--job-id", required=True)
+
     cell = sub.add_parser("run-cell")
     cell.add_argument("--mode", choices=("smoke", "formal"), required=True)
     _root_source(cell)
@@ -107,6 +134,13 @@ def build_parser() -> argparse.ArgumentParser:
     analyze = sub.add_parser("analyze-once")
     _root_source(analyze)
     _implementation(analyze)
+
+    combined = sub.add_parser("analyze-combined")
+    combined.add_argument("--original-run-root", required=True, type=Path)
+    combined.add_argument("--supplement-run-root", required=True, type=Path)
+    combined.add_argument("--combined-run-root", required=True, type=Path)
+    combined.add_argument("--expected-source-commit", required=True)
+    _implementation(combined)
     return parser
 
 
@@ -158,6 +192,51 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             time_limit=args.time_limit,
             batch_size=args.batch_size,
         )
+    elif args.command == "supplement-dry-run":
+        card = _load_card()
+        result = build_supplement_launch_manifest(
+            run_root=args.run_root,
+            implementation_commit=args.implementation_commit,
+            expected_source_commit=args.expected_source_commit,
+            partition=args.partition,
+            gres=args.gres,
+            qos=args.qos,
+            account=args.account,
+            time_limit=args.time_limit,
+            batch_size=args.batch_size,
+            created_at_utc="2026-07-23T00:00:00Z",
+            card=card,
+            score_payload=_strict_json(Path(card["source"]["gate_e_score_path"])),
+            implementation_sha256=implementation_hashes(),
+        )
+    elif args.command == "prepare-supplement-formal":
+        result = prepare_supplement_formal(
+            run_root=args.run_root,
+            implementation_commit=args.implementation_commit,
+            expected_source_commit=args.expected_source_commit,
+            partition=args.partition,
+            gres=args.gres,
+            qos=args.qos,
+            account=args.account,
+            time_limit=args.time_limit,
+            batch_size=args.batch_size,
+        )
+    elif args.command == "run-supplement-cell":
+        run_supplement_cell(
+            run_root=args.run_root,
+            expected_source_commit=args.expected_source_commit,
+        )
+        result = {"status": "PRODUCER_COMPLETED", "cell": "15:19"}
+    elif args.command == "record-supplement-submission":
+        result = record_supplement_submission(
+            run_root=args.run_root, job_id=args.job_id
+        )
+    elif args.command == "seal-supplement":
+        result = seal_supplement(
+            run_root=args.run_root,
+            expected_source_commit=args.expected_source_commit,
+            job_id=args.job_id,
+        )
     elif args.command == "run-cell":
         run_cell(
             mode=args.mode,
@@ -181,9 +260,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             expected_source_commit=args.expected_source_commit,
             job_id=args.job_id,
         )
-    else:
+    elif args.command == "analyze-once":
         result = run_one_shot_analysis(
             run_root=args.run_root,
+            expected_source_commit=args.expected_source_commit,
+            implementation_commit=args.implementation_commit,
+            argv=raw_argv,
+        )
+    else:
+        result = run_combined_one_shot_analysis(
+            original_run_root=args.original_run_root,
+            supplement_run_root=args.supplement_run_root,
+            combined_run_root=args.combined_run_root,
             expected_source_commit=args.expected_source_commit,
             implementation_commit=args.implementation_commit,
             argv=raw_argv,
