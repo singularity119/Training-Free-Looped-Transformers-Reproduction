@@ -1,0 +1,106 @@
+{
+  "schema_version": "loopscope.phase5.gate-f-card.v1",
+  "card": "PHASE5_POST_TERMINAL_MULTIWIDTH_TOP4_OUTCOME_EXPLORATORY_V1",
+  "status": "PLANNING_FROZEN_GATE_F",
+  "gate": "F",
+  "executor_thread_id": "019f8eb5-2f08-7c80-afc2-b4ae52464162",
+  "planning_thread_id": "019f8604-4717-7be2-8bf8-9d4a26a3d7f7",
+  "source": {
+    "gate_e_score_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase5-gate-e-multiwidth-mid40-20260723T100836Z/phase5_multiwidth_mid40_scores.json",
+    "gate_e_score_file_sha256": "a4bd8b7be3b531b89961667b1cbfba9db0f4020e01bfa8efc97a3ccd43826e44",
+    "gate_e_score_manifest_sha256": "29aadf54e52925f502255f797616e299595d8615b0ca9e0459c5d7ac8c960c0a",
+    "gate_e_receipt_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase5-gate-e-multiwidth-mid40-20260723T100836Z/phase5_multiwidth_mid40_manifest_receipt.json",
+    "gate_e_receipt_file_sha256": "4ccf5e31093d280896675997287b18dc118d0ea8dbd1c128729977013134c78e",
+    "gate_c_completion_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase5-gate-c-repair-identity-20260722T072256Z/phase5_gate_c_completion_receipt.json",
+    "gate_c_completion_file_sha256": "4f15ae291afb2fcb00992cfd3bb4d216386874cfb1ff55bf1d3a9ad7c8e9c8d4",
+    "gate_c_completion_manifest_sha256": "979b4e61fc32b3eeb2cebdd5d6a5662f9bdbc0c87eb296a67f7be97ad0ee0ac6",
+    "baseline_results_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase5-gate-c-repair-identity-20260722T072256Z/formal/cell-00-baseline_no_loop/eval/results.json",
+    "baseline_results_size_bytes": 202181804,
+    "baseline_results_file_sha256": "497c09bbd57e746e67b3514ab312e1f7d98219d3f72c669c46b8dd9dfed9e075",
+    "gate_c_test_ordered_identity_sha256": "2c4557079fca1a7c071460f779ed714805fc96c3391560825cd34386d4051532"
+  },
+  "frozen_cells": [
+    {
+      "array_index": 0,
+      "gate_e_rank": 1,
+      "role": "gate_e_rank1",
+      "width": 5,
+      "start": 13,
+      "window": "13:17",
+      "score": 23.122176074886756
+    },
+    {
+      "array_index": 1,
+      "gate_e_rank": 2,
+      "role": "gate_e_rank2",
+      "width": 6,
+      "start": 15,
+      "window": "15:20",
+      "score": 20.459460381229054
+    },
+    {
+      "array_index": 2,
+      "gate_e_rank": 3,
+      "role": "gate_e_rank3",
+      "width": 6,
+      "start": 12,
+      "window": "12:17",
+      "score": 16.2928844989786
+    },
+    {
+      "array_index": 3,
+      "gate_e_rank": 4,
+      "role": "gate_e_rank4",
+      "width": 3,
+      "start": 15,
+      "window": "15:17",
+      "score": 11.683278605031116
+    }
+  ],
+  "recipe": {
+    "model_repo": "Qwen/Qwen3-4B-Base",
+    "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+    "tokenizer_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+    "dtype": "bfloat16",
+    "dataset": "cais/mmlu",
+    "dataset_revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+    "task_group": "mmlu",
+    "split": "test",
+    "num_fewshot": 5,
+    "lm_eval_version": "0.4.11",
+    "metric": "acc,none",
+    "apply_chat_template": false,
+    "fewshot_as_multiturn": false,
+    "k": 3,
+    "operator_body_calls_per_prefill": 3,
+    "iteration_mode": "block",
+    "strategy_cli": "euler",
+    "strategy_kernel": "damped_euler_alias",
+    "alpha": 1.0,
+    "beta": 0.0,
+    "step_size": 0.3333333333333333,
+    "total_horizon": 1.0,
+    "cache_strategy": "first",
+    "decode_mode": "bypass",
+    "log_samples": true,
+    "batch_size": 16
+  },
+  "population": {
+    "record_count": 14042,
+    "subject_count": 57,
+    "ordered_identity_sha256": "2c4557079fca1a7c071460f779ed714805fc96c3391560825cd34386d4051532"
+  },
+  "bootstrap": {
+    "method": "joint_subject_stratified_paired_bootstrap",
+    "replicates": 2000,
+    "seed": 20260723,
+    "standard_error_ddof": 1,
+    "percentile_method": "linear_q_times_R_minus_1",
+    "shared_draw_stream_across_baseline_and_four_cells": true
+  },
+  "claim_boundary": {
+    "label": "POST_TERMINAL_MULTIWIDTH_TOP4_OUTCOME_EXPLORATORY",
+    "prospective_selected_window_success_forbidden": true,
+    "phase5_terminal_label_unchanged": "H5_ABSTAIN_WITH_RANKING_RESULT"
+  }
+}
