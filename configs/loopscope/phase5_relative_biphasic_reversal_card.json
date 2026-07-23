@@ -1,0 +1,149 @@
+{
+  "schema_version": "loopscope.phase5.relative-biphasic-reversal-card.v1",
+  "card": "RELATIVE_BIPHASIC_REVERSAL_V1",
+  "status": "PLANNING_FROZEN_POST_TERMINAL_METHOD_DEVELOPMENT",
+  "authorization": {
+    "gate": "G",
+    "planning_thread": "019f8604-4717-7be2-8bf8-9d4a26a3d7f7",
+    "executor_thread": "019f8f8d-89fd-7660-a915-1d0201374274",
+    "authorized_local_base_commit": "338bd22008135bc5d3df05aaa125b7c28e7ac783",
+    "runtime_reference_commit": "f33a37a4e5c0cfc461184a3471277897c77cf83b",
+    "protected_reference_ancestor": "4f59bd93eca4da3cbf458a93508f91c5b23912bc"
+  },
+  "claim_scope": {
+    "kind": "retrospective_dual_model_method_development_and_falsification",
+    "prospective_validation": false,
+    "positive_benefit_claim": false,
+    "general_selector_claim": false,
+    "both_model_cells_participated_in_rule_formation": true
+  },
+  "models": {
+    "qwen17": {
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "decoder_layers": 28,
+      "boundary_count": 29,
+      "central_blocks": [9, 18],
+      "candidate_starts": {
+        "3": [9, 16],
+        "4": [9, 15],
+        "5": [9, 14],
+        "6": [9, 13]
+      },
+      "candidate_count": 26,
+      "bootstrap": {
+        "replicates": 2000,
+        "seed": 20260716,
+        "standard_error_ddof": 1,
+        "prng": "python_stdlib_random.Random",
+        "random_api": "randrange",
+        "expected_draw_index_sha256": "4563c9c8f7ef4d8abfcefaf7eedf23de2ccd9b44eb850bb95214ae8ea04653b8"
+      },
+      "inputs": {
+        "phase_card_sha256": "5b5cb333d0bb191ab8da1db23b7d4b36f9f4e9ccc97c16dc46c5e7aeb2ca4825",
+        "variable_width_card_sha256": "b99352c415d9aa041f90d6d8c5b7cffd3771c549b348db36f10740998ec23612",
+        "trajectory_sha256": "fb7ae66a1a2696f46727c7ca5069ade2e2f9d6e181db03ed1d005cb2eed1525f",
+        "trajectory_manifest_sha256": "75a568c6f6595f74d34d1e86efc0f716934e3a2a1cf972daab7874e4afe89cf0",
+        "legacy_table_sha256": "74332060f0b1da99202a7e647bc5b18a6733a992ed152889043c77b5c3cffb00"
+      }
+    },
+    "qwen4": {
+      "model": "Qwen/Qwen3-4B-Base",
+      "decoder_layers": 36,
+      "boundary_count": 37,
+      "central_blocks": [11, 24],
+      "candidate_starts": {
+        "3": [11, 22],
+        "4": [11, 21],
+        "5": [11, 20],
+        "6": [11, 19]
+      },
+      "candidate_count": 42,
+      "bootstrap": {
+        "replicates": 2000,
+        "seed": 20260722,
+        "standard_error_ddof": 1,
+        "prng": "python_stdlib_random.Random",
+        "random_api": "randrange"
+      },
+      "inputs": {
+        "multiwidth_card_sha256": "8c0029e34c87240a3afa58effbfe9045a4c49c6b27c1062a78b06b9ec423f769",
+        "trajectory_sha256": "aa4894e632f557ddc4614e88d06ec1fc4c525463be7531aef69fa3c28671edf9",
+        "trajectory_manifest_sha256": "343689e4d2c4d8bf40f2237233a5333f1a7d53cef219e226e56d017d5aad21c6",
+        "legacy_table_sha256": "a4bd8b7be3b531b89961667b1cbfba9db0f4020e01bfa8efc97a3ccd43826e44"
+      }
+    }
+  },
+  "population": {
+    "record_count": 1531,
+    "subject_count": 57,
+    "split": "validation",
+    "allowed_record_values": [
+      "identity",
+      "subject",
+      "boundary_id",
+      "choice_entropy",
+      "kl_to_final"
+    ]
+  },
+  "candidate_domain": {
+    "widths": [3, 4, 5, 6],
+    "trim_per_side": "ceil(0.30*decoder_layers)",
+    "publish_rule": "every decoder block in the inclusive window lies inside central_blocks",
+    "relative_references": ["s-1", "s+1", "s-w", "s+w"],
+    "reference_may_leave_published_domain": true,
+    "reference_must_be_legal_same_width_window": true
+  },
+  "relative_score": {
+    "G_H": "mean_i[(1/w)*sum_j(H_i,j-H_i,j+1)]",
+    "G_K": "mean_i[(1/w)*sum_j(D_i,j+1-D_i,j)]",
+    "contrasts": ["O_H", "O_K", "F_H", "F_K"],
+    "score": "S_REL=min(z_OH,z_OK,z_FH,z_FK)",
+    "rank_order": ["S_REL_descending", "width_ascending", "start_ascending"],
+    "percentile_interval": "linear interpolation at q*(R-1) for q=.025,.975",
+    "soft_relative_stable": "NetPositive and all four percentile lower95 strictly positive"
+  },
+  "shared_biphasic": {
+    "orientations": [1, -1],
+    "change_points": "tau=s+k for k=1..w-1",
+    "margin_count": 12,
+    "point_pair_score": "S_SHAPE=min over 12 full-sample z margins",
+    "point_tie_rel_tolerance": 1e-12,
+    "point_tie_abs_tolerance": 1e-12,
+    "simultaneous_bound": "within-window one-sided 95 percent max-t over all scorable pairs and 12 margins",
+    "pair_frequency_threshold": 0.8,
+    "pair_frequency_equality_passes": true,
+    "heterogeneity_pi_threshold": null,
+    "shape_score_combined_with_relative_score": false
+  },
+  "selection": {
+    "new_eligible": "Scorable and NetPositive and SoftRelativeStable and BiphasicStable",
+    "point_top_tie_rel_tolerance": 1e-12,
+    "point_top_tie_abs_tolerance": 1e-12,
+    "window_frequency_threshold": 0.8,
+    "replicate_order": ["S_REL_descending", "width_ascending", "start_ascending"],
+    "decisions": [
+      "ABSTAIN_NO_NEW_ELIGIBLE",
+      "ABSTAIN_NO_UNIQUE_TOP1",
+      "ABSTAIN_WINDOW_UNSTABLE",
+      "SELECTED_WINDOW"
+    ]
+  },
+  "diagnostics": {
+    "qwen4_full_rule_windows": ["4:7", "5:8", "13:17", "15:18", "15:19"],
+    "qwen4_harmful_falsification_windows": ["4:7", "5:8"],
+    "retrospective_coherence_windows": {
+      "qwen17": ["12:15"],
+      "qwen4": ["15:18", "15:19"]
+    }
+  },
+  "execution": {
+    "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase5-gate-g-relative-biphasic-dualmodel-20260723T151428Z",
+    "formal_analyzer_runs": 1,
+    "fresh_process_verifier_runs": 1,
+    "model_or_dataset_loading": false,
+    "forward": false,
+    "gpu_cuda_slurm": false,
+    "remote_source_checkout_mutation": false,
+    "publish_or_push": false
+  }
+}
