@@ -17,6 +17,7 @@ from tflt.loopscope.phase5_variable_width_outcome import (
     validate_extension_card,
     validate_launch_manifest,
     validate_scheduler_rows,
+    validate_smoke_structural_info,
 )
 
 
@@ -141,6 +142,23 @@ class Phase5GateFTests(unittest.TestCase):
         self.assertEqual(len(validate_scheduler_rows(rows, "123")), 4)
         with self.assertRaisesRegex(Phase5GateFError, "exact four"):
             validate_scheduler_rows(rows[:3], "123")
+        validate_smoke_structural_info(
+            {
+                "operator_body_calls_per_prompt": [3, 3, 3, 3, 3, 3],
+                "prompt_count": 6,
+                "restore_allclose_all_prompts": True,
+                "overall_decision": "loop_effective_logits_changed",
+            }
+        )
+        with self.assertRaisesRegex(Phase5GateFError, "structural closure"):
+            validate_smoke_structural_info(
+                {
+                    "operator_body_calls_per_prompt": [3, 3, 2],
+                    "prompt_count": 3,
+                    "restore_allclose_all_prompts": True,
+                    "overall_decision": "loop_effective_logits_changed",
+                }
+            )
 
     def test_joint_bootstrap_analysis_and_claim_boundary(self):
         correctness = np.asarray(

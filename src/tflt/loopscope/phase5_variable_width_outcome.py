@@ -1073,6 +1073,19 @@ def _gpu_count(alloc_tres: str) -> int:
     return int(matches[0]) if matches else 0
 
 
+def validate_smoke_structural_info(info: Mapping[str, Any]) -> None:
+    calls = info.get("operator_body_calls_per_prompt")
+    if (
+        not isinstance(calls, list)
+        or not calls
+        or any(value != 3 for value in calls)
+        or info.get("prompt_count") != len(calls)
+        or info.get("restore_allclose_all_prompts") is not True
+        or info.get("overall_decision") != "loop_effective_logits_changed"
+    ):
+        raise Phase5GateFError("smoke loop structural closure differs")
+
+
 def _close_cells(mode: str, manifest: Mapping[str, Any]) -> List[Dict[str, Any]]:
     entries = []
     for cell in manifest["cells"]:
@@ -1113,13 +1126,7 @@ def _close_cells(mode: str, manifest: Mapping[str, Any]) -> List[Dict[str, Any]]
         ):
             raise Phase5GateFError("sealed results stat/SHA differs")
         if mode == "smoke":
-            info = structural.get("structural", {})
-            if (
-                info.get("operator_body_calls_per_prompt") != [3, 3, 3, 3]
-                or info.get("restore_allclose_all_prompts") is not True
-                or info.get("overall_decision") != "loop_effective_logits_changed"
-            ):
-                raise Phase5GateFError("smoke loop structural closure differs")
+            validate_smoke_structural_info(structural.get("structural", {}))
         entries.append(
             {
                 "array_index": cell["array_index"],
@@ -1790,4 +1797,5 @@ __all__ = [
     "validate_extension_card",
     "validate_launch_manifest",
     "validate_scheduler_rows",
+    "validate_smoke_structural_info",
 ]
