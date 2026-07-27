@@ -1,0 +1,121 @@
+{
+  "schema_version": "loopscope.phase5.gate-i-angular-trajectory-card.v1",
+  "contract_id": "LOOPSCOPE_PHASE5_GATE_I_ADJACENT_ANGULAR_DISTANCE_V1",
+  "gate": "I",
+  "executor_thread_id": "019fa464-6734-7ec0-a57a-e07a33223331",
+  "planning_thread_id": "019f8604-4717-7be2-8bf8-9d4a26a3d7f7",
+  "authorized_base_commit": "97de998504a9bad9867688f307a8bfc6fffdfb81",
+  "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase5-gate-i-angular-trajectory-20260727T161957Z",
+  "source_checkout": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope",
+  "runtime_venv": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711",
+  "pool": {
+    "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase3-p3b-20260715T223304Z",
+    "records_file": "validation1531_pool.jsonl",
+    "records_file_sha256": "9a5b8f8ce955e51130a7615fdb752c1d1d31d62e73ecc5d2e7be44f5a11bbda9",
+    "manifest_file": "validation1531_pool_manifest.json",
+    "manifest_file_sha256": "9d64b453cb1caedb84c394603eb4fece76bd11b3e403663e713ff7965a65a6c9",
+    "manifest_internal_sha256": "8b0aa3517002131d8600fba6528cf3f997be41de627ac28198e24bb6d1f64208",
+    "source_manifest_file": "source_manifest.json",
+    "source_manifest_file_sha256": "f2f9383cb0983178bfd71e6b5eae4035818f8b2b44e9cedb5e5275625a7885f7",
+    "source_manifest_internal_sha256": "4f8d313d0447fdbace3298b313d5c1361c40bc04715c32909686f580abd950e8",
+    "ordered_identity_sha256": "ced8dd2ac8277a30e4d4e101f8f76c2dd125659abe35af679f60e5c6a9f076eb",
+    "ordered_prompt_sha256": "8dd3648e70aa6743baf02772a33cad5285b7ddf9574e3a68ae587bdac636caf0",
+    "record_count": 1531,
+    "subject_count": 57
+  },
+  "renderer": {
+    "dataset": "cais/mmlu",
+    "dataset_revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+    "task_group": "mmlu",
+    "num_fewshot": 5,
+    "fewshot_split": "dev",
+    "trajectory_split": "validation",
+    "lm_eval_version": "0.4.11",
+    "validation_projection_file_sha256": "439e41113458ccfbd51d211ab7fae4e91ecc02723c7b14ad6c1969803aa61a6a",
+    "renderer_manifest_file_sha256": "48ba67c204249b5f2f9a6cf711f8678711b5e606398d35ba4d919d4eee70e6e7",
+    "renderer_manifest_internal_sha256": "e1baaa92c8ab3804c75a5e415a324d00fed0277d17c26b16d12b8c99aafbe949",
+    "renderer_source_sha256": "105ff765d068bd246387249d3941a697c964070834d92d7a3268056b7a68a8a9",
+    "template_sha256": "15dea12df4d7dc69b4d9d425a51bc14976f560b3e5ed52a319895cde79f2dabb",
+    "render_contract_sha256": "eff9612c2984c7f2668e5cfb11d9eec89a5468c6f227ff94e4a226843043d6f4",
+    "dataset_fingerprint_sha256": "c3f97b35254b7953d20cffc65414e1c78a792128f215805962c0db5d4d185e11"
+  },
+  "models": {
+    "qwen3_1p7b": {
+      "repo": "Qwen/Qwen3-1.7B-Base",
+      "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "tokenizer_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "dtype": "float16",
+      "decoder_layers": 28,
+      "hidden_size": 2048,
+      "snapshot": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/models--Qwen--Qwen3-1.7B-Base/snapshots/ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "config_sha256": "1bb33a92c3548fbc68b889b490e810440435253598835bd71dff0396060c12db",
+      "tokenizer_config_sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5",
+      "tokenizer_json_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+      "weight_files": {
+        "model.safetensors": "6df85b39330e5a425ee36253d0f894e4387e4f0a15b9c53cb467d668e6b3a841"
+      },
+      "bootstrap_seed": 20260716,
+      "color": "#C98022"
+    },
+    "qwen3_4b": {
+      "repo": "Qwen/Qwen3-4B-Base",
+      "revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "tokenizer_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "dtype": "bfloat16",
+      "decoder_layers": 36,
+      "hidden_size": 2560,
+      "snapshot": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/models--Qwen--Qwen3-4B-Base/snapshots/906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "config_sha256": "304b2545a258d35620f1d4bf46940c0471d9baa00715ff8e77f84c2fca5057c1",
+      "tokenizer_config_sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5",
+      "tokenizer_json_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+      "weight_files": {
+        "model-00001-of-00003.safetensors": "4c807e2503d68ae373d508689d00a41f4b33f33c2536da97ab81a20caddc1241",
+        "model-00002-of-00003.safetensors": "f4707585548b2fc75a6b1d732e8465c62040a8699903c32850781beeb9b27826",
+        "model-00003-of-00003.safetensors": "c7b1aa8fb672de2e00423c99876926022e50b18d4f0d140670788510a27f9965",
+        "model.safetensors.index.json": "d6c42883a895dfef5b0080ed2116a1bcd764f558406b98923d675978a1abf29c"
+      },
+      "bootstrap_seed": 20260722,
+      "color": "#3775BA"
+    }
+  },
+  "acquisition": {
+    "position": "final_non_padding_prompt_token",
+    "forward": "native_no_loop",
+    "use_cache": false,
+    "output_hidden_states": true,
+    "loop_insertions": 0,
+    "raw_residual_before_final_norm": true,
+    "formal_shard_count": 4,
+    "smoke_record_count": 4
+  },
+  "metric": {
+    "name": "adjacent_angular_distance",
+    "formula": "acos(clamp(dot(float32(B_l),float32(B_l+1))/(norm(float32(B_l))*norm(float32(B_l+1))),-1,1))/pi",
+    "normalized_depth": "l/L",
+    "quantile": "ascending_linear_interpolation_q_times_n_minus_1"
+  },
+  "bootstrap": {
+    "method": "57_subject_stratified_joint",
+    "replicates": 2000,
+    "ci_quantiles": [0.025, 0.975],
+    "iteration_order": "replicate_major_subject_lexicographic_then_canonical_identity"
+  },
+  "kneedle": {
+    "package": "kneed",
+    "version": "0.8.5",
+    "curve": "convex",
+    "direction": "decreasing",
+    "interp_method": "polynomial",
+    "polynomial_degree": 2,
+    "online": true,
+    "S": 1.0,
+    "grid_tolerance": 1e-12,
+    "minimum_bootstrap_frequency": 0.8
+  },
+  "figure": {
+    "size_inches": [7.2, 3.4],
+    "png_dpi": 600,
+    "base": "phase5_gate_i_adjacent_angular_distance_dual_model",
+    "source_data": "angular_distance_composite_source_data.csv"
+  }
+}
