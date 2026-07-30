@@ -151,14 +151,8 @@ scripts/loopscope/verify_phase6_gate_a.py
 tests/test_loopscope_phase6_*.py
 ```
 
-## Current authorization
+## Authorization
 
-Only Gate A is authorized to executor
-`019fb3fd-8cb5-7980-a0fb-6baaa48bd0d0` under
-`../../.planning/loopscope_phase6_gate_a_handoff.md` revision 3. Gate A may perform its local
-allowlisted implementation, targeted CPU tests, explicit-path commit, and push. It may additionally
-use bounded read-only SSH to the pinned HPC2 lm-eval MMLU-Pro source directory and package METADATA
-solely for exact source/hash closure. It may not write remotely, sync remote Git, load/download a
-model or dataset, read caches/outcomes, use CUDA/GPU/Slurm, run real generation/replay, or enter
-Gate B. Exact current authority and any later transition are owned only by the control file plus
-the matching Gate handoff.
+This runbook never records live Gate or executor state and does not grant execution authority.
+Consult `../../.planning/loopscope_phase6_control.md` and the matching current-Gate handoff. If
+they disagree, stop.
