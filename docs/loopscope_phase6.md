@@ -1,9 +1,8 @@
 # LoopScope Phase 6: Pre-answer trajectory window selection
 
-Phase 6 is activated under a standing phase-continuation mandate. Gate A alone is currently
-authorized to its exact executor; Gates B--G remain locked. The authoritative mutable state is
-`../../.planning/loopscope_phase6_control.md`; this file is a runbook-level summary and never grants
-authority by itself.
+Phase 6 is activated under a standing phase-continuation mandate. The authoritative mutable state
+is `../../.planning/loopscope_phase6_control.md`; this runbook never records current Gate/executor
+state and never grants execution authority.
 
 ## Scientific question
 
