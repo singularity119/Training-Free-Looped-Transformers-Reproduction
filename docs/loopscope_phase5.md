@@ -244,7 +244,8 @@ High3-Low3 enrichment was `+4.156578 pp` with subject-stratified paired-bootstra
 
 These results preserve the distinction between relative ranking enrichment and positive absolute
 gain: Phase 5 does not claim a selected success or a universal cross-model automatic window
-selector. The canonical Chinese report is `报告/LoopScope_第五阶段实验结果与结论.md`; write-once
+selector. The canonical Chinese report is
+`../../资产/报告/LoopScope_第五阶段实验结果与结论.md`; write-once
 analysis artifacts remain under the Gate C run root's `gate_d/` directory.
 
 ## 7. Gate terminal packet

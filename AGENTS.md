@@ -18,6 +18,15 @@
 - 单线程内的临时步骤优先使用 Codex 原生 plan/goal，不把每一步复制到项目文件。
 - 不得自动调用 `planning-with-files` skill。只有用户在当前请求中明确点名或明确要求启用该工作流时才可使用。
 - 仅在 Gate 决策、执行线程变更、审计 commit 变更、实验配方变更或授权边界变更时更新控制文件；不得按每次读取、命令或工具调用追加流水账。
+- 面向用户、导师或论文阅读者的人类交付物统一放在专用 clone 外层的 `../资产/`：
+  中文报告和结果表放在 `../资产/报告/`；图片、绘图脚本、source-data、QA 和
+  PNG/PDF/SVG 等展示输出放在 `../资产/figures/`。不得在 Git 项目内新建或镜像
+  `报告/`、`figures/` 或其他人类交付目录；这些输出默认不进入代码仓库提交。
+- `research-gate-orchestrator` 的协作上下文继续按信息分层保存：稳定规则在本
+  `AGENTS.md`，当前授权与 Gate 决策在 `../.planning/*_control.md`，Gate contract、
+  handoff 与 repair supplement 在 `../.planning/`，可执行 runbook 在 `docs/`，
+  card/schema/launcher/tests 在各自 repo 路径，机器运行证据在 write-once HPC run root。
+  不得为了“集中资产”把这些 agent/执行上下文移动到 `../资产/`。
 
 ## 1. 项目定位
 

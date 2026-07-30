@@ -12,7 +12,7 @@ Authoritative layers:
 
 - stable policy: `AGENTS.md`;
 - mutable Phase 4 state: `../../.planning/loopscope_phase4_control.md` after activation;
-- science plan: `../../报告/LoopScope_第4阶段总体目标与Gate计划.md`;
+- science plan: `../../资产/报告/LoopScope_第四阶段总体目标与Gate计划.md`;
 - exact Gate permission: the current `GATE_P4X_HANDOFF`;
 - factual evidence: Git, tests, scheduler records, and write-once artifacts.
 
