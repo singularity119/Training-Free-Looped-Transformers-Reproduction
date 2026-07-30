@@ -1,0 +1,188 @@
+{
+  "schema_version": "loopscope.phase6.pre-answer-rbr-v2-card.v1",
+  "card": "H6_PRE_ANSWER_FULLVOCAB_RBR_V2_WINDOW_SELECTION",
+  "claim_boundary": "local_contract_only_no_model_data_generation_replay_selector_or_outcome",
+  "cell": {
+    "model_repo": "Qwen/Qwen3-4B-Instruct-2507",
+    "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "decoder_layers": 36,
+    "dtype": "bfloat16",
+    "dataset_repo": "TIGER-Lab/MMLU-Pro",
+    "dataset_revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+    "split": "test",
+    "population": 12032,
+    "fewshot": 5,
+    "fewshot_split": "validation"
+  },
+  "generation": {
+    "mode": "greedy",
+    "do_sample": false,
+    "temperature": 0.0,
+    "max_gen_toks": 2048,
+    "until": "Question:",
+    "generation_count": 1
+  },
+  "loop": {
+    "k": 3,
+    "iteration_mode": "block",
+    "strategy": "euler",
+    "step_size": "1/3",
+    "total_horizon": 1,
+    "cache_strategy": "first",
+    "decode_mode": "full"
+  },
+  "anchor": {
+    "lm_eval_version": "0.4.11",
+    "renderer_source_sha256": "74ab409c4e4c96e4351fbe6122d519f64dd3e11381a676957631e858923cc9fc",
+    "task_group_sha256": "0271e3fdbbb0e8df5b6909786600c1292da29842086b521a1181954941156f94",
+    "filter_source_sha256": "356e937a958288fafd8f07b03da7fd4825977e9bb3d62136931c9f649b600647",
+    "filter_name": "custom-extract",
+    "regex_pattern": "answer is \\(?([ABCDEFGHIJ])\\)?",
+    "capture_group": 1,
+    "case_sensitive": true,
+    "match_rule": "collect_all_capture_spans_require_exactly_one",
+    "outcome_take_first_used_for_anchor": false,
+    "offset_unit": "utf8_byte",
+    "token_intervals": "half_open",
+    "boundary_owner": "right_token",
+    "probe_rule": "token_strictly_preceding_answer_first_token",
+    "fallback": "forbidden"
+  },
+  "trajectory": {
+    "raw_boundaries": "B0...B36_final_norm_pre_hook",
+    "selector_fields": [
+      "H",
+      "D"
+    ],
+    "diagnostic_fields": [
+      "hidden_rms_l2_to_final",
+      "hidden_cosine_to_final",
+      "hidden_cosine_distance_to_final",
+      "adjacent_angular_distance"
+    ],
+    "D36_tolerance": 1e-06,
+    "hidden_endpoint_tolerance": 1e-06
+  },
+  "candidate_domain": {
+    "central_blocks": [
+      11,
+      24
+    ],
+    "width_starts": {
+      "3": [
+        11,
+        22
+      ],
+      "4": [
+        11,
+        21
+      ],
+      "5": [
+        11,
+        20
+      ],
+      "6": [
+        11,
+        19
+      ]
+    },
+    "candidate_count": 42
+  },
+  "selector": {
+    "method": "RELATIVE_BIPHASIC_REVERSAL_V2_ABSOLUTE_RATE",
+    "new_eligible": [
+      "Scorable",
+      "NetPositive",
+      "SoftRelativeStable",
+      "BiphasicStable"
+    ],
+    "score": "sqrt(G_H*G_K)",
+    "rate_stable": "within_window_HK_one_sided_fixed_SE_max_t_LCB_both_gt_0",
+    "tie_rel_tol": 1e-12,
+    "tie_abs_tol": 1e-12,
+    "selection_frequency_threshold": 0.8
+  },
+  "bootstrap": {
+    "method": "category_stratified_joint",
+    "replicates": 2000,
+    "selector_seed": 20260801,
+    "outcome_seed": 20260802,
+    "standard_deviation_ddof": 1,
+    "epsilon": 1e-12,
+    "quantile": "linear_q_times_R_minus_1"
+  },
+  "known_outcome_registry": [
+    "no-loop",
+    "15:18",
+    "6:9",
+    "10:13",
+    "25:28",
+    "4:7",
+    "5:8",
+    "22:25"
+  ],
+  "panel": {
+    "baseline": "no-loop",
+    "fixed_comparator": "15:18",
+    "diagnostic_universe": "registry_excluded_positive_finite_S_RATE_candidates",
+    "high_count": 3,
+    "low_count": 3,
+    "selected_if_distinct": true,
+    "union": "unique",
+    "underpopulation_block": "BLOCK_DIAGNOSTIC_PANEL_UNDERPOPULATED"
+  },
+  "information_barrier": {
+    "selector_allowed_fields": [
+      "canonical_identity",
+      "category",
+      "H",
+      "D"
+    ],
+    "diagnostic_only_fields": [
+      "hidden_rms_l2_to_final",
+      "hidden_cosine_to_final",
+      "hidden_cosine_distance_to_final",
+      "adjacent_angular_distance"
+    ],
+    "sanitized_metadata_allowed": [
+      "span_offsets",
+      "token_indices",
+      "extractor_aligner_hashes",
+      "scalar_arrays"
+    ],
+    "forbidden_payloads": [
+      "prompt_text",
+      "generated_text",
+      "token_ids",
+      "answer_content",
+      "answer_span_hash",
+      "prediction",
+      "gold",
+      "label",
+      "correctness",
+      "accuracy",
+      "gain",
+      "flip",
+      "outcome"
+    ]
+  },
+  "scientific_states": [
+    "SELECTED_WINDOW",
+    "ABSTAIN_NO_RATE_STABLE_ELIGIBLE",
+    "ABSTAIN_NO_UNIQUE_TOP1",
+    "ABSTAIN_RATE_RANK_UNSTABLE"
+  ],
+  "engineering_block_states": [
+    "BLOCK_PROVENANCE_MISMATCH",
+    "BLOCK_ANCHOR_COVERAGE_NOT_EXACT",
+    "BLOCK_GENERATION_REPLAY_MISMATCH",
+    "BLOCK_NUMERIC_OR_ENDPOINT_INVALID",
+    "BLOCK_POPULATION_OR_HASH_MISMATCH",
+    "BLOCK_INFORMATION_BARRIER_VIOLATION",
+    "BLOCK_V1_COMPATIBILITY_MISMATCH",
+    "BLOCK_DIAGNOSTIC_PANEL_UNDERPOPULATED",
+    "BLOCK_VERIFIER_MISMATCH",
+    "BLOCK_OUTCOME_CELL_INCOMPLETE"
+  ]
+}

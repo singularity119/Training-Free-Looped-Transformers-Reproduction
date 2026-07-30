@@ -1,0 +1,52 @@
+{
+  "$id": "loopscope.phase6.pre-answer-trajectory.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "D": {"items": {"type": "number"}, "maxItems": 37, "minItems": 37, "type": "array"},
+    "H": {"items": {"type": "number"}, "maxItems": 37, "minItems": 37, "type": "array"},
+    "adjacent_angular_distance": {"items": {"maximum": 1.0, "minimum": 0.0, "type": "number"}, "maxItems": 36, "minItems": 36, "type": "array"},
+    "anchor_token_index": {},
+    "answer_first_token_index": {},
+    "answer_span_end_offset": {},
+    "answer_span_extractor_sha256": {},
+    "answer_span_start_offset": {},
+    "canonical_identity": {},
+    "category": {},
+    "dataset_repo": {"const": "TIGER-Lab/MMLU-Pro"},
+    "dataset_revision": {"const": "b189ec765aa7ed75c8acfea42df31fdae71f97be"},
+    "generated_completion_sha256": {},
+    "generated_id_text_aligner_sha256": {},
+    "generation_count": {"const": 1},
+    "generation_length": {},
+    "hidden_cosine_distance_to_final": {"items": {"type": "number"}, "maxItems": 37, "minItems": 37, "type": "array"},
+    "hidden_cosine_to_final": {"items": {"type": "number"}, "maxItems": 37, "minItems": 37, "type": "array"},
+    "hidden_rms_l2_to_final": {"items": {"type": "number"}, "maxItems": 37, "minItems": 37, "type": "array"},
+    "loop_insertions": {"const": 0},
+    "model_repo": {"const": "Qwen/Qwen3-4B-Instruct-2507"},
+    "model_revision": {"const": "cdbee75f17c01a7cc42f958dc650907174af0554"},
+    "prompt_sha256": {},
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "boundary_capture": {},
+        "card_sha256": {},
+        "final_norm_path": {},
+        "generation_ids_sha256": {},
+        "lm_head_path": {},
+        "producer_version": {},
+        "renderer_manifest_sha256": {},
+        "replay_ids_sha256": {},
+        "tokenizer_manifest_sha256": {}
+      },
+      "required": ["boundary_capture", "card_sha256", "final_norm_path", "generation_ids_sha256", "lm_head_path", "producer_version", "renderer_manifest_sha256", "replay_ids_sha256", "tokenizer_manifest_sha256"],
+      "type": "object"
+    },
+    "replay_count": {"const": 1},
+    "replay_length": {},
+    "schema_version": {"const": "loopscope.phase6.pre-answer-trajectory.v1"},
+    "split": {"const": "test"}
+  },
+  "required": ["D", "H", "adjacent_angular_distance", "anchor_token_index", "answer_first_token_index", "answer_span_end_offset", "answer_span_extractor_sha256", "answer_span_start_offset", "canonical_identity", "category", "dataset_repo", "dataset_revision", "generated_completion_sha256", "generated_id_text_aligner_sha256", "generation_count", "generation_length", "hidden_cosine_distance_to_final", "hidden_cosine_to_final", "hidden_rms_l2_to_final", "loop_insertions", "model_repo", "model_revision", "prompt_sha256", "provenance", "replay_count", "replay_length", "schema_version", "split"],
+  "type": "object"
+}
