@@ -97,10 +97,9 @@ CLOSURE_NAME = "runtime_closure.jsonl"
 SEALED_MEMBERSHIP_NAME = "sealed_membership.json"
 RECEIPT_NAME = "receipt.json"
 VERIFIER_NAME = "verifier_receipt.json"
-KNOWN_NOT_EXPRESSED_DEBUG_ORDINAL = 4
-# Reproduce the exact failed-shard execution position first, then cover the
-# remaining representative eligible ordinals.  Debug order is not the formal
-# canonical eligibility-mask order.
+# Preserve the already frozen recovery cohort and its execution order.  Debug
+# acceptance validates whichever eligibility partition the fresh producer
+# observes; it does not require a predetermined not-expressed identity.
 RECOVERY_DEBUG_ORDINALS = (4, 0, 1, 2, 3, 5, 6, 7)
 
 
@@ -624,7 +623,6 @@ def prepare_debug(
         "card_sha256": CARD_SHA256,
         "gate_b_manifest_sha256": GATE_B_MANIFEST_SHA256,
         "record_count": len(smoke),
-        "required_not_expressed_ordinal": KNOWN_NOT_EXPRESSED_DEBUG_ORDINAL,
         "required_eligible_count_minimum": 1,
         "members": smoke,
     }
@@ -1210,17 +1208,6 @@ def verify_debug(
         shard_id=None,
         attempt=1,
     )
-    state_by_ordinal = {
-        int(member["ordinal"]): record["eligibility_state"]
-        for member, record in zip(
-            membership["members"], verified["eligibility_records"]
-        )
-    }
-    _require(
-        state_by_ordinal.get(membership["required_not_expressed_ordinal"])
-        == "ANCHOR_NOT_EXPRESSED",
-        "debug did not reproduce deterministic ANCHOR_NOT_EXPRESSED identity",
-    )
     _require(
         verified["coverage"]["eligible_count"]
         >= int(membership["required_eligible_count_minimum"]),
@@ -1237,9 +1224,6 @@ def verify_debug(
         "trajectory_count": len(verified["records"]),
         "eligible_count": verified["coverage"]["eligible_count"],
         "not_expressed_count": verified["coverage"]["not_expressed_count"],
-        "required_not_expressed_ordinal": membership[
-            "required_not_expressed_ordinal"
-        ],
         "membership_sha256": membership["manifest_sha256"],
         "attempt_receipt_sha256": file_sha256(output / RECEIPT_NAME),
         "sanitized_records_sha256": file_sha256(output / SANITIZED_NAME),

@@ -159,6 +159,13 @@ decision, absolute selected gain, ranking enrichment, and known-outcome status s
 Each Gate requires a new independent user-visible executor. No executor may cross a Gate boundary.
 The planning/audit task alone issues `PASS`, `PASS_WITH_FIXES`, or `BLOCK`.
 
+The Gate D-2 real-CUDA debug cohort validates the eligibility partition it actually observes and
+may legally contain zero or more `ANCHOR_NOT_EXPRESSED` rows. Focused synthetic verification must
+separately close both the all-eligible case and a mixed eligible/not-expressed case, including zero
+replay and zero trajectory for every not-expressed row. Formal test-12032 acquisition is the
+decisive coverage measurement; debug does not search for or require a permanently classified
+identity.
+
 ## Gate A local artifacts
 
 Gate A provides one machine-readable card, closed trajectory and selector-freeze schemas,

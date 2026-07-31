@@ -3,6 +3,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import numpy as np
 
@@ -92,6 +93,158 @@ def _record(identity: str, payload_sha256: str):
     )
 
 
+def _debug_member(ordinal: int):
+    return {
+        "ordinal": ordinal,
+        "canonical_identity": "identity-%d" % ordinal,
+        "category": "biology",
+        "question_id": ordinal,
+        "safe_content_sha256": SHA,
+        "rendered_prefix_sha256": SHA,
+        "rendered_token_ids_sha256": SHA,
+        "sequence_length": 10,
+    }
+
+
+def _eligible_runtime_closure(member, record, payload_sha256):
+    return {
+        "ordinal": member["ordinal"],
+        "canonical_identity": member["canonical_identity"],
+        "eligibility_state": "ANCHOR_ELIGIBLE",
+        "prompt_sha256": SHA,
+        "generated_completion_sha256": payload_sha256,
+        "generation_ids_sha256": record["provenance"]["generation_ids_sha256"],
+        "replay_ids_sha256": record["provenance"]["replay_ids_sha256"],
+        "generation_length": 8,
+        "replay_length": 3,
+        "anchor_token_index": 2,
+        "answer_span_start_offset": 10,
+        "answer_span_end_offset": 11,
+        "answer_match_count": 2,
+        "selected_match_ordinal": 0,
+        "answer_first_token_index": 3,
+        "generation_count": 1,
+        "replay_count": 1,
+        "trajectory_count": 1,
+        "loop_insertions": 0,
+        "anchor_resolved": True,
+        "unique_token_mapping": True,
+        "record_semantic_sha256": runtime_record_sha256(record),
+        "final_norm_pre_hook_count": 1,
+        "raw_boundary_count": 37,
+        "final_norm_postnorm_allclose": True,
+        "final_norm_postnorm_max_abs": 0.0,
+        "replay_next_token_closure": True,
+        "replay_sequence_length": 3,
+    }
+
+
+def _write_debug_fixture(run_root: Path, states, expected_commit: str):
+    members = [_debug_member(index) for index in range(len(states))]
+    membership = {
+        "schema_version": "loopscope.phase6.gate-d2-debug-membership.v1",
+        "gate": "D-2",
+        "run_root": str(run_root),
+        "git": {"commit": expected_commit},
+        "card_sha256": gate_d.CARD_SHA256,
+        "gate_b_manifest_sha256": gate_d.GATE_B_MANIFEST_SHA256,
+        "record_count": len(members),
+        "required_eligible_count_minimum": 1,
+        "members": members,
+    }
+    membership["manifest_sha256"] = gate_d._manifest_hash(membership)
+    gate_d._write_new_json(run_root / "debug/membership.json", membership)
+
+    output = run_root / "debug/attempt-0001"
+    records = []
+    eligibility_records = []
+    closures = []
+    sealed_members = []
+    for member, state in zip(members, states):
+        ordinal = member["ordinal"]
+        payload = ("opaque-payload-%d" % ordinal).encode("utf-8")
+        payload_relative = "sealed_baseline/%06d.bin" % ordinal
+        payload_path = output / payload_relative
+        payload_sha = gate_d._write_new_bytes(payload_path, payload, mode=0o600)
+        eligibility = _eligibility_record(
+            member["canonical_identity"], member["category"], state
+        )
+        eligibility["sealed_payload_sha256"] = payload_sha
+        eligibility["sealed_membership_ref"] = payload_relative
+        eligibility_records.append(eligibility)
+        if state == "ANCHOR_ELIGIBLE":
+            record = _record(member["canonical_identity"], payload_sha)
+            records.append(record)
+            closures.append(
+                _eligible_runtime_closure(member, record, payload_sha)
+            )
+        sealed_members.append(
+            {
+                "ordinal": ordinal,
+                "canonical_identity": member["canonical_identity"],
+                "payload_relative": payload_relative,
+                "byte_count": len(payload),
+                "sha256": payload_sha,
+            }
+        )
+
+    records_sha = gate_d._write_new_jsonl(
+        output / gate_d.SANITIZED_NAME, records, allow_empty=True
+    )
+    eligibility_sha = gate_d._write_new_jsonl(
+        output / gate_d.ELIGIBILITY_NAME, eligibility_records
+    )
+    closure_sha = gate_d._write_new_jsonl(
+        output / gate_d.CLOSURE_NAME, closures, allow_empty=True
+    )
+    sealed = {
+        "schema_version": "loopscope.phase6.gate-d2-sealed-membership.v1",
+        "payload_format": "opaque_utf8_completion_bytes_not_parsed_before_gate_g",
+        "record_count": len(members),
+        "membership_sha256": membership["manifest_sha256"],
+        "members": sealed_members,
+    }
+    sealed["manifest_sha256"] = gate_d._manifest_hash(sealed)
+    sealed_sha = gate_d._write_new_json(
+        output / gate_d.SEALED_MEMBERSHIP_NAME, sealed
+    )
+    coverage = gate_d._coverage_summary(
+        members=members,
+        eligibility_records=eligibility_records,
+        enforce_floors=False,
+    )
+    receipt = {
+        "schema_version": gate_d.SHARD_RECEIPT_SCHEMA,
+        "status": "COMPLETED",
+        "mode": "debug",
+        "shard_id": None,
+        "attempt": 1,
+        "git": {"commit": expected_commit},
+        "membership_sha256": membership["manifest_sha256"],
+        "record_count": len(members),
+        "trajectory_count": len(records),
+        "runtime_closure_count": len(closures),
+        "eligibility_count": len(eligibility_records),
+        "coverage": coverage,
+        "artifacts": {
+            gate_d.SANITIZED_NAME: records_sha,
+            gate_d.ELIGIBILITY_NAME: eligibility_sha,
+            gate_d.CLOSURE_NAME: closure_sha,
+            gate_d.SEALED_MEMBERSHIP_NAME: sealed_sha,
+        },
+        "information_barrier": {
+            "protected_target_fields_accessed": False,
+            "sealed_payload_content_inspected_after_write": False,
+            "selector_executed": False,
+            "outcomes_read": False,
+            "later_gate_entered": False,
+        },
+    }
+    receipt["manifest_sha256"] = gate_d._manifest_hash(receipt)
+    gate_d._write_new_json(output / gate_d.RECEIPT_NAME, receipt)
+    return membership
+
+
 class GateDManifestTests(unittest.TestCase):
     def test_exact_executor_and_planning_bindings(self):
         self.assertEqual(
@@ -106,7 +259,6 @@ class GateDManifestTests(unittest.TestCase):
             gate_d.ORDERED_IDENTITY_SHA256,
             "ac52d6e43c693bd0b47b567c2955dae0c6be895ce3230e854d4e1538f05503a5",
         )
-        self.assertEqual(gate_d.KNOWN_NOT_EXPRESSED_DEBUG_ORDINAL, 4)
         self.assertEqual(gate_d.RECOVERY_DEBUG_ORDINALS, (4, 0, 1, 2, 3, 5, 6, 7))
 
     def test_shards_are_exact_ordinal_modulo_and_bounded(self):
@@ -177,6 +329,62 @@ class GateDManifestTests(unittest.TestCase):
 
 
 class GateDArtifactTests(unittest.TestCase):
+    def _verify_debug_fixture(self, states):
+        expected_commit = "b" * 40
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        run_root = Path(temporary.name) / "debug-root"
+        membership = _write_debug_fixture(run_root, states, expected_commit)
+        with (
+            mock.patch.object(gate_d, "_assert_offline_environment"),
+            mock.patch.object(
+                gate_d,
+                "_git_provenance",
+                return_value={"commit": expected_commit},
+            ),
+            mock.patch.object(gate_d, "_load_card"),
+            mock.patch.object(gate_d, "_load_gate_b_manifest"),
+        ):
+            result = gate_d.verify_debug(
+                run_root=run_root,
+                gate_b_manifest_path=Path("/tmp/gate-b.json"),
+                expected_commit=expected_commit,
+            )
+        return run_root, membership, result
+
+    def test_all_eligible_debug_cohort_closes_and_verifies(self):
+        run_root, membership, result = self._verify_debug_fixture(
+            ["ANCHOR_ELIGIBLE", "ANCHOR_ELIGIBLE"]
+        )
+        self.assertEqual(result["status"], "PASS")
+        self.assertEqual(result["eligible_count"], 2)
+        self.assertEqual(result["not_expressed_count"], 0)
+        receipt = gate_d._strict_json(
+            run_root / "debug/attempt-0001" / gate_d.VERIFIER_NAME
+        )
+        self.assertEqual(receipt["membership_sha256"], membership["manifest_sha256"])
+        self.assertNotIn("required_not_expressed_ordinal", membership)
+        self.assertNotIn("required_not_expressed_ordinal", receipt)
+
+    def test_mixed_debug_cohort_has_no_not_expressed_replay_or_trajectory(self):
+        run_root, _membership, result = self._verify_debug_fixture(
+            ["ANCHOR_ELIGIBLE", "ANCHOR_NOT_EXPRESSED"]
+        )
+        self.assertEqual(result["status"], "PASS")
+        self.assertEqual(result["eligible_count"], 1)
+        self.assertEqual(result["not_expressed_count"], 1)
+        output = run_root / "debug/attempt-0001"
+        records = gate_d._strict_jsonl(output / gate_d.SANITIZED_NAME)
+        closures = gate_d._strict_jsonl(output / gate_d.CLOSURE_NAME)
+        eligibility = gate_d._strict_jsonl(output / gate_d.ELIGIBILITY_NAME)
+        self.assertEqual([row["canonical_identity"] for row in records], ["identity-0"])
+        self.assertEqual([row["canonical_identity"] for row in closures], ["identity-0"])
+        self.assertEqual(
+            eligibility[1]["eligibility_state"], "ANCHOR_NOT_EXPRESSED"
+        )
+        self.assertNotIn("replay_count", eligibility[1])
+        self.assertNotIn("trajectory_count", eligibility[1])
+
     def test_coverage_floors_are_inclusive_and_fail_closed(self):
         members = [
             {
