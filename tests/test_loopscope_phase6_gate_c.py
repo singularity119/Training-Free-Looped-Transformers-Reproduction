@@ -131,6 +131,7 @@ class GateCRuntimePureTests(unittest.TestCase):
             isfinite = staticmethod(torch.isfinite)
             allclose = staticmethod(torch.allclose)
             argmax = staticmethod(torch.argmax)
+            ones_like = staticmethod(torch.ones_like)
 
             @staticmethod
             def tensor(value, *, dtype, device):
