@@ -7,10 +7,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import numpy as np
+
 from tflt.loopscope.phase6_runtime import (
     GateCRuntimeError,
     assemble_raw_boundaries,
     assert_native_no_loop_runtime,
+    normalize_raw_boundary_vectors,
     semantic_sha256,
 )
 from tflt.wrapper import LoopIdentityLayer
@@ -103,6 +106,23 @@ class GateCRuntimePureTests(unittest.TestCase):
             assemble_raw_boundaries(hidden, "raw-36", 2)
         with self.assertRaisesRegex(GateCRuntimeError, "hidden states"):
             assemble_raw_boundaries(hidden[:-1], "raw-36", 1)
+
+    def test_raw_boundary_vectors_normalize_exact_3d_2d_mix(self):
+        hidden = tuple(
+            np.full((1, 3, 4), float(index), dtype=np.float32)
+            for index in range(36)
+        )
+        raw_b36 = np.full((1, 4), 36.0, dtype=np.float32)
+        vectors = normalize_raw_boundary_vectors(hidden + (raw_b36,))
+        self.assertEqual(len(vectors), 37)
+        self.assertTrue(all(vector.shape == (1, 4) for vector in vectors))
+        np.testing.assert_array_equal(vectors[0], hidden[0][:, -1, :])
+        np.testing.assert_array_equal(vectors[-1], raw_b36)
+
+        with self.assertRaisesRegex(GateCRuntimeError, "B0.*\\[1,S,H\\]"):
+            normalize_raw_boundary_vectors((hidden[0][:, -1, :],) + hidden[1:] + (raw_b36,))
+        with self.assertRaisesRegex(GateCRuntimeError, "raw B36"):
+            normalize_raw_boundary_vectors(hidden + (raw_b36[:, None, :],))
 
     def test_duplicate_closure_requires_exact_two_equal_replicates(self):
         records, evidence = _duplicate_inputs()

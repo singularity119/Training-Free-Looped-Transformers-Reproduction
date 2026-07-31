@@ -34,7 +34,7 @@ LAYER_COUNT = 36
 HIDDEN_SIZE = 2560
 GENERATION_MAX_NEW_TOKENS = 2048
 GENERATION_STOP_STRING = "Question:"
-PRODUCER_VERSION = "loopscope.phase6.gate-c-runtime.v2"
+PRODUCER_VERSION = "loopscope.phase6.gate-c-runtime.v3"
 FINAL_NORM_RTOL = 1e-3
 FINAL_NORM_ATOL = 1e-3
 LOOP_WRAPPER_CLASS_NAMES = frozenset(
@@ -116,6 +116,57 @@ def assemble_raw_boundaries(
     )
     _require(captured_raw_b36 is not None, "FinalNorm pre-hook did not capture raw B36")
     return tuple(hidden_states[:-1]) + (captured_raw_b36,)
+
+
+def normalize_raw_boundary_vectors(
+    raw_state_tensors: Sequence[Any],
+) -> Tuple[Any, ...]:
+    """Select one `[1,H]` vector for each strict B0...B36 tensor shape."""
+
+    states = tuple(raw_state_tensors)
+    _require(
+        len(states) == LAYER_COUNT + 1,
+        "raw boundary states must contain B0...B36",
+    )
+    vectors = []
+    hidden_width = None
+    for boundary_index, state in enumerate(states):
+        shape = tuple(int(value) for value in getattr(state, "shape", ()))
+        if boundary_index < LAYER_COUNT:
+            _require(
+                getattr(state, "ndim", None) == 3
+                and len(shape) == 3
+                and shape[0] == 1
+                and shape[1] >= 1
+                and shape[2] >= 1,
+                "model hidden boundary B%d must have shape [1,S,H]"
+                % boundary_index,
+            )
+            vector = state[:, -1, :]
+        else:
+            _require(
+                getattr(state, "ndim", None) == 2
+                and len(shape) == 2
+                and shape[0] == 1
+                and shape[1] >= 1,
+                "raw B36 pre-hook boundary must have shape [1,H]",
+            )
+            vector = state
+        vector_shape = tuple(int(value) for value in getattr(vector, "shape", ()))
+        _require(
+            getattr(vector, "ndim", None) == 2
+            and len(vector_shape) == 2
+            and vector_shape[0] == 1,
+            "normalized boundary B%d must have shape [1,H]" % boundary_index,
+        )
+        if hidden_width is None:
+            hidden_width = vector_shape[1]
+        _require(
+            vector_shape[1] == hidden_width,
+            "raw boundary hidden widths differ",
+        )
+        vectors.append(vector)
+    return tuple(vectors)
 
 
 def duplicate_result_sha256(record: Mapping[str, Any]) -> str:
@@ -280,7 +331,11 @@ def _replay_once(
         hidden_states, captured["last"], int(captured["count"])
     )
     raw_vectors = torch.cat(
-        [state[:, -1, :].detach() for state in raw_state_tensors], dim=0
+        [
+            vector.detach()
+            for vector in normalize_raw_boundary_vectors(raw_state_tensors)
+        ],
+        dim=0,
     ).float()
     _require(
         tuple(raw_vectors.shape) == (LAYER_COUNT + 1, HIDDEN_SIZE),
@@ -463,6 +518,7 @@ __all__ = [
     "canonical_json_bytes",
     "duplicate_result_sha256",
     "load_gate_c_runtime",
+    "normalize_raw_boundary_vectors",
     "semantic_sha256",
     "text_sha256",
 ]
