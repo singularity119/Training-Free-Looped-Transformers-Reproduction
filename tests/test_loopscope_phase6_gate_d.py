@@ -8,6 +8,7 @@ import numpy as np
 
 from tflt.loopscope.phase6_acquisition import build_sanitized_trajectory_record
 from tflt.loopscope.phase4_schema import file_sha256, semantic_sha256
+from tflt.loopscope.phase6_runtime import semantic_sha256 as runtime_record_sha256
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -196,7 +197,7 @@ class GateDArtifactTests(unittest.TestCase):
                 "loop_insertions": 0,
                 "anchor_resolved": True,
                 "unique_token_mapping": True,
-                "record_semantic_sha256": semantic_sha256(record),
+                "record_semantic_sha256": runtime_record_sha256(record),
                 "final_norm_pre_hook_count": 1,
                 "raw_boundary_count": 37,
                 "final_norm_postnorm_allclose": True,

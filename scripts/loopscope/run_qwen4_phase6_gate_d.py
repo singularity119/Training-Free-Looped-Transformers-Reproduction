@@ -49,6 +49,7 @@ from tflt.loopscope.phase6_runtime import (  # noqa: E402
     PRODUCER_VERSION,
     acquire_two_pass_record_and_payload,
     load_gate_c_runtime,
+    semantic_sha256 as runtime_record_sha256,
 )
 from tflt.loopscope.phase6_schema import (  # noqa: E402
     load_json,
@@ -917,7 +918,7 @@ def _validate_attempt(
             "runtime closure differs",
         )
         _require(
-            closure["record_semantic_sha256"] == semantic_sha256(record),
+            closure["record_semantic_sha256"] == runtime_record_sha256(record),
             "record semantic hash differs",
         )
         payload_relative = Path(str(sealed_row["payload_relative"]))
