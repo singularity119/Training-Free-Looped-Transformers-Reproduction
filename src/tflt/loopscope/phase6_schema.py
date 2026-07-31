@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping, Sequence
 
 
-CARD_SCHEMA_VERSION = "loopscope.phase6.pre-answer-rbr-v2-card.v1"
-TRAJECTORY_SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v1"
+CARD_SCHEMA_VERSION = "loopscope.phase6.pre-answer-rbr-v2-card.v2"
+TRAJECTORY_SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v2"
 SELECTOR_SCHEMA_VERSION = "loopscope.phase6.selector-freeze.v1"
 METHOD = "RELATIVE_BIPHASIC_REVERSAL_V2_ABSOLUTE_RATE"
 EXPECTED_POPULATION = 12032
@@ -74,6 +74,8 @@ TRAJECTORY_KEYS = {
     "anchor_token_index",
     "answer_span_start_offset",
     "answer_span_end_offset",
+    "answer_match_count",
+    "selected_match_ordinal",
     "answer_first_token_index",
     "answer_span_extractor_sha256",
     "generated_id_text_aligner_sha256",
@@ -159,6 +161,8 @@ SELECTOR_KEYS = {
 PERSISTENCE_SAFE_KEYS = {
     "answer_span_start_offset",
     "answer_span_end_offset",
+    "answer_match_count",
+    "selected_match_ordinal",
     "answer_first_token_index",
     "answer_span_extractor_sha256",
     "known_outcome_registry",
@@ -359,8 +363,8 @@ def validate_card(card: Mapping[str, Any]) -> None:
         "regex_pattern": r"answer is \(?([ABCDEFGHIJ])\)?",
         "capture_group": 1,
         "case_sensitive": True,
-        "match_rule": "collect_all_capture_spans_require_exactly_one",
-        "outcome_take_first_used_for_anchor": False,
+        "match_rule": "collect_all_capture_spans_select_ordinal_0",
+        "outcome_take_first_used_for_anchor": True,
         "offset_unit": "utf8_byte",
         "token_intervals": "half_open",
         "boundary_owner": "right_token",
@@ -551,6 +555,12 @@ def validate_trajectory_record(record: Mapping[str, Any]) -> None:
         raise Phase6ContractError("answer/probe token indices differ")
     start = require_integer(record["answer_span_start_offset"], "answer_span_start_offset")
     end = require_integer(record["answer_span_end_offset"], "answer_span_end_offset", 1)
+    match_count = require_integer(record["answer_match_count"], "answer_match_count", 1)
+    selected_ordinal = require_integer(
+        record["selected_match_ordinal"], "selected_match_ordinal"
+    )
+    if selected_ordinal != 0 or selected_ordinal >= match_count:
+        raise Phase6ContractError("selected answer match ordinal differs")
     if end <= start or replay_length <= anchor:
         raise Phase6ContractError("span/replay closure failed")
     _vector(record["H"], BOUNDARY_COUNT, "H", 0.0)
@@ -799,6 +809,8 @@ def trajectory_json_schema() -> Dict[str, Any]:
             "generation_count": {"const": 1},
             "replay_count": {"const": 1},
             "loop_insertions": {"const": 0},
+            "answer_match_count": {"type": "integer", "minimum": 1},
+            "selected_match_ordinal": {"const": 0},
             "provenance": {
                 "type": "object",
                 "additionalProperties": False,

@@ -20,7 +20,7 @@ from tflt.loopscope.phase6_schema import (
 )
 
 
-SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v1"
+SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v2"
 BOUNDARY_COUNT = 37
 TRANSITION_COUNT = 36
 FINAL_TOLERANCE = 1e-6
@@ -42,6 +42,8 @@ TOP_LEVEL_KEYS = frozenset(
         "anchor_token_index",
         "answer_span_start_offset",
         "answer_span_end_offset",
+        "answer_match_count",
+        "selected_match_ordinal",
         "answer_first_token_index",
         "answer_span_extractor_sha256",
         "generated_id_text_aligner_sha256",
@@ -312,6 +314,8 @@ def build_sanitized_trajectory_record(
     anchor_token_index: int,
     answer_span_start_offset: int,
     answer_span_end_offset: int,
+    answer_match_count: int,
+    selected_match_ordinal: int,
     answer_first_token_index: int,
     answer_span_extractor_sha256: str,
     generated_id_text_aligner_sha256: str,
@@ -344,6 +348,12 @@ def build_sanitized_trajectory_record(
     span_end = _require_nonnegative_integer(
         answer_span_end_offset, "answer_span_end_offset"
     )
+    match_count = _require_nonnegative_integer(
+        answer_match_count, "answer_match_count"
+    )
+    selected_ordinal = _require_nonnegative_integer(
+        selected_match_ordinal, "selected_match_ordinal"
+    )
     answer_index = _require_nonnegative_integer(
         answer_first_token_index, "answer_first_token_index"
     )
@@ -353,6 +363,8 @@ def build_sanitized_trajectory_record(
         _fail("replay_length must equal the exact replay-ID sequence length")
     if span_end <= span_start:
         _fail("answer span offsets must form a non-empty half-open interval")
+    if match_count < 1 or selected_ordinal != 0 or selected_ordinal >= match_count:
+        _fail("selected answer match ordinal must be zero within match count")
     if answer_index == 0 or anchor_index + 1 != answer_index:
         _fail("anchor must be the token immediately preceding the answer-first token")
 
@@ -407,6 +419,8 @@ def build_sanitized_trajectory_record(
         "anchor_token_index": anchor_index,
         "answer_span_start_offset": span_start,
         "answer_span_end_offset": span_end,
+        "answer_match_count": match_count,
+        "selected_match_ordinal": selected_ordinal,
         "answer_first_token_index": answer_index,
         "answer_span_extractor_sha256": str(answer_span_extractor_sha256),
         "generated_id_text_aligner_sha256": str(generated_id_text_aligner_sha256),

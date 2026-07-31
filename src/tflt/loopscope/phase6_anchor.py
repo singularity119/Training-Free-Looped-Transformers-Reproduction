@@ -1,10 +1,10 @@
 """Pure-Python Phase 6 final-answer anchor resolution.
 
-The extractor deliberately differs from lm-eval's outcome filter: lm-eval may
-apply ``take_first`` after extraction, while Phase 6 fails closed unless the
-capture group has exactly one span.  The aligner uses only generated token IDs,
-the tokenizer's actual prefix decodes, and the generated text supplied by the
-generation path.
+The extractor mirrors lm-eval's ``custom-extract -> take_first`` path: it
+enumerates every capture-group span in generated-text order, fails closed when
+none exist, and selects ordinal zero.  The aligner uses only generated token
+IDs, the tokenizer's actual prefix decodes, and the generated text supplied by
+the generation path.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ DEFAULT_TEMPLATE_YAML_SHA256 = (
 ANSWER_REGEX_PATTERN = r"answer is \(?([ABCDEFGHIJ])\)?"
 ANSWER_REGEX = re.compile(ANSWER_REGEX_PATTERN)
 
-ANSWER_SPAN_EXTRACTOR_VERSION = "loopscope-phase6-answer-span-v1"
+ANSWER_SPAN_EXTRACTOR_VERSION = "loopscope-phase6-answer-span-v2"
 GENERATED_ID_TEXT_ALIGNER_VERSION = "loopscope-phase6-generated-id-aligner-v1"
 REPLAY_PREFIX_VERSION = "loopscope-phase6-replay-prefix-v1"
 
@@ -67,7 +67,7 @@ def _identity_hash(component: str, version: str, **extra: Any) -> str:
 ANSWER_SPAN_EXTRACTOR_SHA256 = _identity_hash(
     "answer_span_extractor",
     ANSWER_SPAN_EXTRACTOR_VERSION,
-    match_policy="all_capture_group_1_spans_exactly_one",
+    match_policy="all_capture_group_1_spans_select_ordinal_0",
 )
 GENERATED_ID_TEXT_ALIGNER_SHA256 = _identity_hash(
     "generated_id_text_aligner",
@@ -107,7 +107,7 @@ class AnchorResolutionError(ValueError):
 
 
 class AnswerSpanError(AnchorResolutionError):
-    """The frozen answer regex did not produce exactly one capture span."""
+    """The frozen answer regex did not produce any capture span."""
 
 
 class GeneratedTextAlignmentError(AnchorResolutionError):
@@ -120,12 +120,14 @@ class ReplayPrefixError(AnchorResolutionError):
 
 @dataclass(frozen=True)
 class AnswerSpan:
-    """The unique capture-group-1 span in character and UTF-8 byte units."""
+    """The selected capture-group-1 span and sanitized match metadata."""
 
     char_start: int
     char_end: int
     byte_start: int
     byte_end: int
+    answer_match_count: int
+    selected_match_ordinal: int
 
     @property
     def char_span(self) -> Tuple[int, int]:
@@ -152,7 +154,7 @@ class TokenByteSpan:
 
 @dataclass(frozen=True)
 class GeneratedAnswerAlignment:
-    """Resolved generated-token location for a unique answer span."""
+    """Resolved generated-token location for the selected answer span."""
 
     answer_span: AnswerSpan
     answer_first_token_index: int
@@ -188,20 +190,15 @@ def _token_id_tuple(values: Sequence[int], name: str) -> Tuple[int, ...]:
 
 
 def answer_span_extractor(generated_text: str) -> AnswerSpan:
-    """Return the sole frozen-regex capture span, or fail closed.
-
-    All capture-group-1 spans are collected before deciding.  Repeated matches
-    are ambiguous even when they capture the same letter.
-    """
+    """Return frozen-regex capture ordinal zero, or fail closed if absent."""
 
     text = _require_text(generated_text, "generated_text")
-    spans = [match.span(1) for match in ANSWER_REGEX.finditer(text)]
-    if len(spans) != 1:
-        raise AnswerSpanError(
-            "expected exactly one answer capture span, found %d" % len(spans)
-        )
+    matches = list(ANSWER_REGEX.finditer(text))
+    if not matches:
+        raise AnswerSpanError("expected at least one answer capture span, found 0")
 
-    char_start, char_end = spans[0]
+    selected_match_ordinal = 0
+    char_start, char_end = matches[selected_match_ordinal].span(1)
     byte_start = len(text[:char_start].encode("utf-8"))
     byte_end = len(text[:char_end].encode("utf-8"))
     return AnswerSpan(
@@ -209,11 +206,13 @@ def answer_span_extractor(generated_text: str) -> AnswerSpan:
         char_end=char_end,
         byte_start=byte_start,
         byte_end=byte_end,
+        answer_match_count=len(matches),
+        selected_match_ordinal=selected_match_ordinal,
     )
 
 
 def extract_unique_answer_span(generated_text: str) -> AnswerSpan:
-    """Descriptive alias for :func:`answer_span_extractor`."""
+    """Compatibility alias for the evaluator-aligned first-match extractor."""
 
     return answer_span_extractor(generated_text)
 
@@ -309,7 +308,7 @@ def generated_id_text_aligner(
     *,
     decode_kwargs: Optional[Mapping[str, Any]] = None,
 ) -> GeneratedAnswerAlignment:
-    """Map the unique answer start to its generated token and preceding probe.
+    """Map the selected answer start to its generated token and preceding probe.
 
     Token intervals are cumulative decoded-prefix UTF-8 byte intervals.  The
     containment test is half-open, so a start at a token boundary belongs to
@@ -326,7 +325,7 @@ def generated_id_text_aligner(
         raise TypeError("answer_span must be AnswerSpan")
     if span != extracted_span:
         raise GeneratedTextAlignmentError(
-            "answer_span does not equal the frozen regex capture span"
+            "answer_span does not equal the selected frozen regex capture span"
         )
 
     expected_byte_start = len(text[: span.char_start].encode("utf-8"))

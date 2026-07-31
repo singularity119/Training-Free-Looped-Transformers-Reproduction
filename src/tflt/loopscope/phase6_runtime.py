@@ -34,7 +34,7 @@ LAYER_COUNT = 36
 HIDDEN_SIZE = 2560
 GENERATION_MAX_NEW_TOKENS = 2048
 GENERATION_STOP_STRING = "Question:"
-PRODUCER_VERSION = "loopscope.phase6.gate-c-runtime.v1"
+PRODUCER_VERSION = "loopscope.phase6.gate-c-runtime.v2"
 FINAL_NORM_RTOL = 1e-3
 FINAL_NORM_ATOL = 1e-3
 LOOP_WRAPPER_CLASS_NAMES = frozenset(
@@ -397,6 +397,8 @@ def acquire_two_pass_record(
         anchor_token_index=alignment.probe_token_index,
         answer_span_start_offset=span.byte_start,
         answer_span_end_offset=span.byte_end,
+        answer_match_count=span.answer_match_count,
+        selected_match_ordinal=span.selected_match_ordinal,
         answer_first_token_index=alignment.answer_first_token_index,
         answer_span_extractor_sha256=ANSWER_SPAN_EXTRACTOR_SHA256,
         generated_id_text_aligner_sha256=GENERATED_ID_TEXT_ALIGNER_SHA256,
@@ -430,11 +432,13 @@ def acquire_two_pass_record(
         "anchor_token_index": alignment.probe_token_index,
         "answer_span_start_offset": span.byte_start,
         "answer_span_end_offset": span.byte_end,
+        "answer_match_count": span.answer_match_count,
+        "selected_match_ordinal": span.selected_match_ordinal,
         "answer_first_token_index": alignment.answer_first_token_index,
         "generation_count": 1,
         "replay_count": 1,
         "loop_insertions": 0,
-        "unique_answer_span": True,
+        "anchor_resolved": True,
         "unique_token_mapping": True,
         "record_semantic_sha256": duplicate_result_sha256(record),
         **replay_evidence,

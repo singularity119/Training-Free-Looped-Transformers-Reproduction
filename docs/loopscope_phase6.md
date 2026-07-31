@@ -8,12 +8,13 @@ state and never grants execution authority.
 
 Phase 6 keeps the Phase 4 model, task, renderer, generation, and TFLT configuration. It moves the
 trajectory probe from the last rendered prompt token to the final generated token immediately
-before the first token of the final answer content.
+before the first token of evaluator-selected answer content.
 
 The experiment is a two-pass, dataset-level offline selector:
 
 1. Run deterministic native no-loop CoT generation.
-2. Resolve the unique final-answer content span and freeze the preceding token as the probe anchor.
+2. Enumerate final-answer matches, select ordinal zero, and freeze the preceding token as the
+   probe anchor.
 3. Replay the prompt plus generated tokens strictly before the answer token with
    `use_cache=false`, `output_hidden_states=true`, and zero loop insertions.
 4. Aggregate the 12,032 MMLU-Pro test identities and freeze one global V2 selector decision.
@@ -24,13 +25,14 @@ It is not a same-pass online or per-sample dynamic selector.
 The anchor extractor is span-preserving. The pinned lm-eval 0.4.11 source closure establishes that
 `utils.py@74ab409c...` defines the renderer, while
 `_default_template_yaml@356e937a...` defines `custom-extract` as the case-sensitive regex
-`answer is \(?([ABCDEFGHIJ])\)?` followed by the outcome filter `take_first`. Phase 6 uses the
-literal regex and capture group 1, but requires exactly one match span; it must not silently apply
-`take_first` to multiple possible anchors. A separately versioned aligner maps that span start to
-the generated token carrying its first content character. A start exactly on a half-open token
-boundary belongs to the token on the right. Regex and alignment rules are frozen on synthetic
-fixtures before any real model completion is observed. Missing, ambiguous, or unalignable spans
-are engineering BLOCKs; they are never dropped or repaired post hoc.
+`answer is \(?([ABCDEFGHIJ])\)?` followed by the outcome filter `take_first`. Phase 6 uses that
+literal regex and capture group 1, enumerates every match in generated-text order, and selects
+ordinal zero. Zero matches fail closed; multiple matches are legal and never cause identity
+dropping or replacement. A separately versioned aligner maps the selected span start to the
+generated token carrying its first content character. A start exactly on a half-open token boundary
+belongs to the token on the right. Regex and alignment rules are frozen on synthetic fixtures
+before any real model completion is observed. Missing or unalignable selected spans are engineering
+BLOCKs; they are never repaired post hoc.
 
 ## Frozen cell
 
@@ -60,9 +62,9 @@ values in the control file are not a substitute for Gate B evidence.
 
 At the pre-answer anchor, extract raw residual boundaries `B_0...B_36`.
 
-The sanitized trajectory record keeps only span offsets, token indices, and extractor/aligner
-hashes. It must not retain the answer content, an answer-span hash, a parsed prediction, gold,
-correctness, or any outcome field.
+The sanitized trajectory record keeps only match count, selected-match ordinal zero, selected span
+offsets, token indices, and extractor/aligner hashes. It must not retain the answer content, an
+answer-span hash, a parsed prediction, gold, correctness, or any outcome field.
 
 Selector inputs:
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": "loopscope.phase6.pre-answer-rbr-v2-card.v1",
+  "schema_version": "loopscope.phase6.pre-answer-rbr-v2-card.v2",
   "card": "H6_PRE_ANSWER_FULLVOCAB_RBR_V2_WINDOW_SELECTION",
   "claim_boundary": "local_contract_only_no_model_data_generation_replay_selector_or_outcome",
   "cell": {
@@ -41,8 +41,8 @@
     "regex_pattern": "answer is \\(?([ABCDEFGHIJ])\\)?",
     "capture_group": 1,
     "case_sensitive": true,
-    "match_rule": "collect_all_capture_spans_require_exactly_one",
-    "outcome_take_first_used_for_anchor": false,
+    "match_rule": "collect_all_capture_spans_select_ordinal_0",
+    "outcome_take_first_used_for_anchor": true,
     "offset_unit": "utf8_byte",
     "token_intervals": "half_open",
     "boundary_owner": "right_token",

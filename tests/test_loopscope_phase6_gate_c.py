@@ -46,12 +46,14 @@ def _duplicate_inputs():
             "anchor_token_index": 4,
             "answer_span_start_offset": 20,
             "answer_span_end_offset": 21,
+            "answer_match_count": 2,
+            "selected_match_ordinal": 0,
             "answer_first_token_index": 5,
             "record_semantic_sha256": digest,
             "generation_count": 1,
             "replay_count": 1,
             "loop_insertions": 0,
-            "unique_answer_span": True,
+            "anchor_resolved": True,
             "unique_token_mapping": True,
             "final_norm_pre_hook_count": 1,
             "raw_boundary_count": 37,
@@ -108,6 +110,12 @@ class GateCRuntimePureTests(unittest.TestCase):
         self.assertTrue(receipt["deterministic_duplicate_pass"])
         self.assertEqual(receipt["identity_count"], 4)
         self.assertEqual(len(receipt["rows"]), 4)
+        self.assertTrue(
+            all(row["answer_match_count"] == 2 for row in receipt["rows"])
+        )
+        self.assertTrue(
+            all(row["selected_match_ordinal"] == 0 for row in receipt["rows"])
+        )
 
         altered_records, altered_evidence = _duplicate_inputs()
         altered_evidence[1]["generation_ids_sha256"] = "d" * 64

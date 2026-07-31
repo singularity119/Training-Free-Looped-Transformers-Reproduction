@@ -58,6 +58,8 @@ def _record(**changes):
         "anchor_token_index": 2,
         "answer_span_start_offset": 10,
         "answer_span_end_offset": 11,
+        "answer_match_count": 2,
+        "selected_match_ordinal": 0,
         "answer_first_token_index": 3,
         "answer_span_extractor_sha256": SHA,
         "generated_id_text_aligner_sha256": SHA,
@@ -101,6 +103,8 @@ class Phase6AcquisitionTests(unittest.TestCase):
         self.assertEqual(record["hidden_rms_l2_to_final"][-1], 0.0)
         self.assertEqual(record["hidden_cosine_to_final"][-1], 1.0)
         self.assertEqual(record["hidden_cosine_distance_to_final"][-1], 0.0)
+        self.assertEqual(record["answer_match_count"], 2)
+        self.assertEqual(record["selected_match_ordinal"], 0)
 
     def test_angular_uses_raw_not_final_normalized_vectors(self):
         raw = np.tile(np.asarray([1.0, 0.0], dtype=np.float32), (37, 1))
@@ -134,6 +138,8 @@ class Phase6AcquisitionTests(unittest.TestCase):
             validate_generation_replay_id_closure([1, 2, 3], [1, 2, 4])
         with self.assertRaisesRegex(Phase6ContractError, "replay_length"):
             _record(replay_length=4)
+        with self.assertRaisesRegex(Phase6ContractError, "ordinal"):
+            _record(selected_match_ordinal=1)
 
     def test_sanitizer_has_no_forbidden_payload_fields(self):
         record = _record()

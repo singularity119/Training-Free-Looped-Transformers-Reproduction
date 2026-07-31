@@ -56,7 +56,7 @@ from tflt.loopscope.phase6_schema import (  # noqa: E402
 EXECUTOR_THREAD_ID = "019fb452-e2af-7bf2-a411-612c81971245"
 PLANNING_THREAD_ID = "019fb3de-2298-75f2-a083-0dca453ea79c"
 CARD_PATH = REPO_ROOT / "configs/loopscope/phase6_pre_answer_v2_card.json"
-CARD_SHA256 = "31bd12dc3b58cb7df92c7617047cd86c290c678381ec744b9af73d01945e6f38"
+CARD_SHA256 = "feef7250b72fa8ecd154d58835ad42eacc1fc96509ed984acdafbfa4c20432d4"
 GATE_B_MANIFEST_SHA256 = (
     "ccb148bd61971d24ad81b240cbe1b5f0810e06e620fb568473a61b2147b44a1d"
 )
@@ -272,6 +272,8 @@ def _duplicate_closure(
         "anchor_token_index",
         "answer_span_start_offset",
         "answer_span_end_offset",
+        "answer_match_count",
+        "selected_match_ordinal",
         "answer_first_token_index",
         "record_semantic_sha256",
     )
@@ -295,9 +297,14 @@ def _duplicate_closure(
                 "runtime generation/replay/loop count closure differs",
             )
             _require(
-                closure.get("unique_answer_span") is True
+                closure.get("anchor_resolved") is True
                 and closure.get("unique_token_mapping") is True,
                 "runtime anchor closure differs",
+            )
+            _require(
+                int(closure.get("answer_match_count", 0)) >= 1
+                and closure.get("selected_match_ordinal") == 0,
+                "runtime first-match closure differs",
             )
             _require(
                 closure.get("final_norm_pre_hook_count") == 1
@@ -316,6 +323,8 @@ def _duplicate_closure(
                 "record_semantic_sha256": closure1["record_semantic_sha256"],
                 "generation_replay_hashes_equal": True,
                 "anchor_indices_equal": True,
+                "answer_match_count": int(closure1["answer_match_count"]),
+                "selected_match_ordinal": 0,
                 "sanitized_scalars_equal": True,
                 "replay_next_token_closure": True,
                 "final_norm_pre_hook_count_each": 1,
@@ -330,7 +339,7 @@ def _duplicate_closure(
             }
         )
     return {
-        "schema_version": "loopscope.phase6.gate-c-duplicate-closure.v1",
+        "schema_version": "loopscope.phase6.gate-c-duplicate-closure.v2",
         "identity_count": 4,
         "replicates_per_identity": 2,
         "deterministic_duplicate_pass": True,
@@ -372,7 +381,7 @@ def run_smoke(
             runtime.torch.cuda.empty_cache()
     duplicate = _duplicate_closure(record_entries, evidence_entries)
     records_payload = {
-        "schema_version": "loopscope.phase6.gate-c-sanitized-smoke.v1",
+        "schema_version": "loopscope.phase6.gate-c-sanitized-smoke.v2",
         "identity_count": 4,
         "replicates_per_identity": 2,
         "records": record_entries,
@@ -381,7 +390,7 @@ def run_smoke(
     duplicate["records_file_sha256"] = records_sha
     duplicate_sha = _write_new_json(run_root / DUPLICATE_NAME, duplicate)
     manifest = {
-        "schema_version": "loopscope.phase6.gate-c-manifest.v1",
+        "schema_version": "loopscope.phase6.gate-c-manifest.v2",
         "gate": "C",
         "executor_thread_id": EXECUTOR_THREAD_ID,
         "planning_thread_id": PLANNING_THREAD_ID,
@@ -436,7 +445,7 @@ def run_smoke(
             DUPLICATE_NAME: duplicate_sha,
         },
         "closure_summary": {
-            "unique_anchor_count": 8,
+            "selected_anchor_count": 8,
             "unique_token_mapping_count": 8,
             "generation_count_each": 1,
             "replay_count_each": 1,
@@ -535,6 +544,11 @@ def verify_smoke(
             "generation/replay/loop counts differ",
         )
         _require(
+            record["answer_match_count"] >= 1
+            and record["selected_match_ordinal"] == 0,
+            "first-match anchor metadata differs",
+        )
+        _require(
             all(
                 left == 1.0 - right
                 for left, right in zip(
@@ -567,6 +581,8 @@ def verify_smoke(
             and row["replicates"] == 2
             and row["generation_replay_hashes_equal"] is True
             and row["anchor_indices_equal"] is True
+            and row["answer_match_count"] >= 1
+            and row["selected_match_ordinal"] == 0
             and row["sanitized_scalars_equal"] is True
             and row["replay_next_token_closure"] is True
             and row["final_norm_pre_hook_count_each"] == 1
@@ -583,7 +599,7 @@ def verify_smoke(
     barrier = manifest["information_barrier"]
     _require(not any(bool(value) for value in barrier.values()), "information barrier differs")
     receipt = {
-        "schema_version": "loopscope.phase6.gate-c-verifier-receipt.v1",
+        "schema_version": "loopscope.phase6.gate-c-verifier-receipt.v2",
         "gate": "C",
         "executor_thread_id": EXECUTOR_THREAD_ID,
         "planning_thread_id": PLANNING_THREAD_ID,
@@ -596,7 +612,7 @@ def verify_smoke(
         "duplicate_file_sha256": file_sha256(duplicate_path),
         "identity_count": 4,
         "replicates_per_identity": 2,
-        "unique_anchor_count": 8,
+        "selected_anchor_count": 8,
         "replay_next_token_closure_count": 8,
         "raw_boundary_count_each": 37,
         "angular_transition_count_each": 36,

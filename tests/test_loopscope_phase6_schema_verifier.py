@@ -43,6 +43,20 @@ class Phase6SchemaVerifierTests(unittest.TestCase):
         invalid["anchor"]["regex_pattern"] = r"Answer is ([A-J])"
         with self.assertRaises(Phase6ContractError):
             validate_card(invalid)
+        valid = load_json(CARD)
+        self.assertEqual(
+            valid["anchor"]["match_rule"],
+            "collect_all_capture_spans_select_ordinal_0",
+        )
+        self.assertTrue(valid["anchor"]["outcome_take_first_used_for_anchor"])
+        trajectory = load_json(TRAJECTORY_SCHEMA)
+        self.assertEqual(
+            trajectory["properties"]["selected_match_ordinal"], {"const": 0}
+        )
+        self.assertEqual(
+            trajectory["properties"]["answer_match_count"],
+            {"minimum": 1, "type": "integer"},
+        )
 
     def test_forbidden_payload_fields_fail_closed_recursively(self):
         for key in (

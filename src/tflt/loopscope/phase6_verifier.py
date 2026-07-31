@@ -50,6 +50,11 @@ def _independent_card_checks(card: Mapping[str, Any]) -> None:
         "extractor regex",
     )
     _check(re.compile(anchor["regex_pattern"]).flags & re.IGNORECASE == 0, "regex case")
+    _check(
+        anchor["match_rule"] == "collect_all_capture_spans_select_ordinal_0",
+        "extractor match rule",
+    )
+    _check(anchor["outcome_take_first_used_for_anchor"] is True, "take_first anchor")
 
     width_starts = card["candidate_domain"]["width_starts"]
     expected = {

@@ -65,18 +65,26 @@ class Phase6AnswerSpanTests(unittest.TestCase):
         span = answer_span_extractor(text)
         self.assertEqual(text[slice(*span.char_span)], "C")
         self.assertEqual(text.encode("utf-8")[slice(*span.byte_span)], b"C")
+        self.assertEqual(span.answer_match_count, 1)
+        self.assertEqual(span.selected_match_ordinal, 0)
 
     def test_missing_answer_fails_closed(self):
         with self.assertRaises(AnswerSpanError):
             answer_span_extractor("The result might be C.")
 
-    def test_ambiguous_distinct_answers_fail_closed(self):
-        with self.assertRaises(AnswerSpanError):
-            answer_span_extractor("answer is A; correction: answer is B")
+    def test_corrected_multiple_matches_selects_first(self):
+        text = "answer is A; correction: answer is B"
+        span = answer_span_extractor(text)
+        self.assertEqual(span.char_span, (10, 11))
+        self.assertEqual(span.answer_match_count, 2)
+        self.assertEqual(span.selected_match_ordinal, 0)
 
-    def test_repeated_identical_cue_is_still_ambiguous(self):
-        with self.assertRaises(AnswerSpanError):
-            answer_span_extractor("answer is D; therefore answer is D")
+    def test_repeated_identical_matches_selects_first(self):
+        text = "answer is D; therefore answer is D"
+        span = answer_span_extractor(text)
+        self.assertEqual(span.char_span, (10, 11))
+        self.assertEqual(span.answer_match_count, 2)
+        self.assertEqual(span.selected_match_ordinal, 0)
 
     def test_regex_is_case_sensitive(self):
         with self.assertRaises(AnswerSpanError):
@@ -142,6 +150,8 @@ class Phase6GeneratedAlignmentTests(unittest.TestCase):
             char_end=real_span.char_end,
             byte_start=real_span.byte_start - 1,
             byte_end=real_span.byte_end,
+            answer_match_count=real_span.answer_match_count,
+            selected_match_ordinal=real_span.selected_match_ordinal,
         )
         with self.assertRaisesRegex(
             GeneratedTextAlignmentError, "frozen regex capture"
@@ -167,6 +177,26 @@ class Phase6GeneratedAlignmentTests(unittest.TestCase):
         alignment = generated_id_text_aligner([1, 2, 3, 4], tokenizer, text)
         self.assertEqual(alignment.answer_first_token_index, 3)
         self.assertEqual(alignment.probe_token_index, 2)
+
+    def test_multiple_match_alignment_and_replay_use_ordinal_zero(self):
+        tokenizer = FakeTokenizer(
+            {
+                1: "reason ",
+                2: "answer is ",
+                3: "A",
+                4: "; correction: answer is ",
+                5: "B",
+            }
+        )
+        generated_ids = [1, 2, 3, 4, 5]
+        text = tokenizer.decode(generated_ids)
+        alignment = generated_id_text_aligner(generated_ids, tokenizer, text)
+        self.assertEqual(alignment.answer_span.answer_match_count, 2)
+        self.assertEqual(alignment.answer_span.selected_match_ordinal, 0)
+        self.assertEqual(alignment.answer_first_token_index, 2)
+        self.assertEqual(alignment.probe_token_index, 1)
+        replay = replay_prefix_ids([10, 11], generated_ids, 2)
+        self.assertEqual(replay, (10, 11, 1, 2))
 
 
 class Phase6ReplayPrefixTests(unittest.TestCase):

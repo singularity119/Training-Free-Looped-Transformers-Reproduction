@@ -55,6 +55,8 @@ def _trajectory_records():
                 "anchor_token_index": 4,
                 "answer_span_start_offset": 20,
                 "answer_span_end_offset": 21,
+                "answer_match_count": 1,
+                "selected_match_ordinal": 0,
                 "answer_first_token_index": 5,
                 "answer_span_extractor_sha256": "c" * 64,
                 "generated_id_text_aligner_sha256": "d" * 64,

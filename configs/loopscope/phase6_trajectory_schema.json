@@ -1,5 +1,5 @@
 {
-  "$id": "loopscope.phase6.pre-answer-trajectory.v1",
+  "$id": "loopscope.phase6.pre-answer-trajectory.v2",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -8,6 +8,7 @@
     "adjacent_angular_distance": {"items": {"maximum": 1.0, "minimum": 0.0, "type": "number"}, "maxItems": 36, "minItems": 36, "type": "array"},
     "anchor_token_index": {},
     "answer_first_token_index": {},
+    "answer_match_count": {"minimum": 1, "type": "integer"},
     "answer_span_end_offset": {},
     "answer_span_extractor_sha256": {},
     "answer_span_start_offset": {},
@@ -44,9 +45,10 @@
     },
     "replay_count": {"const": 1},
     "replay_length": {},
-    "schema_version": {"const": "loopscope.phase6.pre-answer-trajectory.v1"},
+    "schema_version": {"const": "loopscope.phase6.pre-answer-trajectory.v2"},
+    "selected_match_ordinal": {"const": 0},
     "split": {"const": "test"}
   },
-  "required": ["D", "H", "adjacent_angular_distance", "anchor_token_index", "answer_first_token_index", "answer_span_end_offset", "answer_span_extractor_sha256", "answer_span_start_offset", "canonical_identity", "category", "dataset_repo", "dataset_revision", "generated_completion_sha256", "generated_id_text_aligner_sha256", "generation_count", "generation_length", "hidden_cosine_distance_to_final", "hidden_cosine_to_final", "hidden_rms_l2_to_final", "loop_insertions", "model_repo", "model_revision", "prompt_sha256", "provenance", "replay_count", "replay_length", "schema_version", "split"],
+  "required": ["D", "H", "adjacent_angular_distance", "anchor_token_index", "answer_first_token_index", "answer_match_count", "answer_span_end_offset", "answer_span_extractor_sha256", "answer_span_start_offset", "canonical_identity", "category", "dataset_repo", "dataset_revision", "generated_completion_sha256", "generated_id_text_aligner_sha256", "generation_count", "generation_length", "hidden_cosine_distance_to_final", "hidden_cosine_to_final", "hidden_rms_l2_to_final", "loop_insertions", "model_repo", "model_revision", "prompt_sha256", "provenance", "replay_count", "replay_length", "schema_version", "selected_match_ordinal", "split"],
   "type": "object"
 }
