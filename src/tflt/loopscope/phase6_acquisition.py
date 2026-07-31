@@ -15,7 +15,9 @@ from typing import Any, Dict, Mapping, Sequence, Tuple
 import numpy as np
 
 from tflt.loopscope.phase6_schema import (
+    ELIGIBILITY_SCHEMA_VERSION,
     Phase6ContractError,
+    validate_eligibility_record,
     validate_trajectory_record,
 )
 
@@ -440,6 +442,39 @@ def build_sanitized_trajectory_record(
     return record
 
 
+def build_anchor_eligibility_record(
+    *,
+    canonical_identity: str,
+    category: str,
+    eligibility_state: str,
+    sealed_payload_sha256: str,
+    sealed_membership_ref: str,
+    producer_version: str,
+    card_sha256: str,
+    renderer_manifest_sha256: str,
+    answer_span_extractor_sha256: str,
+) -> Dict[str, Any]:
+    """Build one minimal mask row for either anchor eligibility state."""
+
+    record: Dict[str, Any] = {
+        "schema_version": ELIGIBILITY_SCHEMA_VERSION,
+        "canonical_identity": str(canonical_identity),
+        "category": str(category),
+        "eligibility_state": str(eligibility_state),
+        "generation_count": 1,
+        "sealed_payload_sha256": str(sealed_payload_sha256),
+        "sealed_membership_ref": str(sealed_membership_ref),
+        "provenance": {
+            "producer_version": str(producer_version),
+            "card_sha256": str(card_sha256),
+            "renderer_manifest_sha256": str(renderer_manifest_sha256),
+            "answer_span_extractor_sha256": str(answer_span_extractor_sha256),
+        },
+    }
+    validate_eligibility_record(record)
+    return record
+
+
 __all__ = [
     "BOUNDARY_COUNT",
     "FINAL_TOLERANCE",
@@ -448,6 +483,7 @@ __all__ = [
     "TOP_LEVEL_KEYS",
     "TRANSITION_COUNT",
     "build_sanitized_trajectory_record",
+    "build_anchor_eligibility_record",
     "exact_generation_replay_id_closure",
     "full_vocabulary_entropy_and_kl",
     "hidden_diagnostics",

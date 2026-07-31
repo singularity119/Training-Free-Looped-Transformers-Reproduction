@@ -21,6 +21,9 @@ DEFAULT_CARD = REPO_ROOT / "configs/loopscope/phase6_pre_answer_v2_card.json"
 DEFAULT_TRAJECTORY_SCHEMA = (
     REPO_ROOT / "configs/loopscope/phase6_trajectory_schema.json"
 )
+DEFAULT_ELIGIBILITY_SCHEMA = (
+    REPO_ROOT / "configs/loopscope/phase6_eligibility_schema.json"
+)
 DEFAULT_SELECTOR_SCHEMA = (
     REPO_ROOT / "configs/loopscope/phase6_selector_freeze_schema.json"
 )
@@ -34,6 +37,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--trajectory-schema", type=Path, default=DEFAULT_TRAJECTORY_SCHEMA
     )
+    parser.add_argument(
+        "--eligibility-schema", type=Path, default=DEFAULT_ELIGIBILITY_SCHEMA
+    )
     parser.add_argument("--selector-schema", type=Path, default=DEFAULT_SELECTOR_SCHEMA)
     parser.add_argument(
         "--self-test",
@@ -46,7 +52,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = build_parser().parse_args()
     verifier = run_self_test if args.self_test else verify_gate_a_contracts
-    result = verifier(args.card, args.trajectory_schema, args.selector_schema)
+    result = verifier(
+        args.card,
+        args.trajectory_schema,
+        args.eligibility_schema,
+        args.selector_schema,
+    )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 

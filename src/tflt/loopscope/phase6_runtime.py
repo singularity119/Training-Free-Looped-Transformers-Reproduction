@@ -12,16 +12,19 @@ import inspect
 import json
 import math
 from dataclasses import dataclass
-from typing import Any, Dict, Mapping, Sequence, Tuple
+from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
 
 from tflt.loopscope.phase4_runtime import tokenization_metadata
-from tflt.loopscope.phase6_acquisition import build_sanitized_trajectory_record
+from tflt.loopscope.phase6_acquisition import (
+    build_anchor_eligibility_record,
+    build_sanitized_trajectory_record,
+)
 from tflt.loopscope.phase6_anchor import (
+    ANCHOR_ELIGIBLE,
     ANSWER_SPAN_EXTRACTOR_SHA256,
     DEFAULT_DECODE_KWARGS,
     GENERATED_ID_TEXT_ALIGNER_SHA256,
-    answer_span_extractor,
-    generated_id_text_aligner,
+    classify_anchor_eligibility,
     replay_prefix_ids,
 )
 
@@ -34,7 +37,7 @@ LAYER_COUNT = 36
 HIDDEN_SIZE = 2560
 GENERATION_MAX_NEW_TOKENS = 2048
 GENERATION_STOP_STRING = "Question:"
-PRODUCER_VERSION = "loopscope.phase6.gate-c-runtime.v4"
+PRODUCER_VERSION = "loopscope.phase6.gate-d2-runtime.v5"
 FINAL_NORM_RTOL = 1e-3
 FINAL_NORM_ATOL = 1e-3
 LOOP_WRAPPER_CLASS_NAMES = frozenset(
@@ -419,7 +422,12 @@ def _acquire_two_pass_record(
     identity: Mapping[str, Any],
     gate_b_manifest_sha256: str,
     card_sha256: str,
-) -> Tuple[Dict[str, Any], Dict[str, Any], bytes]:
+) -> Tuple[
+    Optional[Dict[str, Any]],
+    Dict[str, Any],
+    Dict[str, Any],
+    bytes,
+]:
     """Acquire one exact generation/replay replicate and return opaque completion bytes."""
 
     expected_prompt_hash = str(identity["rendered_prefix_sha256"])
@@ -442,10 +450,41 @@ def _acquire_two_pass_record(
     generated_text = runtime.tokenizer.decode(
         list(generated_ids), **dict(DEFAULT_DECODE_KWARGS)
     )
-    span = answer_span_extractor(generated_text)
-    alignment = generated_id_text_aligner(
-        generated_ids, runtime.tokenizer, generated_text, span
+    opaque_payload = generated_text.encode("utf-8")
+    payload_sha256 = text_sha256(generated_text)
+    ordinal = int(identity["ordinal"])
+    sealed_membership_ref = "sealed_baseline/%06d.bin" % ordinal
+    decision = classify_anchor_eligibility(
+        generated_ids,
+        runtime.tokenizer,
+        generated_text,
     )
+    eligibility_record = build_anchor_eligibility_record(
+        canonical_identity=str(identity["canonical_identity"]),
+        category=str(identity["category"]),
+        eligibility_state=decision.state,
+        sealed_payload_sha256=payload_sha256,
+        sealed_membership_ref=sealed_membership_ref,
+        producer_version=PRODUCER_VERSION,
+        card_sha256=card_sha256,
+        renderer_manifest_sha256=gate_b_manifest_sha256,
+        answer_span_extractor_sha256=ANSWER_SPAN_EXTRACTOR_SHA256,
+    )
+    if decision.state != ANCHOR_ELIGIBLE:
+        evidence = {
+            "canonical_identity": str(identity["canonical_identity"]),
+            "eligibility_state": decision.state,
+            "generation_count": 1,
+            "replay_count": 0,
+            "trajectory_count": 0,
+            "loop_insertions": 0,
+            "sealed_payload_sha256": payload_sha256,
+        }
+        return None, eligibility_record, evidence, opaque_payload
+
+    span = decision.answer_span
+    alignment = decision.alignment
+    _require(span is not None and alignment is not None, "eligible anchor resolution is absent")
     replay_ids = replay_prefix_ids(
         prompt_ids, generated_ids, alignment.answer_first_token_index
     )
@@ -471,7 +510,7 @@ def _acquire_two_pass_record(
         canonical_identity=str(identity["canonical_identity"]),
         category=str(identity["category"]),
         prompt_sha256=expected_prompt_hash,
-        generated_completion_sha256=text_sha256(generated_text),
+        generated_completion_sha256=payload_sha256,
         generation_length=len(generated_ids),
         replay_length=len(replay_ids),
         anchor_token_index=alignment.probe_token_index,
@@ -518,12 +557,14 @@ def _acquire_two_pass_record(
         "generation_count": 1,
         "replay_count": 1,
         "loop_insertions": 0,
+        "eligibility_state": ANCHOR_ELIGIBLE,
+        "trajectory_count": 1,
         "anchor_resolved": True,
         "unique_token_mapping": True,
         "record_semantic_sha256": duplicate_result_sha256(record),
         **replay_evidence,
     }
-    return record, evidence, generated_text.encode("utf-8")
+    return record, eligibility_record, evidence, opaque_payload
 
 
 def acquire_two_pass_record(
@@ -536,13 +577,14 @@ def acquire_two_pass_record(
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Acquire one exact generation/replay replicate without exposing raw payloads."""
 
-    record, evidence, _opaque_payload = _acquire_two_pass_record(
+    record, _eligibility, evidence, _opaque_payload = _acquire_two_pass_record(
         runtime,
         prefix=prefix,
         identity=identity,
         gate_b_manifest_sha256=gate_b_manifest_sha256,
         card_sha256=card_sha256,
     )
+    _require(record is not None, "Gate C smoke identity is ANCHOR_NOT_EXPRESSED")
     return record, evidence
 
 
@@ -553,7 +595,12 @@ def acquire_two_pass_record_and_payload(
     identity: Mapping[str, Any],
     gate_b_manifest_sha256: str,
     card_sha256: str,
-) -> Tuple[Dict[str, Any], Dict[str, Any], bytes]:
+) -> Tuple[
+    Optional[Dict[str, Any]],
+    Dict[str, Any],
+    Dict[str, Any],
+    bytes,
+]:
     """Gate D producer path returning completion bytes for opaque sealed storage."""
 
     return _acquire_two_pass_record(

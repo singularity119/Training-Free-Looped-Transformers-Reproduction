@@ -1,10 +1,10 @@
 """Pure-Python Phase 6 final-answer anchor resolution.
 
 The extractor mirrors lm-eval's ``custom-extract -> take_first`` path: it
-enumerates every capture-group span in generated-text order, fails closed when
-none exist, and selects ordinal zero.  The aligner uses only generated token
-IDs, the tokenizer's actual prefix decodes, and the generated text supplied by
-the generation path.
+enumerates every capture-group span in generated-text order and selects ordinal
+zero.  Gate D-2 classifies zero matches and a selected answer carried by the
+first generated token as ``ANCHOR_NOT_EXPRESSED``.  All other alignment
+failures remain fail-closed engineering errors.
 """
 
 from __future__ import annotations
@@ -33,8 +33,11 @@ ANSWER_REGEX_PATTERN = r"answer is \(?([ABCDEFGHIJ])\)?"
 ANSWER_REGEX = re.compile(ANSWER_REGEX_PATTERN)
 
 ANSWER_SPAN_EXTRACTOR_VERSION = "loopscope-phase6-answer-span-v2"
-GENERATED_ID_TEXT_ALIGNER_VERSION = "loopscope-phase6-generated-id-aligner-v1"
+GENERATED_ID_TEXT_ALIGNER_VERSION = "loopscope-phase6-generated-id-aligner-v2"
 REPLAY_PREFIX_VERSION = "loopscope-phase6-replay-prefix-v1"
+
+ANCHOR_ELIGIBLE = "ANCHOR_ELIGIBLE"
+ANCHOR_NOT_EXPRESSED = "ANCHOR_NOT_EXPRESSED"
 
 # These kwargs are part of the aligner's identity.  Callers may pass a
 # different frozen mapping explicitly, but must then retain that mapping with
@@ -76,7 +79,9 @@ GENERATED_ID_TEXT_ALIGNER_SHA256 = _identity_hash(
     boundary_policy="half_open_boundary_belongs_right",
     decode_kwargs=dict(DEFAULT_DECODE_KWARGS),
     full_text_round_trip="exact",
-    special_token_content="forbidden",
+    token_mapping="unique_stable_adjacent_prefix_pair",
+    unstable_intermediate_prefixes="allowed_outside_selected_token_boundary",
+    special_token_policy="carrier_forbidden_others_allowed_if_full_closure",
 )
 REPLAY_PREFIX_SHA256 = _identity_hash(
     "replay_prefix",
@@ -112,6 +117,10 @@ class AnswerSpanError(AnchorResolutionError):
 
 class GeneratedTextAlignmentError(AnchorResolutionError):
     """Generated IDs and text could not be aligned exactly."""
+
+
+class NoPrecedingGeneratedTokenError(AnchorResolutionError):
+    """The selected answer is carried by the first generated token."""
 
 
 class ReplayPrefixError(AnchorResolutionError):
@@ -163,6 +172,15 @@ class GeneratedAnswerAlignment:
     token_byte_spans: Tuple[TokenByteSpan, ...]
     extractor_sha256: str = ANSWER_SPAN_EXTRACTOR_SHA256
     aligner_sha256: str = GENERATED_ID_TEXT_ALIGNER_SHA256
+
+
+@dataclass(frozen=True)
+class AnchorEligibilityDecision:
+    """Outcome-blind Gate D-2 anchor eligibility classification."""
+
+    state: str
+    answer_span: Optional[AnswerSpan]
+    alignment: Optional[GeneratedAnswerAlignment]
 
 
 def _require_text(value: Any, name: str) -> str:
@@ -247,6 +265,15 @@ def _token_byte_spans(
     generated_text: str,
     decode_kwargs: Mapping[str, Any],
 ) -> Tuple[TokenByteSpan, ...]:
+    """Return exact spans whose adjacent prefix decodes are both stable.
+
+    Qwen's tokenizer does not guarantee that every intermediate prefix decode
+    is a literal prefix of the final decode.  Such transient rewrites are
+    irrelevant when they occur away from the selected answer token.  We still
+    require exact full-ID/text closure and require the answer start to fall in
+    exactly one token interval proven by two adjacent stable prefix decodes.
+    """
+
     full_decoded = _decode(tokenizer, generated_ids, decode_kwargs)
     if full_decoded != generated_text:
         raise GeneratedTextAlignmentError(
@@ -254,35 +281,30 @@ def _token_byte_spans(
         )
 
     special_ids = _special_ids(tokenizer)
-    prefixes = []
+    stable_prefix_byte_ends = {}
     for stop in range(len(generated_ids) + 1):
         prefix = _decode(tokenizer, generated_ids[:stop], decode_kwargs)
-        if not generated_text.startswith(prefix):
-            raise GeneratedTextAlignmentError(
-                "decoded prefix %d is not an exact generated_text prefix" % stop
-            )
-        prefixes.append(prefix)
+        if generated_text.startswith(prefix):
+            stable_prefix_byte_ends[stop] = len(prefix.encode("utf-8"))
 
-    if prefixes[0] != "" or prefixes[-1] != generated_text:
+    if stable_prefix_byte_ends.get(0) != 0 or stable_prefix_byte_ends.get(
+        len(generated_ids)
+    ) != len(generated_text.encode("utf-8")):
         raise GeneratedTextAlignmentError(
-            "decoded prefixes do not cover generated_text exactly"
+            "stable decoded prefixes do not close empty/full generated text"
         )
 
     spans = []
-    previous_end = 0
     for index, token_id in enumerate(generated_ids):
-        byte_start = len(prefixes[index].encode("utf-8"))
-        byte_end = len(prefixes[index + 1].encode("utf-8"))
-        if byte_start != previous_end or byte_end < byte_start:
+        if index not in stable_prefix_byte_ends or index + 1 not in stable_prefix_byte_ends:
+            continue
+        byte_start = stable_prefix_byte_ends[index]
+        byte_end = stable_prefix_byte_ends[index + 1]
+        if byte_end < byte_start:
             raise GeneratedTextAlignmentError(
-                "decoded-prefix UTF-8 byte spans are not cumulative"
+                "adjacent stable decoded-prefix byte offsets are not monotone"
             )
         is_special = int(token_id) in special_ids
-        if is_special and byte_end != byte_start:
-            raise GeneratedTextAlignmentError(
-                "special token at generated index %d contributes visible content"
-                % index
-            )
         spans.append(
             TokenByteSpan(
                 generated_index=index,
@@ -291,13 +313,30 @@ def _token_byte_spans(
                 is_special=is_special,
             )
         )
-        previous_end = byte_end
-
-    if previous_end != len(generated_text.encode("utf-8")):
-        raise GeneratedTextAlignmentError(
-            "decoded-prefix spans do not cover generated_text UTF-8 bytes"
-        )
     return tuple(spans)
+
+
+def validate_generated_text_closure(
+    generated_ids: Sequence[int],
+    tokenizer: Any,
+    generated_text: str,
+    *,
+    decode_kwargs: Optional[Mapping[str, Any]] = None,
+) -> Tuple[int, ...]:
+    """Prove exact full generated-ID/text closure without inspecting payload."""
+
+    text = _require_text(generated_text, "generated_text")
+    ids = _token_id_tuple(generated_ids, "generated_ids")
+    if not ids:
+        raise GeneratedTextAlignmentError("generated_ids must not be empty")
+    kwargs = DEFAULT_DECODE_KWARGS if decode_kwargs is None else decode_kwargs
+    if not isinstance(kwargs, Mapping):
+        raise TypeError("decode_kwargs must be a mapping")
+    if _decode(tokenizer, ids, kwargs) != text:
+        raise GeneratedTextAlignmentError(
+            "full generated-ID decode does not exactly round-trip generated_text"
+        )
+    return ids
 
 
 def generated_id_text_aligner(
@@ -316,9 +355,12 @@ def generated_id_text_aligner(
     """
 
     text = _require_text(generated_text, "generated_text")
-    ids = _token_id_tuple(generated_ids, "generated_ids")
-    if not ids:
-        raise GeneratedTextAlignmentError("generated_ids must not be empty")
+    ids = validate_generated_text_closure(
+        generated_ids,
+        tokenizer,
+        text,
+        decode_kwargs=decode_kwargs,
+    )
     extracted_span = answer_span_extractor(text)
     span = extracted_span if answer_span is None else answer_span
     if not isinstance(span, AnswerSpan):
@@ -356,13 +398,13 @@ def generated_id_text_aligner(
         )
 
     carrier = carriers[0]
+    if carrier.generated_index == 0:
+        raise NoPrecedingGeneratedTokenError(
+            "answer token has no preceding generated probe token"
+        )
     if carrier.is_special:
         raise GeneratedTextAlignmentError(
             "answer content cannot be carried by a special token"
-        )
-    if carrier.generated_index == 0:
-        raise GeneratedTextAlignmentError(
-            "answer token has no preceding generated probe token"
         )
 
     return GeneratedAnswerAlignment(
@@ -371,6 +413,54 @@ def generated_id_text_aligner(
         probe_token_index=carrier.generated_index - 1,
         answer_token_byte_span=carrier.byte_span,
         token_byte_spans=token_spans,
+    )
+
+
+def classify_anchor_eligibility(
+    generated_ids: Sequence[int],
+    tokenizer: Any,
+    generated_text: str,
+    *,
+    decode_kwargs: Optional[Mapping[str, Any]] = None,
+) -> AnchorEligibilityDecision:
+    """Classify only the two user-authorized not-expressed conditions.
+
+    A present match with any other alignment failure propagates as an
+    engineering error and therefore cannot be absorbed by the mask.
+    """
+
+    validate_generated_text_closure(
+        generated_ids,
+        tokenizer,
+        generated_text,
+        decode_kwargs=decode_kwargs,
+    )
+    try:
+        span = answer_span_extractor(generated_text)
+    except AnswerSpanError:
+        return AnchorEligibilityDecision(
+            state=ANCHOR_NOT_EXPRESSED,
+            answer_span=None,
+            alignment=None,
+        )
+    try:
+        alignment = generated_id_text_aligner(
+            generated_ids,
+            tokenizer,
+            generated_text,
+            span,
+            decode_kwargs=decode_kwargs,
+        )
+    except NoPrecedingGeneratedTokenError:
+        return AnchorEligibilityDecision(
+            state=ANCHOR_NOT_EXPRESSED,
+            answer_span=span,
+            alignment=None,
+        )
+    return AnchorEligibilityDecision(
+        state=ANCHOR_ELIGIBLE,
+        answer_span=span,
+        alignment=alignment,
     )
 
 
@@ -466,6 +556,8 @@ def verify_replay_prefix(
 
 
 __all__ = [
+    "ANCHOR_ELIGIBLE",
+    "ANCHOR_NOT_EXPRESSED",
     "ANSWER_REGEX_PATTERN",
     "ANSWER_SPAN_EXTRACTOR_SHA256",
     "ANSWER_SPAN_EXTRACTOR_VERSION",
@@ -480,17 +572,21 @@ __all__ = [
     "REPLAY_PREFIX_VERSION",
     "SOURCE_BUNDLE_IDENTITY",
     "AnchorResolutionError",
+    "AnchorEligibilityDecision",
     "AnswerSpan",
     "AnswerSpanError",
     "GeneratedAnswerAlignment",
     "GeneratedTextAlignmentError",
+    "NoPrecedingGeneratedTokenError",
     "ReplayPrefixError",
     "TokenByteSpan",
     "align_generated_ids_to_answer_span",
     "answer_span_extractor",
     "build_replay_prefix",
     "extract_unique_answer_span",
+    "classify_anchor_eligibility",
     "generated_id_text_aligner",
     "replay_prefix_ids",
     "verify_replay_prefix",
+    "validate_generated_text_closure",
 ]

@@ -10,15 +10,20 @@ Phase 6 keeps the Phase 4 model, task, renderer, generation, and TFLT configurat
 trajectory probe from the last rendered prompt token to the final generated token immediately
 before the first token of evaluator-selected answer content.
 
-The experiment is a two-pass, dataset-level offline selector:
+The experiment is an eligibility-aware two-pass, dataset-level offline selector:
 
 1. Run deterministic native no-loop CoT generation.
-2. Enumerate final-answer matches, select ordinal zero, and freeze the preceding token as the
-   probe anchor.
-3. Replay the prompt plus generated tokens strictly before the answer token with
+2. Enumerate final-answer matches, select ordinal zero, map its first content character to the
+   generated token that carries it, and classify canonical anchor eligibility.
+3. Freeze one canonical-order eligibility mask and its category coverage receipt across all
+   12,032 identities before selector execution.
+4. For eligible identities only, replay the prompt plus generated tokens strictly before the
+   answer token with
    `use_cache=false`, `output_hidden_states=true`, and zero loop insertions.
-4. Aggregate the 12,032 MMLU-Pro test identities and freeze one global V2 selector decision.
-5. Run independent loop full decoding only after the selector and panel are byte-frozen.
+5. Aggregate the near-complete eligible trajectory subset and freeze one global V2 selector
+   decision together with the frozen coverage receipt.
+6. Run independent full-population loop decoding only after the selector and panel are
+   byte-frozen. Every canonical identity remains in sealed baseline and outcome membership.
 
 It is not a same-pass online or per-sample dynamic selector.
 
@@ -27,12 +32,26 @@ The anchor extractor is span-preserving. The pinned lm-eval 0.4.11 source closur
 `_default_template_yaml@356e937a...` defines `custom-extract` as the case-sensitive regex
 `answer is \(?([ABCDEFGHIJ])\)?` followed by the outcome filter `take_first`. Phase 6 uses that
 literal regex and capture group 1, enumerates every match in generated-text order, and selects
-ordinal zero. Zero matches fail closed; multiple matches are legal and never cause identity
-dropping or replacement. A separately versioned aligner maps the selected span start to the
-generated token carrying its first content character. A start exactly on a half-open token boundary
-belongs to the token on the right. Regex and alignment rules are frozen on synthetic fixtures
-before any real model completion is observed. Missing or unalignable selected spans are engineering
-BLOCKs; they are never repaired post hoc.
+ordinal zero. Multiple matches are legal. Zero exact matches, or a match whose answer character is
+carried by the first generated token so that no preceding generated token exists, is
+`ANCHOR_NOT_EXPRESSED`: the identity remains in the canonical and sealed population but has no
+replay and no trajectory. No alternate parser, case folding, cue broadening, EOS/prompt/final-token
+fallback, identity replacement, or fabricated anchor is allowed.
+
+A separately versioned aligner proves that the frozen generated IDs decode exactly to the frozen
+generated text and uniquely maps the selected span start to its generated token. It does not assume
+that every intermediate prefix decode is a string prefix: an unrelated unstable prefix is legal
+when the adjacent decoded boundaries at the selected character prove a unique token carrier. A
+start exactly on a half-open token boundary belongs to the token on the right. A special token may
+occur before or after the selected answer when it follows the actual frozen decode path and full
+closure still holds; the token carrying answer content itself cannot be special. In particular, a
+later special token does not invalidate an already resolved answer unless it breaks full
+generated-ID/text closure. If an exact match exists, any alignment, replay, or runtime failure is an
+engineering BLOCK and cannot be converted into an eligibility exclusion.
+
+The frozen mask must satisfy `eligible_count / 12032 >= 0.995` and coverage in every one of the 14
+frozen categories `>= 0.98`; otherwise the terminal state is
+`BLOCK_ANCHOR_COVERAGE_BELOW_FLOOR`.
 
 ## Frozen cell
 
@@ -62,9 +81,17 @@ values in the control file are not a substitute for Gate B evidence.
 
 At the pre-answer anchor, extract raw residual boundaries `B_0...B_36`.
 
-The sanitized trajectory record keeps only match count, selected-match ordinal zero, selected span
-offsets, token indices, and extractor/aligner hashes. It must not retain the answer content, an
-answer-span hash, a parsed prediction, gold, correctness, or any outcome field.
+Each canonical identity has one minimal eligibility row containing only canonical identity/category,
+eligibility state, generation count, sealed-payload membership/hash reference, and frozen
+provenance. In particular, an `ANCHOR_NOT_EXPRESSED` row contains no completion text, answer
+letter/content, token IDs, span values, target/gold/label, correctness/outcome, logits,
+probabilities, or hidden tensors.
+
+Eligible identities additionally have one closed sanitized trajectory record. It keeps only match
+count, selected-match ordinal zero, selected span offsets, token indices, extractor/aligner hashes,
+and the frozen trajectory scalars. It must not retain answer content, an answer-span hash, a parsed
+prediction, gold, correctness, or any outcome field. Human-facing claims must describe a
+near-complete eligible trajectory subset, never exact-12,032 trajectory coverage.
 
 Selector inputs:
 
@@ -123,7 +150,8 @@ decision, absolute selected gain, ranking enrichment, and known-outcome status s
 | A | Local card, schema, anchor, producer, V2 analyzer, and focused tests |
 | B | Remote CPU/import and provenance closure |
 | C | Four-identity deterministic two-pass GPU smoke |
-| D | Full test-12032 no-loop generation and trajectory acquisition |
+| D | Historical exact-population trajectory attempt; invalid outputs are diagnostic only |
+| D-2 | Eligibility-aware full-population generation, mask freeze, and eligible trajectory recovery |
 | E | CPU-only V2 selector/panel freeze and diagnostic reporting |
 | F | Frozen loop-panel full-decode acquisition with outcomes sealed |
 | G | One-time unseal, paired analysis, final report, and phase audit |
@@ -140,6 +168,7 @@ skeleton: it validates and prints the frozen two-pass plan but cannot load a mod
 
 ```text
 configs/loopscope/phase6_pre_answer_v2_card.json
+configs/loopscope/phase6_eligibility_schema.json
 configs/loopscope/phase6_trajectory_schema.json
 configs/loopscope/phase6_selector_freeze_schema.json
 src/tflt/loopscope/phase6_anchor.py

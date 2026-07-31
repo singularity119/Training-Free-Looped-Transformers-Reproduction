@@ -10,6 +10,7 @@ from typing import Any, Dict, Mapping
 from tflt.loopscope import phase6_anchor
 from tflt.loopscope.phase6_schema import (
     Phase6ContractError,
+    eligibility_json_schema,
     load_json,
     selector_freeze_json_schema,
     trajectory_json_schema,
@@ -55,6 +56,16 @@ def _independent_card_checks(card: Mapping[str, Any]) -> None:
         "extractor match rule",
     )
     _check(anchor["outcome_take_first_used_for_anchor"] is True, "take_first anchor")
+    eligibility = card["anchor_eligibility"]
+    _check(eligibility["population"] == 12032, "eligibility population")
+    _check(eligibility["category_count"] == 14, "eligibility categories")
+    _check(eligibility["overall_coverage_floor"] == 0.995, "overall floor")
+    _check(eligibility["per_category_coverage_floor"] == 0.98, "category floor")
+    _check(
+        eligibility["match_present_failure_policy"]
+        == "engineering_error_fail_closed_not_masked",
+        "match-present failure policy",
+    )
 
     width_starts = card["candidate_domain"]["width_starts"]
     expected = {
@@ -84,6 +95,7 @@ def _independent_card_checks(card: Mapping[str, Any]) -> None:
 def verify_gate_a_contracts(
     card_path: Path,
     trajectory_schema_path: Path,
+    eligibility_schema_path: Path,
     selector_schema_path: Path,
 ) -> Dict[str, Any]:
     """Validate the card and both checked-in closed-world schemas."""
@@ -91,9 +103,11 @@ def verify_gate_a_contracts(
     try:
         card = load_json(card_path)
         trajectory_schema = load_json(trajectory_schema_path)
+        eligibility_schema = load_json(eligibility_schema_path)
         selector_schema = load_json(selector_schema_path)
         validate_card(card)
         validate_schema_document(trajectory_schema, trajectory_json_schema())
+        validate_schema_document(eligibility_schema, eligibility_json_schema())
         validate_schema_document(selector_schema, selector_freeze_json_schema())
         _independent_card_checks(card)
     except (OSError, KeyError, TypeError, ValueError, Phase6ContractError) as exc:
@@ -103,6 +117,7 @@ def verify_gate_a_contracts(
         "claim_boundary": card["claim_boundary"],
         "candidate_count": 42,
         "trajectory_schema_closed": True,
+        "eligibility_schema_closed": True,
         "selector_schema_closed": True,
         "model_or_data_loaded": False,
         "selector_executed": False,
@@ -113,12 +128,16 @@ def verify_gate_a_contracts(
 def run_self_test(
     card_path: Path,
     trajectory_schema_path: Path,
+    eligibility_schema_path: Path,
     selector_schema_path: Path,
 ) -> Dict[str, Any]:
     """Exercise one valid and several decision-critical invalid fixtures."""
 
     result = verify_gate_a_contracts(
-        card_path, trajectory_schema_path, selector_schema_path
+        card_path,
+        trajectory_schema_path,
+        eligibility_schema_path,
+        selector_schema_path,
     )
     card = load_json(card_path)
     rejected = []

@@ -6,8 +6,12 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest import mock
 
 import numpy as np
+
+import tflt.loopscope.phase6_runtime as phase6_runtime
 
 from tflt.loopscope.phase6_runtime import (
     GateCRuntimeError,
@@ -72,6 +76,58 @@ def _duplicate_inputs():
 
 
 class GateCRuntimePureTests(unittest.TestCase):
+    def test_zero_match_masks_replay_and_trajectory_but_keeps_sealed_payload(self):
+        class Tokenizer:
+            all_special_ids = []
+
+            def encode(self, _text):
+                return [10]
+
+            def decode(
+                self,
+                token_ids,
+                *,
+                skip_special_tokens=False,
+                clean_up_tokenization_spaces=False,
+            ):
+                del token_ids, skip_special_tokens, clean_up_tokenization_spaces
+                return "No exact answer cue."
+
+        runtime = SimpleNamespace(tokenizer=Tokenizer())
+        identity = {
+            "ordinal": 0,
+            "canonical_identity": "identity-not-expressed",
+            "category": "biology",
+            "rendered_prefix_sha256": "a" * 64,
+            "rendered_token_ids_sha256": "b" * 64,
+            "sequence_length": 1,
+        }
+        prompt_metadata = {
+            "rendered_prefix_sha256": "a" * 64,
+            "rendered_token_ids_sha256": "b" * 64,
+            "sequence_length": 1,
+        }
+        with mock.patch.object(
+            phase6_runtime, "tokenization_metadata", return_value=prompt_metadata
+        ), mock.patch.object(
+            phase6_runtime, "_generate_once", return_value=(20,)
+        ), mock.patch.object(phase6_runtime, "_replay_once") as replay:
+            record, eligibility, evidence, payload = (
+                phase6_runtime.acquire_two_pass_record_and_payload(
+                    runtime,
+                    prefix="prompt",
+                    identity=identity,
+                    gate_b_manifest_sha256="c" * 64,
+                    card_sha256="d" * 64,
+                )
+            )
+        self.assertIsNone(record)
+        self.assertEqual(eligibility["eligibility_state"], "ANCHOR_NOT_EXPRESSED")
+        self.assertEqual(evidence["replay_count"], 0)
+        self.assertEqual(evidence["trajectory_count"], 0)
+        self.assertEqual(payload, b"No exact answer cue.")
+        replay.assert_not_called()
+
     def test_native_runtime_checks_model_application_not_harmless_imports(self):
         class NativeLayer:
             pass

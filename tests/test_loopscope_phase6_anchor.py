@@ -10,9 +10,12 @@ from tflt.loopscope.phase6_anchor import (
     MMLU_PRO_YAML_SHA256,
     AnswerSpanError,
     AnswerSpan,
+    AnchorEligibilityDecision,
     GeneratedTextAlignmentError,
+    NoPrecedingGeneratedTokenError,
     ReplayPrefixError,
     answer_span_extractor,
+    classify_anchor_eligibility,
     generated_id_text_aligner,
     replay_prefix_ids,
 )
@@ -36,6 +39,30 @@ class FakeTokenizer:
             if skip_special_tokens and token_id in self.all_special_ids
             else self.pieces[token_id]
             for token_id in token_ids
+        )
+
+
+class PrefixRewritingTokenizer(FakeTokenizer):
+    """Characterize context-sensitive prefix decoding without changing full decode."""
+
+    def __init__(self, pieces, rewrites, special_ids=()):
+        super().__init__(pieces, special_ids=special_ids)
+        self.rewrites = {tuple(key): value for key, value in rewrites.items()}
+
+    def decode(
+        self,
+        token_ids,
+        *,
+        skip_special_tokens=False,
+        clean_up_tokenization_spaces=False,
+    ):
+        key = tuple(token_ids)
+        if key in self.rewrites:
+            return self.rewrites[key]
+        return super().decode(
+            token_ids,
+            skip_special_tokens=skip_special_tokens,
+            clean_up_tokenization_spaces=clean_up_tokenization_spaces,
         )
 
 
@@ -94,6 +121,46 @@ class Phase6AnswerSpanTests(unittest.TestCase):
 
 
 class Phase6GeneratedAlignmentTests(unittest.TestCase):
+    def test_seven_preserved_gate_d_alignment_normal_paths_resolve(self):
+        base_pieces = {
+            1: "reason",
+            2: "ing ",
+            3: "answer is ",
+            4: "A",
+            5: ".",
+        }
+        cases = [
+            PrefixRewritingTokenizer(base_pieces, {(1,): "\ufffd"}),
+            PrefixRewritingTokenizer(base_pieces, {(1, 2): "reasoning\ufffd"}),
+            PrefixRewritingTokenizer(base_pieces, {(1,): ""}),
+            PrefixRewritingTokenizer(base_pieces, {(1, 2): "reason"}),
+            PrefixRewritingTokenizer(base_pieces, {(1,): "reason\ufffd"}),
+            FakeTokenizer({**base_pieces, 90: "<|im_end|>"}, special_ids={90}),
+            FakeTokenizer(
+                {**base_pieces, 90: "<|im_end|>", 91: "<|endoftext|>"},
+                special_ids={90, 91},
+            ),
+        ]
+        generated_id_cases = [
+            [1, 2, 3, 4, 5],
+            [1, 2, 3, 4, 5],
+            [1, 2, 3, 4, 5],
+            [1, 2, 3, 4, 5],
+            [1, 2, 3, 4, 5],
+            [1, 2, 3, 4, 5, 90],
+            [1, 2, 3, 4, 5, 90, 91],
+        ]
+        for case_index, (tokenizer, generated_ids) in enumerate(
+            zip(cases, generated_id_cases)
+        ):
+            with self.subTest(case_index=case_index):
+                text = tokenizer.decode(generated_ids)
+                alignment = generated_id_text_aligner(
+                    generated_ids, tokenizer, text
+                )
+                self.assertEqual(alignment.answer_first_token_index, 3)
+                self.assertEqual(alignment.probe_token_index, 2)
+
     def test_answer_span_inside_token(self):
         tokenizer = FakeTokenizer({1: "thinking ", 2: "answer is (C)."})
         text = tokenizer.decode([1, 2])
@@ -163,11 +230,21 @@ class Phase6GeneratedAlignmentTests(unittest.TestCase):
     def test_first_generated_token_has_no_preceding_probe(self):
         tokenizer = FakeTokenizer({1: "answer is A"})
         with self.assertRaisesRegex(
-            GeneratedTextAlignmentError, "no preceding generated probe"
+            NoPrecedingGeneratedTokenError, "no preceding generated probe"
         ):
             generated_id_text_aligner(
                 [1], tokenizer, tokenizer.decode([1])
             )
+
+    def test_visible_special_before_selected_answer_obeys_full_decode_path(self):
+        tokenizer = FakeTokenizer(
+            {90: "<|im_end|>", 1: "reason ", 2: "answer is A"},
+            special_ids={90},
+        )
+        text = tokenizer.decode([90, 1, 2])
+        alignment = generated_id_text_aligner([90, 1, 2], tokenizer, text)
+        self.assertEqual(alignment.answer_first_token_index, 2)
+        self.assertEqual(alignment.probe_token_index, 1)
 
     def test_probe_is_immediately_before_answer_token(self):
         tokenizer = FakeTokenizer(
@@ -225,6 +302,36 @@ class Phase6ReplayPrefixTests(unittest.TestCase):
     def test_answer_index_must_reference_an_existing_generated_id(self):
         with self.assertRaisesRegex(ReplayPrefixError, "out of range"):
             replay_prefix_ids([10], [20, 21], 2)
+
+
+class Phase6AnchorEligibilityTests(unittest.TestCase):
+    def test_zero_match_is_not_expressed_without_fallback(self):
+        tokenizer = FakeTokenizer({1: "The result might be C."})
+        decision = classify_anchor_eligibility(
+            [1], tokenizer, tokenizer.decode([1])
+        )
+        self.assertIsInstance(decision, AnchorEligibilityDecision)
+        self.assertEqual(decision.state, "ANCHOR_NOT_EXPRESSED")
+        self.assertIsNone(decision.answer_span)
+        self.assertIsNone(decision.alignment)
+
+    def test_first_token_match_is_not_expressed(self):
+        tokenizer = FakeTokenizer({1: "answer is A"})
+        decision = classify_anchor_eligibility(
+            [1], tokenizer, tokenizer.decode([1])
+        )
+        self.assertEqual(decision.state, "ANCHOR_NOT_EXPRESSED")
+        self.assertIsNotNone(decision.answer_span)
+        self.assertIsNone(decision.alignment)
+
+    def test_match_present_alignment_error_is_not_masked(self):
+        tokenizer = FakeTokenizer({1: "reason ", 2: "answer is B"})
+        with self.assertRaisesRegex(
+            GeneratedTextAlignmentError, "round-trip"
+        ):
+            classify_anchor_eligibility(
+                [1, 2], tokenizer, "reason  answer is B"
+            )
 
 
 if __name__ == "__main__":

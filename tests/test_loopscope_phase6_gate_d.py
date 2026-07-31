@@ -9,6 +9,7 @@ import numpy as np
 from tflt.loopscope.phase6_acquisition import build_sanitized_trajectory_record
 from tflt.loopscope.phase4_schema import file_sha256, semantic_sha256
 from tflt.loopscope.phase6_runtime import semantic_sha256 as runtime_record_sha256
+from tflt.loopscope.phase6_schema import ELIGIBILITY_SCHEMA_VERSION
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +20,24 @@ assert SPEC.loader is not None
 SPEC.loader.exec_module(gate_d)
 
 SHA = "a" * 64
+
+
+def _eligibility_record(identity: str, category: str, state: str):
+    return {
+        "schema_version": ELIGIBILITY_SCHEMA_VERSION,
+        "canonical_identity": identity,
+        "category": category,
+        "eligibility_state": state,
+        "generation_count": 1,
+        "sealed_payload_sha256": SHA,
+        "sealed_membership_ref": "sealed_baseline/%s.bin" % identity,
+        "provenance": {
+            "producer_version": "gate-d2-test",
+            "card_sha256": SHA,
+            "renderer_manifest_sha256": SHA,
+            "answer_span_extractor_sha256": SHA,
+        },
+    }
 
 
 def _record(identity: str, payload_sha256: str):
@@ -77,7 +96,7 @@ class GateDManifestTests(unittest.TestCase):
     def test_exact_executor_and_planning_bindings(self):
         self.assertEqual(
             gate_d.EXECUTOR_THREAD_ID,
-            "019fb6d3-9485-7f33-90c1-ece73c3863bc",
+            "019fb8f3-8cb7-7c93-a8a0-bae811735601",
         )
         self.assertEqual(
             gate_d.PLANNING_THREAD_ID,
@@ -156,6 +175,92 @@ class GateDManifestTests(unittest.TestCase):
 
 
 class GateDArtifactTests(unittest.TestCase):
+    def test_coverage_floors_are_inclusive_and_fail_closed(self):
+        members = [
+            {
+                "ordinal": index,
+                "canonical_identity": "identity-%04d" % index,
+                "category": "biology",
+            }
+            for index in range(200)
+        ]
+        exact_floor = [
+            _eligibility_record(
+                member["canonical_identity"],
+                member["category"],
+                "ANCHOR_ELIGIBLE" if index < 199 else "ANCHOR_NOT_EXPRESSED",
+            )
+            for index, member in enumerate(members)
+        ]
+        summary = gate_d._coverage_summary(
+            members=members,
+            eligibility_records=exact_floor,
+            enforce_floors=True,
+        )
+        self.assertEqual(summary["eligible_count"], 199)
+        self.assertEqual(summary["not_expressed_count"], 1)
+        self.assertEqual(summary["overall_coverage"], 0.995)
+
+        below_overall = [dict(row) for row in exact_floor]
+        below_overall[-2] = dict(below_overall[-2], eligibility_state="ANCHOR_NOT_EXPRESSED")
+        with self.assertRaisesRegex(
+            gate_d.GateDError, "BLOCK_ANCHOR_COVERAGE_BELOW_FLOOR"
+        ):
+            gate_d._coverage_summary(
+                members=members,
+                eligibility_records=below_overall,
+                enforce_floors=True,
+            )
+
+    def test_per_category_floor_and_canonical_order_are_enforced(self):
+        members = []
+        for index in range(1000):
+            members.append(
+                {
+                    "ordinal": index,
+                    "canonical_identity": "identity-%04d" % index,
+                    "category": "biology" if index < 100 else "law",
+                }
+            )
+        records = [
+            _eligibility_record(
+                member["canonical_identity"],
+                member["category"],
+                (
+                    "ANCHOR_NOT_EXPRESSED"
+                    if member["category"] == "biology" and index in (98, 99)
+                    else "ANCHOR_ELIGIBLE"
+                ),
+            )
+            for index, member in enumerate(members)
+        ]
+        summary = gate_d._coverage_summary(
+            members=members,
+            eligibility_records=records,
+            enforce_floors=True,
+        )
+        self.assertEqual(summary["categories"]["biology"]["coverage"], 0.98)
+
+        below_category = [dict(row) for row in records]
+        below_category[97] = dict(
+            below_category[97], eligibility_state="ANCHOR_NOT_EXPRESSED"
+        )
+        with self.assertRaisesRegex(
+            gate_d.GateDError, "BLOCK_ANCHOR_COVERAGE_BELOW_FLOOR"
+        ):
+            gate_d._coverage_summary(
+                members=members,
+                eligibility_records=below_category,
+                enforce_floors=True,
+            )
+
+        with self.assertRaisesRegex(gate_d.GateDError, "canonical order"):
+            gate_d._coverage_summary(
+                members=members,
+                eligibility_records=list(reversed(records)),
+                enforce_floors=False,
+            )
+
     def test_opaque_payload_is_hash_checked_without_json_or_text_parsing(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "attempt-0001"
@@ -166,6 +271,11 @@ class GateDArtifactTests(unittest.TestCase):
             payload_path = sealed_dir / "000000.bin"
             payload_sha = gate_d._write_new_bytes(payload_path, payload, mode=0o600)
             record = _record("identity-0", payload_sha)
+            eligibility = _eligibility_record(
+                "identity-0", "biology", "ANCHOR_ELIGIBLE"
+            )
+            eligibility["sealed_payload_sha256"] = payload_sha
+            eligibility["sealed_membership_ref"] = "sealed_baseline/000000.bin"
             member = {
                 "ordinal": 0,
                 "canonical_identity": "identity-0",
@@ -180,6 +290,7 @@ class GateDArtifactTests(unittest.TestCase):
             closure = {
                 "ordinal": 0,
                 "canonical_identity": "identity-0",
+                "eligibility_state": "ANCHOR_ELIGIBLE",
                 "prompt_sha256": SHA,
                 "generated_completion_sha256": payload_sha,
                 "generation_ids_sha256": record["provenance"]["generation_ids_sha256"],
@@ -194,6 +305,7 @@ class GateDArtifactTests(unittest.TestCase):
                 "answer_first_token_index": 3,
                 "generation_count": 1,
                 "replay_count": 1,
+                "trajectory_count": 1,
                 "loop_insertions": 0,
                 "anchor_resolved": True,
                 "unique_token_mapping": True,
@@ -208,11 +320,14 @@ class GateDArtifactTests(unittest.TestCase):
             records_sha = gate_d._write_new_jsonl(
                 output / gate_d.SANITIZED_NAME, [record]
             )
+            eligibility_sha = gate_d._write_new_jsonl(
+                output / gate_d.ELIGIBILITY_NAME, [eligibility]
+            )
             closure_sha = gate_d._write_new_jsonl(
                 output / gate_d.CLOSURE_NAME, [closure]
             )
             sealed = {
-                "schema_version": "loopscope.phase6.gate-d-sealed-membership.v1",
+                "schema_version": "loopscope.phase6.gate-d2-sealed-membership.v1",
                 "payload_format": "opaque_utf8_completion_bytes_not_parsed_before_gate_g",
                 "record_count": 1,
                 "membership_sha256": membership_sha,
@@ -238,8 +353,18 @@ class GateDArtifactTests(unittest.TestCase):
                 "attempt": 1,
                 "git": {"commit": "b" * 40},
                 "membership_sha256": membership_sha,
+                "record_count": 1,
+                "trajectory_count": 1,
+                "runtime_closure_count": 1,
+                "eligibility_count": 1,
+                "coverage": gate_d._coverage_summary(
+                    members=[member],
+                    eligibility_records=[eligibility],
+                    enforce_floors=False,
+                ),
                 "artifacts": {
                     gate_d.SANITIZED_NAME: records_sha,
+                    gate_d.ELIGIBILITY_NAME: eligibility_sha,
                     gate_d.CLOSURE_NAME: closure_sha,
                     gate_d.SEALED_MEMBERSHIP_NAME: sealed_sha,
                 },
@@ -272,6 +397,25 @@ class GateDArtifactTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 gate_d._write_new_bytes(path, b"second")
 
+    def test_not_expressed_has_no_persisted_runtime_closure(self):
+        evidence = {
+            "canonical_identity": "identity-not-expressed",
+            "eligibility_state": "ANCHOR_NOT_EXPRESSED",
+            "generation_count": 1,
+            "replay_count": 0,
+            "trajectory_count": 0,
+            "loop_insertions": 0,
+            "sealed_payload_sha256": SHA,
+        }
+        with self.assertRaisesRegex(
+            gate_d.GateDError, "only eligible runtime closures"
+        ):
+            gate_d._safe_runtime_closure(0, evidence)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "eligible-only.jsonl"
+            gate_d._write_new_jsonl(path, [], allow_empty=True)
+            self.assertEqual(gate_d._strict_jsonl(path, allow_empty=True), [])
+
 
 class GateDParserTests(unittest.TestCase):
     def test_parser_exposes_only_gate_d_commands(self):
@@ -293,6 +437,17 @@ class GateDParserTests(unittest.TestCase):
             ["acquire-shard", *common, "--shard-id", "2", "--attempt", "1"]
         )
         self.assertEqual((shard.shard_id, shard.attempt), (2, 1))
+        scheduler = parser.parse_args(
+            [
+                "record-scheduler",
+                *common,
+                "--job-id",
+                "101",
+                "--job-id",
+                "102",
+            ]
+        )
+        self.assertEqual(scheduler.job_ids, ["101", "102"])
 
 
 if __name__ == "__main__":

@@ -47,8 +47,21 @@ def main() -> int:
         "card": str(args.card.resolve()),
         "card_sha256": file_sha256(args.card),
         "pass_1": "native_no_loop_deterministic_full_cot_generation",
-        "anchor": "unique_span_then_preceding_generated_token",
-        "pass_2": "exact_prefix_replay_no_cache_hidden_states_zero_loop_insertions",
+        "anchor": "literal_regex_match_ordinal_zero_then_preceding_generated_token",
+        "eligibility": (
+            "zero_match_or_no_preceding_generated_token_is_anchor_not_expressed"
+        ),
+        "eligibility_mask": "canonical_test_12032_frozen_before_selector",
+        "overall_coverage_floor": card["anchor_eligibility"][
+            "overall_coverage_floor"
+        ],
+        "category_coverage_floor": card["anchor_eligibility"][
+            "per_category_coverage_floor"
+        ],
+        "pass_2": (
+            "eligible_only_exact_prefix_replay_no_cache_hidden_states_"
+            "zero_loop_insertions"
+        ),
         "model_or_data_loaded": False,
         "generation_or_replay_executed": False,
         "selector_executed": False,

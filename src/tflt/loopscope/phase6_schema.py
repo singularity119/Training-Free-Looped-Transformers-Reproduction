@@ -10,8 +10,9 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping, Sequence
 
 
-CARD_SCHEMA_VERSION = "loopscope.phase6.pre-answer-rbr-v2-card.v2"
+CARD_SCHEMA_VERSION = "loopscope.phase6.pre-answer-rbr-v2-card.v3"
 TRAJECTORY_SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v2"
+ELIGIBILITY_SCHEMA_VERSION = "loopscope.phase6.anchor-eligibility.v1"
 SELECTOR_SCHEMA_VERSION = "loopscope.phase6.selector-freeze.v1"
 METHOD = "RELATIVE_BIPHASIC_REVERSAL_V2_ABSOLUTE_RATE"
 EXPECTED_POPULATION = 12032
@@ -19,6 +20,12 @@ BOUNDARY_COUNT = 37
 TRANSITION_COUNT = 36
 D36_TOLERANCE = 1e-6
 ENDPOINT_TOLERANCE = 1e-6
+OVERALL_ELIGIBLE_COVERAGE_FLOOR = 0.995
+PER_CATEGORY_ELIGIBLE_COVERAGE_FLOOR = 0.98
+ANCHOR_ELIGIBILITY_STATES = (
+    "ANCHOR_ELIGIBLE",
+    "ANCHOR_NOT_EXPRESSED",
+)
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 
 SCIENTIFIC_STATES = (
@@ -30,6 +37,7 @@ SCIENTIFIC_STATES = (
 ENGINEERING_BLOCK_STATES = (
     "BLOCK_PROVENANCE_MISMATCH",
     "BLOCK_ANCHOR_COVERAGE_NOT_EXACT",
+    "BLOCK_ANCHOR_COVERAGE_BELOW_FLOOR",
     "BLOCK_GENERATION_REPLAY_MISMATCH",
     "BLOCK_NUMERIC_OR_ENDPOINT_INVALID",
     "BLOCK_POPULATION_OR_HASH_MISMATCH",
@@ -48,6 +56,7 @@ CARD_KEYS = {
     "generation",
     "loop",
     "anchor",
+    "anchor_eligibility",
     "trajectory",
     "candidate_domain",
     "selector",
@@ -100,6 +109,22 @@ PROVENANCE_KEYS = {
     "boundary_capture",
     "final_norm_path",
     "lm_head_path",
+}
+ELIGIBILITY_KEYS = {
+    "schema_version",
+    "canonical_identity",
+    "category",
+    "eligibility_state",
+    "generation_count",
+    "sealed_payload_sha256",
+    "sealed_membership_ref",
+    "provenance",
+}
+ELIGIBILITY_PROVENANCE_KEYS = {
+    "producer_version",
+    "card_sha256",
+    "renderer_manifest_sha256",
+    "answer_span_extractor_sha256",
 }
 CANDIDATE_KEYS = {
     "width",
@@ -373,6 +398,30 @@ def validate_card(card: Mapping[str, Any]) -> None:
     }
     if dict(anchor) != expected_anchor:
         raise Phase6ContractError("anchor contract differs")
+    anchor_eligibility = card["anchor_eligibility"]
+    expected_anchor_eligibility = {
+        "states": list(ANCHOR_ELIGIBILITY_STATES),
+        "eligible_when": "one_or_more_exact_matches_and_preceding_generated_token",
+        "not_expressed_when": [
+            "zero_exact_matches",
+            "selected_answer_token_is_first_generated_token",
+        ],
+        "match_present_failure_policy": "engineering_error_fail_closed_not_masked",
+        "mask_order": "gate_b_canonical_test_12032",
+        "population": EXPECTED_POPULATION,
+        "category_count": 14,
+        "overall_coverage_floor": OVERALL_ELIGIBLE_COVERAGE_FLOOR,
+        "per_category_coverage_floor": PER_CATEGORY_ELIGIBLE_COVERAGE_FLOOR,
+        "sealed_baseline_membership": "all_12032",
+        "selector_input": "eligible_trajectories_plus_frozen_coverage_receipt",
+    }
+    require_exact_keys(
+        anchor_eligibility,
+        expected_anchor_eligibility,
+        "card.anchor_eligibility",
+    )
+    if dict(anchor_eligibility) != expected_anchor_eligibility:
+        raise Phase6ContractError("anchor eligibility contract differs")
     trajectory = card["trajectory"]
     if trajectory != {
         "raw_boundaries": "B0...B36_final_norm_pre_hook",
@@ -471,6 +520,9 @@ def validate_card(card: Mapping[str, Any]) -> None:
             "token_indices",
             "extractor_aligner_hashes",
             "scalar_arrays",
+            "eligibility_mask",
+            "sealed_payload_hash_reference",
+            "coverage_receipt",
         ],
         "forbidden_payloads": [
             "prompt_text",
@@ -613,6 +665,50 @@ def validate_trajectory_record(record: Mapping[str, Any]) -> None:
         require_sha256(record["provenance"][key], "provenance.%s" % key)
     if record["provenance"]["boundary_capture"] != "raw_B0_through_B36_final_norm_pre_hook":
         raise Phase6ContractError("raw boundary capture differs")
+
+
+def validate_eligibility_record(record: Mapping[str, Any]) -> None:
+    """Validate the minimal canonical eligibility-mask row.
+
+    The same closed shape is used for eligible and not-expressed identities so
+    the mask can be frozen before selector execution.  It deliberately omits
+    span values, token IDs, replay fields, answer content, and trajectories.
+    """
+
+    scan_forbidden_fields(record)
+    require_exact_keys(record, ELIGIBILITY_KEYS, "eligibility record")
+    if record["schema_version"] != ELIGIBILITY_SCHEMA_VERSION:
+        raise Phase6ContractError("eligibility schema_version differs")
+    if record["eligibility_state"] not in ANCHOR_ELIGIBILITY_STATES:
+        raise Phase6ContractError("eligibility state differs")
+    if not isinstance(record["canonical_identity"], str) or not record[
+        "canonical_identity"
+    ]:
+        raise Phase6ContractError("eligibility canonical_identity is missing")
+    if not isinstance(record["category"], str) or not record["category"].strip():
+        raise Phase6ContractError("eligibility category is missing")
+    if record["generation_count"] != 1:
+        raise Phase6ContractError("eligibility generation_count differs")
+    require_sha256(record["sealed_payload_sha256"], "sealed_payload_sha256")
+    reference = Path(str(record["sealed_membership_ref"]))
+    if (
+        reference.is_absolute()
+        or ".." in reference.parts
+        or reference.parts[:1] != ("sealed_baseline",)
+    ):
+        raise Phase6ContractError("sealed membership reference differs")
+    provenance = record["provenance"]
+    require_exact_keys(
+        provenance,
+        ELIGIBILITY_PROVENANCE_KEYS,
+        "eligibility provenance",
+    )
+    if not isinstance(provenance["producer_version"], str) or not provenance[
+        "producer_version"
+    ]:
+        raise Phase6ContractError("eligibility producer version is missing")
+    for key in ELIGIBILITY_PROVENANCE_KEYS - {"producer_version"}:
+        require_sha256(provenance[key], "eligibility provenance.%s" % key)
 
 
 def selector_sample(record: Mapping[str, Any]) -> Dict[str, Any]:
@@ -829,6 +925,40 @@ def trajectory_json_schema() -> Dict[str, Any]:
     }
 
 
+def eligibility_json_schema() -> Dict[str, Any]:
+    properties: Dict[str, Any] = {key: {} for key in sorted(ELIGIBILITY_KEYS)}
+    properties.update(
+        {
+            "schema_version": {"const": ELIGIBILITY_SCHEMA_VERSION},
+            "canonical_identity": {"type": "string", "minLength": 1},
+            "category": {"type": "string", "minLength": 1},
+            "eligibility_state": {"enum": list(ANCHOR_ELIGIBILITY_STATES)},
+            "generation_count": {"const": 1},
+            "sealed_payload_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$",
+            },
+            "sealed_membership_ref": {"type": "string", "minLength": 1},
+            "provenance": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": sorted(ELIGIBILITY_PROVENANCE_KEYS),
+                "properties": {
+                    key: {} for key in sorted(ELIGIBILITY_PROVENANCE_KEYS)
+                },
+            },
+        }
+    )
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": ELIGIBILITY_SCHEMA_VERSION,
+        "type": "object",
+        "additionalProperties": False,
+        "required": sorted(ELIGIBILITY_KEYS),
+        "properties": properties,
+    }
+
+
 def selector_freeze_json_schema() -> Dict[str, Any]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -868,17 +998,24 @@ def _reject_constant(value: str) -> None:
 
 
 __all__ = [
+    "ANCHOR_ELIGIBILITY_STATES",
     "BOUNDARY_COUNT",
     "CANDIDATE_KEYS",
     "CARD_SCHEMA_VERSION",
+    "ELIGIBILITY_KEYS",
+    "ELIGIBILITY_PROVENANCE_KEYS",
+    "ELIGIBILITY_SCHEMA_VERSION",
     "ENGINEERING_BLOCK_STATES",
     "EXPECTED_POPULATION",
     "METHOD",
+    "OVERALL_ELIGIBLE_COVERAGE_FLOOR",
+    "PER_CATEGORY_ELIGIBLE_COVERAGE_FLOOR",
     "Phase6ContractError",
     "SCIENTIFIC_STATES",
     "SELECTOR_SCHEMA_VERSION",
     "TRAJECTORY_SCHEMA_VERSION",
     "canonical_json_bytes",
+    "eligibility_json_schema",
     "file_sha256",
     "load_json",
     "require_exact_keys",
@@ -891,6 +1028,7 @@ __all__ = [
     "semantic_sha256",
     "trajectory_json_schema",
     "validate_card",
+    "validate_eligibility_record",
     "validate_schema_document",
     "validate_selector_freeze",
     "validate_trajectory_record",

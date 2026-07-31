@@ -1,5 +1,5 @@
 {
-  "schema_version": "loopscope.phase6.pre-answer-rbr-v2-card.v2",
+  "schema_version": "loopscope.phase6.pre-answer-rbr-v2-card.v3",
   "card": "H6_PRE_ANSWER_FULLVOCAB_RBR_V2_WINDOW_SELECTION",
   "claim_boundary": "local_contract_only_no_model_data_generation_replay_selector_or_outcome",
   "cell": {
@@ -48,6 +48,25 @@
     "boundary_owner": "right_token",
     "probe_rule": "token_strictly_preceding_answer_first_token",
     "fallback": "forbidden"
+  },
+  "anchor_eligibility": {
+    "states": [
+      "ANCHOR_ELIGIBLE",
+      "ANCHOR_NOT_EXPRESSED"
+    ],
+    "eligible_when": "one_or_more_exact_matches_and_preceding_generated_token",
+    "not_expressed_when": [
+      "zero_exact_matches",
+      "selected_answer_token_is_first_generated_token"
+    ],
+    "match_present_failure_policy": "engineering_error_fail_closed_not_masked",
+    "mask_order": "gate_b_canonical_test_12032",
+    "population": 12032,
+    "category_count": 14,
+    "overall_coverage_floor": 0.995,
+    "per_category_coverage_floor": 0.98,
+    "sealed_baseline_membership": "all_12032",
+    "selector_input": "eligible_trajectories_plus_frozen_coverage_receipt"
   },
   "trajectory": {
     "raw_boundaries": "B0...B36_final_norm_pre_hook",
@@ -149,7 +168,10 @@
       "span_offsets",
       "token_indices",
       "extractor_aligner_hashes",
-      "scalar_arrays"
+      "scalar_arrays",
+      "eligibility_mask",
+      "sealed_payload_hash_reference",
+      "coverage_receipt"
     ],
     "forbidden_payloads": [
       "prompt_text",
@@ -176,6 +198,7 @@
   "engineering_block_states": [
     "BLOCK_PROVENANCE_MISMATCH",
     "BLOCK_ANCHOR_COVERAGE_NOT_EXACT",
+    "BLOCK_ANCHOR_COVERAGE_BELOW_FLOOR",
     "BLOCK_GENERATION_REPLAY_MISMATCH",
     "BLOCK_NUMERIC_OR_ENDPOINT_INVALID",
     "BLOCK_POPULATION_OR_HASH_MISMATCH",

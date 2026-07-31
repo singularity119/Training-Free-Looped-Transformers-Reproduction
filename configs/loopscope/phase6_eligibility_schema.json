@@ -1,0 +1,27 @@
+{
+  "$id": "loopscope.phase6.anchor-eligibility.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_identity": {"minLength": 1, "type": "string"},
+    "category": {"minLength": 1, "type": "string"},
+    "eligibility_state": {"enum": ["ANCHOR_ELIGIBLE", "ANCHOR_NOT_EXPRESSED"]},
+    "generation_count": {"const": 1},
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "answer_span_extractor_sha256": {},
+        "card_sha256": {},
+        "producer_version": {},
+        "renderer_manifest_sha256": {}
+      },
+      "required": ["answer_span_extractor_sha256", "card_sha256", "producer_version", "renderer_manifest_sha256"],
+      "type": "object"
+    },
+    "schema_version": {"const": "loopscope.phase6.anchor-eligibility.v1"},
+    "sealed_membership_ref": {"minLength": 1, "type": "string"},
+    "sealed_payload_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}
+  },
+  "required": ["canonical_identity", "category", "eligibility_state", "generation_count", "provenance", "schema_version", "sealed_membership_ref", "sealed_payload_sha256"],
+  "type": "object"
+}
