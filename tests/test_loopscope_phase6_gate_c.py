@@ -14,6 +14,7 @@ from tflt.loopscope.phase6_runtime import (
     assemble_raw_boundaries,
     assert_native_no_loop_runtime,
     normalize_raw_boundary_vectors,
+    project_boundaries_in_model_dtype,
     semantic_sha256,
 )
 from tflt.wrapper import LoopIdentityLayer
@@ -123,6 +124,37 @@ class GateCRuntimePureTests(unittest.TestCase):
             normalize_raw_boundary_vectors((hidden[0][:, -1, :],) + hidden[1:] + (raw_b36,))
         with self.assertRaisesRegex(GateCRuntimeError, "raw B36"):
             normalize_raw_boundary_vectors(hidden + (raw_b36[:, None, :],))
+
+    def test_boundary_projection_casts_only_after_native_lm_head(self):
+        class FakeTensor:
+            def __init__(self, shape, dtype):
+                self.shape = shape
+                self.ndim = len(shape)
+                self.dtype = dtype
+
+            def float(self):
+                return FakeTensor(self.shape, "float32")
+
+        raw = FakeTensor((37, 4), "bfloat16")
+        observed = []
+
+        def final_norm(tensor):
+            observed.append(("final_norm", tensor.dtype))
+            return FakeTensor(tensor.shape, tensor.dtype)
+
+        def lm_head(tensor):
+            observed.append(("lm_head", tensor.dtype))
+            return FakeTensor((37, 11), tensor.dtype)
+
+        normalized, logits = project_boundaries_in_model_dtype(
+            final_norm, lm_head, raw
+        )
+        self.assertEqual(
+            observed,
+            [("final_norm", "bfloat16"), ("lm_head", "bfloat16")],
+        )
+        self.assertEqual(normalized.dtype, "float32")
+        self.assertEqual(logits.dtype, "float32")
 
     def test_duplicate_closure_requires_exact_two_equal_replicates(self):
         records, evidence = _duplicate_inputs()

@@ -34,7 +34,7 @@ LAYER_COUNT = 36
 HIDDEN_SIZE = 2560
 GENERATION_MAX_NEW_TOKENS = 2048
 GENERATION_STOP_STRING = "Question:"
-PRODUCER_VERSION = "loopscope.phase6.gate-c-runtime.v3"
+PRODUCER_VERSION = "loopscope.phase6.gate-c-runtime.v4"
 FINAL_NORM_RTOL = 1e-3
 FINAL_NORM_ATOL = 1e-3
 LOOP_WRAPPER_CLASS_NAMES = frozenset(
@@ -167,6 +167,29 @@ def normalize_raw_boundary_vectors(
         )
         vectors.append(vector)
     return tuple(vectors)
+
+
+def project_boundaries_in_model_dtype(
+    final_norm: Any, lm_head: Any, raw_vectors: Any
+) -> Tuple[Any, Any]:
+    """Run FinalNorm/LM head in model dtype, then return float32 outputs."""
+
+    normalized_native = final_norm(raw_vectors)
+    _require(
+        tuple(getattr(normalized_native, "shape", ()))
+        == tuple(getattr(raw_vectors, "shape", ())),
+        "FinalNorm boundary matrix shape differs",
+    )
+    boundary_logits_native = lm_head(normalized_native)
+    logits_shape = tuple(getattr(boundary_logits_native, "shape", ()))
+    _require(
+        getattr(boundary_logits_native, "ndim", None) == 2
+        and len(logits_shape) == 2
+        and logits_shape[0] == LAYER_COUNT + 1
+        and logits_shape[1] >= 1,
+        "LM-head boundary logits shape differs",
+    )
+    return normalized_native.float(), boundary_logits_native.float()
 
 
 def duplicate_result_sha256(record: Mapping[str, Any]) -> str:
@@ -330,20 +353,22 @@ def _replay_once(
     raw_state_tensors = assemble_raw_boundaries(
         hidden_states, captured["last"], int(captured["count"])
     )
-    raw_vectors = torch.cat(
+    raw_vectors_native = torch.cat(
         [
             vector.detach()
             for vector in normalize_raw_boundary_vectors(raw_state_tensors)
         ],
         dim=0,
-    ).float()
+    )
     _require(
-        tuple(raw_vectors.shape) == (LAYER_COUNT + 1, HIDDEN_SIZE),
+        tuple(raw_vectors_native.shape) == (LAYER_COUNT + 1, HIDDEN_SIZE),
         "raw boundary vector matrix shape differs",
     )
     with torch.inference_mode():
-        normalized = runtime.final_norm(raw_vectors).float()
-        boundary_logits = runtime.lm_head(normalized).float()
+        normalized, boundary_logits = project_boundaries_in_model_dtype(
+            runtime.final_norm, runtime.lm_head, raw_vectors_native
+        )
+    raw_vectors = raw_vectors_native.float()
     post_norm_final = hidden_states[-1][:, -1, :].float()
     final_norm_max_abs = float(
         (normalized[-1:, :] - post_norm_final).abs().max().double().cpu()
@@ -519,6 +544,7 @@ __all__ = [
     "duplicate_result_sha256",
     "load_gate_c_runtime",
     "normalize_raw_boundary_vectors",
+    "project_boundaries_in_model_dtype",
     "semantic_sha256",
     "text_sha256",
 ]
