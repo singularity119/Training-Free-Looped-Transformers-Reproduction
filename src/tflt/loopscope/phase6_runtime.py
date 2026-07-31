@@ -412,15 +412,15 @@ def _replay_once(
     )
 
 
-def acquire_two_pass_record(
+def _acquire_two_pass_record(
     runtime: GateCRuntime,
     *,
     prefix: str,
     identity: Mapping[str, Any],
     gate_b_manifest_sha256: str,
     card_sha256: str,
-) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    """Acquire one exact generation/replay replicate without persisting raw data."""
+) -> Tuple[Dict[str, Any], Dict[str, Any], bytes]:
+    """Acquire one exact generation/replay replicate and return opaque completion bytes."""
 
     expected_prompt_hash = str(identity["rendered_prefix_sha256"])
     prompt_metadata = tokenization_metadata(runtime.tokenizer, prefix)
@@ -523,7 +523,46 @@ def acquire_two_pass_record(
         "record_semantic_sha256": duplicate_result_sha256(record),
         **replay_evidence,
     }
+    return record, evidence, generated_text.encode("utf-8")
+
+
+def acquire_two_pass_record(
+    runtime: GateCRuntime,
+    *,
+    prefix: str,
+    identity: Mapping[str, Any],
+    gate_b_manifest_sha256: str,
+    card_sha256: str,
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """Acquire one exact generation/replay replicate without exposing raw payloads."""
+
+    record, evidence, _opaque_payload = _acquire_two_pass_record(
+        runtime,
+        prefix=prefix,
+        identity=identity,
+        gate_b_manifest_sha256=gate_b_manifest_sha256,
+        card_sha256=card_sha256,
+    )
     return record, evidence
+
+
+def acquire_two_pass_record_and_payload(
+    runtime: GateCRuntime,
+    *,
+    prefix: str,
+    identity: Mapping[str, Any],
+    gate_b_manifest_sha256: str,
+    card_sha256: str,
+) -> Tuple[Dict[str, Any], Dict[str, Any], bytes]:
+    """Gate D producer path returning completion bytes for opaque sealed storage."""
+
+    return _acquire_two_pass_record(
+        runtime,
+        prefix=prefix,
+        identity=identity,
+        gate_b_manifest_sha256=gate_b_manifest_sha256,
+        card_sha256=card_sha256,
+    )
 
 
 __all__ = [
@@ -538,6 +577,7 @@ __all__ = [
     "MODEL_REVISION",
     "PRODUCER_VERSION",
     "acquire_two_pass_record",
+    "acquire_two_pass_record_and_payload",
     "assert_native_no_loop_runtime",
     "assemble_raw_boundaries",
     "canonical_json_bytes",
