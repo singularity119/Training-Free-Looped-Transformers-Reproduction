@@ -2,6 +2,7 @@ import contextlib
 import importlib.util
 import io
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -9,8 +10,10 @@ from pathlib import Path
 from tflt.loopscope.phase6_runtime import (
     GateCRuntimeError,
     assemble_raw_boundaries,
+    assert_native_no_loop_runtime,
     semantic_sha256,
 )
+from tflt.wrapper import LoopIdentityLayer
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,6 +66,31 @@ def _duplicate_inputs():
 
 
 class GateCRuntimePureTests(unittest.TestCase):
+    def test_native_runtime_checks_model_application_not_harmless_imports(self):
+        class NativeLayer:
+            pass
+
+        class NativeModel:
+            def __init__(self):
+                self.layer = NativeLayer()
+
+            def named_modules(self):
+                return iter((("", self), ("model.layers.0", self.layer)))
+
+        self.assertIn("tflt.wrapper", sys.modules)
+        assert_native_no_loop_runtime(NativeModel())
+
+    def test_native_runtime_rejects_registered_loop_wrapper(self):
+        class WrappedModel:
+            def __init__(self):
+                self.layer = LoopIdentityLayer()
+
+            def named_modules(self):
+                return iter((("", self), ("model.layers.0", self.layer)))
+
+        with self.assertRaisesRegex(GateCRuntimeError, "model.layers.0"):
+            assert_native_no_loop_runtime(WrappedModel())
+
     def test_raw_b36_replaces_postnorm_endpoint_and_requires_one_hook(self):
         hidden = tuple("post-%d" % index for index in range(37))
         raw = assemble_raw_boundaries(hidden, "raw-36", 1)

@@ -11,7 +11,6 @@ import hashlib
 import inspect
 import json
 import math
-import sys
 from dataclasses import dataclass
 from typing import Any, Dict, Mapping, Sequence, Tuple
 
@@ -38,6 +37,9 @@ GENERATION_STOP_STRING = "Question:"
 PRODUCER_VERSION = "loopscope.phase6.gate-c-runtime.v1"
 FINAL_NORM_RTOL = 1e-3
 FINAL_NORM_ATOL = 1e-3
+LOOP_WRAPPER_CLASS_NAMES = frozenset(
+    {"LoopLayerWrapper", "LoopBlockEntryWrapper", "LoopIdentityLayer"}
+)
 
 
 class GateCRuntimeError(RuntimeError):
@@ -79,18 +81,27 @@ def module_path(root: Any, target: Any) -> str:
     raise GateCRuntimeError("runtime module is not registered under the model")
 
 
-def assert_native_no_loop_runtime() -> None:
-    forbidden = [
-        name
-        for name in sys.modules
-        if name == "tflt.wrapper"
-        or name.startswith("tflt.wrapper.")
-        or name == "tflt.strategies"
-        or name.startswith("tflt.strategies.")
-        or name == "tflt.cache"
-        or name.startswith("tflt.cache.")
-    ]
-    _require(not forbidden, "loop implementation modules are loaded in Gate C runtime")
+def assert_native_no_loop_runtime(model: Any) -> None:
+    """Fail closed only when a loop wrapper is registered on the model itself."""
+
+    named_modules = getattr(model, "named_modules", None)
+    _require(callable(named_modules), "loaded model lacks a named_modules registry")
+    wrapped_paths = []
+    for path, module in named_modules():
+        module_type = type(module)
+        implementation_module = str(getattr(module_type, "__module__", ""))
+        implementation_name = str(getattr(module_type, "__name__", ""))
+        if (
+            implementation_module == "tflt.wrapper"
+            or implementation_module.startswith("tflt.wrapper.")
+            or implementation_name in LOOP_WRAPPER_CLASS_NAMES
+        ):
+            wrapped_paths.append(str(path) or "<root>")
+    _require(
+        not wrapped_paths,
+        "loop wrapper is applied to registered model modules: %s"
+        % ",".join(sorted(wrapped_paths)),
+    )
 
 
 def assemble_raw_boundaries(
@@ -126,7 +137,6 @@ class GateCRuntime:
 def load_gate_c_runtime() -> GateCRuntime:
     """Load the pinned Qwen runtime from audited local cache only."""
 
-    assert_native_no_loop_runtime()
     try:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -153,6 +163,7 @@ def load_gate_c_runtime() -> GateCRuntime:
         torch_dtype=torch.bfloat16,
         **load_kwargs,
     )
+    assert_native_no_loop_runtime(model)
     closure = strict_revision_closure(model, tokenizer_commit, MODEL_REVISION)
     _require(
         int(getattr(model.config, "num_hidden_layers", 0) or 0) == LAYER_COUNT,
@@ -171,7 +182,7 @@ def load_gate_c_runtime() -> GateCRuntime:
     )
     model.eval()
     model.to("cuda")
-    assert_native_no_loop_runtime()
+    assert_native_no_loop_runtime(model)
     return GateCRuntime(
         torch=torch,
         tokenizer=tokenizer,
@@ -196,7 +207,7 @@ def _token_ids(tokenizer: Any, prefix: str) -> Tuple[int, ...]:
 
 
 def _generate_once(runtime: GateCRuntime, prompt_ids: Sequence[int]) -> Tuple[int, ...]:
-    assert_native_no_loop_runtime()
+    assert_native_no_loop_runtime(runtime.model)
     torch = runtime.torch
     input_ids = torch.tensor([list(prompt_ids)], dtype=torch.long, device="cuda")
     attention_mask = torch.ones_like(input_ids)
@@ -234,6 +245,7 @@ def _replay_once(
 ) -> Tuple[Any, Any, Any, Dict[str, Any]]:
     """Run exactly one replay and return CPU float32 matrices plus closures."""
 
+    assert_native_no_loop_runtime(runtime.model)
     torch = runtime.torch
     captured: Dict[str, Any] = {"count": 0, "last": None}
 
@@ -311,7 +323,7 @@ def _replay_once(
         "replay_next_token_closure": True,
         "replay_sequence_length": len(replay_ids),
     }
-    assert_native_no_loop_runtime()
+    assert_native_no_loop_runtime(runtime.model)
     return (
         boundary_logits.detach().cpu().numpy(),
         normalized.detach().cpu().numpy(),
