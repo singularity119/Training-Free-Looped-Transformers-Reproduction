@@ -97,8 +97,11 @@ CLOSURE_NAME = "runtime_closure.jsonl"
 SEALED_MEMBERSHIP_NAME = "sealed_membership.json"
 RECEIPT_NAME = "receipt.json"
 VERIFIER_NAME = "verifier_receipt.json"
-RECOVERY_DEBUG_ORDINALS = tuple(range(8))
 KNOWN_NOT_EXPRESSED_DEBUG_ORDINAL = 4
+# Reproduce the exact failed-shard execution position first, then cover the
+# remaining representative eligible ordinals.  Debug order is not the formal
+# canonical eligibility-mask order.
+RECOVERY_DEBUG_ORDINALS = (4, 0, 1, 2, 3, 5, 6, 7)
 
 
 class GateDError(RuntimeError):

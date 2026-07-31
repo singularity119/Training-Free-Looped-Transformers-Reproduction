@@ -106,6 +106,8 @@ class GateDManifestTests(unittest.TestCase):
             gate_d.ORDERED_IDENTITY_SHA256,
             "ac52d6e43c693bd0b47b567c2955dae0c6be895ce3230e854d4e1538f05503a5",
         )
+        self.assertEqual(gate_d.KNOWN_NOT_EXPRESSED_DEBUG_ORDINAL, 4)
+        self.assertEqual(gate_d.RECOVERY_DEBUG_ORDINALS, (4, 0, 1, 2, 3, 5, 6, 7))
 
     def test_shards_are_exact_ordinal_modulo_and_bounded(self):
         members = [
