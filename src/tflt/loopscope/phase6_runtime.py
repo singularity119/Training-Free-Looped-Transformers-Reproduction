@@ -37,7 +37,7 @@ LAYER_COUNT = 36
 HIDDEN_SIZE = 2560
 GENERATION_MAX_NEW_TOKENS = 2048
 GENERATION_STOP_STRING = "Question:"
-PRODUCER_VERSION = "loopscope.phase6.gate-d2-runtime.v5"
+PRODUCER_VERSION = "loopscope.phase6.gate-d2-runtime.v6"
 FINAL_NORM_RTOL = 1e-3
 FINAL_NORM_ATOL = 1e-3
 LOOP_WRAPPER_CLASS_NAMES = frozenset(
@@ -195,10 +195,10 @@ def project_boundaries_in_model_dtype(
     return normalized_native.float(), boundary_logits_native.float()
 
 
-def validate_native_replay_next_token_closure(
+def native_replay_argmax_matches_generated(
     torch: Any, native_logits: Any, expected_next_token_id: int
-) -> None:
-    """Close replay against the logits emitted by that exact model forward."""
+) -> bool:
+    """Return the sanitized argmax diagnostic from the exact replay forward."""
 
     shape = tuple(int(value) for value in getattr(native_logits, "shape", ()))
     _require(
@@ -215,10 +215,20 @@ def validate_native_replay_next_token_closure(
         "native replay logits contain non-finite values",
     )
     observed_next_token_id = int(torch.argmax(final_logits).item())
+    return observed_next_token_id == int(expected_next_token_id)
+
+
+def _cache_sequence_length(cache: Any) -> int:
+    """Read the exact logical KV-cache length without retaining cache contents."""
+
+    getter = getattr(cache, "get_seq_length", None)
+    _require(callable(getter), "replay past_key_values lacks get_seq_length closure")
+    length = getter()
     _require(
-        observed_next_token_id == int(expected_next_token_id),
-        "native replay next-token argmax differs from generated answer-first token",
+        isinstance(length, int) and not isinstance(length, bool) and length >= 1,
+        "replay past_key_values sequence length is invalid",
     )
+    return int(length)
 
 
 def duplicate_result_sha256(record: Mapping[str, Any]) -> str:
@@ -344,12 +354,22 @@ def _generate_once(runtime: GateCRuntime, prompt_ids: Sequence[int]) -> Tuple[in
 
 
 def _replay_once(
-    runtime: GateCRuntime, replay_ids: Sequence[int], expected_next_token_id: int
+    runtime: GateCRuntime,
+    prompt_ids: Sequence[int],
+    generated_prefix_ids: Sequence[int],
+    expected_next_token_id: int,
 ) -> Tuple[Any, Any, Any, Dict[str, Any]]:
-    """Run exactly one replay and return CPU float32 matrices plus closures."""
+    """Run one cache-aligned incremental replay and return sanitized closures."""
 
     assert_native_no_loop_runtime(runtime.model)
     torch = runtime.torch
+    prompt = tuple(int(value) for value in prompt_ids)
+    generated_prefix = tuple(int(value) for value in generated_prefix_ids)
+    _require(bool(prompt), "cache-aligned replay prompt IDs are empty")
+    _require(
+        bool(generated_prefix),
+        "eligible cache-aligned replay generated prefix is empty",
+    )
     captured: Dict[str, Any] = {"count": 0, "last": None}
 
     def capture_raw_b36(_module: Any, inputs: Sequence[Any]) -> None:
@@ -362,21 +382,94 @@ def _replay_once(
         )
         captured["last"] = tensor[:, -1, :].detach().clone()
 
-    handle = runtime.final_norm.register_forward_pre_hook(capture_raw_b36)
-    input_ids = torch.tensor([list(replay_ids)], dtype=torch.long, device="cuda")
-    attention_mask = torch.ones_like(input_ids)
-    try:
-        with torch.inference_mode():
-            outputs = runtime.model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                use_cache=False,
-                output_hidden_states=True,
-                return_dict=True,
-                logits_to_keep=1,
-            )
-    finally:
-        handle.remove()
+    step_trace = []
+    prompt_length = len(prompt)
+    prompt_input = torch.tensor([list(prompt)], dtype=torch.long, device="cuda")
+    prompt_mask = torch.ones_like(prompt_input)
+    prompt_positions = torch.arange(prompt_length, dtype=torch.long, device="cuda")
+    with torch.inference_mode():
+        prompt_outputs = runtime.model(
+            input_ids=prompt_input,
+            attention_mask=prompt_mask,
+            position_ids=prompt_positions.unsqueeze(0),
+            cache_position=prompt_positions,
+            past_key_values=None,
+            use_cache=True,
+            output_hidden_states=False,
+            return_dict=True,
+            logits_to_keep=1,
+        )
+    cache = getattr(prompt_outputs, "past_key_values", None)
+    _require(cache is not None, "prompt replay did not return past_key_values")
+    _require(
+        _cache_sequence_length(cache) == prompt_length,
+        "prompt replay KV-cache length differs",
+    )
+    step_trace.append(
+        {
+            "kind": "prompt_cache",
+            "input_length": prompt_length,
+            "attention_mask_length": prompt_length,
+            "cache_position_start": 0,
+            "cache_position_end": prompt_length - 1,
+            "cache_length_after": prompt_length,
+        }
+    )
+
+    outputs = None
+    for prefix_ordinal, token_id in enumerate(generated_prefix):
+        logical_position = prompt_length + prefix_ordinal
+        step_input = torch.tensor([[token_id]], dtype=torch.long, device="cuda")
+        step_mask = torch.ones(
+            (1, logical_position + 1), dtype=torch.long, device="cuda"
+        )
+        step_position = torch.tensor(
+            [logical_position], dtype=torch.long, device="cuda"
+        )
+        final_step = prefix_ordinal == len(generated_prefix) - 1
+        handle = (
+            runtime.final_norm.register_forward_pre_hook(capture_raw_b36)
+            if final_step
+            else None
+        )
+        try:
+            with torch.inference_mode():
+                outputs = runtime.model(
+                    input_ids=step_input,
+                    attention_mask=step_mask,
+                    position_ids=step_position.unsqueeze(0),
+                    cache_position=step_position,
+                    past_key_values=cache,
+                    use_cache=True,
+                    output_hidden_states=final_step,
+                    return_dict=True,
+                    logits_to_keep=1,
+                )
+        finally:
+            if handle is not None:
+                handle.remove()
+        next_cache = getattr(outputs, "past_key_values", None)
+        _require(next_cache is not None, "incremental replay lost past_key_values")
+        expected_cache_length = logical_position + 1
+        _require(
+            _cache_sequence_length(next_cache) == expected_cache_length,
+            "incremental replay KV-cache length differs",
+        )
+        step_trace.append(
+            {
+                "kind": "generated_prefix",
+                "prefix_ordinal": prefix_ordinal,
+                "input_length": 1,
+                "attention_mask_length": expected_cache_length,
+                "cache_position_start": logical_position,
+                "cache_position_end": logical_position,
+                "cache_length_after": expected_cache_length,
+                "hidden_capture": final_step,
+            }
+        )
+        cache = next_cache
+
+    _require(outputs is not None, "cache-aligned replay produced no final step")
 
     hidden_states = tuple(outputs.hidden_states or ())
     raw_state_tensors = assemble_raw_boundaries(
@@ -413,7 +506,7 @@ def _replay_once(
         ),
         "FinalNorm(raw B36) does not close post-norm hidden state",
     )
-    validate_native_replay_next_token_closure(
+    argmax_matches = native_replay_argmax_matches_generated(
         torch, outputs.logits, expected_next_token_id
     )
     _require(
@@ -427,8 +520,17 @@ def _replay_once(
         "raw_boundary_count": int(raw_vectors.shape[0]),
         "final_norm_postnorm_allclose": True,
         "final_norm_postnorm_max_abs": final_norm_max_abs,
-        "replay_next_token_closure": True,
-        "replay_sequence_length": len(replay_ids),
+        "replay_mode": "cache_aligned_incremental_use_cache_true",
+        "replay_use_cache": True,
+        "replay_prompt_length": prompt_length,
+        "replay_generated_prefix_length": len(generated_prefix),
+        "replay_incremental_step_count": len(generated_prefix),
+        "replay_forward_count": len(step_trace),
+        "replay_step_trace_sha256": semantic_sha256(step_trace),
+        "replay_cache_position_closure": True,
+        "replay_attention_mask_closure": True,
+        "replay_argmax_matches_generated": bool(argmax_matches),
+        "replay_sequence_length": prompt_length + len(generated_prefix),
     }
     assert_native_no_loop_runtime(runtime.model)
     return (
@@ -512,9 +614,12 @@ def _acquire_two_pass_record(
     replay_ids = replay_prefix_ids(
         prompt_ids, generated_ids, alignment.answer_first_token_index
     )
+    generated_prefix_ids = tuple(
+        generated_ids[: alignment.answer_first_token_index]
+    )
     expected_next = int(generated_ids[alignment.answer_first_token_index])
     boundary_logits, normalized, raw_boundaries, replay_evidence = _replay_once(
-        runtime, replay_ids, expected_next
+        runtime, prompt_ids, generated_prefix_ids, expected_next
     )
     provenance = {
         "producer_version": PRODUCER_VERSION,
@@ -550,6 +655,13 @@ def _acquire_two_pass_record(
         boundary_logits=boundary_logits,
         final_normalized_vectors=normalized,
         raw_boundaries=raw_boundaries,
+        replay_incremental_step_count=replay_evidence[
+            "replay_incremental_step_count"
+        ],
+        replay_step_trace_sha256=replay_evidence["replay_step_trace_sha256"],
+        replay_argmax_matches_generated=replay_evidence[
+            "replay_argmax_matches_generated"
+        ],
         provenance=provenance,
     )
     diagnostic_values = (

@@ -66,7 +66,7 @@ from tflt.loopscope.phase6_schema import (  # noqa: E402
 EXECUTOR_THREAD_ID = "019fb8f3-8cb7-7c93-a8a0-bae811735601"
 PLANNING_THREAD_ID = "019fb3de-2298-75f2-a083-0dca453ea79c"
 CARD_PATH = REPO_ROOT / "configs/loopscope/phase6_pre_answer_v2_card.json"
-CARD_SHA256 = "3f26d9a373c03a3ebbd47e403f153af65f62ab8048f1b28ea00cdeab97020527"
+CARD_SHA256 = "d305bfd427820141dc50f0d4908dbbb4f15c452779d55344c78399d9a1461394"
 GATE_B_MANIFEST_SHA256 = (
     "ccb148bd61971d24ad81b240cbe1b5f0810e06e620fb568473a61b2147b44a1d"
 )
@@ -85,10 +85,10 @@ HF_DATASETS_CACHE = Path("/hpc2hdd/home/xhuang225/shared/datasets")
 
 POPULATION_SCHEMA = "loopscope.phase6.gate-d2-population.v1"
 SHARD_MANIFEST_SCHEMA = "loopscope.phase6.gate-d2-shard-manifest.v1"
-SHARD_RECEIPT_SCHEMA = "loopscope.phase6.gate-d2-shard-receipt.v1"
-SHARD_VERIFIER_SCHEMA = "loopscope.phase6.gate-d2-shard-verifier.v1"
-MERGED_MANIFEST_SCHEMA = "loopscope.phase6.gate-d2-merged-manifest.v1"
-FINAL_VERIFIER_SCHEMA = "loopscope.phase6.gate-d2-final-verifier.v1"
+SHARD_RECEIPT_SCHEMA = "loopscope.phase6.gate-d2-shard-receipt.v2"
+SHARD_VERIFIER_SCHEMA = "loopscope.phase6.gate-d2-shard-verifier.v2"
+MERGED_MANIFEST_SCHEMA = "loopscope.phase6.gate-d2-merged-manifest.v2"
+FINAL_VERIFIER_SCHEMA = "loopscope.phase6.gate-d2-final-verifier.v2"
 SCHEDULER_RECEIPT_SCHEMA = "loopscope.phase6.gate-d2-scheduler.v1"
 
 SANITIZED_NAME = "sanitized_records.jsonl"
@@ -100,7 +100,9 @@ VERIFIER_NAME = "verifier_receipt.json"
 # Preserve the already frozen recovery cohort and its execution order.  Debug
 # acceptance validates whichever eligibility partition the fresh producer
 # observes; it does not require a predetermined not-expressed identity.
-RECOVERY_DEBUG_ORDINALS = (4, 0, 1, 2, 3, 5, 6, 7)
+RECOVERY_DEBUG_ORDINALS = (577, 268, 0, 1, 2, 3, 4, 5)
+OVERALL_ARGMAX_MATCH_RATE_FLOOR = 0.995
+PER_CATEGORY_ARGMAX_MATCH_RATE_FLOOR = 0.98
 
 
 class GateDError(RuntimeError):
@@ -278,6 +280,78 @@ def _coverage_summary(
         "overall_floor_pass": overall_pass,
         "per_category_floor": PER_CATEGORY_ELIGIBLE_COVERAGE_FLOOR,
         "per_category_floor_pass": per_category_pass,
+        "floors_pass": floors_pass,
+        "category_count": len(category_rows),
+        "categories": category_rows,
+    }
+
+
+def _argmax_match_summary(
+    *,
+    members: Sequence[Mapping[str, Any]],
+    eligibility_records: Sequence[Mapping[str, Any]],
+    records: Sequence[Mapping[str, Any]],
+    enforce_floors: bool,
+) -> Dict[str, Any]:
+    """Recompute the frozen eligible-population argmax match-rate closure."""
+
+    eligible_members = [
+        member
+        for member, eligibility in zip(members, eligibility_records)
+        if eligibility.get("eligibility_state") == "ANCHOR_ELIGIBLE"
+    ]
+    _require(
+        [row.get("canonical_identity") for row in records]
+        == [row.get("canonical_identity") for row in eligible_members],
+        "argmax-rate records differ from eligible canonical order",
+    )
+    _require(bool(records), "argmax-rate denominator is empty")
+    category_eligible: Counter[str] = Counter()
+    category_matches: Counter[str] = Counter()
+    match_count = 0
+    for member, record in zip(eligible_members, records):
+        _require(
+            record.get("category") == member.get("category"),
+            "argmax-rate record category differs",
+        )
+        matches = record.get("replay_argmax_matches_generated")
+        _require(isinstance(matches, bool), "argmax-rate field is not Boolean")
+        category = str(member["category"])
+        category_eligible[category] += 1
+        if matches:
+            match_count += 1
+            category_matches[category] += 1
+    category_rows: Dict[str, Any] = {}
+    category_floors_pass = True
+    for category in sorted(category_eligible):
+        eligible_count = category_eligible[category]
+        matches = category_matches[category]
+        rate = matches / eligible_count
+        passed = rate >= PER_CATEGORY_ARGMAX_MATCH_RATE_FLOOR
+        category_floors_pass = category_floors_pass and passed
+        category_rows[category] = {
+            "eligible_count": eligible_count,
+            "match_count": matches,
+            "mismatch_count": eligible_count - matches,
+            "match_rate": rate,
+            "floor": PER_CATEGORY_ARGMAX_MATCH_RATE_FLOOR,
+            "floor_pass": passed,
+        }
+    eligible_count = len(records)
+    overall_rate = match_count / eligible_count
+    overall_pass = overall_rate >= OVERALL_ARGMAX_MATCH_RATE_FLOOR
+    floors_pass = overall_pass and category_floors_pass
+    if enforce_floors and not floors_pass:
+        raise GateDError("BLOCK_REPLAY_ARGMAX_MATCH_RATE_BELOW_FLOOR")
+    return {
+        "eligible_count": eligible_count,
+        "match_count": match_count,
+        "mismatch_count": eligible_count - match_count,
+        "overall_match_rate": overall_rate,
+        "overall_floor": OVERALL_ARGMAX_MATCH_RATE_FLOOR,
+        "overall_floor_pass": overall_pass,
+        "per_category_floor": PER_CATEGORY_ARGMAX_MATCH_RATE_FLOOR,
+        "per_category_floor_pass": category_floors_pass,
         "floors_pass": floors_pass,
         "category_count": len(category_rows),
         "categories": category_rows,
@@ -804,7 +878,16 @@ def _safe_runtime_closure(ordinal: int, evidence: Mapping[str, Any]) -> Dict[str
         "raw_boundary_count",
         "final_norm_postnorm_allclose",
         "final_norm_postnorm_max_abs",
-        "replay_next_token_closure",
+        "replay_mode",
+        "replay_use_cache",
+        "replay_prompt_length",
+        "replay_generated_prefix_length",
+        "replay_incremental_step_count",
+        "replay_forward_count",
+        "replay_step_trace_sha256",
+        "replay_cache_position_closure",
+        "replay_attention_mask_closure",
+        "replay_argmax_matches_generated",
         "replay_sequence_length",
     )
     closure = {"ordinal": ordinal}
@@ -910,6 +993,12 @@ def _acquire_members(
         eligibility_records=eligibility_records,
         enforce_floors=False,
     )
+    argmax_match = _argmax_match_summary(
+        members=members,
+        eligibility_records=eligibility_records,
+        records=records,
+        enforce_floors=False,
+    )
     receipt: Dict[str, Any] = {
         "schema_version": SHARD_RECEIPT_SCHEMA,
         "status": "COMPLETED",
@@ -941,6 +1030,7 @@ def _acquire_members(
             SEALED_MEMBERSHIP_NAME: sealed_sha,
         },
         "coverage": coverage,
+        "argmax_match": argmax_match,
         "runtime": _resource_evidence(runtime),
         "closure": {
             "generation_count_each": 1,
@@ -950,7 +1040,9 @@ def _acquire_members(
             "anchor_eligible_count": coverage["eligible_count"],
             "anchor_not_expressed_count": coverage["not_expressed_count"],
             "selected_match_ordinal_zero_count": len(records),
-            "replay_next_token_closure_count": len(records),
+            "cache_aligned_incremental_replay_count": len(records),
+            "replay_argmax_match_count": argmax_match["match_count"],
+            "replay_argmax_mismatch_count": argmax_match["mismatch_count"],
             "raw_boundary_count_each": 37,
             "angular_transition_count_each": 36,
             "final_norm_pre_hook_count_each": 1,
@@ -1044,6 +1136,12 @@ def _validate_attempt(
         [row.get("canonical_identity") for row in closures] == eligible_identities,
         "eligible runtime closure order differs",
     )
+    argmax_match = _argmax_match_summary(
+        members=members,
+        eligibility_records=eligibility_records,
+        records=records,
+        enforce_floors=False,
+    )
     sealed_members = sealed.get("members")
     _require(isinstance(sealed_members, list), "sealed membership rows are missing")
     _require(
@@ -1132,7 +1230,26 @@ def _validate_attempt(
                 and closure["trajectory_count"] == 1
                 and closure["anchor_resolved"] is True
                 and closure["unique_token_mapping"] is True
-                and closure["replay_next_token_closure"] is True
+                and closure["replay_mode"]
+                == "cache_aligned_incremental_use_cache_true"
+                and closure["replay_use_cache"] is True
+                and closure["replay_prompt_length"] >= 1
+                and closure["replay_generated_prefix_length"]
+                == record["answer_first_token_index"]
+                and closure["replay_incremental_step_count"]
+                == record["replay_incremental_step_count"]
+                and closure["replay_forward_count"]
+                == closure["replay_incremental_step_count"] + 1
+                and closure["replay_sequence_length"] == record["replay_length"]
+                and closure["replay_sequence_length"]
+                == closure["replay_prompt_length"]
+                + closure["replay_generated_prefix_length"]
+                and closure["replay_step_trace_sha256"]
+                == record["replay_step_trace_sha256"]
+                and closure["replay_cache_position_closure"] is True
+                and closure["replay_attention_mask_closure"] is True
+                and closure["replay_argmax_matches_generated"]
+                is record["replay_argmax_matches_generated"]
                 and closure["final_norm_pre_hook_count"] == 1
                 and closure["raw_boundary_count"] == 37
                 and closure["record_semantic_sha256"]
@@ -1157,6 +1274,10 @@ def _validate_attempt(
         "attempt receipt coverage/count closure differs",
     )
     _require(
+        receipt.get("argmax_match") == argmax_match,
+        "attempt receipt argmax-rate closure differs",
+    )
+    _require(
         not any(bool(value) for value in receipt["information_barrier"].values()),
         "attempt information barrier differs",
     )
@@ -1166,6 +1287,7 @@ def _validate_attempt(
         "closures": closures,
         "sealed_members": sealed_members,
         "coverage": coverage,
+        "argmax_match": argmax_match,
         "receipt": receipt,
     }
 
@@ -1224,6 +1346,7 @@ def verify_debug(
         "trajectory_count": len(verified["records"]),
         "eligible_count": verified["coverage"]["eligible_count"],
         "not_expressed_count": verified["coverage"]["not_expressed_count"],
+        "argmax_match": verified["argmax_match"],
         "membership_sha256": membership["manifest_sha256"],
         "attempt_receipt_sha256": file_sha256(output / RECEIPT_NAME),
         "sanitized_records_sha256": file_sha256(output / SANITIZED_NAME),
@@ -1242,6 +1365,8 @@ def verify_debug(
         "trajectory_count": len(verified["records"]),
         "eligible_count": verified["coverage"]["eligible_count"],
         "not_expressed_count": verified["coverage"]["not_expressed_count"],
+        "replay_argmax_match_count": verified["argmax_match"]["match_count"],
+        "replay_argmax_mismatch_count": verified["argmax_match"]["mismatch_count"],
         "verifier_receipt_sha256": verifier_sha,
     }
 
@@ -1367,6 +1492,7 @@ def verify_shard(
         "trajectory_count": len(verified["records"]),
         "eligible_count": verified["coverage"]["eligible_count"],
         "not_expressed_count": verified["coverage"]["not_expressed_count"],
+        "argmax_match": verified["argmax_match"],
         "membership_sha256": shard["membership_sha256"],
         "attempt_receipt_sha256": file_sha256(output / RECEIPT_NAME),
         "sanitized_records_sha256": file_sha256(output / SANITIZED_NAME),
@@ -1387,6 +1513,8 @@ def verify_shard(
         "trajectory_count": len(verified["records"]),
         "eligible_count": verified["coverage"]["eligible_count"],
         "not_expressed_count": verified["coverage"]["not_expressed_count"],
+        "replay_argmax_match_count": verified["argmax_match"]["match_count"],
+        "replay_argmax_mismatch_count": verified["argmax_match"]["mismatch_count"],
         "verifier_receipt_sha256": verifier_sha,
     }
 
@@ -1598,6 +1726,12 @@ def merge_formal(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
         "merged trajectory membership differs from frozen eligibility mask",
     )
     ordered_records = [merged_records[identity] for identity in eligible_identities]
+    argmax_match = _argmax_match_summary(
+        members=members,
+        eligibility_records=ordered_eligibility,
+        records=ordered_records,
+        enforce_floors=True,
+    )
     ordered_sealed = [merged_sealed[identity] for identity in expected]
     merged_path = run_root / "merged/sanitized_trajectories.jsonl"
     eligibility_path = run_root / "merged/eligibility_mask.jsonl"
@@ -1624,7 +1758,7 @@ def merge_formal(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
     sealed_payload["manifest_sha256"] = _manifest_hash(sealed_payload)
     sealed_sha = _write_new_json(sealed_path, sealed_payload)
     coverage_receipt = {
-        "schema_version": "loopscope.phase6.gate-d2-coverage-receipt.v1",
+        "schema_version": "loopscope.phase6.gate-d2-coverage-receipt.v2",
         "status": "PASS",
         "gate": "D-2",
         "executor_thread_id": EXECUTOR_THREAD_ID,
@@ -1635,6 +1769,7 @@ def merge_formal(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
         "ordered_identity_sha256": ORDERED_IDENTITY_SHA256,
         "eligibility_mask_sha256": eligibility_sha,
         "coverage": coverage,
+        "argmax_match": argmax_match,
         "missing_count": 0,
         "extra_count": 0,
         "duplicate_count": 0,
@@ -1657,6 +1792,9 @@ def merge_formal(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
         "eligibility_count": len(ordered_eligibility),
         "eligible_count": coverage["eligible_count"],
         "not_expressed_count": coverage["not_expressed_count"],
+        "replay_argmax_match_count": argmax_match["match_count"],
+        "replay_argmax_mismatch_count": argmax_match["mismatch_count"],
+        "argmax_match": argmax_match,
         "missing_count": 0,
         "extra_count": 0,
         "duplicate_count": 0,
@@ -1685,6 +1823,8 @@ def merge_formal(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
         "trajectory_count": len(ordered_records),
         "eligible_count": coverage["eligible_count"],
         "not_expressed_count": coverage["not_expressed_count"],
+        "replay_argmax_match_count": argmax_match["match_count"],
+        "replay_argmax_mismatch_count": argmax_match["mismatch_count"],
         "merged_manifest_sha256": manifest_sha,
     }
 
@@ -1745,14 +1885,29 @@ def verify_formal(
         eligibility_records=eligibility_records,
         enforce_floors=True,
     )
+    argmax_match = _argmax_match_summary(
+        members=members,
+        eligibility_records=eligibility_records,
+        records=records,
+        enforce_floors=True,
+    )
+    _require(
+        manifest.get("argmax_match") == argmax_match
+        and manifest.get("replay_argmax_match_count")
+        == argmax_match["match_count"]
+        and manifest.get("replay_argmax_mismatch_count")
+        == argmax_match["mismatch_count"],
+        "merged manifest argmax-rate closure differs",
+    )
     _require(
         coverage["category_count"] == 14
         and coverage_receipt.get("schema_version")
-        == "loopscope.phase6.gate-d2-coverage-receipt.v1"
+        == "loopscope.phase6.gate-d2-coverage-receipt.v2"
         and coverage_receipt.get("status") == "PASS"
         and coverage_receipt.get("manifest_sha256")
         == _manifest_hash(coverage_receipt)
         and coverage_receipt.get("coverage") == coverage
+        and coverage_receipt.get("argmax_match") == argmax_match
         and coverage_receipt.get("eligibility_mask_sha256")
         == file_sha256(eligibility_path),
         "canonical eligibility coverage receipt differs",
@@ -1913,6 +2068,9 @@ def verify_formal(
         "eligible_count": coverage["eligible_count"],
         "not_expressed_count": coverage["not_expressed_count"],
         "coverage": coverage,
+        "argmax_match": argmax_match,
+        "replay_argmax_match_count": argmax_match["match_count"],
+        "replay_argmax_mismatch_count": argmax_match["mismatch_count"],
         "unique_count": 12032,
         "missing_count": 0,
         "extra_count": 0,
@@ -1949,6 +2107,8 @@ def verify_formal(
         "trajectory_count": len(records),
         "eligible_count": coverage["eligible_count"],
         "not_expressed_count": coverage["not_expressed_count"],
+        "replay_argmax_match_count": argmax_match["match_count"],
+        "replay_argmax_mismatch_count": argmax_match["mismatch_count"],
         "final_verifier_receipt_sha256": receipt_sha,
     }
 
@@ -2004,6 +2164,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                     "distribution": "canonical_ordinal_modulo_shard_count",
                     "generation_count_each": 1,
                     "replay_count": "1_if_eligible_else_0",
+                    "replay_mode": "cache_aligned_incremental_use_cache_true",
+                    "replay_argmax_mismatch_policy": "retain_trajectory_and_denominator",
+                    "overall_argmax_match_rate_floor": OVERALL_ARGMAX_MATCH_RATE_FLOOR,
+                    "category_argmax_match_rate_floor": PER_CATEGORY_ARGMAX_MATCH_RATE_FLOOR,
                     "trajectory_count": "1_if_eligible_else_0",
                     "eligibility_mask_frozen_before_selector": True,
                     "overall_coverage_floor": OVERALL_ELIGIBLE_COVERAGE_FLOOR,

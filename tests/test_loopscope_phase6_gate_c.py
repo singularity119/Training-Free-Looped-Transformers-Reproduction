@@ -20,7 +20,7 @@ from tflt.loopscope.phase6_runtime import (
     normalize_raw_boundary_vectors,
     project_boundaries_in_model_dtype,
     semantic_sha256,
-    validate_native_replay_next_token_closure,
+    native_replay_argmax_matches_generated,
 )
 from tflt.wrapper import LoopIdentityLayer
 
@@ -68,7 +68,17 @@ def _duplicate_inputs():
             "raw_boundary_count": 37,
             "final_norm_postnorm_allclose": True,
             "final_norm_postnorm_max_abs": 0.0,
-            "replay_next_token_closure": True,
+            "replay_mode": "cache_aligned_incremental_use_cache_true",
+            "replay_use_cache": True,
+            "replay_prompt_length": 7,
+            "replay_generated_prefix_length": 5,
+            "replay_incremental_step_count": 5,
+            "replay_forward_count": 6,
+            "replay_step_trace_sha256": "d" * 64,
+            "replay_cache_position_closure": True,
+            "replay_attention_mask_closure": True,
+            "replay_argmax_matches_generated": True,
+            "replay_sequence_length": 12,
         }
         for replicate in (1, 2):
             records.append({"replicate": replicate, "record": dict(record)})
@@ -99,10 +109,128 @@ class GateCRuntimePureTests(unittest.TestCase):
                 return FakeScalar(int(np.argmax(values)))
 
         native_logits = np.asarray([[[0.0, 3.0, 1.0]]], dtype=np.float32)
-        validate_native_replay_next_token_closure(FakeTorch, native_logits, 1)
-        with self.assertRaisesRegex(GateCRuntimeError, "native replay next-token"):
-            validate_native_replay_next_token_closure(
-                FakeTorch, native_logits, 2
+        self.assertTrue(
+            native_replay_argmax_matches_generated(FakeTorch, native_logits, 1)
+        )
+        self.assertFalse(
+            native_replay_argmax_matches_generated(FakeTorch, native_logits, 2)
+        )
+
+    def test_cache_aligned_incremental_replay_closes_steps_and_retains_mismatch(self):
+        try:
+            import torch
+        except ModuleNotFoundError:
+            self.skipTest(
+                "local CPU environment does not include torch; remote focused test does"
+            )
+
+        class CpuTorch:
+            long = torch.long
+            inference_mode = staticmethod(torch.inference_mode)
+            cat = staticmethod(torch.cat)
+            isfinite = staticmethod(torch.isfinite)
+            allclose = staticmethod(torch.allclose)
+            argmax = staticmethod(torch.argmax)
+
+            @staticmethod
+            def tensor(value, *, dtype, device):
+                del device
+                return torch.tensor(value, dtype=dtype)
+
+            @staticmethod
+            def arange(*args, dtype, device):
+                del device
+                return torch.arange(*args, dtype=dtype)
+
+            @staticmethod
+            def ones(shape, *, dtype, device):
+                del device
+                return torch.ones(shape, dtype=dtype)
+
+        class Cache:
+            def __init__(self, length):
+                self.length = length
+
+            def get_seq_length(self):
+                return self.length
+
+        final_norm = torch.nn.Identity()
+        lm_head = torch.nn.Linear(phase6_runtime.HIDDEN_SIZE, 5, bias=False)
+
+        class Model:
+            def __init__(self, wrong_cache=False):
+                self.calls = []
+                self.wrong_cache = wrong_cache
+
+            def named_modules(self):
+                return iter((("", self), ("model.norm", final_norm)))
+
+            def __call__(self, **kwargs):
+                self.calls.append(kwargs)
+                input_length = int(kwargs["input_ids"].shape[1])
+                previous = kwargs["past_key_values"]
+                previous_length = 0 if previous is None else previous.get_seq_length()
+                cache_length = previous_length + input_length
+                if self.wrong_cache and previous is not None:
+                    cache_length += 1
+                hidden_states = None
+                logits = torch.tensor([[[0.0, 4.0, 1.0, 0.0, 0.0]]])
+                if kwargs["output_hidden_states"]:
+                    raw = torch.ones((1, 1, phase6_runtime.HIDDEN_SIZE))
+                    post = final_norm(raw)
+                    hidden_states = tuple(raw.clone() for _ in range(36)) + (post,)
+                return SimpleNamespace(
+                    past_key_values=Cache(cache_length),
+                    hidden_states=hidden_states,
+                    logits=logits,
+                )
+
+        model = Model()
+        runtime = phase6_runtime.GateCRuntime(
+            torch=CpuTorch,
+            tokenizer=SimpleNamespace(),
+            model=model,
+            final_norm=final_norm,
+            lm_head=lm_head,
+            final_norm_path="model.norm",
+            lm_head_path="lm_head",
+            revision_closure={},
+        )
+        _logits, _normalized, _raw, evidence = phase6_runtime._replay_once(
+            runtime,
+            prompt_ids=(10, 11),
+            generated_prefix_ids=(20, 21, 22),
+            expected_next_token_id=2,
+        )
+        self.assertEqual(len(model.calls), 4)
+        self.assertTrue(all(call["use_cache"] is True for call in model.calls))
+        self.assertEqual(
+            [int(call["attention_mask"].shape[1]) for call in model.calls],
+            [2, 3, 4, 5],
+        )
+        self.assertEqual(evidence["replay_incremental_step_count"], 3)
+        self.assertEqual(evidence["replay_forward_count"], 4)
+        self.assertTrue(evidence["replay_cache_position_closure"])
+        self.assertTrue(evidence["replay_attention_mask_closure"])
+        self.assertFalse(evidence["replay_argmax_matches_generated"])
+
+        failing_model = Model(wrong_cache=True)
+        failing_runtime = phase6_runtime.GateCRuntime(
+            torch=CpuTorch,
+            tokenizer=SimpleNamespace(),
+            model=failing_model,
+            final_norm=final_norm,
+            lm_head=lm_head,
+            final_norm_path="model.norm",
+            lm_head_path="lm_head",
+            revision_closure={},
+        )
+        with self.assertRaisesRegex(GateCRuntimeError, "KV-cache length"):
+            phase6_runtime._replay_once(
+                failing_runtime,
+                prompt_ids=(10, 11),
+                generated_prefix_ids=(20,),
+                expected_next_token_id=1,
             )
 
     def test_zero_match_masks_replay_and_trajectory_but_keeps_sealed_payload(self):

@@ -17,15 +17,18 @@ The experiment is an eligibility-aware two-pass, dataset-level offline selector:
    generated token that carries it, and classify canonical anchor eligibility.
 3. Freeze one canonical-order eligibility mask and its category coverage receipt across all
    12,032 identities before selector execution.
-4. For eligible identities only, replay the prompt plus generated tokens strictly before the
-   answer token with
-   `use_cache=false`, `output_hidden_states=true`, and zero loop insertions.
-   The next-token closure is evaluated from the logits emitted by that exact replay forward;
-   the separately batched B0...B36 projection supplies trajectory logits and is not substituted
-   for the native replay output in this closure check.
-5. Aggregate the near-complete eligible trajectory subset and freeze one global V2 selector
+4. For eligible identities only, run one cache-aligned incremental replay: establish the prompt
+   KV cache with `use_cache=true`, then feed generated-prefix tokens strictly in original order
+   with exact cache-position and attention-mask closure. Capture hidden states only on the final
+   generated token immediately before the answer token, with zero loop insertions. Full-prefix
+   `use_cache=false` replay is forbidden.
+5. Record `replay_argmax_matches_generated` for every eligible trajectory. A mismatch is retained
+   in the trajectory aggregation and rate denominator. The eligible overall match rate must be
+   `>=0.995`, and every frozen-category match rate must be `>=0.98`; structural replay/cache
+   failures remain fail-closed engineering defects.
+6. Aggregate the near-complete eligible trajectory subset and freeze one global V2 selector
    decision together with the frozen coverage receipt.
-6. Run independent full-population loop decoding only after the selector and panel are
+7. Run independent full-population loop decoding only after the selector and panel are
    byte-frozen. Every canonical identity remains in sealed baseline and outcome membership.
 
 It is not a same-pass online or per-sample dynamic selector.

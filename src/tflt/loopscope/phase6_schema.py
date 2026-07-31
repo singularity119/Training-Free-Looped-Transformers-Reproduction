@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping, Sequence
 
 
-CARD_SCHEMA_VERSION = "loopscope.phase6.pre-answer-rbr-v2-card.v3"
-TRAJECTORY_SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v2"
+CARD_SCHEMA_VERSION = "loopscope.phase6.pre-answer-rbr-v2-card.v4"
+TRAJECTORY_SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v3"
 ELIGIBILITY_SCHEMA_VERSION = "loopscope.phase6.anchor-eligibility.v1"
 SELECTOR_SCHEMA_VERSION = "loopscope.phase6.selector-freeze.v1"
 METHOD = "RELATIVE_BIPHASIC_REVERSAL_V2_ABSOLUTE_RATE"
@@ -39,6 +39,7 @@ ENGINEERING_BLOCK_STATES = (
     "BLOCK_ANCHOR_COVERAGE_NOT_EXACT",
     "BLOCK_ANCHOR_COVERAGE_BELOW_FLOOR",
     "BLOCK_GENERATION_REPLAY_MISMATCH",
+    "BLOCK_REPLAY_ARGMAX_MATCH_RATE_BELOW_FLOOR",
     "BLOCK_NUMERIC_OR_ENDPOINT_INVALID",
     "BLOCK_POPULATION_OR_HASH_MISMATCH",
     "BLOCK_INFORMATION_BARRIER_VIOLATION",
@@ -90,6 +91,9 @@ TRAJECTORY_KEYS = {
     "generated_id_text_aligner_sha256",
     "generation_count",
     "replay_count",
+    "replay_incremental_step_count",
+    "replay_step_trace_sha256",
+    "replay_argmax_matches_generated",
     "loop_insertions",
     "H",
     "D",
@@ -425,6 +429,12 @@ def validate_card(card: Mapping[str, Any]) -> None:
     trajectory = card["trajectory"]
     if trajectory != {
         "raw_boundaries": "B0...B36_final_norm_pre_hook",
+        "replay_mode": "cache_aligned_incremental_use_cache_true",
+        "full_prefix_use_cache_false": "forbidden",
+        "argmax_match_field": "replay_argmax_matches_generated",
+        "overall_argmax_match_rate_floor": 0.995,
+        "per_category_argmax_match_rate_floor": 0.98,
+        "argmax_mismatch_policy": "retain_trajectory_and_denominator_membership",
         "selector_fields": ["H", "D"],
         "diagnostic_fields": [
             "hidden_rms_l2_to_final",
@@ -599,12 +609,22 @@ def validate_trajectory_record(record: Mapping[str, Any]) -> None:
         require_sha256(record[key], key)
     generation_length = require_integer(record["generation_length"], "generation_length", 1)
     replay_length = require_integer(record["replay_length"], "replay_length", 1)
+    replay_step_count = require_integer(
+        record["replay_incremental_step_count"],
+        "replay_incremental_step_count",
+        1,
+    )
     answer_first = require_integer(
         record["answer_first_token_index"], "answer_first_token_index", 1
     )
     anchor = require_integer(record["anchor_token_index"], "anchor_token_index")
     if answer_first >= generation_length or anchor != answer_first - 1:
         raise Phase6ContractError("answer/probe token indices differ")
+    if replay_step_count != answer_first:
+        raise Phase6ContractError("incremental replay step count differs")
+    require_sha256(record["replay_step_trace_sha256"], "replay_step_trace_sha256")
+    if not isinstance(record["replay_argmax_matches_generated"], bool):
+        raise Phase6ContractError("replay argmax diagnostic must be Boolean")
     start = require_integer(record["answer_span_start_offset"], "answer_span_start_offset")
     end = require_integer(record["answer_span_end_offset"], "answer_span_end_offset", 1)
     match_count = require_integer(record["answer_match_count"], "answer_match_count", 1)
@@ -613,7 +633,11 @@ def validate_trajectory_record(record: Mapping[str, Any]) -> None:
     )
     if selected_ordinal != 0 or selected_ordinal >= match_count:
         raise Phase6ContractError("selected answer match ordinal differs")
-    if end <= start or replay_length <= anchor:
+    if (
+        end <= start
+        or replay_length <= anchor
+        or replay_length <= replay_step_count
+    ):
         raise Phase6ContractError("span/replay closure failed")
     _vector(record["H"], BOUNDARY_COUNT, "H", 0.0)
     d_values = _vector(record["D"], BOUNDARY_COUNT, "D", -D36_TOLERANCE)
@@ -904,6 +928,12 @@ def trajectory_json_schema() -> Dict[str, Any]:
             "adjacent_angular_distance": vector36,
             "generation_count": {"const": 1},
             "replay_count": {"const": 1},
+            "replay_incremental_step_count": {"type": "integer", "minimum": 1},
+            "replay_step_trace_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$",
+            },
+            "replay_argmax_matches_generated": {"type": "boolean"},
             "loop_insertions": {"const": 0},
             "answer_match_count": {"type": "integer", "minimum": 1},
             "selected_match_ordinal": {"const": 0},

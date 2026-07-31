@@ -1,5 +1,5 @@
 {
-  "schema_version": "loopscope.phase6.pre-answer-rbr-v2-card.v3",
+  "schema_version": "loopscope.phase6.pre-answer-rbr-v2-card.v4",
   "card": "H6_PRE_ANSWER_FULLVOCAB_RBR_V2_WINDOW_SELECTION",
   "claim_boundary": "local_contract_only_no_model_data_generation_replay_selector_or_outcome",
   "cell": {
@@ -70,6 +70,12 @@
   },
   "trajectory": {
     "raw_boundaries": "B0...B36_final_norm_pre_hook",
+    "replay_mode": "cache_aligned_incremental_use_cache_true",
+    "full_prefix_use_cache_false": "forbidden",
+    "argmax_match_field": "replay_argmax_matches_generated",
+    "overall_argmax_match_rate_floor": 0.995,
+    "per_category_argmax_match_rate_floor": 0.98,
+    "argmax_mismatch_policy": "retain_trajectory_and_denominator_membership",
     "selector_fields": [
       "H",
       "D"
@@ -200,6 +206,7 @@
     "BLOCK_ANCHOR_COVERAGE_NOT_EXACT",
     "BLOCK_ANCHOR_COVERAGE_BELOW_FLOOR",
     "BLOCK_GENERATION_REPLAY_MISMATCH",
+    "BLOCK_REPLAY_ARGMAX_MATCH_RATE_BELOW_FLOOR",
     "BLOCK_NUMERIC_OR_ENDPOINT_INVALID",
     "BLOCK_POPULATION_OR_HASH_MISMATCH",
     "BLOCK_INFORMATION_BARRIER_VIOLATION",

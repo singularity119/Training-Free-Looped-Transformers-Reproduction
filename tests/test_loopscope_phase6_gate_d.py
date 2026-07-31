@@ -67,7 +67,7 @@ def _record(identity: str, payload_sha256: str):
         prompt_sha256=SHA,
         generated_completion_sha256=payload_sha256,
         generation_length=8,
-        replay_length=3,
+        replay_length=10,
         anchor_token_index=2,
         answer_span_start_offset=10,
         answer_span_end_offset=11,
@@ -76,11 +76,14 @@ def _record(identity: str, payload_sha256: str):
         answer_first_token_index=3,
         answer_span_extractor_sha256=SHA,
         generated_id_text_aligner_sha256=SHA,
-        generation_prefix_ids=[11, 12, 13],
-        replay_ids=[11, 12, 13],
+        generation_prefix_ids=list(range(10, 20)),
+        replay_ids=list(range(10, 20)),
         boundary_logits=logits,
         final_normalized_vectors=normalized,
         raw_boundaries=raw,
+        replay_incremental_step_count=3,
+        replay_step_trace_sha256=SHA,
+        replay_argmax_matches_generated=True,
         provenance={
             "producer_version": "gate-d-test",
             "card_sha256": SHA,
@@ -116,7 +119,7 @@ def _eligible_runtime_closure(member, record, payload_sha256):
         "generation_ids_sha256": record["provenance"]["generation_ids_sha256"],
         "replay_ids_sha256": record["provenance"]["replay_ids_sha256"],
         "generation_length": 8,
-        "replay_length": 3,
+        "replay_length": 10,
         "anchor_token_index": 2,
         "answer_span_start_offset": 10,
         "answer_span_end_offset": 11,
@@ -134,8 +137,19 @@ def _eligible_runtime_closure(member, record, payload_sha256):
         "raw_boundary_count": 37,
         "final_norm_postnorm_allclose": True,
         "final_norm_postnorm_max_abs": 0.0,
-        "replay_next_token_closure": True,
-        "replay_sequence_length": 3,
+        "replay_mode": "cache_aligned_incremental_use_cache_true",
+        "replay_use_cache": True,
+        "replay_prompt_length": 7,
+        "replay_generated_prefix_length": 3,
+        "replay_incremental_step_count": 3,
+        "replay_forward_count": 4,
+        "replay_step_trace_sha256": SHA,
+        "replay_cache_position_closure": True,
+        "replay_attention_mask_closure": True,
+        "replay_argmax_matches_generated": record[
+            "replay_argmax_matches_generated"
+        ],
+        "replay_sequence_length": 10,
     }
 
 
@@ -213,6 +227,12 @@ def _write_debug_fixture(run_root: Path, states, expected_commit: str):
         eligibility_records=eligibility_records,
         enforce_floors=False,
     )
+    argmax_match = gate_d._argmax_match_summary(
+        members=members,
+        eligibility_records=eligibility_records,
+        records=records,
+        enforce_floors=False,
+    )
     receipt = {
         "schema_version": gate_d.SHARD_RECEIPT_SCHEMA,
         "status": "COMPLETED",
@@ -226,6 +246,7 @@ def _write_debug_fixture(run_root: Path, states, expected_commit: str):
         "runtime_closure_count": len(closures),
         "eligibility_count": len(eligibility_records),
         "coverage": coverage,
+        "argmax_match": argmax_match,
         "artifacts": {
             gate_d.SANITIZED_NAME: records_sha,
             gate_d.ELIGIBILITY_NAME: eligibility_sha,
@@ -259,7 +280,10 @@ class GateDManifestTests(unittest.TestCase):
             gate_d.ORDERED_IDENTITY_SHA256,
             "ac52d6e43c693bd0b47b567c2955dae0c6be895ce3230e854d4e1538f05503a5",
         )
-        self.assertEqual(gate_d.RECOVERY_DEBUG_ORDINALS, (4, 0, 1, 2, 3, 5, 6, 7))
+        self.assertEqual(
+            gate_d.RECOVERY_DEBUG_ORDINALS,
+            (577, 268, 0, 1, 2, 3, 4, 5),
+        )
 
     def test_shards_are_exact_ordinal_modulo_and_bounded(self):
         members = [
@@ -471,6 +495,92 @@ class GateDArtifactTests(unittest.TestCase):
                 enforce_floors=False,
             )
 
+    def test_argmax_mismatches_are_retained_and_overall_floor_is_inclusive(self):
+        members = [
+            {
+                "canonical_identity": "identity-%03d" % index,
+                "category": "biology",
+            }
+            for index in range(200)
+        ]
+        eligibility = [
+            _eligibility_record(
+                row["canonical_identity"], row["category"], "ANCHOR_ELIGIBLE"
+            )
+            for row in members
+        ]
+        records = [
+            {
+                "canonical_identity": row["canonical_identity"],
+                "category": row["category"],
+                "replay_argmax_matches_generated": index != 199,
+            }
+            for index, row in enumerate(members)
+        ]
+        summary = gate_d._argmax_match_summary(
+            members=members,
+            eligibility_records=eligibility,
+            records=records,
+            enforce_floors=True,
+        )
+        self.assertEqual(summary["overall_match_rate"], 0.995)
+        self.assertEqual(summary["mismatch_count"], 1)
+        self.assertEqual(len(records), summary["eligible_count"])
+
+        records[-2]["replay_argmax_matches_generated"] = False
+        with self.assertRaisesRegex(
+            gate_d.GateDError,
+            "BLOCK_REPLAY_ARGMAX_MATCH_RATE_BELOW_FLOOR",
+        ):
+            gate_d._argmax_match_summary(
+                members=members,
+                eligibility_records=eligibility,
+                records=records,
+                enforce_floors=True,
+            )
+
+    def test_argmax_per_category_floor_is_recomputed_and_fail_closed(self):
+        members = [
+            {
+                "canonical_identity": "identity-%04d" % index,
+                "category": "biology" if index < 100 else "law",
+            }
+            for index in range(1000)
+        ]
+        eligibility = [
+            _eligibility_record(
+                row["canonical_identity"], row["category"], "ANCHOR_ELIGIBLE"
+            )
+            for row in members
+        ]
+        records = [
+            {
+                "canonical_identity": row["canonical_identity"],
+                "category": row["category"],
+                "replay_argmax_matches_generated": index not in (98, 99),
+            }
+            for index, row in enumerate(members)
+        ]
+        summary = gate_d._argmax_match_summary(
+            members=members,
+            eligibility_records=eligibility,
+            records=records,
+            enforce_floors=True,
+        )
+        self.assertEqual(summary["categories"]["biology"]["match_rate"], 0.98)
+
+        records[97]["replay_argmax_matches_generated"] = False
+        with self.assertRaisesRegex(
+            gate_d.GateDError,
+            "BLOCK_REPLAY_ARGMAX_MATCH_RATE_BELOW_FLOOR",
+        ):
+            gate_d._argmax_match_summary(
+                members=members,
+                eligibility_records=eligibility,
+                records=records,
+                enforce_floors=True,
+            )
+
     def test_opaque_payload_is_hash_checked_without_json_or_text_parsing(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "attempt-0001"
@@ -497,36 +607,7 @@ class GateDArtifactTests(unittest.TestCase):
                 "sequence_length": 10,
             }
             membership_sha = semantic_sha256([member])
-            closure = {
-                "ordinal": 0,
-                "canonical_identity": "identity-0",
-                "eligibility_state": "ANCHOR_ELIGIBLE",
-                "prompt_sha256": SHA,
-                "generated_completion_sha256": payload_sha,
-                "generation_ids_sha256": record["provenance"]["generation_ids_sha256"],
-                "replay_ids_sha256": record["provenance"]["replay_ids_sha256"],
-                "generation_length": 8,
-                "replay_length": 3,
-                "anchor_token_index": 2,
-                "answer_span_start_offset": 10,
-                "answer_span_end_offset": 11,
-                "answer_match_count": 2,
-                "selected_match_ordinal": 0,
-                "answer_first_token_index": 3,
-                "generation_count": 1,
-                "replay_count": 1,
-                "trajectory_count": 1,
-                "loop_insertions": 0,
-                "anchor_resolved": True,
-                "unique_token_mapping": True,
-                "record_semantic_sha256": runtime_record_sha256(record),
-                "final_norm_pre_hook_count": 1,
-                "raw_boundary_count": 37,
-                "final_norm_postnorm_allclose": True,
-                "final_norm_postnorm_max_abs": 0.0,
-                "replay_next_token_closure": True,
-                "replay_sequence_length": 3,
-            }
+            closure = _eligible_runtime_closure(member, record, payload_sha)
             records_sha = gate_d._write_new_jsonl(
                 output / gate_d.SANITIZED_NAME, [record]
             )
@@ -555,6 +636,17 @@ class GateDArtifactTests(unittest.TestCase):
             sealed_sha = gate_d._write_new_json(
                 output / gate_d.SEALED_MEMBERSHIP_NAME, sealed
             )
+            coverage = gate_d._coverage_summary(
+                members=[member],
+                eligibility_records=[eligibility],
+                enforce_floors=False,
+            )
+            argmax_match = gate_d._argmax_match_summary(
+                members=[member],
+                eligibility_records=[eligibility],
+                records=[record],
+                enforce_floors=False,
+            )
             receipt = {
                 "schema_version": gate_d.SHARD_RECEIPT_SCHEMA,
                 "status": "COMPLETED",
@@ -567,11 +659,8 @@ class GateDArtifactTests(unittest.TestCase):
                 "trajectory_count": 1,
                 "runtime_closure_count": 1,
                 "eligibility_count": 1,
-                "coverage": gate_d._coverage_summary(
-                    members=[member],
-                    eligibility_records=[eligibility],
-                    enforce_floors=False,
-                ),
+                "coverage": coverage,
+                "argmax_match": argmax_match,
                 "artifacts": {
                     gate_d.SANITIZED_NAME: records_sha,
                     gate_d.ELIGIBILITY_NAME: eligibility_sha,

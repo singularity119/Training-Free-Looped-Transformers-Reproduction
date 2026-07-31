@@ -91,6 +91,17 @@ class Phase6SchemaVerifierTests(unittest.TestCase):
         self.assertEqual(
             valid["anchor_eligibility"]["per_category_coverage_floor"], 0.98
         )
+        self.assertEqual(
+            valid["trajectory"]["replay_mode"],
+            "cache_aligned_incremental_use_cache_true",
+        )
+        self.assertEqual(
+            valid["trajectory"]["overall_argmax_match_rate_floor"], 0.995
+        )
+        self.assertEqual(
+            trajectory["properties"]["replay_argmax_matches_generated"],
+            {"type": "boolean"},
+        )
 
     def test_expressed_and_not_expressed_records_are_separate_closed_schemas(self):
         for state in ("ANCHOR_ELIGIBLE", "ANCHOR_NOT_EXPRESSED"):

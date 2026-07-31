@@ -54,7 +54,7 @@ def _record(**changes):
         "prompt_sha256": SHA,
         "generated_completion_sha256": SHA,
         "generation_length": 8,
-        "replay_length": 3,
+        "replay_length": 10,
         "anchor_token_index": 2,
         "answer_span_start_offset": 10,
         "answer_span_end_offset": 11,
@@ -63,11 +63,14 @@ def _record(**changes):
         "answer_first_token_index": 3,
         "answer_span_extractor_sha256": SHA,
         "generated_id_text_aligner_sha256": SHA,
-        "generation_prefix_ids": [11, 12, 13],
-        "replay_ids": [11, 12, 13],
+        "generation_prefix_ids": list(range(10, 20)),
+        "replay_ids": list(range(10, 20)),
         "boundary_logits": logits,
         "final_normalized_vectors": normalized,
         "raw_boundaries": raw,
+        "replay_incremental_step_count": 3,
+        "replay_step_trace_sha256": SHA,
+        "replay_argmax_matches_generated": True,
         "provenance": _provenance(),
     }
     kwargs.update(changes)
@@ -105,6 +108,7 @@ class Phase6AcquisitionTests(unittest.TestCase):
         self.assertEqual(record["hidden_cosine_distance_to_final"][-1], 0.0)
         self.assertEqual(record["answer_match_count"], 2)
         self.assertEqual(record["selected_match_ordinal"], 0)
+        self.assertTrue(record["replay_argmax_matches_generated"])
 
     def test_angular_uses_raw_not_final_normalized_vectors(self):
         raw = np.tile(np.asarray([1.0, 0.0], dtype=np.float32), (37, 1))

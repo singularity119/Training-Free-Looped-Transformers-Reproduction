@@ -56,7 +56,7 @@ from tflt.loopscope.phase6_schema import (  # noqa: E402
 EXECUTOR_THREAD_ID = "019fb452-e2af-7bf2-a411-612c81971245"
 PLANNING_THREAD_ID = "019fb3de-2298-75f2-a083-0dca453ea79c"
 CARD_PATH = REPO_ROOT / "configs/loopscope/phase6_pre_answer_v2_card.json"
-CARD_SHA256 = "feef7250b72fa8ecd154d58835ad42eacc1fc96509ed984acdafbfa4c20432d4"
+CARD_SHA256 = "d305bfd427820141dc50f0d4908dbbb4f15c452779d55344c78399d9a1461394"
 GATE_B_MANIFEST_SHA256 = (
     "ccb148bd61971d24ad81b240cbe1b5f0810e06e620fb568473a61b2147b44a1d"
 )
@@ -313,7 +313,11 @@ def _duplicate_closure(
             )
             _require(
                 closure.get("final_norm_postnorm_allclose") is True
-                and closure.get("replay_next_token_closure") is True,
+                and closure.get("replay_mode")
+                == "cache_aligned_incremental_use_cache_true"
+                and closure.get("replay_use_cache") is True
+                and closure.get("replay_cache_position_closure") is True
+                and closure.get("replay_attention_mask_closure") is True,
                 "runtime replay/final-norm closure differs",
             )
         rows.append(
@@ -326,7 +330,10 @@ def _duplicate_closure(
                 "answer_match_count": int(closure1["answer_match_count"]),
                 "selected_match_ordinal": 0,
                 "sanitized_scalars_equal": True,
-                "replay_next_token_closure": True,
+                "cache_aligned_incremental_replay": True,
+                "replay_argmax_matches_generated": closure1[
+                    "replay_argmax_matches_generated"
+                ],
                 "final_norm_pre_hook_count_each": 1,
                 "raw_boundary_count_each": 37,
                 "generation_count_each": 1,
@@ -453,7 +460,12 @@ def run_smoke(
             "raw_boundary_count_each": 37,
             "angular_transition_count_each": 36,
             "final_norm_pre_hook_count_each": 1,
-            "replay_next_token_closure_count": 8,
+            "cache_aligned_incremental_replay_count": 8,
+            "replay_argmax_match_count": sum(
+                int(row["replay_argmax_matches_generated"])
+                for row in duplicate["rows"]
+            )
+            * 2,
             "duplicate_determinism": "PASS",
         },
         "information_barrier": {
@@ -584,7 +596,8 @@ def verify_smoke(
             and row["answer_match_count"] >= 1
             and row["selected_match_ordinal"] == 0
             and row["sanitized_scalars_equal"] is True
-            and row["replay_next_token_closure"] is True
+            and row["cache_aligned_incremental_replay"] is True
+            and isinstance(row["replay_argmax_matches_generated"], bool)
             and row["final_norm_pre_hook_count_each"] == 1
             and row["raw_boundary_count_each"] == 37
             and row["generation_count_each"] == 1
@@ -613,7 +626,12 @@ def verify_smoke(
         "identity_count": 4,
         "replicates_per_identity": 2,
         "selected_anchor_count": 8,
-        "replay_next_token_closure_count": 8,
+        "cache_aligned_incremental_replay_count": 8,
+        "replay_argmax_match_count": sum(
+            int(row["replay_argmax_matches_generated"])
+            for row in duplicate_rows.values()
+        )
+        * 2,
         "raw_boundary_count_each": 37,
         "angular_transition_count_each": 36,
         "final_norm_pre_hook_count_each": 1,

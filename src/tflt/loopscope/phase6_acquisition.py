@@ -22,7 +22,7 @@ from tflt.loopscope.phase6_schema import (
 )
 
 
-SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v2"
+SCHEMA_VERSION = "loopscope.phase6.pre-answer-trajectory.v3"
 BOUNDARY_COUNT = 37
 TRANSITION_COUNT = 36
 FINAL_TOLERANCE = 1e-6
@@ -51,6 +51,9 @@ TOP_LEVEL_KEYS = frozenset(
         "generated_id_text_aligner_sha256",
         "generation_count",
         "replay_count",
+        "replay_incremental_step_count",
+        "replay_step_trace_sha256",
+        "replay_argmax_matches_generated",
         "loop_insertions",
         "H",
         "D",
@@ -326,6 +329,9 @@ def build_sanitized_trajectory_record(
     boundary_logits: Sequence[Sequence[float]],
     final_normalized_vectors: Sequence[Sequence[float]],
     raw_boundaries: Sequence[Sequence[float]],
+    replay_incremental_step_count: int,
+    replay_step_trace_sha256: str,
+    replay_argmax_matches_generated: bool,
     provenance: Mapping[str, Any],
 ) -> Dict[str, Any]:
     """Reduce in-memory producer values to the exact sanitized record schema."""
@@ -343,6 +349,9 @@ def build_sanitized_trajectory_record(
         generation_length, "generation_length"
     )
     replay_length_value = _require_nonnegative_integer(replay_length, "replay_length")
+    replay_step_count = _require_nonnegative_integer(
+        replay_incremental_step_count, "replay_incremental_step_count"
+    )
     anchor_index = _require_nonnegative_integer(anchor_token_index, "anchor_token_index")
     span_start = _require_nonnegative_integer(
         answer_span_start_offset, "answer_span_start_offset"
@@ -363,6 +372,11 @@ def build_sanitized_trajectory_record(
         _fail("generation/replay lengths must be positive")
     if replay_length_value != len(generation_ids):
         _fail("replay_length must equal the exact replay-ID sequence length")
+    if replay_step_count != answer_index:
+        _fail("incremental replay step count must equal generated-prefix length")
+    if not isinstance(replay_argmax_matches_generated, bool):
+        _fail("replay_argmax_matches_generated must be Boolean")
+    _require_sha256(replay_step_trace_sha256, "replay_step_trace_sha256")
     if span_end <= span_start:
         _fail("answer span offsets must form a non-empty half-open interval")
     if match_count < 1 or selected_ordinal != 0 or selected_ordinal >= match_count:
@@ -428,6 +442,9 @@ def build_sanitized_trajectory_record(
         "generated_id_text_aligner_sha256": str(generated_id_text_aligner_sha256),
         "generation_count": 1,
         "replay_count": 1,
+        "replay_incremental_step_count": replay_step_count,
+        "replay_step_trace_sha256": str(replay_step_trace_sha256),
+        "replay_argmax_matches_generated": replay_argmax_matches_generated,
         "loop_insertions": 0,
         "H": H,
         "D": D,

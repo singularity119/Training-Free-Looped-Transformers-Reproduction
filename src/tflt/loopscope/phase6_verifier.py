@@ -66,6 +66,26 @@ def _independent_card_checks(card: Mapping[str, Any]) -> None:
         == "engineering_error_fail_closed_not_masked",
         "match-present failure policy",
     )
+    trajectory = card["trajectory"]
+    _check(
+        trajectory["replay_mode"]
+        == "cache_aligned_incremental_use_cache_true",
+        "cache-aligned replay mode",
+    )
+    _check(
+        trajectory["full_prefix_use_cache_false"] == "forbidden",
+        "full-prefix replay prohibition",
+    )
+    _check(
+        trajectory["overall_argmax_match_rate_floor"] == 0.995
+        and trajectory["per_category_argmax_match_rate_floor"] == 0.98,
+        "argmax match-rate floors",
+    )
+    _check(
+        trajectory["argmax_mismatch_policy"]
+        == "retain_trajectory_and_denominator_membership",
+        "argmax mismatch retention",
+    )
 
     width_starts = card["candidate_domain"]["width_starts"]
     expected = {

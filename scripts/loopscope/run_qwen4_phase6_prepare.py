@@ -59,8 +59,12 @@ def main() -> int:
             "per_category_coverage_floor"
         ],
         "pass_2": (
-            "eligible_only_exact_prefix_replay_no_cache_hidden_states_"
-            "zero_loop_insertions"
+            "eligible_only_cache_aligned_incremental_use_cache_true_"
+            "final_pre_answer_hidden_states_zero_loop_insertions"
+        ),
+        "replay_argmax_closure": (
+            "retain_all_eligible_trajectories_overall_rate_ge_0.995_"
+            "each_category_rate_ge_0.98"
         ),
         "model_or_data_loaded": False,
         "generation_or_replay_executed": False,

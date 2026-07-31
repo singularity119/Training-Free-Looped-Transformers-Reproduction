@@ -1,5 +1,5 @@
 {
-  "$id": "loopscope.phase6.pre-answer-trajectory.v2",
+  "$id": "loopscope.phase6.pre-answer-trajectory.v3",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -43,12 +43,15 @@
       "required": ["boundary_capture", "card_sha256", "final_norm_path", "generation_ids_sha256", "lm_head_path", "producer_version", "renderer_manifest_sha256", "replay_ids_sha256", "tokenizer_manifest_sha256"],
       "type": "object"
     },
+    "replay_argmax_matches_generated": {"type": "boolean"},
     "replay_count": {"const": 1},
+    "replay_incremental_step_count": {"minimum": 1, "type": "integer"},
     "replay_length": {},
-    "schema_version": {"const": "loopscope.phase6.pre-answer-trajectory.v2"},
+    "replay_step_trace_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "schema_version": {"const": "loopscope.phase6.pre-answer-trajectory.v3"},
     "selected_match_ordinal": {"const": 0},
     "split": {"const": "test"}
   },
-  "required": ["D", "H", "adjacent_angular_distance", "anchor_token_index", "answer_first_token_index", "answer_match_count", "answer_span_end_offset", "answer_span_extractor_sha256", "answer_span_start_offset", "canonical_identity", "category", "dataset_repo", "dataset_revision", "generated_completion_sha256", "generated_id_text_aligner_sha256", "generation_count", "generation_length", "hidden_cosine_distance_to_final", "hidden_cosine_to_final", "hidden_rms_l2_to_final", "loop_insertions", "model_repo", "model_revision", "prompt_sha256", "provenance", "replay_count", "replay_length", "schema_version", "selected_match_ordinal", "split"],
+  "required": ["D", "H", "adjacent_angular_distance", "anchor_token_index", "answer_first_token_index", "answer_match_count", "answer_span_end_offset", "answer_span_extractor_sha256", "answer_span_start_offset", "canonical_identity", "category", "dataset_repo", "dataset_revision", "generated_completion_sha256", "generated_id_text_aligner_sha256", "generation_count", "generation_length", "hidden_cosine_distance_to_final", "hidden_cosine_to_final", "hidden_rms_l2_to_final", "loop_insertions", "model_repo", "model_revision", "prompt_sha256", "provenance", "replay_argmax_matches_generated", "replay_count", "replay_incremental_step_count", "replay_length", "replay_step_trace_sha256", "schema_version", "selected_match_ordinal", "split"],
   "type": "object"
 }
