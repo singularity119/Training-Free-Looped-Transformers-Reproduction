@@ -20,6 +20,7 @@ from tflt.loopscope.phase6_runtime import (
     normalize_raw_boundary_vectors,
     project_boundaries_in_model_dtype,
     semantic_sha256,
+    validate_native_replay_next_token_closure,
 )
 from tflt.wrapper import LoopIdentityLayer
 
@@ -76,6 +77,34 @@ def _duplicate_inputs():
 
 
 class GateCRuntimePureTests(unittest.TestCase):
+    def test_next_token_closure_uses_native_replay_logits(self):
+        class FakeScalar:
+            def __init__(self, value):
+                self.value = value
+
+            def item(self):
+                return self.value
+
+        class FakeFinite:
+            def all(self):
+                return FakeScalar(True)
+
+        class FakeTorch:
+            @staticmethod
+            def isfinite(_values):
+                return FakeFinite()
+
+            @staticmethod
+            def argmax(values):
+                return FakeScalar(int(np.argmax(values)))
+
+        native_logits = np.asarray([[[0.0, 3.0, 1.0]]], dtype=np.float32)
+        validate_native_replay_next_token_closure(FakeTorch, native_logits, 1)
+        with self.assertRaisesRegex(GateCRuntimeError, "native replay next-token"):
+            validate_native_replay_next_token_closure(
+                FakeTorch, native_logits, 2
+            )
+
     def test_zero_match_masks_replay_and_trajectory_but_keeps_sealed_payload(self):
         class Tokenizer:
             all_special_ids = []

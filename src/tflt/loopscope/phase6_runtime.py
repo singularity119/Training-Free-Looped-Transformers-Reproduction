@@ -195,6 +195,32 @@ def project_boundaries_in_model_dtype(
     return normalized_native.float(), boundary_logits_native.float()
 
 
+def validate_native_replay_next_token_closure(
+    torch: Any, native_logits: Any, expected_next_token_id: int
+) -> None:
+    """Close replay against the logits emitted by that exact model forward."""
+
+    shape = tuple(int(value) for value in getattr(native_logits, "shape", ()))
+    _require(
+        getattr(native_logits, "ndim", None) == 3
+        and len(shape) == 3
+        and shape[0] == 1
+        and shape[1] >= 1
+        and shape[2] >= 1,
+        "native replay logits must have shape [1,S,V]",
+    )
+    final_logits = native_logits[0, -1, :]
+    _require(
+        bool(torch.isfinite(final_logits).all().item()),
+        "native replay logits contain non-finite values",
+    )
+    observed_next_token_id = int(torch.argmax(final_logits).item())
+    _require(
+        observed_next_token_id == int(expected_next_token_id),
+        "native replay next-token argmax differs from generated answer-first token",
+    )
+
+
 def duplicate_result_sha256(record: Mapping[str, Any]) -> str:
     return semantic_sha256(record)
 
@@ -387,10 +413,8 @@ def _replay_once(
         ),
         "FinalNorm(raw B36) does not close post-norm hidden state",
     )
-    observed_next_token_id = int(torch.argmax(boundary_logits[-1]).item())
-    _require(
-        observed_next_token_id == int(expected_next_token_id),
-        "replay final next-token argmax differs from generated answer-first token",
+    validate_native_replay_next_token_closure(
+        torch, outputs.logits, expected_next_token_id
     )
     _require(
         bool(torch.isfinite(raw_vectors).all().item())

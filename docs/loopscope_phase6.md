@@ -20,6 +20,9 @@ The experiment is an eligibility-aware two-pass, dataset-level offline selector:
 4. For eligible identities only, replay the prompt plus generated tokens strictly before the
    answer token with
    `use_cache=false`, `output_hidden_states=true`, and zero loop insertions.
+   The next-token closure is evaluated from the logits emitted by that exact replay forward;
+   the separately batched B0...B36 projection supplies trajectory logits and is not substituted
+   for the native replay output in this closure check.
 5. Aggregate the near-complete eligible trajectory subset and freeze one global V2 selector
    decision together with the frozen coverage receipt.
 6. Run independent full-population loop decoding only after the selector and panel are
