@@ -946,33 +946,38 @@ def _safe_dataset_prompts(task_by_subject: Mapping[str, Any], selected: Sequence
         from datasets import DownloadMode, load_dataset
     except Exception as exc:  # pragma: no cover - remote dependency path.
         raise GateIMMLU0Error("datasets import failed during smoke") from exc
-    dataset = load_dataset(
-        path=DATASET_REPO,
-        revision=DATASET_REVISION,
-        split="validation",
-        cache_dir=str(HF_DATASETS_CACHE),
-        download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS,
-    ).select_columns(["question", "choices", "subject"])
     wanted = {canonical_json_bytes(row["identity"]): row for row in selected}
+    selected_subjects = sorted({str(row["subject"]) for row in selected})
+    _require(len(selected_subjects) == SMOKE_COUNT, "smoke subject count differs")
     counters: Counter[str] = Counter()
     prompts: Dict[str, str] = {}
-    for row in dataset:
-        subject = str(row["subject"])
-        safe = _safe_doc(row, subject)
-        index = counters[subject]
-        counters[subject] += 1
-        identity = {
-            "task": "mmlu",
-            "doc_id": "mmlu_%s:validation:%d" % (subject, index),
-            "doc_hash": _safe_doc_hash(safe),
-        }
-        key = canonical_json_bytes(identity)
-        if key not in wanted:
-            continue
-        prompt = _render_zero_shot_prompt(task_by_subject[subject], safe)
-        _require(list(tokenizer.encode(prompt, add_special_tokens=False)), "smoke prompt tokenizes empty")
-        _require(_sha256_bytes(prompt.encode("utf-8")) == wanted[key]["prompt_sha256"], "smoke prompt hash differs")
-        prompts[key.decode("utf-8")] = prompt
+    for subject in selected_subjects:
+        task_name = "mmlu_%s" % subject
+        _require(task_name in task_by_subject, "smoke subject has no standard MMLU task")
+        dataset = load_dataset(
+            path=DATASET_REPO,
+            name=subject,
+            revision=DATASET_REVISION,
+            split="validation",
+            cache_dir=str(HF_DATASETS_CACHE),
+            download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS,
+        ).select_columns(["question", "choices", "subject"])
+        for row in dataset:
+            safe = _safe_doc(row, subject)
+            index = counters[subject]
+            counters[subject] += 1
+            identity = {
+                "task": "mmlu",
+                "doc_id": "mmlu_%s:validation:%d" % (subject, index),
+                "doc_hash": _safe_doc_hash(safe),
+            }
+            key = canonical_json_bytes(identity)
+            if key not in wanted:
+                continue
+            prompt = _render_zero_shot_prompt(task_by_subject[task_name], safe)
+            _require(list(tokenizer.encode(prompt, add_special_tokens=False)), "smoke prompt tokenizes empty")
+            _require(_sha256_bytes(prompt.encode("utf-8")) == wanted[key]["prompt_sha256"], "smoke prompt hash differs")
+            prompts[key.decode("utf-8")] = prompt
     _require(len(prompts) == len(selected), "smoke prompt reconstruction is incomplete")
     return prompts
 
