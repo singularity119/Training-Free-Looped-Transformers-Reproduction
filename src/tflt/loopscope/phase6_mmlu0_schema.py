@@ -481,10 +481,24 @@ def adjacent_angular_distance(hidden_states: Sequence[Sequence[Any]]) -> List[Di
     return result
 
 
-def compute_trajectory_metrics(choice_probabilities: Sequence[Sequence[Any]], hidden_states: Sequence[Sequence[Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+def compute_trajectory_metrics(
+    choice_probabilities: Sequence[Sequence[Any]],
+    hidden_states: Sequence[Sequence[Any]],
+    *,
+    angular_hidden_states: Sequence[Sequence[Any]] | None = None,
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Reduce one trajectory while keeping raw-angle provenance explicit.
+
+    The default keeps the historical Gate H behavior.  Gate I passes the
+    final-normalized states for hidden-to-final diagnostics and the raw
+    residual states for adjacent angular distance, matching the frozen card.
+    """
+
     choice = choice_trajectory_metrics(choice_probabilities)
     hidden = hidden_geometry_to_final(hidden_states)
-    angular = adjacent_angular_distance(hidden_states)
+    angular = adjacent_angular_distance(
+        hidden_states if angular_hidden_states is None else angular_hidden_states
+    )
     boundaries: List[Dict[str, Any]] = []
     for index, boundary_id in enumerate(BOUNDARY_IDS):
         boundaries.append({
@@ -580,11 +594,25 @@ def validate_trajectory_record(record: Mapping[str, Any], card: Mapping[str, Any
             raise MMLU0ContractError("adjacent angular distance out of range")
 
 
-def build_trajectory_record(identity: Mapping[str, Any], subject: str, prompt_sha256: str, renderer_provenance: Mapping[str, Any], choice_probabilities: Sequence[Sequence[Any]], hidden_states: Sequence[Sequence[Any]], card: Mapping[str, Any] | None = None) -> Dict[str, Any]:
+def build_trajectory_record(
+    identity: Mapping[str, Any],
+    subject: str,
+    prompt_sha256: str,
+    renderer_provenance: Mapping[str, Any],
+    choice_probabilities: Sequence[Sequence[Any]],
+    hidden_states: Sequence[Sequence[Any]],
+    card: Mapping[str, Any] | None = None,
+    *,
+    angular_hidden_states: Sequence[Sequence[Any]] | None = None,
+) -> Dict[str, Any]:
     if not isinstance(identity, Mapping):
         raise MMLU0ContractError("identity must be an object")
     _keys(identity, ("task", "doc_id", "doc_hash"), "identity")
-    boundaries, angular = compute_trajectory_metrics(choice_probabilities, hidden_states)
+    boundaries, angular = compute_trajectory_metrics(
+        choice_probabilities,
+        hidden_states,
+        angular_hidden_states=angular_hidden_states,
+    )
     record = {
         "schema_version": TRAJECTORY_SCHEMA_VERSION,
         "identity": dict(identity),
