@@ -8,6 +8,7 @@ from tflt.loopscope.phase6_mmlu0_schema import (
     CHOICE_SURFACES,
     CHOICE_TOKEN_IDS,
     MMLU0ContractError,
+    MODEL_CONFIG_SHA256,
     adjacent_angular_distance,
     build_trajectory_record,
     choice_entropy,
@@ -74,13 +75,13 @@ class MMLU0GateHTests(unittest.TestCase):
     def test_card_schema_and_verifier_close(self):
         validate_card(self.card)
         validate_schema_document(self.schema)
+        self.assertEqual(self.card["model"]["config_sha256"], MODEL_CONFIG_SHA256)
         result = verify_gate_h_contracts(CARD_PATH, SCHEMA_PATH)
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["candidate_count"], 42)
         self.assertFalse(result["formal_selector_executed"])
         dry_run = dry_run_payload(CARD_PATH, SCHEMA_PATH)
         self.assertEqual(dry_run["status"], "DRY_RUN_VALID")
-        self.assertFalse(dry_run["test_split_read"])
 
     def test_choice_surface_is_exact_unique_one_token(self):
         manifest = choice_surface_manifest()
@@ -181,7 +182,7 @@ class MMLU0GateHTests(unittest.TestCase):
     def test_independent_self_test_has_no_execution(self):
         result = run_self_test(CARD_PATH, SCHEMA_PATH)
         self.assertEqual(result["status"], "SELF_TEST_PASS")
-        self.assertEqual(len(result["invalid_cases_passed"]), 11)
+        self.assertEqual(len(result["invalid_cases_passed"]), 12)
         self.assertFalse(result["model_or_data_forward_executed"])
         self.assertFalse(result["formal_selector_executed"])
         self.assertFalse(result["outcomes_read"])

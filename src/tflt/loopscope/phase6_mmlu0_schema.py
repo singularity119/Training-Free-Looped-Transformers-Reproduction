@@ -18,13 +18,13 @@ CARD_SCHEMA_VERSION = "loopscope.phase6.mmlu0-prefix-card.v1"
 TRAJECTORY_SCHEMA_VERSION = "loopscope.phase6.mmlu0-prefix-trajectory.v1"
 METHOD = "MMLU_ZERO_SHOT_PREFIX_TRAJECTORY_RBR_V2"
 MODEL_REVISION = "cdbee75f17c01a7cc42f958dc650907174af0554"
+MODEL_CONFIG_SHA256 = "5beea1a4a34c62782bfb2f911c606741a3bab8f92d80a118fa053c28af12e8ba"
 DATASET_REVISION = "c30699e8356da336a370243923dbaf21066bb9fe"
 LAYERS = 36
 BOUNDARY_COUNT = LAYERS + 1
 HIDDEN_SIZE = 2560
 VALIDATION_RECORD_COUNT = 1531
 VALIDATION_SUBJECT_COUNT = 57
-TEST_RECORD_COUNT_IDENTITY_ONLY = 14042
 FORMAL_REPLICATES = 2000
 FORMAL_SEED = 20260801
 FREQUENCY_THRESHOLD = 0.80
@@ -248,17 +248,17 @@ def validate_card(card: Mapping[str, Any]) -> None:
         raise MMLU0ContractError("model shape or dtype differs")
     for key in ("config_sha256", "tokenizer_config_sha256", "tokenizer_json_sha256"):
         _sha256(model[key], "model.%s" % key)
+    if model["config_sha256"] != MODEL_CONFIG_SHA256:
+        raise MMLU0ContractError("model config SHA-256 differs")
 
     task = card["task"]
     if not isinstance(task, Mapping):
         raise MMLU0ContractError("task must be an object")
-    _keys(task, ("dataset", "revision", "task_name", "validation_split", "validation_record_count", "validation_subject_count", "test_split", "test_record_count_identity_only", "test_split_read_in_gate_h", "lm_eval_task_source", "identity_only_reuse"), "task")
+    _keys(task, ("dataset", "revision", "task_name", "validation_split", "validation_record_count", "validation_subject_count", "lm_eval_task_source", "validation_identity_reuse"), "task")
     if task["dataset"] != "cais/mmlu" or task["revision"] != DATASET_REVISION or task["task_name"] != "mmlu":
         raise MMLU0ContractError("task identity differs")
     if task["validation_split"] != "validation" or task["validation_record_count"] != VALIDATION_RECORD_COUNT or task["validation_subject_count"] != VALIDATION_SUBJECT_COUNT:
         raise MMLU0ContractError("validation population differs")
-    if task["test_split"] != "test" or task["test_record_count_identity_only"] != TEST_RECORD_COUNT_IDENTITY_ONLY or task["test_split_read_in_gate_h"] is not False:
-        raise MMLU0ContractError("test identity boundary differs")
     source = task["lm_eval_task_source"]
     if not isinstance(source, Mapping):
         raise MMLU0ContractError("lm-eval task source must be an object")
@@ -267,14 +267,14 @@ def validate_card(card: Mapping[str, Any]) -> None:
         raise MMLU0ContractError("lm-eval task source identity differs")
     for key in ("yaml_sha256", "default_template_sha256", "stem_group_yaml_sha256", "other_group_yaml_sha256", "social_sciences_group_yaml_sha256", "humanities_group_yaml_sha256", "default_source_manifest_sha256"):
         _sha256(source[key], "lm-eval task source.%s" % key)
-    reuse = task["identity_only_reuse"]
+    reuse = task["validation_identity_reuse"]
     if not isinstance(reuse, Mapping):
         raise MMLU0ContractError("identity-only reuse must be an object")
-    _keys(reuse, ("source", "validation_pool_manifest_file_sha256", "validation_pool_manifest_internal_sha256", "validation_ordered_identity_sha256", "test_identity_manifest_file_sha256", "test_identity_manifest_internal_sha256", "test_ordered_identity_sha256", "validation_test_disjointness_sha256", "prompt_hash_reuse", "fresh_zero_shot_prompt_projection_required"), "identity-only reuse")
+    _keys(reuse, ("source", "validation_pool_manifest_file_sha256", "validation_pool_manifest_internal_sha256", "validation_ordered_identity_sha256", "prompt_hash_reuse", "fresh_zero_shot_prompt_projection_required"), "validation identity reuse")
     if reuse["prompt_hash_reuse"] is not False or reuse["fresh_zero_shot_prompt_projection_required"] is not True:
         raise MMLU0ContractError("prompt reuse boundary differs")
-    for key in ("validation_pool_manifest_file_sha256", "validation_pool_manifest_internal_sha256", "validation_ordered_identity_sha256", "test_identity_manifest_file_sha256", "test_identity_manifest_internal_sha256", "test_ordered_identity_sha256", "validation_test_disjointness_sha256"):
-        _sha256(reuse[key], "identity-only reuse.%s" % key)
+    for key in ("validation_pool_manifest_file_sha256", "validation_pool_manifest_internal_sha256", "validation_ordered_identity_sha256"):
+        _sha256(reuse[key], "validation identity reuse.%s" % key)
 
     evaluator = card["evaluator"]
     if not isinstance(evaluator, Mapping):
@@ -640,10 +640,10 @@ __all__ = [
     "LAYERS",
     "LEGAL_SELECTOR_STATES",
     "METHOD",
+    "MODEL_CONFIG_SHA256",
     "MMLU0ContractError",
     "MODEL_REVISION",
     "STARTS",
-    "TEST_RECORD_COUNT_IDENTITY_ONLY",
     "TRAJECTORY_SCHEMA_VERSION",
     "VALIDATION_RECORD_COUNT",
     "VALIDATION_SUBJECT_COUNT",

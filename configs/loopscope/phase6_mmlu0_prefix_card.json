@@ -17,7 +17,7 @@
     "decoder_layers": 36,
     "hidden_size": 2560,
     "dtype": "bfloat16",
-    "config_sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+    "config_sha256": "5beea1a4a34c62782bfb2f911c606741a3bab8f92d80a118fa053c28af12e8ba",
     "tokenizer_config_sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
     "tokenizer_json_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
     "tokenizer_class": "transformers.models.qwen2.tokenization_qwen2_fast.Qwen2TokenizerFast"
@@ -29,9 +29,6 @@
     "validation_split": "validation",
     "validation_record_count": 1531,
     "validation_subject_count": 57,
-    "test_split": "test",
-    "test_record_count_identity_only": 14042,
-    "test_split_read_in_gate_h": false,
     "lm_eval_task_source": {
       "version": "0.4.11",
       "yaml_path": "lm_eval/tasks/mmlu/default/_mmlu.yaml",
@@ -44,15 +41,11 @@
       "default_source_file_count": 63,
       "default_source_manifest_sha256": "7e03a4bac9704839de842c099e068fb2ebba626a066adfc3499c69eb05336b68"
     },
-    "identity_only_reuse": {
-      "source": "audited Phase 5 MMLU validation/test identity closure",
+    "validation_identity_reuse": {
+      "source": "audited Phase 5 MMLU validation identity closure",
       "validation_pool_manifest_file_sha256": "9d64b453cb1caedb84c394603eb4fece76bd11b3e403663e713ff7965a65a6c9",
       "validation_pool_manifest_internal_sha256": "8b0aa3517002131d8600fba6528cf3f997be41de627ac28198e24bb6d1f64208",
       "validation_ordered_identity_sha256": "ced8dd2ac8277a30e4d4e101f8f76c2dd125659abe35af679f60e5c6a9f076eb",
-      "test_identity_manifest_file_sha256": "59500340aa64d91810cd5a5d40f3d96ded5618ab5508543b31eea93050e7f3e4",
-      "test_identity_manifest_internal_sha256": "ec494ff6dd55b4398cd8151eed4609916e8d4c272df4583a4a1574cab3c25386",
-      "test_ordered_identity_sha256": "2c4557079fca1a7c071460f779ed714805fc96c3391560825cd34386d4051532",
-      "validation_test_disjointness_sha256": "f51ec5a9048b1ed8e615a6576e6a4ca6d2c0763ad1a4ed44a21a44d252e1fac7",
       "prompt_hash_reuse": false,
       "fresh_zero_shot_prompt_projection_required": true
     }
@@ -195,7 +188,6 @@
       "gain",
       "flip",
       "outcome",
-      "test split records",
       "formal selector inputs"
     ],
     "no_model_forward": true,

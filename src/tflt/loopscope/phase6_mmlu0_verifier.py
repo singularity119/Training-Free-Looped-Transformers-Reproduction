@@ -61,7 +61,6 @@ def verify_gate_h_contracts(card_path: Path, schema_path: Path) -> Dict[str, Any
         "formal_bootstrap_seed": FORMAL_SEED,
         "model_or_data_forward_executed": False,
         "formal_selector_executed": False,
-        "test_split_read": False,
         "outcomes_read": False,
     }
 
@@ -78,7 +77,6 @@ def dry_run_payload(card_path: Path, schema_path: Path) -> Dict[str, Any]:
             "data_records_loaded": False,
             "model_or_data_forward_executed": False,
             "formal_selector_executed": False,
-            "test_split_read": False,
             "outcomes_read": False,
             "loop_executed": False,
         }
@@ -143,6 +141,10 @@ def run_self_test(card_path: Path, schema_path: Path) -> Dict[str, Any]:
     invalid_cases.append(_expect_failure("wrong_model_revision", lambda: validate_card(invalid)))
 
     invalid = copy.deepcopy(card)
+    invalid["model"]["config_sha256"] = "0" * 64
+    invalid_cases.append(_expect_failure("wrong_model_config_sha256", lambda: validate_card(invalid)))
+
+    invalid = copy.deepcopy(card)
     invalid["choice_surfaces"]["A"]["token_ids"] = [362, 999]
     invalid_cases.append(_expect_failure("multi_token_surface", lambda: validate_card(invalid)))
 
@@ -171,7 +173,7 @@ def run_self_test(card_path: Path, schema_path: Path) -> Dict[str, Any]:
     invalid_record["outcome"] = {"accuracy": 1.0}
     invalid_cases.append(_expect_failure("outcome_field", lambda: validate_trajectory_record(invalid_record, card)))
 
-    if len(invalid_cases) != 11:
+    if len(invalid_cases) != 12:
         raise MMLU0ContractError("self-test case count differs")
     return {
         "status": "SELF_TEST_PASS",
@@ -185,7 +187,6 @@ def run_self_test(card_path: Path, schema_path: Path) -> Dict[str, Any]:
         "invalid_cases_passed": invalid_cases,
         "model_or_data_forward_executed": False,
         "formal_selector_executed": False,
-        "test_split_read": False,
         "outcomes_read": False,
         "selector_projection_fields": ["identity", "category", "H", "D"],
         "trajectory_schema_version": TRAJECTORY_SCHEMA_VERSION,

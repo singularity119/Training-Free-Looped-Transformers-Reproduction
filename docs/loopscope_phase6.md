@@ -33,14 +33,14 @@ no-execution CLI. A trajectory record contains identity/subject, four-choice pro
 choice entropy, KL to the final choice distribution, hidden-to-final scalar diagnostics, and 36
 adjacent angular diagnostics; raw logits, full-vocabulary probabilities, and hidden tensors are
 not persisted. The selector projection is exactly `identity, category, H, D`, so hidden
-diagnostics cannot enter ranking. Phase 5 identity-only validation/test provenance may be reused,
+diagnostics cannot enter ranking. Audited Phase 5 validation identity provenance may be reused,
 but zero-shot prompt hashes require a fresh closure.
 
-Gate H does not load a model or data, run a forward/generation call, access the test split or any
-gold/target/label/correctness/outcome field, execute the formal selector, run a loop, or create a
-panel. Gate I is limited to CPU/import and four-identity A40 debug admission; Gate J performs the
-validation-1531 V2 selector and ends this branch with a selected window or legal `ABSTAIN`. No
-test-split outcome, full-loop result, panel, Gate K, or Gate L is authorized. The mutable authority
+Gate H does not load a model or data, run a forward/generation call, read gold/target/label/
+correctness/outcome fields, execute the formal selector, run a loop, or create a panel. Gate I is
+limited to CPU/import and four-identity A40 debug admission; Gate J performs the validation-1531
+V2 selector and ends this branch with a selected window or legal `ABSTAIN`. No full-loop result,
+panel, Gate K, or Gate L is authorized. The mutable authority
 and live handoff remain the planning control file and matching handoff named above.
 
 ## Scientific question

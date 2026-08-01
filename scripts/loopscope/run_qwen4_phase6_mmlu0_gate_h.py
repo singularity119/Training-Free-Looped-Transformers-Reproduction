@@ -2,7 +2,7 @@
 """Gate H local verifier/dry-run for the MMLU 0-shot prefix contract.
 
 All actions are local and outcome-blind.  This script never loads a model or
-dataset, performs a forward/generation call, reads the test split, or runs the
+dataset, performs a forward/generation call, reads outcome fields, or runs the
 formal selector.
 """
 
@@ -34,7 +34,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
             "Validate the local outcome-blind Phase 6 MMLU 0-shot Gate H contract; "
-            "no model/data forward, formal selector, test split, or outcome read."
+            "no model/data forward, formal selector, or outcome read."
         )
     )
     parser.add_argument("--card", type=Path, default=DEFAULT_CARD)
