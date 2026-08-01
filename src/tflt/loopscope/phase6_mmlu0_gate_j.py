@@ -630,6 +630,7 @@ def merge_shards(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
 
 
 SACCT_FIELDS = (
+    "JobID",
     "JobIDRaw",
     "JobName",
     "Partition",
@@ -672,13 +673,19 @@ def _scheduler_acceptance(
     expected_shards: int,
     expected_partition: str,
 ) -> Dict[str, Any]:
-    task_rows = [row for row in rows if re.fullmatch(r"%s_[0-9]+" % re.escape(str(job_id)), str(row["JobIDRaw"]))]
+    array_pattern = r"%s_[0-9]+" % re.escape(str(job_id))
+    task_rows = [row for row in rows if re.fullmatch(array_pattern, str(row.get("JobID", "")))]
     if expected_shards == 1 and not task_rows:
-        task_rows = [row for row in rows if str(row["JobIDRaw"]) == str(job_id)]
+        task_rows = [
+            row
+            for row in rows
+            if str(row.get("JobID", "")) == str(job_id)
+            or str(row.get("JobIDRaw", "")) == str(job_id)
+        ]
     _require(len(task_rows) == int(expected_shards), "scheduler task count differs")
     expected_ids = {"%s_%d" % (job_id, index) for index in range(int(expected_shards))}
-    observed_ids = {str(row["JobIDRaw"]) for row in task_rows}
-    if expected_shards == 1 and observed_ids == {str(job_id)}:
+    observed_ids = {str(row.get("JobID", "")) for row in task_rows}
+    if expected_shards == 1 and observed_ids in ({str(job_id)}, {""}):
         expected_ids = {str(job_id)}
     _require(observed_ids == expected_ids, "scheduler task membership differs")
     for row in task_rows:

@@ -98,6 +98,15 @@ class GateJMMLU0Tests(unittest.TestCase):
         self.assertFalse(result["formal_loop_execution"])
         self.assertFalse(result["formal_outcome_read"])
 
+    def test_scheduler_acceptance_uses_slurm_array_job_label(self):
+        rows = [
+            {"JobID": "123456_0", "JobIDRaw": "123457", "Partition": "debug", "State": "COMPLETED", "ExitCode": "0:0"},
+            {"JobID": "123456_1", "JobIDRaw": "123456", "Partition": "debug", "State": "COMPLETED", "ExitCode": "0:0"},
+        ]
+        result = gate_j._scheduler_acceptance(rows, "123456", 2, "debug")
+        self.assertEqual(result["expected_shards"], 2)
+        self.assertEqual({row["JobID"] for row in result["task_rows"]}, {"123456_0", "123456_1"})
+
     def test_record_fixture_is_selector_compatible(self):
         record = _record(self.card, 0, "subject0")
         projected = gate_j.selector_sample(record)
