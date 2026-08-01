@@ -42,7 +42,6 @@ GATE = "J"
 EXECUTOR_THREAD_ID = "019fbf4b-5d69-7931-9724-16b03e2bc3f9"
 PLANNING_THREAD_ID = "019fb3de-2298-75f2-a083-0dca453ea79c"
 AUTHORIZED_BASE = "b2fc70167c7803645d442dad607945fdfacb8d0e"
-AUTHORIZED_COMMIT = "7457111961b1ca6add7b516fba7a435dd6699ea0"
 CARD_RELATIVE = Path("configs/loopscope/phase6_mmlu0_prefix_card.json")
 SCHEMA_RELATIVE = Path("configs/loopscope/phase6_mmlu0_trajectory_schema.json")
 CARD_SHA256 = "a415307c6e33a5c90b2fc2072c1926af75bc6d00e2b36938c11b8dad263ff43a"
@@ -82,6 +81,14 @@ class GateJMMLU0Error(RuntimeError):
 def _require(condition: bool, message: str) -> None:
     if not condition:
         raise GateJMMLU0Error(message)
+
+
+def _validate_expected_commit(expected_commit: str) -> None:
+    _require(
+        isinstance(expected_commit, str) and re.fullmatch(r"[0-9a-f]{40}", expected_commit) is not None,
+        "Gate J expected commit is not a full Git SHA-1",
+    )
+    _require(expected_commit != AUTHORIZED_BASE, "Gate J producer commit cannot be the Gate I admission base")
 
 
 def _write_new_bytes(path: Path, body: bytes) -> str:
@@ -212,7 +219,7 @@ def freeze_manifest(
 ) -> Dict[str, Any]:
     """Create a fresh formal-shaped manifest and deterministic shard files."""
 
-    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
+    _validate_expected_commit(expected_commit)
     _require(not Path(run_root).exists(), "Gate J run root must be fresh")
     all_rows, source = _projection_context(source_root)
     rows = _preflight_subset(all_rows) if preflight else [dict(row) for row in all_rows]
@@ -351,7 +358,7 @@ def _load_context(root: Path) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Dic
     semantic = manifest.pop("manifest_sha256", None)
     _require(isinstance(semantic, str) and semantic_sha256(manifest) == semantic, "formal manifest semantic hash differs")
     manifest["manifest_sha256"] = semantic
-    _require(manifest["expected_commit"] == AUTHORIZED_COMMIT, "formal manifest commit differs")
+    _validate_expected_commit(str(manifest["expected_commit"]))
     _require(manifest["card_sha256"] == CARD_SHA256 and manifest["schema_sha256"] == SCHEMA_SHA256, "formal manifest contract hash differs")
     _require(file_sha256(manifest_path) == load_json(freeze_path)["formal_manifest_file_sha256"], "formal manifest file hash differs")
     copied_projection = root / "cpu/validation_projection.jsonl"
@@ -457,7 +464,7 @@ def _validate_runtime_fact(fact: Mapping[str, Any], record: Mapping[str, Any]) -
 
 
 def acquire_shard(*, run_root: Path, expected_commit: str, shard_index: int, attempt: int = 1) -> Dict[str, Any]:
-    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
+    _validate_expected_commit(expected_commit)
     manifest, _rows, _freeze, card_path, _schema_path = _load_context(run_root)
     shard_index = int(shard_index)
     _require(0 <= shard_index < int(manifest["shard_count"]), "shard index is outside frozen domain")
@@ -551,7 +558,7 @@ def _valid_attempts(root: Path, shard_index: int) -> List[Tuple[int, Path, Dict[
 
 
 def merge_shards(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
-    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
+    _validate_expected_commit(expected_commit)
     manifest, rows, _freeze, card_path, schema_path = _load_context(run_root)
     card = load_json(_repo_root() / CARD_RELATIVE)
     root = Path(run_root).resolve()
@@ -695,7 +702,7 @@ def verify_formal_run(
 ) -> Dict[str, Any]:
     """Fresh-process verifier for formal or debug-shaped trajectory closure."""
 
-    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
+    _validate_expected_commit(expected_commit)
     manifest, rows, _freeze, card_path, schema_path = _load_context(run_root)
     root = Path(run_root).resolve()
     _require(manifest["expected_commit"] == expected_commit, "manifest commit differs")
@@ -771,7 +778,7 @@ def build_sbatch_text(
     time_limit: str = FORMAL_DEFAULT_TIME_LIMIT,
     concurrency: int | None = None,
 ) -> str:
-    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
+    _validate_expected_commit(expected_commit)
     _require(1 <= int(shard_count) <= MAX_SHARDS, "shard count must be between 1 and 8")
     _require(partition and gpu_type and time_limit, "scheduler resource fields must be explicit")
     concurrency = int(concurrency or shard_count)
@@ -829,7 +836,9 @@ def write_launcher(
     time_limit: str = FORMAL_DEFAULT_TIME_LIMIT,
     concurrency: int | None = None,
 ) -> Dict[str, Any]:
+    _validate_expected_commit(expected_commit)
     manifest, _rows, _freeze, _card_path, _schema_path = _load_context(run_root)
+    _require(manifest["expected_commit"] == expected_commit, "launcher commit differs")
     body = build_sbatch_text(
         run_root=Path(run_root).resolve(),
         expected_commit=expected_commit,
@@ -866,7 +875,9 @@ def write_launcher(
 
 
 def freeze_selector(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
+    _validate_expected_commit(expected_commit)
     manifest, _rows, _freeze, card_path, schema_path = _load_context(run_root)
+    _require(manifest["expected_commit"] == expected_commit, "selector commit differs")
     _require(manifest["scope"] == "formal", "official selector requires formal scope")
     merge = load_json(Path(run_root).resolve() / "merge/merge_receipt.json")
     verifier_path = Path(run_root).resolve() / "merge/verifier_receipt.json"
@@ -913,7 +924,9 @@ def freeze_selector(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
 
 
 def verify_selector(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
+    _validate_expected_commit(expected_commit)
     manifest, _rows, _freeze, card_path, schema_path = _load_context(run_root)
+    _require(manifest["expected_commit"] == expected_commit, "selector commit differs")
     selector_path = Path(run_root).resolve() / "selector/selector_freeze.json"
     projection_path = Path(run_root).resolve() / "selector/selector_projection.jsonl"
     verifier_path = Path(run_root).resolve() / "merge/verifier_receipt.json"
@@ -963,7 +976,9 @@ def verify_selector(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
 def aggregate_diagnostics(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
     """Produce only layerwise scalar aggregates after selector closure."""
 
+    _validate_expected_commit(expected_commit)
     manifest, _rows, _freeze, _card_path, _schema_path = _load_context(run_root)
+    _require(manifest["expected_commit"] == expected_commit, "aggregate commit differs")
     selector_verifier = Path(run_root).resolve() / "selector/verifier_receipt.json"
     _require(selector_verifier.is_file() and load_json(selector_verifier).get("status") == "PASS", "selector verifier PASS is required")
     records = _load_jsonl(Path(run_root).resolve() / "merge/merged_trajectory_records.jsonl")
@@ -1119,7 +1134,6 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 __all__ = [
     "AUTHORIZED_BASE",
-    "AUTHORIZED_COMMIT",
     "GateJMMLU0Error",
     "aggregate_diagnostics",
     "build_sbatch_text",

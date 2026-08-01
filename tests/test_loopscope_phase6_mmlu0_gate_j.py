@@ -16,6 +16,7 @@ from tflt.loopscope.phase6_mmlu0_schema import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CARD_PATH = ROOT / "configs/loopscope/phase6_mmlu0_prefix_card.json"
+EXPECTED_COMMIT = "1" * 40
 
 
 def _record(card, ordinal, subject):
@@ -54,7 +55,7 @@ class GateJMMLU0Tests(unittest.TestCase):
         self.assertFalse(result["formal_loop_execution"])
         text = gate_j.build_sbatch_text(
             run_root=Path("/hpc2hdd/home/xhuang225/workspaces/gate-j-test"),
-            expected_commit=gate_j.AUTHORIZED_COMMIT,
+            expected_commit=EXPECTED_COMMIT,
             shard_count=8,
             partition="formal",
             gpu_type="A800",
@@ -90,7 +91,7 @@ class GateJMMLU0Tests(unittest.TestCase):
             (root / "manifest").mkdir()
             (root / "selector").mkdir()
             with self.assertRaises(gate_j.GateJMMLU0Error):
-                gate_j.freeze_selector(run_root=root, expected_commit=gate_j.AUTHORIZED_COMMIT)
+                gate_j.freeze_selector(run_root=root, expected_commit=EXPECTED_COMMIT)
 
     def test_no_forbidden_information_is_in_gate_j_launcher_or_dry_run(self):
         result = gate_j.dry_run()
