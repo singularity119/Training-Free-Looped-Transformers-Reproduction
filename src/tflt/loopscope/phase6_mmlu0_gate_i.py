@@ -486,50 +486,67 @@ def _dataset_projection(
         from datasets import DownloadMode, load_dataset
     except Exception as exc:  # pragma: no cover - remote dependency path.
         raise GateIMMLU0Error("datasets import failed") from exc
-    dataset = load_dataset(
-        path=DATASET_REPO,
-        revision=DATASET_REVISION,
-        split="validation",
-        cache_dir=str(HF_DATASETS_CACHE),
-        download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS,
-    )
-    columns = set(getattr(dataset, "column_names", ()))
-    _require(
-        {"question", "choices", "subject"}.issubset(columns),
-        "MMLU validation dataset lacks the safe column set",
-    )
-    safe_dataset = dataset.select_columns(["question", "choices", "subject"])
-    _require(
-        set(getattr(safe_dataset, "column_names", ())) == {"question", "choices", "subject"},
-        "safe MMLU projection retained non-safe columns",
-    )
+    cache_files: List[Dict[str, Any]] = []
+    dataset_fingerprints: Dict[str, str] = {}
     by_subject_index: Counter[str] = Counter()
     rows: List[Dict[str, Any]] = []
-    for row in safe_dataset:
-        subject = str(row["subject"])
-        _require(subject in task_by_subject, "validation subject has no standard MMLU task")
-        safe = _safe_doc(row, subject)
-        index = by_subject_index[subject]
-        by_subject_index[subject] += 1
-        prompt = _render_zero_shot_prompt(task_by_subject[subject], safe)
-        token_ids = list(tokenizer.encode(prompt, add_special_tokens=False))
-        _require(token_ids, "rendered MMLU prompt tokenizes to empty")
-        identity = {
-            "task": "mmlu",
-            "doc_id": "mmlu_%s:validation:%d" % (subject, index),
-            "doc_hash": _safe_doc_hash(safe),
-        }
-        rows.append(
-            {
-                "ordinal_source": len(rows),
-                "identity": identity,
-                "subject": subject,
-                "split": "validation",
-                "prompt_sha256": _sha256_bytes(prompt.encode("utf-8")),
-                "prompt_token_ids_sha256": _sha256_bytes(canonical_json_bytes(token_ids)),
-                "sequence_length": len(token_ids),
-            }
+    for task_name in sorted(task_by_subject):
+        _require(task_name.startswith("mmlu_"), "MMLU task name is outside the frozen group")
+        subject = task_name[len("mmlu_") :]
+        dataset = load_dataset(
+            path=DATASET_REPO,
+            name=subject,
+            revision=DATASET_REVISION,
+            split="validation",
+            cache_dir=str(HF_DATASETS_CACHE),
+            download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS,
         )
+        columns = set(getattr(dataset, "column_names", ()))
+        _require(
+            {"question", "choices", "subject"}.issubset(columns),
+            "MMLU validation dataset lacks the safe column set",
+        )
+        safe_dataset = dataset.select_columns(["question", "choices", "subject"])
+        _require(
+            set(getattr(safe_dataset, "column_names", ())) == {"question", "choices", "subject"},
+            "safe MMLU projection retained non-safe columns",
+        )
+        fingerprint = str(getattr(dataset, "_fingerprint", ""))
+        _require(fingerprint, "validation dataset fingerprint is missing: %s" % subject)
+        dataset_fingerprints[subject] = fingerprint
+        for row in safe_dataset:
+            safe = _safe_doc(row, subject)
+            index = by_subject_index[subject]
+            by_subject_index[subject] += 1
+            prompt = _render_zero_shot_prompt(task_by_subject[task_name], safe)
+            token_ids = list(tokenizer.encode(prompt, add_special_tokens=False))
+            _require(token_ids, "rendered MMLU prompt tokenizes to empty")
+            identity = {
+                "task": "mmlu",
+                "doc_id": "mmlu_%s:validation:%d" % (subject, index),
+                "doc_hash": _safe_doc_hash(safe),
+            }
+            rows.append(
+                {
+                    "ordinal_source": len(rows),
+                    "identity": identity,
+                    "subject": subject,
+                    "split": "validation",
+                    "prompt_sha256": _sha256_bytes(prompt.encode("utf-8")),
+                    "prompt_token_ids_sha256": _sha256_bytes(canonical_json_bytes(token_ids)),
+                    "sequence_length": len(token_ids),
+                }
+            )
+        for item in getattr(dataset, "cache_files", []) or []:
+            filename = Path(str(item.get("filename", "")))
+            if filename.is_file():
+                cache_files.append(
+                    {
+                        "path": str(filename),
+                        "sha256": file_sha256(filename),
+                        "size_bytes": filename.stat().st_size,
+                    }
+                )
     rows.sort(key=lambda row: row["identity"]["doc_id"])
     for ordinal, row in enumerate(rows):
         row["ordinal"] = ordinal
@@ -552,18 +569,12 @@ def _dataset_projection(
         if len(smoke) == SMOKE_COUNT:
             break
     _require(len(smoke) == SMOKE_COUNT, "four-subject smoke membership could not be frozen")
-    cache_files = []
-    for item in getattr(dataset, "cache_files", []) or []:
-        filename = Path(str(item.get("filename", "")))
-        if filename.is_file():
-            cache_files.append(
-                {
-                    "path": str(filename),
-                    "sha256": file_sha256(filename),
-                    "size_bytes": filename.stat().st_size,
-                }
-            )
     _require(cache_files, "validation cache file closure is empty")
+    _require(
+        len(dataset_fingerprints) == EXPECTED_SUBJECT_COUNT,
+        "validation dataset configuration count differs",
+    )
+    cache_files.sort(key=lambda item: item["path"])
     closure = {
         "record_count": len(rows),
         "subject_count": len(category_counts),
@@ -571,7 +582,8 @@ def _dataset_projection(
         "ordered_identity_sha256": semantic_sha256(identities),
         "ordered_prompt_projection_sha256": semantic_sha256(rows),
         "smoke_identities": [dict(row) for row in smoke],
-        "dataset_fingerprint": str(getattr(dataset, "_fingerprint", "")),
+        "dataset_fingerprint": semantic_sha256(dataset_fingerprints),
+        "dataset_fingerprints": dict(sorted(dataset_fingerprints.items())),
         "dataset_cache_files": cache_files,
         "safe_columns": ["question", "choices", "subject"],
         "forbidden_columns_selected": False,
