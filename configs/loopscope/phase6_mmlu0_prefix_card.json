@@ -1,0 +1,207 @@
+{
+  "schema_version": "loopscope.phase6.mmlu0-prefix-card.v1",
+  "card": "MMLU_ZERO_SHOT_PREFIX_TRAJECTORY_RBR_V2",
+  "status": "GATE_H_LOCAL_CONTRACT_FROZEN",
+  "phase": {
+    "name": "LoopScope Phase 6",
+    "hypothesis": "H6_MMLU_ZERO_SHOT_PREFIX_CHOICE_TRAJECTORY_RBR_V2",
+    "gate": "H",
+    "planning_thread": "019fb3de-2298-75f2-a083-0dca453ea79c",
+    "executor_thread": "019fbecf-be9a-71e3-94f0-a82356b79d29",
+    "terminal_scope": "Gate J validation-1531 selected window or legal ABSTAIN"
+  },
+  "model": {
+    "repo_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "decoder_layers": 36,
+    "hidden_size": 2560,
+    "dtype": "bfloat16",
+    "config_sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+    "tokenizer_config_sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+    "tokenizer_json_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "tokenizer_class": "transformers.models.qwen2.tokenization_qwen2_fast.Qwen2TokenizerFast"
+  },
+  "task": {
+    "dataset": "cais/mmlu",
+    "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+    "task_name": "mmlu",
+    "validation_split": "validation",
+    "validation_record_count": 1531,
+    "validation_subject_count": 57,
+    "test_split": "test",
+    "test_record_count_identity_only": 14042,
+    "test_split_read_in_gate_h": false,
+    "lm_eval_task_source": {
+      "version": "0.4.11",
+      "yaml_path": "lm_eval/tasks/mmlu/default/_mmlu.yaml",
+      "yaml_sha256": "e35dd25fea5fa5583fbb64a99f9b7c4a2071a3edbbd65182f152d77b7798e11d",
+      "default_template_sha256": "a0997593bf94f52cc87eb1f9b621f52613a6c60f1fb48775b0926104fd385122",
+      "stem_group_yaml_sha256": "2d58563cf678c1e7f98ade5aa47ff68143d8554cc1661ed7b832abe483b2604d",
+      "other_group_yaml_sha256": "1cd803a8f56b88a830f8a12a9fc052d8b8237c712b8ea859582da3eeb6ad43de",
+      "social_sciences_group_yaml_sha256": "ece4a326d603c2424411af4a3b1cb1a99677792f50cd366f8e9f5e726899194b",
+      "humanities_group_yaml_sha256": "790036db1420e7c8a1266f149ecaa401326380608552fc123cac1c15255ad7f1",
+      "default_source_file_count": 63,
+      "default_source_manifest_sha256": "7e03a4bac9704839de842c099e068fb2ebba626a066adfc3499c69eb05336b68"
+    },
+    "identity_only_reuse": {
+      "source": "audited Phase 5 MMLU validation/test identity closure",
+      "validation_pool_manifest_file_sha256": "9d64b453cb1caedb84c394603eb4fece76bd11b3e403663e713ff7965a65a6c9",
+      "validation_pool_manifest_internal_sha256": "8b0aa3517002131d8600fba6528cf3f997be41de627ac28198e24bb6d1f64208",
+      "validation_ordered_identity_sha256": "ced8dd2ac8277a30e4d4e101f8f76c2dd125659abe35af679f60e5c6a9f076eb",
+      "test_identity_manifest_file_sha256": "59500340aa64d91810cd5a5d40f3d96ded5618ab5508543b31eea93050e7f3e4",
+      "test_identity_manifest_internal_sha256": "ec494ff6dd55b4398cd8151eed4609916e8d4c272df4583a4a1574cab3c25386",
+      "test_ordered_identity_sha256": "2c4557079fca1a7c071460f779ed714805fc96c3391560825cd34386d4051532",
+      "validation_test_disjointness_sha256": "f51ec5a9048b1ed8e615a6576e6a4ca6d2c0763ad1a4ed44a21a44d252e1fac7",
+      "prompt_hash_reuse": false,
+      "fresh_zero_shot_prompt_projection_required": true
+    }
+  },
+  "evaluator": {
+    "lm_eval_version": "0.4.11",
+    "transformers_version": "4.51.3",
+    "tokenizers_version": "0.21.4",
+    "datasets_version": "5.0.0",
+    "torch_version": "2.3.1+cu121",
+    "accelerate_version": "1.14.0",
+    "request_type": "loglikelihood",
+    "num_fewshot": 0,
+    "plain_prompt": true,
+    "apply_chat_template": false,
+    "fewshot_as_multiturn": false,
+    "generation": false,
+    "direct_letter_fallback": false
+  },
+  "renderer": {
+    "contract_version": "loopscope.mmlu-0shot-prefix-render.v1",
+    "terminal": "standard task renderer terminal",
+    "semantic_contract": {
+      "task_group": "mmlu",
+      "task_renderer": "standard lm-eval task renderer",
+      "num_fewshot": 0,
+      "fewshot_split": null,
+      "plain_prompt": true,
+      "apply_chat_template": false,
+      "fewshot_as_multiturn": false,
+      "generation": false,
+      "direct_letter_fallback": false,
+      "choice_surfaces": [" A", " B", " C", " D"],
+      "terminal": "standard task renderer terminal",
+      "probe_position": "last_non_padding_rendered_prefix_token"
+    },
+    "semantic_contract_sha256": "2ac7e14bc61be29e5ad2c51764f06a50580adeb74b81258d6410f1718434332b",
+    "zero_shot_prompt_projection_sha256": null,
+    "zero_shot_prompt_projection_required_before_gate_i": true
+  },
+  "choice_surfaces": {
+    "A": {"surface": " A", "token_ids": [362], "decoded": " A"},
+    "B": {"surface": " B", "token_ids": [425], "decoded": " B"},
+    "C": {"surface": " C", "token_ids": [356], "decoded": " C"},
+    "D": {"surface": " D", "token_ids": [422], "decoded": " D"}
+  },
+  "trajectory": {
+    "boundary_ids": ["B_0", "B_1", "B_2", "B_3", "B_4", "B_5", "B_6", "B_7", "B_8", "B_9", "B_10", "B_11", "B_12", "B_13", "B_14", "B_15", "B_16", "B_17", "B_18", "B_19", "B_20", "B_21", "B_22", "B_23", "B_24", "B_25", "B_26", "B_27", "B_28", "B_29", "B_30", "B_31", "B_32", "B_33", "B_34", "B_35", "B_36"],
+    "boundary_count": 37,
+    "raw_boundary_definition": "B_j is the state after decoder layers 0 through j-1",
+    "final_norm_definition": "B_0 through B_35 final-normalized once; never double-apply B_36",
+    "probe_position": "last_non_padding_rendered_prefix_token",
+    "forward_passes_per_record": 1,
+    "native_no_loop": true,
+    "use_cache": false,
+    "hidden_diagnostics_only": true,
+    "persist_raw_logits": false,
+    "persist_full_vocab_probabilities": false,
+    "persist_hidden_tensors": false
+  },
+  "metrics": {
+    "choice_entropy": "H_l=-sum_c p_l,c log(p_l,c), natural logarithm",
+    "kl_to_final": "D_l=KL(p_l || p_36), with D_36=0",
+    "hidden_diagnostics": [
+      "hidden_rms_l2_to_final",
+      "hidden_cosine_to_final",
+      "hidden_cosine_distance_to_final"
+    ],
+    "adjacent_diagnostic": "raw adjacent angular distance acos(cosine)/pi for B_j to B_(j+1)",
+    "selector_fields": ["H", "D"],
+    "diagnostic_fields_not_in_selector": [
+      "hidden_rms_l2_to_final",
+      "hidden_cosine_to_final",
+      "hidden_cosine_distance_to_final",
+      "adjacent_angular_distance"
+    ]
+  },
+  "selector": {
+    "method": "RELATIVE_BIPHASIC_REVERSAL_V2_ABSOLUTE_RATE",
+    "central_blocks_inclusive": [11, 24],
+    "widths": [3, 4, 5, 6],
+    "candidate_starts": {
+      "3": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+      "4": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+      "5": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "6": [11, 12, 13, 14, 15, 16, 17, 18, 19]
+    },
+    "candidate_count": 42,
+    "bootstrap": {
+      "replicates": 2000,
+      "seed": 20260801,
+      "population_stratification": "subject-stratified joint bootstrap",
+      "standard_error_ddof": 1,
+      "frequency_threshold": 0.8
+    },
+    "projection_fields": ["identity", "category", "H", "D"],
+    "projection_excludes": [
+      "choice_probabilities",
+      "hidden_rms_l2_to_final",
+      "hidden_cosine_to_final",
+      "hidden_cosine_distance_to_final",
+      "adjacent_angular_distance",
+      "gold",
+      "target",
+      "label",
+      "correctness",
+      "outcome",
+      "gain",
+      "flip"
+    ],
+    "legal_terminal_states": [
+      "SELECTED_WINDOW",
+      "ABSTAIN_NO_RATE_STABLE_ELIGIBLE",
+      "ABSTAIN_NO_UNIQUE_TOP1",
+      "ABSTAIN_RATE_RANK_UNSTABLE"
+    ],
+    "formal_execution_deferred_to": "Gate J"
+  },
+  "loop_identity_suggestion": {
+    "authorized": false,
+    "k": 3,
+    "block_euler_step": "1/3",
+    "horizon": 1,
+    "cache_strategy": "first_decode_full",
+    "note": "identity suggestion only; no loop is authorized in Gate H"
+  },
+  "information_barrier": {
+    "gate_h_may_read": [
+      "gold-free identity and subject metadata",
+      "standard renderer source definitions",
+      "choice tokenization closure",
+      "synthetic scalar fixtures"
+    ],
+    "gate_h_must_not_read": [
+      "target",
+      "gold",
+      "label",
+      "correctness",
+      "accuracy",
+      "gain",
+      "flip",
+      "outcome",
+      "test split records",
+      "formal selector inputs"
+    ],
+    "no_model_forward": true,
+    "no_generation": true,
+    "no_cuda_gpu_slurm": true,
+    "no_panel": true,
+    "no_full_loop_outcome": true
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "loopscope.phase6.mmlu0-prefix-trajectory.v1",
+  "title": "Gate H MMLU zero-shot prefix trajectory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "identity", "subject", "split", "prompt_sha256", "renderer_provenance", "boundaries", "adjacent_angular_distance"],
+  "properties": {
+    "schema_version": {"const": "loopscope.phase6.mmlu0-prefix-trajectory.v1"},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task", "doc_id", "doc_hash"],
+      "properties": {
+        "task": {"type": "string", "minLength": 1},
+        "doc_id": {"type": "string", "minLength": 1},
+        "doc_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "subject": {"type": "string", "minLength": 1},
+    "split": {"const": "validation"},
+    "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "renderer_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "semantic_contract_sha256", "task_source_manifest_sha256", "choice_surface_manifest_sha256"],
+      "properties": {
+        "contract_version": {"const": "loopscope.mmlu-0shot-prefix-render.v1"},
+        "semantic_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "task_source_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "choice_surface_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 37,
+      "maxItems": 37,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["boundary_id", "choice_probabilities", "choice_entropy", "kl_to_final", "hidden_rms_l2_to_final", "hidden_cosine_to_final", "hidden_cosine_distance_to_final"],
+        "properties": {
+          "boundary_id": {"type": "string", "pattern": "^B_([0-9]|[12][0-9]|3[0-6])$"},
+          "choice_probabilities": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number", "exclusiveMinimum": 0}},
+          "choice_entropy": {"type": "number"},
+          "kl_to_final": {"type": "number", "minimum": 0},
+          "hidden_rms_l2_to_final": {"type": "number", "minimum": 0},
+          "hidden_cosine_to_final": {"type": "number", "minimum": -1, "maximum": 1},
+          "hidden_cosine_distance_to_final": {"type": "number", "minimum": 0, "maximum": 2}
+        }
+      }
+    },
+    "adjacent_angular_distance": {
+      "type": "array",
+      "minItems": 36,
+      "maxItems": 36,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["transition_id", "angle_over_pi"],
+        "properties": {
+          "transition_id": {"type": "string", "pattern": "^B_[0-9]+->B_[0-9]+$"},
+          "angle_over_pi": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    }
+  }
+}

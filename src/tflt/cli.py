@@ -15,6 +15,11 @@ from tflt.loopscope.grid import add_make_window_grid_args, cmd_make_window_grid
 from tflt.loopscope.probe import add_probe_layers_args, cmd_probe_layers
 from tflt.loopscope.selection import add_score_windows_args, cmd_score_windows
 from tflt.loopscope.window_probe import add_probe_window_args, cmd_probe_window
+from tflt.loopscope.phase6_mmlu0_verifier import (
+    dry_run_payload as dry_run_phase6_mmlu0,
+    run_self_test as self_test_phase6_mmlu0,
+    verify_gate_h_contracts,
+)
 from tflt.loopscope.phase2_analysis import (
     analysis_command_record,
     analysis_environment_record,
@@ -150,6 +155,24 @@ def main(argv: Optional[list] = None) -> int:
     p.set_defaults(func=cmd_analyze_phase2_h1)
 
     p = sub.add_parser(
+        "phase6-mmlu0-gate-h",
+        help="Validate the outcome-blind Phase 6 MMLU 0-shot Gate H contract.",
+    )
+    p.add_argument(
+        "--card",
+        default="configs/loopscope/phase6_mmlu0_prefix_card.json",
+    )
+    p.add_argument(
+        "--schema",
+        default="configs/loopscope/phase6_mmlu0_trajectory_schema.json",
+    )
+    action = p.add_mutually_exclusive_group(required=True)
+    action.add_argument("--dry-run", action="store_true")
+    action.add_argument("--self-test", action="store_true")
+    action.add_argument("--verify", action="store_true")
+    p.set_defaults(func=cmd_phase6_mmlu0_gate_h)
+
+    p = sub.add_parser(
         "verify-phase2-analysis",
         help="Reload canonical sources and verify a Phase 2 report by exact recomputation.",
     )
@@ -215,6 +238,19 @@ def cmd_analyze_phase2_h1(args: argparse.Namespace) -> int:
 def cmd_verify_phase2_analysis(args: argparse.Namespace) -> int:
     verify_phase2_analysis_report(Path(args.input), Path(args.report))
     print(str(Path(args.report)))
+    return 0
+
+
+def cmd_phase6_mmlu0_gate_h(args: argparse.Namespace) -> int:
+    card = Path(args.card)
+    schema = Path(args.schema)
+    if args.dry_run:
+        payload = dry_run_phase6_mmlu0(card, schema)
+    elif args.self_test:
+        payload = self_test_phase6_mmlu0(card, schema)
+    else:
+        payload = verify_gate_h_contracts(card, schema)
+    print(json.dumps(payload, indent=2, sort_keys=True))
     return 0
 
 

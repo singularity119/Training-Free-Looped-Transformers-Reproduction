@@ -4,6 +4,45 @@ Phase 6 is activated under a standing phase-continuation mandate. The authoritat
 is `../../.planning/loopscope_phase6_control.md`; this runbook never records current Gate/executor
 state and never grants execution authority.
 
+## Current MMLU 0-shot prefix branch
+
+The current Phase 6 continuation is the MMLU 0-shot prefix-trajectory contract in
+`configs/loopscope/phase6_mmlu0_prefix_card.json`. It is a separate local contract from the
+historical MMLU-Pro pre-answer/D-2 material below.
+
+```text
+model=Qwen/Qwen3-4B-Instruct-2507
+revision=cdbee75f17c01a7cc42f958dc650907174af0554
+task=cais/mmlu@c30699e8356da336a370243923dbaf21066bb9fe
+lm_eval=0.4.11
+num_fewshot=0
+prompt=plain standard task renderer terminal
+apply_chat_template=false
+fewshot_as_multiturn=false
+generation=false
+population=validation-1531 / 57 subjects
+choice_continuations=" A", " B", " C", " D"; each exactly one unique tokenizer ID
+probe=last non-padding rendered-prefix token; one native no-loop forward; use_cache=false
+boundaries=B_0...B_36; final normalization is applied once to B_0...B_35
+selector=RELATIVE_BIPHASIC_REVERSAL_V2_ABSOLUTE_RATE; central blocks 11...24; widths 3/4/5/6; 42 candidates
+bootstrap=2000 subject-stratified joint draws; seed=20260801; frequency threshold=0.80
+```
+
+Gate H only closes the local card, schema, pure metrics, selector projection, verifier, and
+no-execution CLI. A trajectory record contains identity/subject, four-choice probabilities,
+choice entropy, KL to the final choice distribution, hidden-to-final scalar diagnostics, and 36
+adjacent angular diagnostics; raw logits, full-vocabulary probabilities, and hidden tensors are
+not persisted. The selector projection is exactly `identity, category, H, D`, so hidden
+diagnostics cannot enter ranking. Phase 5 identity-only validation/test provenance may be reused,
+but zero-shot prompt hashes require a fresh closure.
+
+Gate H does not load a model or data, run a forward/generation call, access the test split or any
+gold/target/label/correctness/outcome field, execute the formal selector, run a loop, or create a
+panel. Gate I is limited to CPU/import and four-identity A40 debug admission; Gate J performs the
+validation-1531 V2 selector and ends this branch with a selected window or legal `ABSTAIN`. No
+test-split outcome, full-loop result, panel, Gate K, or Gate L is authorized. The mutable authority
+and live handoff remain the planning control file and matching handoff named above.
+
 ## Scientific question
 
 Phase 6 keeps the Phase 4 model, task, renderer, generation, and TFLT configuration. It moves the
