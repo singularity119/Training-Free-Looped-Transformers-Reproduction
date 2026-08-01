@@ -555,8 +555,17 @@ def _dataset_projection(
     _require(len({row["subject"] for row in rows}) == EXPECTED_SUBJECT_COUNT, "validation subject count differs")
     identities = [row["identity"] for row in rows]
     _require(len({canonical_json_bytes(value) for value in identities}) == len(rows), "validation identities duplicate")
+    validation_identity_reuse = [
+        {
+            "task": "mmlu_%s" % row["subject"],
+            "doc_id": row["identity"]["doc_id"],
+            "doc_hash": row["identity"]["doc_hash"],
+        }
+        for row in rows
+    ]
+    validation_identity_reuse_sha = semantic_sha256(validation_identity_reuse)
     _require(
-        semantic_sha256(identities) == EXPECTED_VALIDATION_IDENTITY_SHA256,
+        validation_identity_reuse_sha == EXPECTED_VALIDATION_IDENTITY_SHA256,
         "validation identity order hash differs from the frozen Phase 5 closure",
     )
     category_counts = Counter(row["subject"] for row in rows)
@@ -580,6 +589,7 @@ def _dataset_projection(
         "subject_count": len(category_counts),
         "category_counts": dict(sorted(category_counts.items())),
         "ordered_identity_sha256": semantic_sha256(identities),
+        "validation_identity_reuse_sha256": validation_identity_reuse_sha,
         "ordered_prompt_projection_sha256": semantic_sha256(rows),
         "smoke_identities": [dict(row) for row in smoke],
         "dataset_fingerprint": semantic_sha256(dataset_fingerprints),
@@ -683,6 +693,7 @@ def cpu_admission(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
             "record_count": len(rows),
             "subject_count": len({row["subject"] for row in rows}),
             "ordered_identity_sha256": projection["ordered_identity_sha256"],
+            "validation_identity_reuse_sha256": projection["validation_identity_reuse_sha256"],
             "ordered_prompt_projection_sha256": projection["ordered_prompt_projection_sha256"],
             "smoke_manifest_sha256": smoke_sha,
         },
@@ -732,6 +743,11 @@ def _load_projection_and_membership(root: Path) -> Tuple[List[Dict[str, Any]], D
     _require(
         membership.get("projection_file_sha256") == cpu_receipt["projection"]["file_sha256"],
         "smoke membership projection hash differs",
+    )
+    _require(
+        cpu_receipt["projection"].get("validation_identity_reuse_sha256")
+        == EXPECTED_VALIDATION_IDENTITY_SHA256,
+        "CPU validation identity reuse hash differs",
     )
     _require(membership.get("record_count") == SMOKE_COUNT, "smoke membership count differs")
     _require(membership.get("partition") == SMOKE_PARTITION, "smoke partition differs")
