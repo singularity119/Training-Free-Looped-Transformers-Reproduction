@@ -42,6 +42,7 @@ GATE = "J"
 EXECUTOR_THREAD_ID = "019fbf4b-5d69-7931-9724-16b03e2bc3f9"
 PLANNING_THREAD_ID = "019fb3de-2298-75f2-a083-0dca453ea79c"
 AUTHORIZED_BASE = "b2fc70167c7803645d442dad607945fdfacb8d0e"
+AUTHORIZED_COMMIT = "e90ee260828c40a300e7e42b85a4993e0da4b919"
 CARD_RELATIVE = Path("configs/loopscope/phase6_mmlu0_prefix_card.json")
 SCHEMA_RELATIVE = Path("configs/loopscope/phase6_mmlu0_trajectory_schema.json")
 CARD_SHA256 = "a415307c6e33a5c90b2fc2072c1926af75bc6d00e2b36938c11b8dad263ff43a"
@@ -211,7 +212,7 @@ def freeze_manifest(
 ) -> Dict[str, Any]:
     """Create a fresh formal-shaped manifest and deterministic shard files."""
 
-    _require(expected_commit == AUTHORIZED_BASE, "Gate J expected commit differs")
+    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
     _require(not Path(run_root).exists(), "Gate J run root must be fresh")
     all_rows, source = _projection_context(source_root)
     rows = _preflight_subset(all_rows) if preflight else [dict(row) for row in all_rows]
@@ -350,7 +351,7 @@ def _load_context(root: Path) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Dic
     semantic = manifest.pop("manifest_sha256", None)
     _require(isinstance(semantic, str) and semantic_sha256(manifest) == semantic, "formal manifest semantic hash differs")
     manifest["manifest_sha256"] = semantic
-    _require(manifest["expected_commit"] == AUTHORIZED_BASE, "formal manifest commit differs")
+    _require(manifest["expected_commit"] == AUTHORIZED_COMMIT, "formal manifest commit differs")
     _require(manifest["card_sha256"] == CARD_SHA256 and manifest["schema_sha256"] == SCHEMA_SHA256, "formal manifest contract hash differs")
     _require(file_sha256(manifest_path) == load_json(freeze_path)["formal_manifest_file_sha256"], "formal manifest file hash differs")
     copied_projection = root / "cpu/validation_projection.jsonl"
@@ -456,7 +457,7 @@ def _validate_runtime_fact(fact: Mapping[str, Any], record: Mapping[str, Any]) -
 
 
 def acquire_shard(*, run_root: Path, expected_commit: str, shard_index: int, attempt: int = 1) -> Dict[str, Any]:
-    _require(expected_commit == AUTHORIZED_BASE, "Gate J expected commit differs")
+    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
     manifest, _rows, _freeze, card_path, _schema_path = _load_context(run_root)
     shard_index = int(shard_index)
     _require(0 <= shard_index < int(manifest["shard_count"]), "shard index is outside frozen domain")
@@ -550,7 +551,7 @@ def _valid_attempts(root: Path, shard_index: int) -> List[Tuple[int, Path, Dict[
 
 
 def merge_shards(*, run_root: Path, expected_commit: str) -> Dict[str, Any]:
-    _require(expected_commit == AUTHORIZED_BASE, "Gate J expected commit differs")
+    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
     manifest, rows, _freeze, card_path, schema_path = _load_context(run_root)
     card = load_json(_repo_root() / CARD_RELATIVE)
     root = Path(run_root).resolve()
@@ -694,7 +695,7 @@ def verify_formal_run(
 ) -> Dict[str, Any]:
     """Fresh-process verifier for formal or debug-shaped trajectory closure."""
 
-    _require(expected_commit == AUTHORIZED_BASE, "Gate J expected commit differs")
+    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
     manifest, rows, _freeze, card_path, schema_path = _load_context(run_root)
     root = Path(run_root).resolve()
     _require(manifest["expected_commit"] == expected_commit, "manifest commit differs")
@@ -770,7 +771,7 @@ def build_sbatch_text(
     time_limit: str = FORMAL_DEFAULT_TIME_LIMIT,
     concurrency: int | None = None,
 ) -> str:
-    _require(expected_commit == AUTHORIZED_BASE, "Gate J expected commit differs")
+    _require(expected_commit == AUTHORIZED_COMMIT, "Gate J expected commit differs")
     _require(1 <= int(shard_count) <= MAX_SHARDS, "shard count must be between 1 and 8")
     _require(partition and gpu_type and time_limit, "scheduler resource fields must be explicit")
     concurrency = int(concurrency or shard_count)
@@ -1118,6 +1119,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 __all__ = [
     "AUTHORIZED_BASE",
+    "AUTHORIZED_COMMIT",
     "GateJMMLU0Error",
     "aggregate_diagnostics",
     "build_sbatch_text",
