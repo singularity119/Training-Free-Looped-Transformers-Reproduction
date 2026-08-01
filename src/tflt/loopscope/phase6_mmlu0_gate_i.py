@@ -218,6 +218,17 @@ def _file_records(root: Path) -> List[Dict[str, Any]]:
     return rows
 
 
+def _binary_source_manifest_sha256(rows: Sequence[Mapping[str, Any]]) -> str:
+    """Match the frozen Gate H task-source manifest encoding exactly."""
+    digest = hashlib.sha256()
+    for row in rows:
+        digest.update(str(row["path"]).encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(bytes.fromhex(str(row["sha256"])))
+        digest.update(b"\n")
+    return digest.hexdigest()
+
+
 def _git_provenance(expected_commit: str) -> Dict[str, Any]:
     root = Path(_run(("git", "rev-parse", "--show-toplevel"))).resolve()
     _require(root == repository_root().resolve(), "not running in the dedicated clone")
@@ -357,7 +368,7 @@ def _task_source_closure() -> Dict[str, Any]:
     default_root = package_root / "tasks/mmlu/default"
     rows = _file_records(default_root)
     _require(len(rows) == EXPECTED_TASK_SOURCE_FILE_COUNT, "MMLU task source file count differs")
-    manifest_hash = semantic_sha256(rows)
+    manifest_hash = _binary_source_manifest_sha256(rows)
     _require(
         manifest_hash == EXPECTED_TASK_SOURCE_MANIFEST_SHA256,
         "MMLU task source manifest hash differs",
