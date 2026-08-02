@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "loopscope.phase6.mmlu5-prompt-projection.v1",
+  "title": "Gate K MMLU five-shot validation prompt projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ordinal", "identity", "subject", "split", "num_fewshot", "fewshot_split", "demonstration_count", "demonstration_ids", "demonstration_provenance", "prompt_sha256", "prompt_tokenization_sha256", "sequence_length", "probe_position", "renderer_source_manifest_sha256", "render_contract_sha256", "dataset_revision"],
+  "properties": {
+    "schema_version": {"const": "loopscope.phase6.mmlu5-prompt-projection.v1"},
+    "ordinal": {"type": "integer", "minimum": 0},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task", "doc_id", "doc_hash"],
+      "properties": {
+        "task": {"const": "mmlu"},
+        "doc_id": {"type": "string", "minLength": 1},
+        "doc_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "subject": {"type": "string", "minLength": 1},
+    "split": {"const": "validation"},
+    "num_fewshot": {"const": 5},
+    "fewshot_split": {"const": "dev"},
+    "demonstration_count": {"const": 5},
+    "demonstration_ids": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"type": "string", "minLength": 1}},
+    "demonstration_provenance": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "doc_index", "subject", "split", "doc_sha256", "rendered_sha256", "example_answer_sha256"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "doc_index": {"type": "integer", "minimum": 0},
+          "subject": {"type": "string", "minLength": 1},
+          "split": {"const": "dev"},
+          "doc_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "rendered_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "example_answer_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "prompt_tokenization_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sequence_length": {"type": "integer", "minimum": 1},
+    "probe_position": {"type": "integer", "minimum": 0},
+    "renderer_source_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "render_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dataset_revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+  }
+}

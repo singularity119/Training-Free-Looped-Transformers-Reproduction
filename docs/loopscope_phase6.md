@@ -40,8 +40,31 @@ Gate H does not load a model or data, run a forward/generation call, read gold/t
 correctness/outcome fields, execute the formal selector, run a loop, or create a panel. Gate I is
 limited to CPU/import and four-identity A40 debug admission; Gate J performs the validation-1531
 V2 selector and ends this branch with a selected window or legal `ABSTAIN`. No full-loop result,
-panel, Gate K, or Gate L is authorized. The mutable authority
+panel, or full-loop result is produced by this branch. The mutable authority
 and live handoff remain the planning control file and matching handoff named above.
+
+## MMLU 5-shot follow-up: Gate K contract
+
+The authorized follow-up is a separate five-shot contract in
+`configs/loopscope/phase6_mmlu5_prefix_card.json`. It keeps the accepted Qwen3-4B model,
+MMLU validation-1531 identity order, exact ` A/B/C/D` continuation surfaces, 37 no-loop
+boundaries, diagnostic metrics, V2 candidate domain, bootstrap, and TFLT identity. Its only
+scientific change is standard `num_fewshot=5` with `fewshot_split=dev` and the resulting fresh
+rendered-prefix projection.
+
+Gate K uses the real lm-eval standard MMLU renderer. Validation rows are selected only with
+`question`, `choices`, and `subject`; dev rows may provide five example demonstrations and their
+answers to the renderer. Prompt text and token IDs are hashed in memory and are not persisted.
+The closed projection records exact demonstration order/count, prompt/tokenization hashes, the
+last non-padding probe position, renderer/source hashes, and no target/gold/test/outcome fields.
+The trajectory shape is separately versioned as `phase6_mmlu5_trajectory_schema.json` so 0-shot
+records cannot enter the five-shot population.
+
+Gate K has no GPU, CUDA, Slurm, model-forward, selector, loop, test-split, validation-target, or
+outcome authority. Its CPU projection and verifier only unlock Gate L after planning acceptance.
+Gate L remains a new executor's debug-partition four-identity native smoke; Gate M alone may
+acquire validation-1531 trajectories and run the frozen V2 selector, ending with selected window
+or legal `ABSTAIN`. No test-14042 or full-loop outcome belongs to this follow-up.
 
 ## Scientific question
 
