@@ -53,6 +53,7 @@ class GateOTests(unittest.TestCase):
             self.assertIn("#SBATCH --partition=emergency_gpu", sbatch)
             self.assertIn("#SBATCH --qos=emergency_gpu", sbatch)
             self.assertIn("#SBATCH --gres=gpu:a800:1", sbatch)
+            self.assertIn("scripts/loopscope/run_qwen4_phase6_mmlu5_gate_o.py run-cell", sbatch)
             self.assertNotIn("--decode-mode", sbatch)
 
     def test_identity_projection_does_not_need_outcome_fields(self):

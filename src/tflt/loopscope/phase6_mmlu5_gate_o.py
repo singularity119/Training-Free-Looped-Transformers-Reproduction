@@ -847,9 +847,10 @@ def build_sbatch_text(*, mode: str, run_root: Path, expected_commit: str) -> str
     lines.extend(
         [
             _common_environment().rstrip("\n"),
-            "exec %s run-cell --mode %s --run-root %s --cell-index \"$SLURM_ARRAY_TASK_ID\" --expected-commit %s"
+            "exec %s %s run-cell --mode %s --run-root %s --cell-index \"$SLURM_ARRAY_TASK_ID\" --expected-commit %s"
             % (
                 shlex.quote(str(AUDITED_VENV / "bin/python")),
+                shlex.quote(str(runner)),
                 mode,
                 shlex.quote(str(Path(run_root).resolve())),
                 shlex.quote(expected_commit),
