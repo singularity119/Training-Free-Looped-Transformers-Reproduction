@@ -260,6 +260,19 @@ def _git_provenance(expected_commit: str) -> Dict[str, Any]:
     }
 
 
+def _require_authorized_descendant(expected_commit: str) -> None:
+    _require(isinstance(expected_commit, str) and re.fullmatch(r"[0-9a-f]{40}", expected_commit) is not None, "expected commit is invalid")
+    try:
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", AUTHORIZED_BASE, expected_commit],
+            cwd=str(repository_root()),
+            check=True,
+            capture_output=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        raise GateLMMLU5Error("Gate L commit is not a descendant of the authorized base") from exc
+
+
 def _package_versions() -> Dict[str, str]:
     try:
         values = gate_k._package_versions()
@@ -393,7 +406,10 @@ def _load_projection_and_membership(root: Path) -> Tuple[List[Dict[str, Any]], L
     membership["manifest_sha256"] = membership_hash
     _require(file_sha256(membership_path) == admission.get("membership_file_sha256"), "Gate L membership file hash differs")
     _require(admission.get("status") == "PASS", "Gate L CPU admission is not PASS")
-    _require(admission.get("gate") == GATE and admission.get("expected_commit") == AUTHORIZED_BASE, "Gate L admission identity differs")
+    admission_commit = admission.get("expected_commit")
+    _require(admission.get("gate") == GATE, "Gate L admission gate differs")
+    _require_authorized_descendant(admission_commit)
+    _require(membership.get("expected_commit") == admission_commit, "Gate L membership commit differs")
     gate_k_closure = _gate_k_projection_closure(Path(admission["gate_k_root"]))
     _require(admission.get("gate_k_projection_file_sha256") == gate_k_closure["projection_file_sha256"], "Gate K projection reference differs")
     expected_members = [dict(row) for row in gate_k_closure["selected"]]
@@ -408,18 +424,9 @@ def _load_projection_and_membership(root: Path) -> Tuple[List[Dict[str, Any]], L
 
 def cpu_admission(*, run_root: Path, expected_commit: str, gate_k_root: Path = GATE_K_ROOT_DEFAULT) -> Dict[str, Any]:
     _assert_offline_environment(cpu=True)
-    _require(re.fullmatch(r"[0-9a-f]{40}", expected_commit) is not None, "expected commit is invalid")
+    _require_authorized_descendant(expected_commit)
     root = Path(run_root).resolve()
     _require(not root.exists(), "Gate L run root must be fresh")
-    try:
-        subprocess.run(
-            ["git", "merge-base", "--is-ancestor", AUTHORIZED_BASE, expected_commit],
-            cwd=str(repository_root()),
-            check=True,
-            capture_output=True,
-        )
-    except subprocess.CalledProcessError as exc:
-        raise GateLMMLU5Error("Gate L commit is not a descendant of the authorized base") from exc
     card, _prompt_schema, _trajectory_schema, card_path, prompt_schema_path, trajectory_schema_path = _load_contract()
     git = _git_provenance(expected_commit)
     packages = _package_versions()
