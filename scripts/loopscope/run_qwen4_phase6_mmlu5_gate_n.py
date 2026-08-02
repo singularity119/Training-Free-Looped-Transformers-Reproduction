@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -33,15 +34,20 @@ def _parser() -> argparse.ArgumentParser:
     analyze = subparsers.add_parser("analyze", help="run the one authorized V3 analyze")
     analyze.add_argument("--source-root", required=True)
     analyze.add_argument("--output-root", required=True)
-    analyze.add_argument("--expected-commit", default=EXPECTED_COMMIT)
+    analyze.add_argument("--expected-commit", required=True)
     verify = subparsers.add_parser("verify", help="run the one fresh-process V3 verifier")
     verify.add_argument("--source-root", required=True)
     verify.add_argument("--run-root", required=True)
-    verify.add_argument("--expected-commit", default=EXPECTED_COMMIT)
+    verify.add_argument("--expected-commit", required=True)
     return parser
 
 
 def run_analyze(args: argparse.Namespace) -> int:
+    current_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
+    ).strip()
+    if current_commit != args.expected_commit:
+        raise GateNV3Error("BLOCK_REPOSITORY_ADMISSION_MISMATCH: repository HEAD differs")
     output_root = Path(args.output_root).resolve()
     if output_root.exists():
         raise GateNV3Error("BLOCK_WRITE_ONCE_VIOLATION: output root already exists")

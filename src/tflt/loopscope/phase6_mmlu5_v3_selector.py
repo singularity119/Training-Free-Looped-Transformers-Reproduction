@@ -37,7 +37,10 @@ EPSILON = 1e-12
 METHOD_ID = "AGGREGATE_COMMON_TURN_V3_ABSOLUTE_RATE"
 METHOD_VERSION = "3.1.0"
 METHOD_FILE_SHA256 = "2a7aaac6bcd4e0d4995758c8e25a720469c1d6e2afd65e7a1143103f31556644"
-EXPECTED_COMMIT = "9446f0e4940a7ae762c95625f8bd891ac4090f6c"
+SOURCE_GATE_M_COMMIT = "9446f0e4940a7ae762c95625f8bd891ac4090f6c"
+# The current Gate N implementation commit is supplied by the launcher.  It
+# is distinct from the frozen Gate M source commit above.
+EXPECTED_COMMIT = SOURCE_GATE_M_COMMIT
 EXPECTED_TRAJECTORY_SHA256 = "0c6989abac8fab56d1661ffdfad9e291e2591b5eb6c87738cfd92282631a1d73"
 EXPECTED_SOURCE_ROOT_NAME = "phase6-gate-m-mmlu5-formal-20260802T085444Z"
 EXPECTED_RECORD_COUNT = 1531
@@ -76,6 +79,16 @@ FORBIDDEN_OUTCOME_KEYS = frozenset(
 
 class GateNV3Error(ValueError):
     """Fail-closed Gate N error with a planning-readable BLOCK reason."""
+
+
+def _validate_commit(value: Any) -> str:
+    if not isinstance(value, str) or len(value) != 40:
+        raise GateNV3Error("BLOCK_REPOSITORY_ADMISSION_MISMATCH: commit is not a SHA-1")
+    try:
+        int(value, 16)
+    except ValueError as exc:
+        raise GateNV3Error("BLOCK_REPOSITORY_ADMISSION_MISMATCH: commit is not hexadecimal") from exc
+    return value
 
 
 def canonical_json_bytes(value: Any) -> bytes:
@@ -588,8 +601,7 @@ def analyze_projected(
 
     if formal and (replicates != FORMAL_REPLICATES or seed != FORMAL_SEED):
         raise GateNV3Error("BLOCK_METHOD_CONTRACT_MISMATCH: formal bootstrap differs")
-    if expected_commit != EXPECTED_COMMIT:
-        raise GateNV3Error("BLOCK_REPOSITORY_ADMISSION_MISMATCH: commit differs")
+    _validate_commit(expected_commit)
     projected = [dict(row) for row in projected]
     projected = project_records(
         [
@@ -915,6 +927,9 @@ def validate_input_closure(source_root: Path) -> Dict[str, Any]:
         for key in ("selector_executed", "loop_executed", "outcome_read", "validation_target_gold_read", "test_split_read", "model_weights_loaded", "model_forward_executed", "cuda_gpu_slurm"):
             if payload.get(key) is True:
                 raise GateNV3Error("BLOCK_INFORMATION_BARRIER_VIOLATION: source receipt %s" % key)
+    manifest = safe_payloads[0]
+    if manifest.get("expected_commit") not in (None, SOURCE_GATE_M_COMMIT):
+        raise GateNV3Error("BLOCK_INPUT_CLOSURE_HASH_MISMATCH: Gate M source commit differs")
     merge = safe_payloads[2]
     verifier = safe_payloads[3]
     if merge.get("record_file_sha256") != EXPECTED_TRAJECTORY_SHA256 or verifier.get("record_file_sha256") != EXPECTED_TRAJECTORY_SHA256:
@@ -931,8 +946,7 @@ def analyze_source(
     replicates: int = FORMAL_REPLICATES,
     seed: int = FORMAL_SEED,
 ) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Dict[str, str]]:
-    if expected_commit != EXPECTED_COMMIT:
-        raise GateNV3Error("BLOCK_REPOSITORY_ADMISSION_MISMATCH: commit differs")
+    _validate_commit(expected_commit)
     closure = validate_input_closure(source_root)
     trajectory_path = Path(source_root).resolve() / "merge/merged_trajectory_records.jsonl"
     records = load_jsonl(trajectory_path)
@@ -969,6 +983,7 @@ __all__ = [
     "METHOD_FILE_SHA256",
     "METHOD_ID",
     "METHOD_VERSION",
+    "SOURCE_GATE_M_COMMIT",
     "PROJECTION_FIELDS",
     "Q_THRESHOLD",
     "REL_TOL",

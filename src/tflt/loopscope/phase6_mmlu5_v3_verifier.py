@@ -35,6 +35,7 @@ from tflt.loopscope.phase6_mmlu5_v3_selector import (
     PROJECTION_FIELDS,
     Q_THRESHOLD,
     REL_TOL,
+    SOURCE_GATE_M_COMMIT,
     STARTS,
     WIDTHS,
     GateNV3Error,
@@ -423,12 +424,18 @@ def _validate_source(root: Path) -> Dict[str, str]:
         for key in ("selector_executed", "loop_executed", "outcome_read", "validation_target_gold_read", "test_split_read", "model_weights_loaded", "model_forward_executed", "cuda_gpu_slurm"):
             if value.get(key) is True:
                 raise GateNV3Error("BLOCK_INFORMATION_BARRIER_VIOLATION: %s" % key)
+        if relative == "manifest/formal_manifest.json" and value.get("expected_commit") not in (None, SOURCE_GATE_M_COMMIT):
+            raise GateNV3Error("BLOCK_INPUT_CLOSURE_HASH_MISMATCH: Gate M source commit differs")
     return observed
 
 
 def verify_freeze(*, source_root: Path, run_root: Path, expected_commit: str = EXPECTED_COMMIT) -> Dict[str, Any]:
-    if expected_commit != EXPECTED_COMMIT:
-        raise GateNV3Error("BLOCK_REPOSITORY_ADMISSION_MISMATCH: commit differs")
+    if not isinstance(expected_commit, str) or len(expected_commit) != 40:
+        raise GateNV3Error("BLOCK_REPOSITORY_ADMISSION_MISMATCH: commit is not a SHA-1")
+    try:
+        int(expected_commit, 16)
+    except ValueError as exc:
+        raise GateNV3Error("BLOCK_REPOSITORY_ADMISSION_MISMATCH: commit is not hexadecimal") from exc
     source_root = Path(source_root).resolve()
     run_root = Path(run_root).resolve()
     source_hashes = _validate_source(source_root)
