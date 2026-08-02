@@ -1,0 +1,173 @@
+{
+  "$id": "loopscope.phase6.mmlu5-gate-n-v3-selector-freeze.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "artifact_role", "gate", "planning_thread_id", "executor_thread_id",
+    "expected_commit", "source_gate_m_root", "source_input_closure", "method_id", "method_version",
+    "method_file_sha256", "input_distribution_contract", "probe_contract", "trajectory_file_sha256",
+    "identity_manifest_sha256", "record_count", "category_count", "ordered_category_sha256",
+    "layer_count", "boundary_count", "central_blocks", "widths", "candidate_count", "aggregation",
+    "selector_projection_fields", "hidden_diagnostics_in_selector", "outcome_fields_consumed",
+    "bootstrap_method", "replicates", "seed", "prng", "draw_api", "standard_deviation_ddof",
+    "epsilon", "quantile_method", "bootstrap_draw_index_sha256", "bootstrap_combined_rank_winner_sha256",
+    "turn_strength_Q_threshold", "numeric_tolerances", "point_rank_score",
+    "combined_rank_frequency_threshold", "selector_decision", "selected_key", "point_operational_winner",
+    "point_top_tie_set", "point_tie_break_applied", "combined_rank_selection_frequency",
+    "combined_rank_winner_count", "combined_rank_usable_replicates", "selected_window", "ranking_digest",
+    "selector_projection_file_sha256", "information_barrier", "rows", "analysis_semantic_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "loopscope.phase6.mmlu5-gate-n-v3-selector-freeze.v1"},
+    "artifact_role": {"const": "gate_n_post_hoc_v3_selector_freeze"},
+    "gate": {"const": "N"},
+    "planning_thread_id": {"type": "string"},
+    "executor_thread_id": {"type": "string"},
+    "expected_commit": {"type": "string", "minLength": 40, "maxLength": 40},
+    "source_gate_m_root": {"type": "string", "minLength": 1},
+    "source_input_closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest/formal_manifest.json", "manifest/freeze_receipt.json", "merge/merge_receipt.json",
+        "merge/merged_trajectory_records.jsonl", "merge/verifier_receipt.json", "selector/selector_freeze.json"
+      ],
+      "properties": {
+        "manifest/formal_manifest.json": {"type": "string", "minLength": 64, "maxLength": 64},
+        "manifest/freeze_receipt.json": {"type": "string", "minLength": 64, "maxLength": 64},
+        "merge/merge_receipt.json": {"type": "string", "minLength": 64, "maxLength": 64},
+        "merge/merged_trajectory_records.jsonl": {"type": "string", "minLength": 64, "maxLength": 64},
+        "merge/verifier_receipt.json": {"type": "string", "minLength": 64, "maxLength": 64},
+        "selector/selector_freeze.json": {"type": "string", "minLength": 64, "maxLength": 64}
+      }
+    },
+    "method_id": {"const": "AGGREGATE_COMMON_TURN_V3_ABSOLUTE_RATE"},
+    "method_version": {"const": "3.1.0"},
+    "method_file_sha256": {"type": "string", "minLength": 64, "maxLength": 64},
+    "input_distribution_contract": {"type": "string"},
+    "probe_contract": {"type": "string"},
+    "trajectory_file_sha256": {"type": "string", "minLength": 64, "maxLength": 64},
+    "identity_manifest_sha256": {"type": "string", "minLength": 64, "maxLength": 64},
+    "record_count": {"type": "integer", "minimum": 1},
+    "category_count": {"type": "integer", "minimum": 1},
+    "ordered_category_sha256": {"type": "string", "minLength": 64, "maxLength": 64},
+    "layer_count": {"const": 36},
+    "boundary_count": {"const": 37},
+    "central_blocks": {"const": [11, 24]},
+    "widths": {"const": [3, 4, 5, 6]},
+    "candidate_count": {"const": 42},
+    "aggregation": {"const": "equal_category_macro"},
+    "selector_projection_fields": {"const": ["identity", "category", "H", "D"]},
+    "hidden_diagnostics_in_selector": {"const": false},
+    "outcome_fields_consumed": {"const": false},
+    "bootstrap_method": {"type": "string"},
+    "replicates": {"const": 2000},
+    "seed": {"const": 20260801},
+    "prng": {"const": "random.Random"},
+    "draw_api": {"const": "randrange"},
+    "standard_deviation_ddof": {"const": 1},
+    "epsilon": {"const": 1e-12},
+    "quantile_method": {"const": "linear_q_times_R_minus_1"},
+    "bootstrap_draw_index_sha256": {"type": "string", "minLength": 64, "maxLength": 64},
+    "bootstrap_combined_rank_winner_sha256": {"type": "string", "minLength": 64, "maxLength": 64},
+    "turn_strength_Q_threshold": {"const": "0.5_strict"},
+    "numeric_tolerances": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rel_tol", "abs_tol", "decomposition_rel"],
+      "properties": {
+        "rel_tol": {"const": 1e-12},
+        "abs_tol": {"const": 1e-12},
+        "decomposition_rel": {"const": 1e-10}
+      }
+    },
+    "point_rank_score": {"const": "S_RATE_TURN"},
+    "combined_rank_frequency_threshold": {"const": 0.8},
+    "selector_decision": {"enum": ["SELECTED_WINDOW", "ABSTAIN_NO_V3_ELIGIBLE", "ABSTAIN_COMBINED_RANK_UNSTABLE"]},
+    "selected_key": {"anyOf": [{"type": "null"}, {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}]},
+    "point_operational_winner": {"anyOf": [{"type": "null"}, {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}]},
+    "point_top_tie_set": {"type": "array", "items": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}},
+    "point_tie_break_applied": {"type": "boolean"},
+    "combined_rank_selection_frequency": {"anyOf": [{"type": "null"}, {"type": "number", "minimum": 0, "maximum": 1}]},
+    "combined_rank_winner_count": {"type": "integer", "minimum": 0},
+    "combined_rank_usable_replicates": {"type": "integer", "minimum": 0},
+    "selected_window": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["window_half_open", "window_layers_inclusive", "boundary_entry", "boundary_exit"],
+          "properties": {
+            "window_half_open": {"type": "string"},
+            "window_layers_inclusive": {"type": "string"},
+            "boundary_entry": {"type": "string"},
+            "boundary_exit": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "ranking_digest": {"type": "string", "minLength": 64, "maxLength": 64},
+    "selector_projection_file_sha256": {"type": "string", "minLength": 0, "maxLength": 64},
+    "information_barrier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validation_target_gold_read", "test_split_read", "outcome_read", "model_weights_loaded", "model_forward_executed", "cuda_gpu_slurm", "loop_executed", "hidden_diagnostics_consumed"],
+      "properties": {
+        "validation_target_gold_read": {"const": false},
+        "test_split_read": {"const": false},
+        "outcome_read": {"const": false},
+        "model_weights_loaded": {"const": false},
+        "model_forward_executed": {"const": false},
+        "cuda_gpu_slurm": {"const": false},
+        "loop_executed": {"const": false},
+        "hidden_diagnostics_consumed": {"const": false}
+      }
+    },
+    "rows": {"type": "array", "minItems": 42, "maxItems": 42, "items": {"$ref": "#/$defs/candidate"}},
+    "analysis_semantic_digest": {"type": "string", "minLength": 64, "maxLength": 64}
+  },
+  "$defs": {
+    "numberOrNull": {"anyOf": [{"type": "null"}, {"type": "number"}]},
+    "turn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tau", "n_L", "n_R", "mu_L", "mu_R", "delta", "T", "BSS", "WSS", "Q", "SST"],
+      "properties": {
+        "tau": {"type": "integer"}, "n_L": {"type": "integer"}, "n_R": {"type": "integer"},
+        "mu_L": {"type": "number"}, "mu_R": {"type": "number"}, "delta": {"type": "number"},
+        "T": {"type": "number"}, "BSS": {"type": "number"}, "WSS": {"type": "number"},
+        "Q": {"$ref": "#/$defs/numberOrNull"}, "SST": {"type": "number"}
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width", "start", "stop_exclusive", "end_inclusive", "window_half_open", "window_layers_inclusive",
+        "boundary_entry", "boundary_exit", "Scorable", "NetPositive", "RateStable", "AggregateCommonTurn",
+        "EligibleV3", "G_H", "G_K", "S_RATE", "S_TURN", "S_RATE_TURN", "rate_SE_H", "rate_SE_K", "rate_c95",
+        "rate_LCB_H", "rate_LCB_K", "rH_window", "rK_window", "tau_candidates", "turn_H_by_tau", "turn_K_by_tau",
+        "tau_H", "tau_K", "common_tau", "turn_T_H", "turn_T_K", "turn_delta_H", "turn_delta_K", "turn_BSS_H",
+        "turn_BSS_K", "turn_WSS_H", "turn_WSS_K", "turn_Q_H", "turn_Q_K", "turn_tau_tie_H", "turn_tau_tie_K",
+        "turn_strength_pass_H", "turn_strength_pass_K", "point_rank", "point_top_tie", "tie_break_applied",
+        "combined_rank_selection_frequency", "selected", "v3_failure_reasons", "legacy_diagnostics", "hidden_diagnostics"
+      ],
+      "properties": {
+        "width": {"type": "integer"}, "start": {"type": "integer"}, "stop_exclusive": {"type": "integer"}, "end_inclusive": {"type": "integer"},
+        "window_half_open": {"type": "string"}, "window_layers_inclusive": {"type": "string"}, "boundary_entry": {"type": "string"}, "boundary_exit": {"type": "string"},
+        "Scorable": {"type": "boolean"}, "NetPositive": {"type": "boolean"}, "RateStable": {"type": "boolean"}, "AggregateCommonTurn": {"type": "boolean"}, "EligibleV3": {"type": "boolean"},
+        "G_H": {"type": "number"}, "G_K": {"type": "number"}, "S_RATE": {"$ref": "#/$defs/numberOrNull"}, "S_TURN": {"$ref": "#/$defs/numberOrNull"}, "S_RATE_TURN": {"$ref": "#/$defs/numberOrNull"},
+        "rate_SE_H": {"type": "number"}, "rate_SE_K": {"type": "number"}, "rate_c95": {"type": "number"}, "rate_LCB_H": {"type": "number"}, "rate_LCB_K": {"type": "number"},
+        "rH_window": {"type": "array", "items": {"type": "number"}}, "rK_window": {"type": "array", "items": {"type": "number"}}, "tau_candidates": {"type": "array", "items": {"type": "integer"}},
+        "turn_H_by_tau": {"type": "array", "items": {"$ref": "#/$defs/turn"}}, "turn_K_by_tau": {"type": "array", "items": {"$ref": "#/$defs/turn"}},
+        "tau_H": {"$ref": "#/$defs/numberOrNull"}, "tau_K": {"$ref": "#/$defs/numberOrNull"}, "common_tau": {"$ref": "#/$defs/numberOrNull"},
+        "turn_T_H": {"$ref": "#/$defs/numberOrNull"}, "turn_T_K": {"$ref": "#/$defs/numberOrNull"}, "turn_delta_H": {"$ref": "#/$defs/numberOrNull"}, "turn_delta_K": {"$ref": "#/$defs/numberOrNull"},
+        "turn_BSS_H": {"$ref": "#/$defs/numberOrNull"}, "turn_BSS_K": {"$ref": "#/$defs/numberOrNull"}, "turn_WSS_H": {"$ref": "#/$defs/numberOrNull"}, "turn_WSS_K": {"$ref": "#/$defs/numberOrNull"}, "turn_Q_H": {"$ref": "#/$defs/numberOrNull"}, "turn_Q_K": {"$ref": "#/$defs/numberOrNull"},
+        "turn_tau_tie_H": {"type": "array", "items": {"type": "integer"}}, "turn_tau_tie_K": {"type": "array", "items": {"type": "integer"}}, "turn_strength_pass_H": {"type": "boolean"}, "turn_strength_pass_K": {"type": "boolean"},
+        "point_rank": {"$ref": "#/$defs/numberOrNull"}, "point_top_tie": {"type": "boolean"}, "tie_break_applied": {"type": "boolean"}, "combined_rank_selection_frequency": {"$ref": "#/$defs/numberOrNull"}, "selected": {"type": "boolean"},
+        "v3_failure_reasons": {"type": "array", "items": {"type": "string"}}, "legacy_diagnostics": {"type": "object", "additionalProperties": false}, "hidden_diagnostics": {"type": "object", "additionalProperties": false}
+      }
+    }
+  }
+}
