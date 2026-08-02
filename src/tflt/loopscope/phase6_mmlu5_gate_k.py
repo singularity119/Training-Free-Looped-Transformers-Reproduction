@@ -357,6 +357,14 @@ def _safe_target_hash(safe: Mapping[str, Any]) -> str:
     return _sha256_bytes(canonical_json_bytes({"question": safe["question"], "subject": safe["subject"], "choices": list(safe["choices"])}))
 
 
+def _renderer_target_doc(safe: Mapping[str, Any]) -> Dict[str, Any]:
+    """Add only lm-eval's empty target sentinel for final-turn rendering."""
+    _require(set(safe) == set(TARGET_COLUMNS), "renderer target must be gold-free")
+    rendered = dict(safe)
+    rendered["answer"] = ""
+    return rendered
+
+
 def _demo_hash(doc: Mapping[str, Any]) -> str:
     return _sha256_bytes(canonical_json_bytes(dict(doc)))
 
@@ -464,7 +472,7 @@ def _render_projection(
         for target_index, row in enumerate(validation):
             safe_target = _safe_target_doc(row, subject)
             identity = {"task": "mmlu", "doc_id": "mmlu_%s:validation:%d" % (subject, target_index), "doc_hash": _safe_target_hash(safe_target)}
-            prompt, demos = backend._render_with_captured_demos(task, safe_target, dev, np, int(seed))
+            prompt, demos = backend._render_with_captured_demos(task, _renderer_target_doc(safe_target), dev, np, int(seed))
             _require(isinstance(prompt, str) and prompt.rstrip().endswith("Answer:"), "standard five-shot prompt terminal differs")
             demo_rows = _demo_provenance(task, demos, dev, subject)
             demo_contract = canonical_json_bytes(demo_rows)

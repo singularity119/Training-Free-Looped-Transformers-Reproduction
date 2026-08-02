@@ -61,6 +61,14 @@ class GateKMMLU5Tests(unittest.TestCase):
         self.assertNotIn("prompt", record)
         self.assertNotIn("token_ids", record)
 
+    def test_standard_renderer_target_sentinel_is_empty_and_non_gold(self):
+        target = {"question": "q", "choices": ["a", "b", "c", "d"], "subject": "math"}
+        rendered = gate_k._renderer_target_doc(target)
+        self.assertEqual(rendered["answer"], "")
+        self.assertEqual(target, {"question": "q", "choices": ["a", "b", "c", "d"], "subject": "math"})
+        with self.assertRaises(gate_k.GateKMMLU5Error):
+            gate_k._renderer_target_doc({**target, "answer": 0})
+
     def test_standard_dev_demo_order_count_and_target_exclusion_are_fail_closed(self):
         record = gate_k._synthetic_projection_record()
         invalid = copy.deepcopy(record)
