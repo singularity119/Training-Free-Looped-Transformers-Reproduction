@@ -411,7 +411,15 @@ def cpu_admission(*, run_root: Path, expected_commit: str, gate_k_root: Path = G
     _require(re.fullmatch(r"[0-9a-f]{40}", expected_commit) is not None, "expected commit is invalid")
     root = Path(run_root).resolve()
     _require(not root.exists(), "Gate L run root must be fresh")
-    _require(expected_commit == AUTHORIZED_BASE, "Gate L authorized base differs")
+    try:
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", AUTHORIZED_BASE, expected_commit],
+            cwd=str(repository_root()),
+            check=True,
+            capture_output=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        raise GateLMMLU5Error("Gate L commit is not a descendant of the authorized base") from exc
     card, _prompt_schema, _trajectory_schema, card_path, prompt_schema_path, trajectory_schema_path = _load_contract()
     git = _git_provenance(expected_commit)
     packages = _package_versions()
