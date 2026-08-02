@@ -311,10 +311,10 @@ def _build_expected_freeze(
         s_turn = math.sqrt(float(q_h) * float(q_k)) if common else None
         row: Dict[str, Any] = {**candidate, "Scorable": True, "NetPositive": positive, "RateStable": False, "AggregateCommonTurn": common, "EligibleV3": False, "G_H": g_h, "G_K": g_k, "S_RATE": s_rate, "S_TURN": s_turn, "S_RATE_TURN": s_rate * s_turn if s_rate is not None and s_turn is not None else None, "rate_SE_H": None, "rate_SE_K": None, "rate_c95": None, "rate_LCB_H": None, "rate_LCB_K": None, "rH_window": r_h[start : start + width], "rK_window": r_k[start : start + width], "tau_candidates": list(turn_h["tau_candidates"]), "turn_H_by_tau": turn_h["entries"], "turn_K_by_tau": turn_k["entries"], "tau_H": turn_h["tau"], "tau_K": turn_k["tau"], "common_tau": turn_h["tau"] if common else None, "turn_T_H": None, "turn_T_K": None, "turn_delta_H": None, "turn_delta_K": None, "turn_BSS_H": None, "turn_BSS_K": None, "turn_WSS_H": None, "turn_WSS_K": None, "turn_Q_H": None, "turn_Q_K": None, "turn_tau_tie_H": list(turn_h["ties"]), "turn_tau_tie_K": list(turn_k["ties"]), "turn_strength_pass_H": bool(turn_h["turn_strength_pass"]), "turn_strength_pass_K": bool(turn_k["turn_strength_pass"]), "point_rank": None, "point_top_tie": False, "tie_break_applied": False, "combined_rank_selection_frequency": None, "selected": False, "v3_failure_reasons": [], "legacy_diagnostics": {}, "hidden_diagnostics": {}}
         if turn_h["tau"] is not None:
-            fit = turn_h["entries"][turn_h["tau"] - start]
+            fit = next(entry for entry in turn_h["entries"] if entry["tau"] == turn_h["tau"])
             row.update({"turn_T_H": fit["T"], "turn_delta_H": fit["delta"], "turn_BSS_H": fit["BSS"], "turn_WSS_H": fit["WSS"], "turn_Q_H": fit["Q"]})
         if turn_k["tau"] is not None:
-            fit = turn_k["entries"][turn_k["tau"] - start]
+            fit = next(entry for entry in turn_k["entries"] if entry["tau"] == turn_k["tau"])
             row.update({"turn_T_K": fit["T"], "turn_delta_K": fit["delta"], "turn_BSS_K": fit["BSS"], "turn_WSS_K": fit["WSS"], "turn_Q_K": fit["Q"]})
         point_rows.append(row)
     for row in point_rows:

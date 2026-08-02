@@ -640,9 +640,11 @@ def analyze_projected(
             and turn_h["tau"] == turn_k["tau"]
         )
         s_rate = math.sqrt(g_h * g_k) if net_positive else None
+        turn_h_fit = next((entry for entry in turn_h["entries"] if entry["tau"] == turn_h["tau"]), None)
+        turn_k_fit = next((entry for entry in turn_k["entries"] if entry["tau"] == turn_k["tau"]), None)
         s_turn = (
-            math.sqrt(float(turn_h["entries"][turn_h["tau"] - start]["Q"]) * float(turn_k["entries"][turn_k["tau"] - start]["Q"]))
-            if common_turn
+            math.sqrt(float(turn_h_fit["Q"]) * float(turn_k_fit["Q"]))
+            if common_turn and turn_h_fit is not None and turn_k_fit is not None
             else None
         )
         s_rate_turn = s_rate * s_turn if s_rate is not None and s_turn is not None else None
@@ -695,10 +697,10 @@ def analyze_projected(
             "hidden_diagnostics": {},
         }
         if turn_h["tau"] is not None:
-            fit = turn_h["entries"][turn_h["tau"] - start]
+            fit = next(entry for entry in turn_h["entries"] if entry["tau"] == turn_h["tau"])
             row.update({"turn_T_H": fit["T"], "turn_delta_H": fit["delta"], "turn_BSS_H": fit["BSS"], "turn_WSS_H": fit["WSS"], "turn_Q_H": fit["Q"]})
         if turn_k["tau"] is not None:
-            fit = turn_k["entries"][turn_k["tau"] - start]
+            fit = next(entry for entry in turn_k["entries"] if entry["tau"] == turn_k["tau"])
             row.update({"turn_T_K": fit["T"], "turn_delta_K": fit["delta"], "turn_BSS_K": fit["BSS"], "turn_WSS_K": fit["WSS"], "turn_Q_K": fit["Q"]})
         rows.append(row)
 
