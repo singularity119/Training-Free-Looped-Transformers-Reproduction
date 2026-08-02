@@ -398,8 +398,15 @@ def _load_subject_datasets(subject: str) -> Tuple[Any, Any, Dict[str, Any]]:
         raise GateKMMLU5Error("datasets CPU import failed") from exc
     validation = load_dataset(path=DATASET_REPO, name=subject, revision=DATASET_REVISION, split="validation", cache_dir=str(HF_DATASETS_CACHE), download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS)
     dev = load_dataset(path=DATASET_REPO, name=subject, revision=DATASET_REVISION, split="dev", cache_dir=str(HF_DATASETS_CACHE), download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS)
-    _require(set(getattr(validation, "column_names", ())) == set(TARGET_COLUMNS), "validation dataset selected columns differ")
-    _require(set(getattr(dev, "column_names", ())) == set(DEV_COLUMNS), "dev dataset selected columns differ")
+    validation_columns = set(getattr(validation, "column_names", ()))
+    dev_columns = set(getattr(dev, "column_names", ()))
+    _require(set(TARGET_COLUMNS).issubset(validation_columns), "MMLU validation dataset lacks the safe column set")
+    _require(set(DEV_COLUMNS).issubset(dev_columns), "MMLU dev dataset lacks the demonstration column set")
+    source_fingerprints = {
+        "validation": str(getattr(validation, "_fingerprint", "")),
+        "dev": str(getattr(dev, "_fingerprint", "")),
+    }
+    _require(all(source_fingerprints.values()), "MMLU split fingerprint is missing")
     validation = validation.select_columns(list(TARGET_COLUMNS))
     dev = dev.select_columns(list(DEV_COLUMNS))
     cache_files = []
@@ -409,8 +416,8 @@ def _load_subject_datasets(subject: str) -> Tuple[Any, Any, Dict[str, Any]]:
             if filename.is_file():
                 cache_files.append({"split": split, "path": str(filename), "sha256": file_sha256(filename), "size_bytes": filename.stat().st_size})
     fingerprints = {
-        "validation": str(getattr(validation, "_fingerprint", "")),
-        "dev": str(getattr(dev, "_fingerprint", "")),
+        "validation": source_fingerprints["validation"],
+        "dev": source_fingerprints["dev"],
     }
     _require(all(fingerprints.values()), "MMLU split fingerprint is missing")
     return validation, dev, {"subject": subject, "revision": DATASET_REVISION, "fingerprints": fingerprints, "cache_files": sorted(cache_files, key=lambda value: (value["split"], value["path"]))}
