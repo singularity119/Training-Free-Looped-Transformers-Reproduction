@@ -563,7 +563,16 @@ def build_cpu_projection(*, run_root: Path, expected_commit: str, seed: int = FO
     _require(len(records) == VALIDATION_RECORD_COUNT, "validation projection count differs")
     _require(len({row["subject"] for row in records}) == VALIDATION_SUBJECT_COUNT, "validation projection subject count differs")
     identities = [row["identity"] for row in records]
-    _require(semantic_sha256(identities) == VALIDATION_IDENTITY_SHA256, "validation identity order differs from Gate J")
+    validation_identity_reuse = [
+        {
+            "task": "mmlu_%s" % row["subject"],
+            "doc_id": row["identity"]["doc_id"],
+            "doc_hash": row["identity"]["doc_hash"],
+        }
+        for row in records
+    ]
+    validation_identity_reuse_sha = semantic_sha256(validation_identity_reuse)
+    _require(validation_identity_reuse_sha == VALIDATION_IDENTITY_SHA256, "validation identity reuse differs from Gate J")
     projection_path = root / "cpu/validation_5shot_projection.jsonl"
     manifest_path = root / "cpu/manifest.json"
     receipt_path = root / "cpu/projection_receipt.json"
@@ -591,6 +600,7 @@ def build_cpu_projection(*, run_root: Path, expected_commit: str, seed: int = FO
             "subject_count": len({row["subject"] for row in records}),
             "ordered_identity_sha256": semantic_sha256(identities),
             "validation_identity_sha256": VALIDATION_IDENTITY_SHA256,
+            "validation_identity_reuse_sha256": validation_identity_reuse_sha,
             "ordered_prompt_projection_sha256": semantic_sha256(records),
             "zero_shot_reference_prompt_projection_sha256": ZERO_SHOT_PROMPT_PROJECTION_SHA256,
             "five_shot_differs_from_zero_shot": semantic_sha256(records) != ZERO_SHOT_PROMPT_PROJECTION_SHA256,
@@ -634,6 +644,7 @@ def build_cpu_projection(*, run_root: Path, expected_commit: str, seed: int = FO
         "record_count": len(records),
         "subject_count": len({row["subject"] for row in records}),
         "ordered_identity_sha256": semantic_sha256(identities),
+        "validation_identity_reuse_sha256": validation_identity_reuse_sha,
         "ordered_prompt_projection_sha256": semantic_sha256(records),
         "demonstration_count": DEMONSTRATION_COUNT,
         "choice_surface_manifest_sha256": CHOICE_SURFACE_MANIFEST_SHA256,
@@ -690,12 +701,26 @@ def verify_cpu_projection(*, run_root: Path, expected_commit: str) -> Dict[str, 
     identities = [row["identity"] for row in records]
     ordered_identity_sha = semantic_sha256(identities)
     ordered_projection_sha = semantic_sha256(records)
-    _require(ordered_identity_sha == VALIDATION_IDENTITY_SHA256, "Gate K identity order differs")
+    validation_identity_reuse = [
+        {
+            "task": "mmlu_%s" % row["subject"],
+            "doc_id": row["identity"]["doc_id"],
+            "doc_hash": row["identity"]["doc_hash"],
+        }
+        for row in records
+    ]
+    validation_identity_reuse_sha = semantic_sha256(validation_identity_reuse)
+    _require(validation_identity_reuse_sha == VALIDATION_IDENTITY_SHA256, "Gate K validation identity reuse differs")
     _require(len({row["subject"] for row in records}) == VALIDATION_SUBJECT_COUNT, "Gate K subject count differs")
     _require(all(row["demonstration_count"] == DEMONSTRATION_COUNT for row in records), "Gate K demonstration count differs")
     _require(ordered_projection_sha != ZERO_SHOT_PROMPT_PROJECTION_SHA256, "five-shot projection equals zero-shot reference")
     population = manifest.get("population", {})
-    _require(population.get("ordered_identity_sha256") == ordered_identity_sha and population.get("ordered_prompt_projection_sha256") == ordered_projection_sha, "Gate K population digest differs")
+    _require(
+        population.get("ordered_identity_sha256") == ordered_identity_sha
+        and population.get("validation_identity_reuse_sha256") == validation_identity_reuse_sha
+        and population.get("ordered_prompt_projection_sha256") == ordered_projection_sha,
+        "Gate K population digest differs",
+    )
     _require(population.get("five_shot_differs_from_zero_shot") is True, "Gate K zero-shot separation flag differs")
     _require(all(row["render_contract_sha256"] == manifest["renderer"]["render_contract_sha256"] for row in records), "Gate K render contract hash differs")
     barrier = manifest.get("information_barrier", {})
@@ -719,6 +744,7 @@ def verify_cpu_projection(*, run_root: Path, expected_commit: str) -> Dict[str, 
         "record_count": len(records),
         "subject_count": len({row["subject"] for row in records}),
         "ordered_identity_sha256": ordered_identity_sha,
+        "validation_identity_reuse_sha256": validation_identity_reuse_sha,
         "ordered_prompt_projection_sha256": ordered_projection_sha,
         "demonstration_count": DEMONSTRATION_COUNT,
         "candidate_count": len(enumerate_candidates()),
