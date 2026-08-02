@@ -1,0 +1,115 @@
+{
+  "schema_version": "loopscope.phase6.mmlu5.v3.outcome-card.v1",
+  "artifact_role": "phase6_gate_o_fixed_five_cell_mmlu5_outcome",
+  "gate": "O",
+  "status": "PLANNING_FROZEN",
+  "model": {
+    "repo": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554"
+  },
+  "dataset": {
+    "repo": "cais/mmlu",
+    "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+    "task_group": "mmlu",
+    "split": "test",
+    "fewshot_split": "dev",
+    "prompt": "plain",
+    "apply_chat_template": false,
+    "generation": false
+  },
+  "evaluator": {
+    "name": "lm-eval",
+    "version": "0.4.11",
+    "mode": "standard MMLU choice-loglikelihood",
+    "metric": "acc,none",
+    "num_fewshot": 5,
+    "log_samples": true
+  },
+  "loop_recipe": {
+    "dtype": "bfloat16",
+    "k": 3,
+    "iteration_mode": "block",
+    "strategy": "euler",
+    "alpha": 1.0,
+    "beta": 0.0,
+    "cache_strategy": "first",
+    "decode_mode": "full",
+    "batch_size": "16",
+    "window_width": 4,
+    "inclusive_window": true
+  },
+  "population": {
+    "record_count": 14042,
+    "subject_count": 57,
+    "canonical_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase3-p3c-20260716T064601Z",
+    "manifest": "test14042_identity_content_manifest.json",
+    "manifest_file_sha256": "59500340aa64d91810cd5a5d40f3d96ded5618ab5508543b31eea93050e7f3e4",
+    "metadata": "test14042_identity_content_metadata.jsonl",
+    "metadata_file_sha256": "3c281447cc7618e58c292a20c13b73d8f42f081692a6927372cf1ee1eebf84df",
+    "ordered_identity_sha256": "2c4557079fca1a7c071460f779ed714805fc96c3391560825cd34386d4051532"
+  },
+  "cells": [
+    {
+      "index": 0,
+      "cell_id": "no_loop",
+      "role": "baseline",
+      "window": null,
+      "loop_enabled": false
+    },
+    {
+      "index": 1,
+      "cell_id": "14:16",
+      "role": "fixed_window",
+      "window": "14:16",
+      "loop_enabled": true
+    },
+    {
+      "index": 2,
+      "cell_id": "13:16",
+      "role": "fixed_window",
+      "window": "13:16",
+      "loop_enabled": true
+    },
+    {
+      "index": 3,
+      "cell_id": "15:18",
+      "role": "fixed_window",
+      "window": "15:18",
+      "loop_enabled": true
+    },
+    {
+      "index": 4,
+      "cell_id": "12:16",
+      "role": "fixed_window",
+      "window": "12:16",
+      "loop_enabled": true
+    }
+  ],
+  "analysis": {
+    "primary": "accuracy",
+    "report_units": ["correct_count", "accuracy", "delta_percentage_points", "n01", "n10"],
+    "paired_bootstrap": {
+      "method": "subject-stratified paired percentile bootstrap",
+      "replicates": 2000,
+      "seed": 20260803,
+      "confidence_level": 0.95,
+      "percentile_method": "linear interpolation at q*(R-1)",
+      "contrast": "each loop cell versus no_loop"
+    },
+    "outcome_read_barrier": "only after all five formal cells have scheduler, artifact, stat, SHA256, and canonical identity closure"
+  },
+  "restrictions": {
+    "fixed_cell_order": true,
+    "no_outcome_based_reordering": true,
+    "no_new_selector": true,
+    "no_additional_full_loop": true,
+    "debug_is_limited_smoke": true,
+    "formal_array": "0-4%5",
+    "formal_gpu": "A800",
+    "debug_gpu": "A40",
+    "low_risk_failures_are_attempt_level": true,
+    "outcome_values_before_seal": false
+  },
+  "manifest_sha256": "279dd91a8f0ea5eaa71c884cd6c41647e382eb2bbbee062ee2430f4b2906a348"
+}
