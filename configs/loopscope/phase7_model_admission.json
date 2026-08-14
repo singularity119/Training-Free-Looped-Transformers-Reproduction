@@ -1,0 +1,129 @@
+{
+  "schema_version": "loopscope.phase7.model-admission.v1",
+  "status": "PASS_THREE_MODEL_ADMISSION",
+  "observation_date": "2026-08-15",
+  "scope": "Gate A metadata/tokenizer-only admission; no model weights, model forward, CUDA, or dataset rows were accessed",
+  "cache_root": "/hpc2hdd/home/xhuang225/shared/hf_home/hub",
+  "models": [
+    {
+      "model_key": "qwen25_3b",
+      "model_repo": "Qwen/Qwen2.5-3B",
+      "architecture_family": "qwen2",
+      "acquisition_route": {
+        "existing_shared_cache": "MISS",
+        "hf_mirror": "SUCCESS",
+        "official_fallback_attempted": false,
+        "actual_source": "https://hf-mirror.com"
+      },
+      "cache_status": "METADATA_AND_TOKENIZER_PRESENT_NO_WEIGHTS",
+      "resolved_model_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+      "resolved_tokenizer_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+      "architecture": "Qwen2ForCausalLM",
+      "decoder_container": "model",
+      "decoder_blocks": "model.layers",
+      "embedding": "model.embed_tokens",
+      "final_norm": "model.norm",
+      "lm_head": "lm_head",
+      "path_closure": true,
+      "layer_count": 36,
+      "choice_surface_status": "PASS_SINGLE_TOKEN_AND_MUTUALLY_DISTINCT",
+      "choice_surface_lengths": [1, 1, 1, 1],
+      "candidate_domain": {
+        "threshold": 11,
+        "central_blocks_inclusive": [11, 24],
+        "widths": [3, 4, 5, 6],
+        "window_count": 42,
+        "half_open_start_ranges_by_width": {
+          "3": [11, 22],
+          "4": [11, 21],
+          "5": [11, 20],
+          "6": [11, 19]
+        }
+      }
+    },
+    {
+      "model_key": "llama32_3b",
+      "model_repo": "meta-llama/Llama-3.2-3B",
+      "architecture_family": "llama",
+      "acquisition_route": {
+        "existing_shared_cache": "MISS",
+        "token_backed_hf_mirror": "SUCCESS",
+        "official_fallback_attempted": false,
+        "actual_source": "https://hf-mirror.com"
+      },
+      "cache_status": "METADATA_AND_TOKENIZER_PRESENT_NO_WEIGHTS",
+      "resolved_model_revision": "13afe5124825b4f3751f836b40dafda64c1ed062",
+      "resolved_tokenizer_revision": "13afe5124825b4f3751f836b40dafda64c1ed062",
+      "architecture": "LlamaForCausalLM",
+      "decoder_container": "model",
+      "decoder_blocks": "model.layers",
+      "embedding": "model.embed_tokens",
+      "final_norm": "model.norm",
+      "lm_head": "lm_head",
+      "path_closure": true,
+      "layer_count": 28,
+      "choice_surface_status": "PASS_SINGLE_TOKEN_AND_MUTUALLY_DISTINCT",
+      "choice_surface_lengths": [1, 1, 1, 1],
+      "candidate_domain": {
+        "threshold": 9,
+        "central_blocks_inclusive": [9, 18],
+        "widths": [3, 4, 5, 6],
+        "window_count": 26,
+        "half_open_start_ranges_by_width": {
+          "3": [9, 16],
+          "4": [9, 15],
+          "5": [9, 14],
+          "6": [9, 13]
+        }
+      }
+    },
+    {
+      "model_key": "gemma2_2b",
+      "model_repo": "google/gemma-2-2b",
+      "architecture_family": "gemma2",
+      "acquisition_route": {
+        "existing_shared_cache": "MISS",
+        "token_backed_hf_mirror": "SUCCESS_ON_USER_REQUESTED_RECHECK",
+        "official_fallback_attempted": false,
+        "actual_source": "https://hf-mirror.com"
+      },
+      "cache_status": "METADATA_AND_TOKENIZER_PRESENT_NO_WEIGHTS",
+      "resolved_model_revision": "c5ebcd40d208330abc697524c919956e692655cf",
+      "resolved_tokenizer_revision": "c5ebcd40d208330abc697524c919956e692655cf",
+      "architecture": "Gemma2ForCausalLM",
+      "decoder_container": "model",
+      "decoder_blocks": "model.layers",
+      "embedding": "model.embed_tokens",
+      "final_norm": "model.norm",
+      "lm_head": "lm_head",
+      "path_closure": true,
+      "layer_count": 26,
+      "choice_surface_status": "PASS_SINGLE_TOKEN_AND_MUTUALLY_DISTINCT",
+      "choice_surface_lengths": [1, 1, 1, 1],
+      "candidate_domain": {
+        "threshold": 8,
+        "central_blocks_inclusive": [8, 17],
+        "widths": [3, 4, 5, 6],
+        "window_count": 26,
+        "half_open_start_ranges_by_width": {
+          "3": [8, 15],
+          "4": [8, 14],
+          "5": [8, 13],
+          "6": [8, 12]
+        }
+      }
+    }
+  ],
+  "read_only_evidence": {
+    "host": "hpc2-hkustgz",
+    "qwen_offline_config_tokenizer_and_empty_model_admission": "PASS",
+    "llama_offline_config_tokenizer_and_empty_model_admission": "PASS",
+    "gemma_offline_config_tokenizer_and_empty_model_admission": "PASS",
+    "hf_token_path_recognized_by_library": true,
+    "hf_mirror_endpoint_recognized_by_library": true,
+    "forbidden_weight_or_index_files_found": false,
+    "fallback_model_used": false,
+    "credential_content_inspected_or_changed": false,
+    "weights_or_dataset_accessed": false
+  }
+}

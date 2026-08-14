@@ -1,0 +1,53 @@
+{
+  "schema_version": "loopscope.phase7.base-trajectory.v1",
+  "purpose": "Gate A closed scalar producer/verifier contract",
+  "frozen_model_task": {
+    "models": [
+      "Qwen/Qwen2.5-3B",
+      "meta-llama/Llama-3.2-3B",
+      "google/gemma-2-2b"
+    ],
+    "dataset_repo": "cais/mmlu",
+    "split": "validation",
+    "num_fewshot": 5,
+    "fewshot_split": "dev",
+    "renderer": "lm-eval 0.4.11 compatible standard plain non-chat MMLU",
+    "probe": "full rendered Answer: prefix final non-padding token",
+    "runtime_dtype": "bfloat16",
+    "batch_size": 1,
+    "forward": "one native zero-loop use_cache=false per identity"
+  },
+  "choice_surfaces": [" A", " B", " C", " D"],
+  "choice_admission": {
+    "required": "each surface encodes to one token and all four tokens are distinct",
+    "persistence": "only booleans and count; token IDs remain in memory"
+  },
+  "raw_boundaries": {
+    "definition": "B0 embedding output; Bj block j output before FinalNorm for 1<=j<L; BL residual before FinalNorm",
+    "endpoint_capture": "temporary FinalNorm forward-pre-hook, exactly one call, removed in finally",
+    "closure": "native final hidden is used for BL after the one native FinalNorm call; BL is never normalized twice"
+  },
+  "persisted_fields": {
+    "allowed": [
+      "model identity/revision metadata",
+      "canonical identity and subject",
+      "sequence/probe and zero-loop counters",
+      "scalar H/D/hidden diagnostic trajectories",
+      "scalar adjacent raw-boundary angular distances"
+    ],
+    "forbidden": [
+      "gold, labels, correctness, predictions, outcomes",
+      "prompt or question text",
+      "choice token IDs or input IDs",
+      "raw/full logits or probabilities",
+      "hidden tensors or loop residuals"
+    ]
+  },
+  "selector_projection": ["identity", "subject", "H", "D"],
+  "formal_scoring": {
+    "locked_to": "Gate D",
+    "bootstrap_replicates": 2000,
+    "seed": 20260801,
+    "digest_persistence": false
+  }
+}
