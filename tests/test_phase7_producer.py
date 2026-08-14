@@ -50,7 +50,15 @@ class Phase7ProducerTests(unittest.TestCase):
     def test_causal_lm_closure_uses_hook_output_without_last_hidden_state(self):
         native_final = torch.tensor([[[1.0, 2.0], [3.0, 4.0]]])
         weight = torch.tensor([[1.0, 0.0, 1.0], [0.0, 1.0, 1.0]])
-        head = lambda hidden: hidden @ weight
+
+        class ShapeSensitiveHead:
+            def __call__(self, hidden):
+                projected = hidden @ weight
+                if hidden.ndim == 2:
+                    projected = projected + 1.0
+                return projected
+
+        head = ShapeSensitiveHead()
         native_logits = head(native_final)
         outputs = SimpleNamespace(logits=native_logits)
         model = SimpleNamespace(config=SimpleNamespace(final_logit_softcapping=None))

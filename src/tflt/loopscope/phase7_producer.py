@@ -119,15 +119,6 @@ def _torch_angle(torch: Any, left: Any, right: Any) -> float:
     return _as_float(torch.acos(cosine) / math.pi)
 
 
-def _native_logits_at_position(outputs: Any, probe_index: int) -> Any:
-    logits = getattr(outputs, "logits", None)
-    if logits is None and isinstance(outputs, Mapping):
-        logits = outputs.get("logits")
-    if logits is None or getattr(logits, "ndim", None) != 3:
-        raise Phase7RuntimeError("causal-LM output must expose native logits with shape [1,S,V]")
-    return logits[:, probe_index, :]
-
-
 def _project_causal_lm_logits(torch: Any, model: Any, lm_head: Any, hidden: Any) -> Any:
     """Apply the frozen model's native post-FinalNorm logits path."""
 
@@ -154,13 +145,23 @@ def _native_final_hidden_and_logits(
     native_norm = capture.get("normalized")
     if native_norm is None:
         raise Phase7RuntimeError("native FinalNorm output was not captured")
-    final_hidden = select_position_vector(native_norm, probe_index)
-    native_logits = _native_logits_at_position(outputs, probe_index)
-    projected_logits = _project_causal_lm_logits(torch, model, lm_head, final_hidden)
-    if tuple(getattr(projected_logits, "shape", ())) != tuple(getattr(native_logits, "shape", ())):
+    native_logits_full = getattr(outputs, "logits", None)
+    if native_logits_full is None and isinstance(outputs, Mapping):
+        native_logits_full = outputs.get("logits")
+    if native_logits_full is None or getattr(native_logits_full, "ndim", None) != 3:
+        raise Phase7RuntimeError("causal-LM output must expose full native logits with shape [1,S,V]")
+    if tuple(getattr(native_norm, "shape", ())[:2]) != tuple(getattr(native_logits_full, "shape", ())[:2]):
+        raise Phase7RuntimeError("native FinalNorm hidden and logits sequence shapes differ")
+    # Match the model's native full-sequence GEMM shape before selecting the
+    # probe.  A [1,H] projection can differ from the native [1,S,H] BF16 GEMM
+    # by rounding even when the same hidden state is used.
+    projected_logits_full = _project_causal_lm_logits(torch, model, lm_head, native_norm)
+    if tuple(getattr(projected_logits_full, "shape", ())) != tuple(getattr(native_logits_full, "shape", ())):
         raise Phase7RuntimeError("native and projected final logits shapes differ")
-    if not bool(torch.allclose(projected_logits, native_logits, rtol=1e-4, atol=1e-5)):
+    if not bool(torch.allclose(projected_logits_full, native_logits_full, rtol=1e-4, atol=1e-5)):
         raise Phase7RuntimeError("native causal-LM logits do not close lm_head(native final hidden)")
+    final_hidden = select_position_vector(native_norm, probe_index)
+    native_logits = native_logits_full[:, probe_index, :]
     return final_hidden, native_logits
 
 
