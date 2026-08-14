@@ -240,48 +240,51 @@ def produce_record(
         int(capture.get("count", 0)),
     )
     raw_vectors = tuple(select_position_vector(state, probe_index) for state in raw_boundaries)
-    final_hidden, final_logits = _native_final_hidden_and_logits(
-        torch,
-        model,
-        lm_head,
-        outputs,
-        capture,
-        probe_index,
-    )
-    final_distribution = _torch_choice_distribution(torch, final_logits, choice_ids)
-    boundaries = []
-    normalized_vectors = []
-    for boundary_index, raw_vector in enumerate(raw_vectors):
-        if boundary_index == config_layers:
-            normalized = final_hidden
-            choice_logits = final_logits
-        else:
-            normalized = final_norm(raw_vector)
-            choice_logits = _project_causal_lm_logits(torch, model, lm_head, normalized)
-        normalized_vectors.append(normalized)
-        distribution = _torch_choice_distribution(torch, choice_logits, choice_ids)
-        entropy = _torch_entropy(torch, distribution)
-        divergence = _torch_kl(torch, distribution, final_distribution)
-        rms, cosine, cosine_distance = _torch_hidden_metrics(torch, normalized, final_hidden)
-        boundaries.append(
-            {
-                "boundary_id": "B_%d" % boundary_index,
-                "choice_entropy": _as_float(entropy),
-                "kl_to_final": _as_float(divergence),
-                "hidden_rms_l2_to_final": rms,
-                "hidden_cosine_to_final": cosine,
-                "hidden_cosine_distance_to_final": cosine_distance,
-            }
+    # The native model forward above intentionally runs in inference mode.  Its
+    # hidden-state outputs are therefore inference tensors, and every native
+    # FinalNorm/lm_head projection below must remain in inference mode as well;
+    # otherwise PyTorch's autograd wrapper rejects an inference tensor.
+    with torch.inference_mode():
+        final_hidden, final_logits = _native_final_hidden_and_logits(
+            torch,
+            model,
+            lm_head,
+            outputs,
+            capture,
+            probe_index,
         )
-    transitions = [
-        {
-            "transition_id": "T_%d" % index,
-            "adjacent_angular_distance": _torch_angle(
-                torch, raw_vectors[index], raw_vectors[index + 1]
-            ),
-        }
-        for index in range(config_layers)
-    ]
+        final_distribution = _torch_choice_distribution(torch, final_logits, choice_ids)
+        boundaries = []
+        for boundary_index, raw_vector in enumerate(raw_vectors):
+            if boundary_index == config_layers:
+                normalized = final_hidden
+                choice_logits = final_logits
+            else:
+                normalized = final_norm(raw_vector)
+                choice_logits = _project_causal_lm_logits(torch, model, lm_head, normalized)
+            distribution = _torch_choice_distribution(torch, choice_logits, choice_ids)
+            entropy = _torch_entropy(torch, distribution)
+            divergence = _torch_kl(torch, distribution, final_distribution)
+            rms, cosine, cosine_distance = _torch_hidden_metrics(torch, normalized, final_hidden)
+            boundaries.append(
+                {
+                    "boundary_id": "B_%d" % boundary_index,
+                    "choice_entropy": _as_float(entropy),
+                    "kl_to_final": _as_float(divergence),
+                    "hidden_rms_l2_to_final": rms,
+                    "hidden_cosine_to_final": cosine,
+                    "hidden_cosine_distance_to_final": cosine_distance,
+                }
+            )
+        transitions = [
+            {
+                "transition_id": "T_%d" % index,
+                "adjacent_angular_distance": _torch_angle(
+                    torch, raw_vectors[index], raw_vectors[index + 1]
+                ),
+            }
+            for index in range(config_layers)
+        ]
     record = {
         "schema_version": TRAJECTORY_SCHEMA_VERSION,
         "model_key": model_key,
