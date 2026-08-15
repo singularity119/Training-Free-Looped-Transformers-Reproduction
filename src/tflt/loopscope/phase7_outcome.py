@@ -1579,7 +1579,6 @@ def verify_canary(run_root: Path, cell_indices: Sequence[int]) -> Dict[str, Any]
     manifest = _load_run(root)
     verify_static(root)
     _require(_is_formal_mode(str(manifest["mode"])), "canary verification requires a formal run")
-    _require((root / "manifest" / "submission.json").is_file(), "formal canary requires a submission receipt")
     indices = list(cell_indices)
     _require(
         indices
@@ -1591,8 +1590,14 @@ def verify_canary(run_root: Path, cell_indices: Sequence[int]) -> Dict[str, Any]
     completed = []
     for index in indices:
         cell = _cell_for_index(manifest, index)
+        cell_root = _cell_artifact_root(root, manifest, cell)
+        source_run_root = cell_root.parent.parent
+        _require(
+            (source_run_root / "manifest" / "submission.json").is_file(),
+            "formal canary cell requires a source submission receipt",
+        )
         rows = _outcome_rows_for_cell(root, cell, expected)
-        resource = _read_json(_cell_artifact_root(root, manifest, cell) / "resource.json")
+        resource = _read_json(cell_root / "resource.json")
         _require(
             resource.get("status") == "COMPLETED"
             and resource.get("oom_detected") is False

@@ -408,6 +408,48 @@ class Phase7OutcomeTests(unittest.TestCase):
             self.assertEqual(receipt["cell_count"], 1)
             self.assertFalse(receipt["outcome_aggregates_computed"])
 
+    def test_canary_verifier_accepts_retained_cells_with_source_submission_receipts(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "formal-retry"
+            source = Path(temporary) / "source"
+            cell_id = "qwen25_3b__no_loop"
+            cell_root = source / "cells" / cell_id
+            cell_root.mkdir(parents=True)
+            (source / "manifest").mkdir()
+            (source / "manifest" / "submission.json").write_text("{}", encoding="utf-8")
+            (root / "manifest").mkdir(parents=True)
+            manifest = {
+                "schema_version": outcome.RUN_SCHEMA,
+                "gate": "E",
+                "mode": "formal_retry",
+                "cells": [{"index": 0, "cell_id": cell_id, "model_key": "qwen25_3b", "batch_size": 16}],
+                "execution_cell_indices": [],
+                "retained_cell_roots": {cell_id: str(cell_root)},
+            }
+            (root / "manifest" / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            (cell_root / "resource.json").write_text(
+                json.dumps(
+                    {
+                        "status": "COMPLETED",
+                        "batch_size": 16,
+                        "oom_detected": False,
+                        "peak_memory_allocated_bytes": 10,
+                        "peak_memory_reserved_bytes": 20,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            rows = [
+                {"canonical_identity": "a", "subject": "s"},
+                {"canonical_identity": "b", "subject": "s"},
+            ]
+            with mock.patch.object(outcome, "verify_static", return_value={"status": "PASS"}), mock.patch.object(
+                outcome, "_load_records_from_run", return_value=rows
+            ), mock.patch.object(outcome, "_outcome_rows_for_cell", return_value=rows):
+                receipt = outcome.verify_canary(root, [0])
+            self.assertEqual(receipt["status"], "PASS")
+            self.assertEqual(receipt["cells"][0]["cell_id"], cell_id)
+
     def test_fresh_analysis_verifier_recomputes_scientific_projection(self) -> None:
         scientific = {
             "schema_version": "loopscope.phase7.gate-e-combined-analysis.v1",
