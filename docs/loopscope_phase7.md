@@ -124,3 +124,45 @@ No credential content, model weights, datasets, model forward, CUDA, GPU, or
 Slurm were used. All three frozen Base repositories now pass Gate A admission;
 the complete machine-readable admission table is
 `configs/loopscope/phase7_model_admission.json`.
+
+## Gate E fixed 3/3/2 outcome panel
+
+Gate E is an independent outcome path.  Its frozen card is
+`configs/loopscope/phase7_gate_e_outcome_card.json`: Qwen and Llama each have
+one no-loop baseline plus three width-four windows across `k={2,3}` and
+`cache={first,last}`; Gemma has one baseline plus its two finite windows, for
+13/13/9 and 35 cells total.  The runner keeps raw lm-eval samples only in
+memory and writes only canonical test identity, subject, cell configuration,
+and the paired-analysis correctness bit.
+
+On HPC2, prepare a fresh formal root before any test forward, then use a debug
+root referring to that frozen identity manifest:
+
+```bash
+PYTHONPATH=src python scripts/loopscope/run_phase7_gate_e_panel.py prepare \
+  --mode formal --run-root <fresh-formal-root> --expected-commit <commit> \
+  --cache-dir "$HF_DATASETS_CACHE"
+
+PYTHONPATH=src python scripts/loopscope/run_phase7_gate_e_panel.py prepare \
+  --mode debug --run-root <fresh-debug-root> --expected-commit <commit> \
+  --formal-identity-manifest <formal-root>/inputs/canonical_test_manifest.json
+```
+
+`build-launch` freezes a bounded Slurm worker-pool plan.  The debug path first
+measures one-process peak memory/throughput and sampled whole-GPU utilization,
+then validates increasing independent-process packing levels with about 10%
+headroom.  Only the highest passing bounded concurrency may be used by the
+formal worker pools.  All children retain independent model instances, logs,
+outputs, and write-once cell paths; `batch_size=16` never changes.
+
+After the formal worker pools are complete, run the fresh verifier without
+printing or aggregating partial outcome values:
+
+```bash
+PYTHONPATH=src python scripts/loopscope/verify_phase7_gate_e_panel.py \
+  preoutcome --run-root <formal-root>
+```
+
+Only a `PASS` pre-outcome receipt permits the single combined paired analysis
+and its separate fresh-process verifier.  Gate E does not re-score V3, add a
+window, produce plots, or update the final Chinese report.
