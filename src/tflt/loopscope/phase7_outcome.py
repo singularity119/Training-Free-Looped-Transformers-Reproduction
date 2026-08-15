@@ -1010,7 +1010,7 @@ def build_launch(
     }
 
 
-def submit_run(run_root: Path) -> Dict[str, Any]:
+def submit_run(run_root: Path, pool_indices: Optional[Sequence[int]] = None) -> Dict[str, Any]:
     root = _run_root(run_root)
     manifest = _load_run(root)
     launch = _read_json(root / "manifest" / "launch_plan.json")
@@ -1020,7 +1020,22 @@ def submit_run(run_root: Path) -> Dict[str, Any]:
     sbatch = root / "slurm" / "gate_e_pool.sbatch"
     _require(sbatch.is_file() and not sbatch.is_symlink(), "Slurm launcher is absent")
     sbatch_binary = "/opt/slurm/bin/sbatch" if Path("/opt/slurm/bin/sbatch").is_file() else "sbatch"
-    completed = subprocess.run((sbatch_binary, "--parsable", str(sbatch)), check=False, capture_output=True, text=True)
+    pool_count = len(launch["pools"])
+    if pool_indices is None:
+        submitted = list(range(pool_count))
+    else:
+        submitted = list(pool_indices)
+        _require(
+            submitted
+            and all(isinstance(index, int) and not isinstance(index, bool) and 0 <= index < pool_count for index in submitted)
+            and len(submitted) == len(set(submitted)),
+            "submitted pool indices are invalid",
+        )
+    command = [sbatch_binary, "--parsable"]
+    if submitted != list(range(pool_count)):
+        command.append("--array=%s" % ",".join(str(index) for index in submitted))
+    command.append(str(sbatch))
+    completed = subprocess.run(command, check=False, capture_output=True, text=True)
     if completed.returncode:
         raise Phase7OutcomeError("sbatch submission failed with exit %d" % completed.returncode)
     raw = completed.stdout.strip()
@@ -1032,7 +1047,8 @@ def submit_run(run_root: Path) -> Dict[str, Any]:
         "mode": manifest["mode"],
         "job_id": job_id,
         "run_root": str(root),
-        "parent_count": len(launch["pools"]),
+        "parent_count": pool_count,
+        "submitted_pool_indices": submitted,
         "max_concurrency_per_gpu": launch["max_concurrency_per_gpu"],
         "submitted_at": utc_now(),
     }
@@ -1490,6 +1506,54 @@ def _outcome_rows_for_cell(root: Path, cell: Mapping[str, Any], expected: Sequen
         normalized.append(dict(observed))
     _require(len({row["canonical_identity"] for row in normalized}) == len(expected), "outcome identity is duplicate")
     return normalized
+
+
+def verify_canary(run_root: Path, cell_indices: Sequence[int]) -> Dict[str, Any]:
+    """Verify a completed formal canary subset without computing outcome aggregates."""
+
+    root = _run_root(run_root)
+    manifest = _load_run(root)
+    verify_static(root)
+    _require(_is_formal_mode(str(manifest["mode"])), "canary verification requires a formal run")
+    _require((root / "manifest" / "submission.json").is_file(), "formal canary requires a submission receipt")
+    indices = list(cell_indices)
+    _require(
+        indices
+        and all(isinstance(index, int) and not isinstance(index, bool) and 0 <= index < len(manifest["cells"]) for index in indices)
+        and len(indices) == len(set(indices)),
+        "canary cell indices are invalid",
+    )
+    expected = _load_records_from_run(manifest)
+    completed = []
+    for index in indices:
+        cell = _cell_for_index(manifest, index)
+        rows = _outcome_rows_for_cell(root, cell, expected)
+        resource = _read_json(_cell_artifact_root(root, manifest, cell) / "resource.json")
+        _require(resource.get("status") == "COMPLETED" and resource.get("oom_detected") is False, "canary resource receipt differs")
+        completed.append(
+            {
+                "cell_index": index,
+                "cell_id": cell["cell_id"],
+                "model_key": cell["model_key"],
+                "record_count": len(rows),
+                "subject_count": len({row["subject"] for row in rows}),
+                "peak_memory_allocated_bytes": resource.get("peak_memory_allocated_bytes"),
+                "peak_memory_reserved_bytes": resource.get("peak_memory_reserved_bytes"),
+                "oom_detected": False,
+            }
+        )
+    receipt = {
+        "schema_version": "loopscope.phase7.gate-e-canary-verifier.v1",
+        "status": "PASS",
+        "mode": manifest["mode"],
+        "run_root": str(root),
+        "cell_count": len(completed),
+        "cells": completed,
+        "outcome_aggregates_computed": False,
+        "created_at": utc_now(),
+    }
+    _write_new_json(root / "manifest" / "canary_verifier_receipt.json", receipt)
+    return receipt
 
 
 def verify_preoutcome(run_root: Path) -> Dict[str, Any]:

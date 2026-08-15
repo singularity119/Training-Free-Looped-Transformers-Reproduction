@@ -65,6 +65,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     submit = sub.add_parser("submit", help="Submit a frozen Slurm worker-pool launcher once.")
     submit.add_argument("--run-root", required=True)
+    submit.add_argument("--pool-indices", type=_indices, default=None)
 
     cell = sub.add_parser("run-cell", help="Run exactly one frozen cell; used only by worker pools.")
     cell.add_argument("--run-root", required=True)
@@ -111,7 +112,7 @@ def main(argv: list[str] | None = None) -> int:
                 qos=args.qos,
             )
         elif args.command == "submit":
-            result = submit_run(Path(args.run_root))
+            result = submit_run(Path(args.run_root), pool_indices=args.pool_indices)
         elif args.command == "run-cell":
             result = run_cell(run_root=Path(args.run_root), cell_index=args.cell_index)
         elif args.command == "run-pool":

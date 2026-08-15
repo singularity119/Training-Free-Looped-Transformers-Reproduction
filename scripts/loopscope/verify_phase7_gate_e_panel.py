@@ -17,6 +17,7 @@ if str(SRC) not in sys.path:
 from tflt.loopscope.phase7_outcome import (  # noqa: E402
     Phase7OutcomeError,
     verify_analysis,
+    verify_canary,
     verify_preoutcome,
     verify_static,
 )
@@ -27,11 +28,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     for name, help_text in (
         ("static", "Verify frozen card, static cell panel, and canonical membership."),
+        ("canary", "Verify a completed formal canary subset without outcome aggregates."),
         ("preoutcome", "Verify all completed cells without computing accuracy."),
         ("analysis", "Independently recompute the one combined paired analysis."),
     ):
         item = sub.add_parser(name, help=help_text)
         item.add_argument("--run-root", required=True)
+        if name == "canary":
+            item.add_argument("--cell-indices", required=True)
     return parser
 
 
@@ -40,6 +44,12 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "static":
             result = verify_static(Path(args.run_root))
+        elif args.command == "canary":
+            try:
+                indices = [int(part.strip()) for part in args.cell_indices.split(",") if part.strip()]
+            except ValueError as exc:
+                raise Phase7OutcomeError("canary cell indices must be comma-separated integers") from exc
+            result = verify_canary(Path(args.run_root), indices)
         elif args.command == "preoutcome":
             result = verify_preoutcome(Path(args.run_root))
         else:

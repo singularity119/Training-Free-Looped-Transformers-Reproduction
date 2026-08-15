@@ -310,6 +310,73 @@ class Phase7OutcomeTests(unittest.TestCase):
         self.assertEqual(snapshot["error_frames"][-1]["function"], "fail")
         self.assertNotIn("error_message", snapshot)
 
+    def test_submit_run_can_select_a_frozen_pool_subset(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "formal-canary"
+            (root / "manifest").mkdir(parents=True)
+            (root / "slurm").mkdir()
+            (root / "cells").mkdir()
+            (root / "manifest" / "run_manifest.json").write_text(
+                json.dumps({"schema_version": outcome.RUN_SCHEMA, "gate": "E", "mode": "formal_retry"}),
+                encoding="utf-8",
+            )
+            (root / "manifest" / "launch_plan.json").write_text(
+                json.dumps(
+                    {
+                        "pools": [
+                            {"pool_index": 0, "cell_indices": [0]},
+                            {"pool_index": 1, "cell_indices": [1]},
+                        ],
+                        "max_concurrency_per_gpu": 1,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (root / "slurm" / "gate_e_pool.sbatch").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+            completed = mock.Mock(returncode=0, stdout="12345\n", stderr="")
+            with mock.patch.object(outcome.subprocess, "run", return_value=completed) as run:
+                receipt = outcome.submit_run(root, pool_indices=[1])
+            self.assertEqual(receipt["submitted_pool_indices"], [1])
+            self.assertIn("--array=1", run.call_args.args[0])
+
+    def test_canary_verifier_closes_membership_and_resource_without_aggregates(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "formal-canary"
+            cell_root = root / "cells" / "qwen25_3b__no_loop"
+            cell_root.mkdir(parents=True)
+            (root / "manifest").mkdir()
+            manifest = {
+                "schema_version": outcome.RUN_SCHEMA,
+                "gate": "E",
+                "mode": "formal_retry",
+                "cells": [{"index": 0, "cell_id": "qwen25_3b__no_loop", "model_key": "qwen25_3b"}],
+                "execution_cell_indices": [0],
+            }
+            (root / "manifest" / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            (root / "manifest" / "submission.json").write_text("{}", encoding="utf-8")
+            (cell_root / "resource.json").write_text(
+                json.dumps(
+                    {
+                        "status": "COMPLETED",
+                        "oom_detected": False,
+                        "peak_memory_allocated_bytes": 10,
+                        "peak_memory_reserved_bytes": 20,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            rows = [
+                {"canonical_identity": "a", "subject": "s"},
+                {"canonical_identity": "b", "subject": "s"},
+            ]
+            with mock.patch.object(outcome, "verify_static", return_value={"status": "PASS"}), mock.patch.object(
+                outcome, "_load_records_from_run", return_value=rows
+            ), mock.patch.object(outcome, "_outcome_rows_for_cell", return_value=rows):
+                receipt = outcome.verify_canary(root, [0])
+            self.assertEqual(receipt["status"], "PASS")
+            self.assertEqual(receipt["cell_count"], 1)
+            self.assertFalse(receipt["outcome_aggregates_computed"])
+
     def test_fresh_analysis_verifier_recomputes_scientific_projection(self) -> None:
         scientific = {
             "schema_version": "loopscope.phase7.gate-e-combined-analysis.v1",
