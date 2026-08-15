@@ -231,7 +231,7 @@ def validate_runtime_git(manifest: Mapping[str, Any]) -> Dict[str, Any]:
     _require(isinstance(validated, Mapping), "run manifest lacks prepared Git validation")
     try:
         return validate_git(expected, require_clean=True)
-    except FileNotFoundError:
+    except (FileNotFoundError, PermissionError):
         root = repository_root()
         _require(validated.get("repository") == str(root), "prepared repository differs")
         _require(validated.get("branch") == "loopscope", "prepared branch differs")

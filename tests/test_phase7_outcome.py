@@ -254,7 +254,7 @@ class Phase7OutcomeTests(unittest.TestCase):
         with mock.patch.object(outcome.os.path, "isfile", return_value=False):
             self.assertEqual(outcome._git_binary(), "git")
 
-    def test_runtime_provenance_falls_back_without_compute_node_git(self) -> None:
+    def test_runtime_provenance_falls_back_when_compute_node_git_is_unusable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "repo"
             root.mkdir()
@@ -269,14 +269,15 @@ class Phase7OutcomeTests(unittest.TestCase):
                     },
                 }
             }
-            with mock.patch.object(outcome, "repository_root", return_value=root), mock.patch.object(
-                outcome, "validate_git", side_effect=FileNotFoundError("git")
-            ), mock.patch.object(
-                outcome, "_read_git_head_metadata", return_value=("loopscope", "frozen-commit")
-            ):
-                observed = outcome.validate_runtime_git(manifest)
-            self.assertEqual(observed["commit"], "frozen-commit")
-            self.assertEqual(observed["validation"], "prepared-clean-plus-live-head")
+            for failure in (FileNotFoundError("git"), PermissionError("git")):
+                with self.subTest(failure=type(failure).__name__), mock.patch.object(
+                    outcome, "repository_root", return_value=root
+                ), mock.patch.object(outcome, "validate_git", side_effect=failure), mock.patch.object(
+                    outcome, "_read_git_head_metadata", return_value=("loopscope", "frozen-commit")
+                ):
+                    observed = outcome.validate_runtime_git(manifest)
+                self.assertEqual(observed["commit"], "frozen-commit")
+                self.assertEqual(observed["validation"], "prepared-clean-plus-live-head")
 
     def test_fresh_analysis_verifier_recomputes_scientific_projection(self) -> None:
         scientific = {
