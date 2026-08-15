@@ -248,6 +248,12 @@ class Phase7OutcomeTests(unittest.TestCase):
         self.assertIn("if [[ -r /etc/profile.d/modules.sh ]]; then source /etc/profile.d/modules.sh; fi", text)
         self.assertIn("if command -v module >/dev/null 2>&1; then module load anaconda3 cuda/12.4; fi", text)
 
+    def test_provenance_git_uses_system_binary_when_available(self) -> None:
+        with mock.patch.object(outcome.os.path, "isfile", return_value=True):
+            self.assertEqual(outcome._git_binary(), "/usr/bin/git")
+        with mock.patch.object(outcome.os.path, "isfile", return_value=False):
+            self.assertEqual(outcome._git_binary(), "git")
+
     def test_fresh_analysis_verifier_recomputes_scientific_projection(self) -> None:
         scientific = {
             "schema_version": "loopscope.phase7.gate-e-combined-analysis.v1",

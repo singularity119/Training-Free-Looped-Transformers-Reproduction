@@ -172,7 +172,9 @@ read-only references rather than copying outcome rows, and permits the
 pre-outcome verifier and one later paired analysis only after all 35 logical
 cells are complete.  Its generated Slurm launcher tolerates compute nodes
 where the optional modules profile is absent, while still loading the audited
-venv and remaining offline.
+venv and remaining offline.  Provenance closure resolves `/usr/bin/git` when
+available, so a node-local module `PATH` cannot prevent the worker from
+checking the frozen commit before its model forward.
 
 After the formal worker pools are complete, run the fresh verifier without
 printing or aggregating partial outcome values:

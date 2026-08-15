@@ -156,21 +156,28 @@ def _run_command(argv: Sequence[str], *, cwd: Optional[Path] = None) -> str:
     return completed.stdout.strip()
 
 
+def _git_binary() -> str:
+    """Keep provenance closure independent of a compute node's module PATH."""
+
+    return "/usr/bin/git" if os.path.isfile("/usr/bin/git") else "git"
+
+
 def validate_git(expected_commit: str, *, require_clean: bool) -> Dict[str, Any]:
     root = repository_root()
     expected = str(expected_commit).strip()
     _require(expected, "expected commit is empty")
-    branch = _run_command(("git", "rev-parse", "--abbrev-ref", "HEAD"), cwd=root)
-    commit = _run_command(("git", "rev-parse", "HEAD"), cwd=root)
-    top = _run_command(("git", "rev-parse", "--show-toplevel"), cwd=root)
+    git_binary = _git_binary()
+    branch = _run_command((git_binary, "rev-parse", "--abbrev-ref", "HEAD"), cwd=root)
+    commit = _run_command((git_binary, "rev-parse", "HEAD"), cwd=root)
+    top = _run_command((git_binary, "rev-parse", "--show-toplevel"), cwd=root)
     ancestry = subprocess.run(
-        ("git", "merge-base", "--is-ancestor", "4f59bd93eca4da3cbf458a93508f91c5b23912bc", "HEAD"),
+        (git_binary, "merge-base", "--is-ancestor", "4f59bd93eca4da3cbf458a93508f91c5b23912bc", "HEAD"),
         cwd=str(root),
         check=False,
         capture_output=True,
         text=True,
     ).returncode
-    status = _run_command(("git", "status", "--porcelain"), cwd=root)
+    status = _run_command((git_binary, "status", "--porcelain"), cwd=root)
     _require(top == str(root), "repository root differs from the Gate E clone")
     _require(branch == "loopscope", "Gate E must run on loopscope branch")
     _require(commit == expected, "working commit differs from the frozen launcher commit")
