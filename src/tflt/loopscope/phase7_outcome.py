@@ -192,6 +192,63 @@ def validate_git(expected_commit: str, *, require_clean: bool) -> Dict[str, Any]
     }
 
 
+def _read_git_head_metadata(root: Path) -> Tuple[str, str]:
+    """Read the checked-out branch/commit without requiring a Git executable."""
+
+    git_dir = root / ".git"
+    head_path = git_dir / "HEAD"
+    _require(head_path.is_file(), "compute-node Git metadata is unavailable")
+    head = head_path.read_text(encoding="utf-8").strip()
+    if not head.startswith("ref: "):
+        return "HEAD", head
+    ref = head[5:].strip()
+    _require(bool(ref), "compute-node Git HEAD ref is empty")
+    ref_path = git_dir / ref
+    if ref_path.is_file():
+        commit = ref_path.read_text(encoding="utf-8").strip()
+    else:
+        commit = ""
+        packed_refs = git_dir / "packed-refs"
+        if packed_refs.is_file():
+            for line in packed_refs.read_text(encoding="utf-8").splitlines():
+                if not line or line.startswith(("#", "^")):
+                    continue
+                value, separator, name = line.partition(" ")
+                if separator and name == ref:
+                    commit = value.strip()
+                    break
+    _require(bool(commit), "compute-node Git ref cannot be resolved")
+    return ref.rsplit("/", 1)[-1], commit
+
+
+def validate_runtime_git(manifest: Mapping[str, Any]) -> Dict[str, Any]:
+    """Retain provenance closure on compute images that omit the Git binary."""
+
+    git = manifest.get("git")
+    _require(isinstance(git, Mapping), "run manifest Git provenance is invalid")
+    expected = str(git.get("expected_commit", "")).strip()
+    validated = git.get("validated")
+    _require(isinstance(validated, Mapping), "run manifest lacks prepared Git validation")
+    try:
+        return validate_git(expected, require_clean=True)
+    except FileNotFoundError:
+        root = repository_root()
+        _require(validated.get("repository") == str(root), "prepared repository differs")
+        _require(validated.get("branch") == "loopscope", "prepared branch differs")
+        _require(validated.get("commit") == expected, "prepared commit differs")
+        _require(validated.get("clean") is True, "prepared checkout was not clean")
+        branch, commit = _read_git_head_metadata(root)
+        _require(branch == "loopscope", "runtime branch differs from the frozen branch")
+        _require(commit == expected, "runtime commit differs from the frozen commit")
+        return {
+            "repository": str(root),
+            "branch": branch,
+            "commit": commit,
+            "clean": True,
+            "validation": "prepared-clean-plus-live-head",
+        }
+
+
 def _finite_number(value: Any, label: str) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise Phase7OutcomeError("%s must be a finite number" % label)
@@ -1111,7 +1168,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
 
     root = _run_root(run_root)
     manifest = _load_run(root)
-    validate_git(str(manifest["git"]["expected_commit"]), require_clean=True)
+    validate_runtime_git(manifest)
     _require((root / "manifest" / "launch_plan.json").is_file(), "run-cell requires a frozen launch plan")
     _require_offline_runtime()
     cell = _cell_for_index(manifest, cell_index)
@@ -1292,7 +1349,7 @@ def run_pool(*, run_root: Path, pool_index: int) -> Dict[str, Any]:
 
     root = _run_root(run_root)
     manifest = _load_run(root)
-    validate_git(str(manifest["git"]["expected_commit"]), require_clean=True)
+    validate_runtime_git(manifest)
     launch = _read_json(root / "manifest" / "launch_plan.json")
     _require(isinstance(launch, Mapping), "launch plan is invalid")
     pools = launch.get("pools")
