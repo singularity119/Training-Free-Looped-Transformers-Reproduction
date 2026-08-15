@@ -340,6 +340,14 @@ class Phase7OutcomeTests(unittest.TestCase):
             with self.assertRaises(outcome.Phase7OutcomeError):
                 outcome._validate_cell_batch_metadata(root, cell)
 
+    def test_lm_eval_optional_git_probe_tolerates_permission_error_and_restores(self) -> None:
+        original = mock.Mock(side_effect=PermissionError(13, "permission denied", "git"))
+        evaluator = mock.Mock()
+        evaluator.get_git_commit_hash = original
+        with outcome._permission_tolerant_lm_eval_git_probe(evaluator):
+            self.assertEqual(evaluator.get_git_commit_hash(), "unavailable")
+        self.assertIs(evaluator.get_git_commit_hash, original)
+
     def test_submit_run_can_select_a_frozen_pool_subset(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "formal-canary"

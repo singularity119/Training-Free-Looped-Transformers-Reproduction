@@ -1246,6 +1246,25 @@ def _resource_snapshot(
     return payload
 
 
+@contextlib.contextmanager
+def _permission_tolerant_lm_eval_git_probe(evaluator_module: Any) -> Iterable[None]:
+    """Keep lm-eval's optional provenance probe from requiring Git on compute nodes."""
+
+    original = evaluator_module.get_git_commit_hash
+
+    def guarded() -> Any:
+        try:
+            return original()
+        except PermissionError:
+            return "unavailable"
+
+    evaluator_module.get_git_commit_hash = guarded
+    try:
+        yield
+    finally:
+        evaluator_module.get_git_commit_hash = original
+
+
 def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
     """Run exactly one frozen cell and persist only safe outcome rows."""
 
@@ -1283,6 +1302,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
     try:
         try:
             import torch
+            from lm_eval import evaluator as lm_evaluator
             from tflt.config import LoopConfig
             from tflt.eval_runner import run_lm_eval
         except Exception as exc:  # pragma: no cover - remote-only import path.
@@ -1307,7 +1327,9 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
         # transient so the pre-outcome barrier cannot be bypassed through a
         # child log; only the deliberately projected correctness bit crosses
         # the write boundary below.
-        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+        with _permission_tolerant_lm_eval_git_probe(lm_evaluator), contextlib.redirect_stdout(
+            io.StringIO()
+        ), contextlib.redirect_stderr(io.StringIO()):
             result = run_lm_eval(
                 model_repo=str(cell["model_repo"]),
                 tasks="mmlu" if _is_formal_mode(str(manifest["mode"])) else ",".join(DEBUG_TASKS),
