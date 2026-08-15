@@ -22,6 +22,7 @@ import subprocess
 import sys
 import threading
 import time
+import traceback
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 
 
@@ -915,9 +916,6 @@ def _sbatch_text(manifest: Mapping[str, Any], launch: Mapping[str, Any]) -> str:
     lines.extend(
         [
             "set -euo pipefail",
-            "if [[ -r /etc/profile.d/modules.sh ]]; then source /etc/profile.d/modules.sh; fi",
-            "if command -v module >/dev/null 2>&1; then module load anaconda3 cuda/12.4; fi",
-            "source %s/bin/activate" % shlex.quote(str(AUDITED_VENV)),
             "cd %s" % shlex.quote(str(REMOTE_REPO)),
             "export PYTHONDONTWRITEBYTECODE=1",
             "export PYTHONPATH=%s/src" % shlex.quote(str(REMOTE_REPO)),
@@ -1146,6 +1144,17 @@ def _resource_snapshot(torch_module: Any, *, started: float, record_count: int, 
         payload["throughput_records_per_second"] = record_count / float(payload["elapsed_seconds"])
     if error is not None:
         payload["oom_detected"] = "out of memory" in str(error).lower()
+        if isinstance(error, OSError):
+            payload["error_errno"] = error.errno
+            payload["error_filename"] = str(error.filename) if error.filename is not None else None
+        payload["error_frames"] = [
+            {
+                "file": Path(frame.filename).name,
+                "line": int(frame.lineno),
+                "function": str(frame.name),
+            }
+            for frame in traceback.extract_tb(error.__traceback__)[-8:]
+        ]
     try:
         if torch_module.cuda.is_available():
             torch_module.cuda.synchronize()

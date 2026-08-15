@@ -229,7 +229,7 @@ class Phase7OutcomeTests(unittest.TestCase):
             retry_manifest = outcome._load_run(retry_root)
             self.assertEqual(outcome._cell_artifact_root(retry_root, retry_manifest, cells[0]), cell_root.resolve())
 
-    def test_sbatch_handles_compute_nodes_without_modules_profile(self) -> None:
+    def test_sbatch_is_self_contained_on_compute_nodes(self) -> None:
         text = outcome._sbatch_text(
             {"mode": "formal_retry", "run_root": "/tmp/gate-e"},
             {
@@ -245,8 +245,11 @@ class Phase7OutcomeTests(unittest.TestCase):
                 "child_cpu_threads": 1,
             },
         )
-        self.assertIn("if [[ -r /etc/profile.d/modules.sh ]]; then source /etc/profile.d/modules.sh; fi", text)
-        self.assertIn("if command -v module >/dev/null 2>&1; then module load anaconda3 cuda/12.4; fi", text)
+        self.assertTrue(text.startswith("#!/usr/bin/env bash\n"))
+        self.assertNotIn("modules.sh", text)
+        self.assertNotIn("module load", text)
+        self.assertNotIn("source ", text)
+        self.assertIn(str(outcome.AUDITED_VENV / "bin/python"), text)
 
     def test_provenance_git_uses_system_binary_when_available(self) -> None:
         with mock.patch.object(outcome.os.path, "isfile", return_value=True):
@@ -278,6 +281,34 @@ class Phase7OutcomeTests(unittest.TestCase):
                     observed = outcome.validate_runtime_git(manifest)
                 self.assertEqual(observed["commit"], "frozen-commit")
                 self.assertEqual(observed["validation"], "prepared-clean-plus-live-head")
+
+    def test_resource_snapshot_records_safe_oserror_diagnostics(self) -> None:
+        class FakeCuda:
+            @staticmethod
+            def is_available() -> bool:
+                return False
+
+        class FakeTorch:
+            cuda = FakeCuda()
+
+        def fail() -> None:
+            raise PermissionError(13, "permission denied", "/restricted/path")
+
+        try:
+            fail()
+        except PermissionError as error:
+            snapshot = outcome._resource_snapshot(
+                FakeTorch(),
+                started=outcome.time.monotonic(),
+                record_count=0,
+                status="FAILED",
+                error=error,
+            )
+        self.assertEqual(snapshot["error_type"], "PermissionError")
+        self.assertEqual(snapshot["error_errno"], 13)
+        self.assertEqual(snapshot["error_filename"], "/restricted/path")
+        self.assertEqual(snapshot["error_frames"][-1]["function"], "fail")
+        self.assertNotIn("error_message", snapshot)
 
     def test_fresh_analysis_verifier_recomputes_scientific_projection(self) -> None:
         scientific = {
