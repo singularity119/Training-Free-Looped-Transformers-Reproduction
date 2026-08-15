@@ -541,6 +541,73 @@ def _load_run(root: Path) -> Dict[str, Any]:
     return dict(value)
 
 
+def _base_mode(mode: str) -> str:
+    value = str(mode)
+    if value in {"formal", "formal_retry"}:
+        return "formal"
+    if value in {"debug", "debug_retry"}:
+        return "debug"
+    raise Phase7OutcomeError("Gate E run mode is invalid")
+
+
+def _is_formal_mode(mode: str) -> bool:
+    return _base_mode(mode) == "formal"
+
+
+def _execution_cell_indices(manifest: Mapping[str, Any]) -> List[int]:
+    cells = manifest.get("cells")
+    _require(isinstance(cells, list), "run cells are invalid")
+    raw = manifest.get("execution_cell_indices")
+    if raw is None:
+        indices = list(range(len(cells)))
+    else:
+        _require(isinstance(raw, list), "execution cell indices are invalid")
+        indices = list(raw)
+    _require(
+        all(isinstance(index, int) and not isinstance(index, bool) and 0 <= index < len(cells) for index in indices),
+        "execution cell index is invalid",
+    )
+    _require(len(indices) == len(set(indices)), "execution cell indices are duplicate")
+    return sorted(indices)
+
+
+def _retained_cell_roots(manifest: Mapping[str, Any]) -> Dict[str, Path]:
+    raw = manifest.get("retained_cell_roots", {})
+    _require(isinstance(raw, Mapping), "retained cell roots are invalid")
+    roots: Dict[str, Path] = {}
+    for cell_id, raw_path in raw.items():
+        _require(isinstance(cell_id, str) and cell_id, "retained cell id is invalid")
+        _require(isinstance(raw_path, str) and raw_path, "retained cell path is invalid")
+        path = Path(raw_path).expanduser().resolve()
+        _require(path.is_dir() and not path.is_symlink(), "retained cell root is unavailable: %s" % path)
+        roots[cell_id] = path
+    return roots
+
+
+def _cell_artifact_root(root: Path, manifest: Mapping[str, Any], cell: Mapping[str, Any]) -> Path:
+    retained = _retained_cell_roots(manifest)
+    cell_id = str(cell["cell_id"])
+    path = retained.get(cell_id, root / "cells" / cell_id)
+    _require(path.is_dir() and not path.is_symlink(), "cell artifact root is unavailable: %s" % path)
+    return path
+
+
+def _validate_retained_cell_metadata(root: Path, manifest: Mapping[str, Any], cell: Mapping[str, Any]) -> Path:
+    cell_root = _cell_artifact_root(root, manifest, cell)
+    allowed_names = {"command.json", "model_revision.json", "outcomes.jsonl", "producer_receipt.json", "resource.json"}
+    _require({path.name for path in cell_root.iterdir()} == allowed_names, "retained cell artifact barrier differs")
+    receipt = _read_json(cell_root / "producer_receipt.json")
+    _require(
+        isinstance(receipt, Mapping)
+        and receipt.get("status") == "COMPLETED"
+        and receipt.get("cell_id") == cell["cell_id"]
+        and receipt.get("outcome_aggregates_computed") is False,
+        "retained cell producer receipt differs",
+    )
+    _validate_model_revision(cell_root / "model_revision.json", cell)
+    return cell_root
+
+
 def _write_static_receipt(root: Path, manifest: Mapping[str, Any]) -> Dict[str, Any]:
     mode = str(manifest["mode"])
     cells = list(manifest["cells"])
@@ -551,10 +618,10 @@ def _write_static_receipt(root: Path, manifest: Mapping[str, Any]) -> Dict[str, 
     )
     records = validate_identity_manifest(
         identity_payload["records"],
-        expected_count=EXPECTED_POPULATION if mode == "formal" else 4,
-        expected_subjects=EXPECTED_SUBJECTS if mode == "formal" else 2,
+        expected_count=EXPECTED_POPULATION if _is_formal_mode(mode) else 4,
+        expected_subjects=EXPECTED_SUBJECTS if _is_formal_mode(mode) else 2,
     )
-    if mode == "formal":
+    if _is_formal_mode(mode):
         validate_cells(cells, formal=True)
         per_model = {key: sum(1 for cell in cells if cell["model_key"] == key) for key in EXPECTED_MODELS}
         _require(per_model == EXPECTED_COUNTS, "formal static panel membership differs")
@@ -569,7 +636,9 @@ def _write_static_receipt(root: Path, manifest: Mapping[str, Any]) -> Dict[str, 
         "cell_count": len(cells),
         "record_count": len(records),
         "subject_count": len({row["subject"] for row in records}),
-        "formal_panel_counts": ({key: sum(1 for cell in cells if cell["model_key"] == key) for key in EXPECTED_MODELS} if mode == "formal" else None),
+        "formal_panel_counts": ({key: sum(1 for cell in cells if cell["model_key"] == key) for key in EXPECTED_MODELS} if _is_formal_mode(mode) else None),
+        "execution_cell_count": len(_execution_cell_indices(manifest)),
+        "retained_cell_count": len(_retained_cell_roots(manifest)),
         "outcome_aggregates_computed": False,
         "created_at": utc_now(),
     }
@@ -585,11 +654,13 @@ def prepare_run(
     cache_dir: Optional[str] = None,
     formal_identity_manifest: Optional[Path] = None,
     debug_indices: Optional[Sequence[int]] = None,
+    retry_source_run_root: Optional[Path] = None,
+    retained_cell_indices: Optional[Sequence[int]] = None,
     card_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """Create one fresh static panel/membership root before model forwards."""
 
-    _require(mode in {"debug", "formal"}, "mode must be debug or formal")
+    _require(mode in {"debug", "formal", "debug_retry", "formal_retry"}, "mode is invalid")
     root = Path(run_root).expanduser().resolve()
     _require(not root.exists(), "Gate E run root must be fresh/write-once")
     git = validate_git(expected_commit, require_clean=True)
@@ -598,12 +669,15 @@ def prepare_run(
     root.mkdir(parents=True, exist_ok=False)
     for name in ("inputs", "manifest", "cells", "logs", "resource", "slurm"):
         (root / name).mkdir(exist_ok=False)
+    retained_roots: Dict[str, str] = {}
+    retry_metadata: Optional[Dict[str, Any]] = None
     if mode == "formal":
         records = build_canonical_test_manifest(cache_dir=cache_dir)
         identity_path = root / "inputs" / "canonical_test_manifest.json"
         _write_new_json(identity_path, {"records": records})
         selected = list(formal_cells)
-    else:
+        execution_indices = list(range(len(selected)))
+    elif mode == "debug":
         _require(formal_identity_manifest is not None, "debug preparation requires frozen formal identity manifest")
         source = _read_json(Path(formal_identity_manifest))
         _require(isinstance(source, Mapping) and isinstance(source.get("records"), list), "formal identity manifest is invalid")
@@ -618,7 +692,45 @@ def prepare_run(
         for index, cell in enumerate(selected):
             cell["source_panel_index"] = cell["index"]
             cell["index"] = index
-    if mode == "formal":
+        execution_indices = list(range(len(selected)))
+    else:
+        _require(retry_source_run_root is not None, "retry preparation requires a source run root")
+        _require(retained_cell_indices is not None, "retry preparation requires retained cell indices")
+        _require(formal_identity_manifest is None and debug_indices is None, "retry preparation cannot redefine membership")
+        source_root = _run_root(Path(retry_source_run_root))
+        source_manifest = _load_run(source_root)
+        _require(_base_mode(str(source_manifest["mode"])) == _base_mode(mode), "retry source mode differs")
+        _require(source_manifest.get("panel_card") == card, "retry source card differs")
+        source_cells = list(source_manifest.get("cells", []))
+        if _is_formal_mode(mode):
+            validate_cells(source_cells, formal=True)
+        else:
+            _require(source_cells and all(cell.get("model_key") in EXPECTED_MODELS for cell in source_cells), "retry debug cells differ")
+        identity_path = Path(source_manifest["identity_manifest"]).expanduser().resolve()
+        identity_payload = _read_json(identity_path)
+        _require(isinstance(identity_payload, Mapping) and isinstance(identity_payload.get("records"), list), "retry source identity manifest is invalid")
+        validate_identity_manifest(
+            identity_payload["records"],
+            expected_count=EXPECTED_POPULATION if _is_formal_mode(mode) else 4,
+            expected_subjects=EXPECTED_SUBJECTS if _is_formal_mode(mode) else 2,
+        )
+        selected = [dict(cell) for cell in source_cells]
+        retained = sorted(set(retained_cell_indices))
+        _require(retained and len(retained) < len(selected), "retry retained cell set is invalid")
+        _require(all(isinstance(index, int) and not isinstance(index, bool) and 0 <= index < len(selected) for index in retained), "retry retained cell index is invalid")
+        execution_indices = [index for index in range(len(selected)) if index not in set(retained)]
+        _require(execution_indices, "retry execution set is empty")
+        for index in retained:
+            source_cell = _cell_for_index(source_manifest, index)
+            source_cell_root = _validate_retained_cell_metadata(source_root, source_manifest, source_cell)
+            retained_roots[str(source_cell["cell_id"])] = str(source_cell_root)
+        retry_metadata = {
+            "source_run_root": str(source_root),
+            "source_mode": str(source_manifest["mode"]),
+            "retained_cell_indices": retained,
+            "source_expected_commit": str(source_manifest["git"]["expected_commit"]),
+        }
+    if mode in {"formal", "formal_retry"}:
         for cell in selected:
             cell["source_panel_index"] = cell["index"]
     manifest = {
@@ -631,6 +743,9 @@ def prepare_run(
         "panel_card": card,
         "identity_manifest": str(identity_path),
         "cells": selected,
+        "execution_cell_indices": execution_indices,
+        "retained_cell_roots": retained_roots,
+        "retry": retry_metadata,
         "outcome_aggregates_computed": False,
         "created_at": utc_now(),
     }
@@ -641,6 +756,8 @@ def prepare_run(
         "mode": mode,
         "run_root": str(root),
         "cell_count": len(selected),
+        "execution_cell_count": len(execution_indices),
+        "retained_cell_count": len(retained_roots),
         "identity_manifest": str(identity_path),
     }
 
@@ -653,15 +770,22 @@ def verify_static(run_root: Path) -> Dict[str, Any]:
     _require(card == manifest["panel_card"], "current card differs from frozen run card")
     records_payload = _read_json(Path(manifest["identity_manifest"]))
     _require(isinstance(records_payload, Mapping) and isinstance(records_payload.get("records"), list), "identity manifest payload differs")
-    expected_count = EXPECTED_POPULATION if manifest["mode"] == "formal" else 4
-    expected_subjects = EXPECTED_SUBJECTS if manifest["mode"] == "formal" else 2
+    expected_count = EXPECTED_POPULATION if _is_formal_mode(str(manifest["mode"])) else 4
+    expected_subjects = EXPECTED_SUBJECTS if _is_formal_mode(str(manifest["mode"])) else 2
     records = validate_identity_manifest(records_payload["records"], expected_count=expected_count, expected_subjects=expected_subjects)
-    if manifest["mode"] == "formal":
+    execution_indices = _execution_cell_indices(manifest)
+    retained_roots = _retained_cell_roots(manifest)
+    cells = list(manifest["cells"])
+    expected_retained = {str(cells[index]["cell_id"]) for index in range(len(cells)) if index not in set(execution_indices)}
+    _require(set(retained_roots) == expected_retained, "retry retained-cell membership differs")
+    if _is_formal_mode(str(manifest["mode"])):
         validate_cells(manifest["cells"], formal=True)
     return {
         "status": "PASS",
         "mode": manifest["mode"],
         "cell_count": len(manifest["cells"]),
+        "execution_cell_count": len(execution_indices),
+        "retained_cell_count": len(retained_roots),
         "record_count": len(records),
         "subject_count": len({row["subject"] for row in records}),
         "outcome_aggregates_computed": False,
@@ -681,20 +805,27 @@ def _parse_slurm_seconds(value: str) -> int:
 
 
 def _pool_groups(cells: Sequence[Mapping[str, Any]], parent_count: int) -> List[List[int]]:
+    return _pool_groups_from_indices([int(cell["index"]) for cell in cells], parent_count)
+
+
+def _pool_groups_from_indices(cell_indices: Sequence[int], parent_count: int) -> List[List[int]]:
     _require(isinstance(parent_count, int) and not isinstance(parent_count, bool) and parent_count >= 1, "parent count is invalid")
-    _require(parent_count <= len(cells), "parent count exceeds cell count")
+    indices = list(cell_indices)
+    _require(indices and all(isinstance(index, int) and not isinstance(index, bool) and index >= 0 for index in indices), "pool cell indices are invalid")
+    _require(len(indices) == len(set(indices)), "pool cell indices are duplicate")
+    _require(parent_count <= len(indices), "parent count exceeds cell count")
     groups: List[List[int]] = [[] for _ in range(parent_count)]
-    for offset, cell in enumerate(cells):
-        groups[offset % parent_count].append(int(cell["index"]))
+    for offset, index in enumerate(indices):
+        groups[offset % parent_count].append(index)
     _require(all(group for group in groups), "empty worker-pool group")
-    _require(sorted(index for group in groups for index in group) == list(range(len(cells))), "worker-pool membership differs")
+    _require(sorted(index for group in groups for index in group) == sorted(indices), "worker-pool membership differs")
     return groups
 
 
 def _sbatch_text(manifest: Mapping[str, Any], launch: Mapping[str, Any]) -> str:
     scheduler = launch["scheduler"]
     mode = str(manifest["mode"])
-    if mode == "debug":
+    if _base_mode(mode) == "debug":
         _require(scheduler["partition"] == "debug", "debug launch must use debug partition")
         _require(_parse_slurm_seconds(str(scheduler["time_limit"])) < 30 * 60, "debug time must be under 30 minutes")
     job_name = "loopscope-p7-e-%s" % mode
@@ -720,8 +851,8 @@ def _sbatch_text(manifest: Mapping[str, Any], launch: Mapping[str, Any]) -> str:
     lines.extend(
         [
             "set -euo pipefail",
-            "source /etc/profile.d/modules.sh",
-            "module load anaconda3 cuda/12.4",
+            "if [[ -r /etc/profile.d/modules.sh ]]; then source /etc/profile.d/modules.sh; fi",
+            "if command -v module >/dev/null 2>&1; then module load anaconda3 cuda/12.4; fi",
             "source %s/bin/activate" % shlex.quote(str(AUDITED_VENV)),
             "cd %s" % shlex.quote(str(REMOTE_REPO)),
             "export PYTHONDONTWRITEBYTECODE=1",
@@ -777,7 +908,8 @@ def build_launch(
     _require(isinstance(cpus_per_task, int) and cpus_per_task >= concurrency * child_cpu_threads, "CPU request cannot support child thread caps")
     _require(str(partition).strip() and str(gpu_type).strip() and str(memory).strip(), "scheduler resource is incomplete")
     _parse_slurm_seconds(str(time_limit))
-    pools = _pool_groups(manifest["cells"], parent_count)
+    execution_indices = _execution_cell_indices(manifest)
+    pools = _pool_groups_from_indices(execution_indices, parent_count)
     launch = {
         "schema_version": "loopscope.phase7.gate-e-launch.v1",
         "run_root": str(root),
@@ -856,8 +988,8 @@ def _load_records_from_run(manifest: Mapping[str, Any]) -> List[Dict[str, Any]]:
     _require(isinstance(payload, Mapping) and isinstance(payload.get("records"), list), "run identity manifest differs")
     return validate_identity_manifest(
         payload["records"],
-        expected_count=EXPECTED_POPULATION if manifest["mode"] == "formal" else 4,
-        expected_subjects=EXPECTED_SUBJECTS if manifest["mode"] == "formal" else 2,
+        expected_count=EXPECTED_POPULATION if _is_formal_mode(str(manifest["mode"])) else 4,
+        expected_subjects=EXPECTED_SUBJECTS if _is_formal_mode(str(manifest["mode"])) else 2,
     )
 
 
@@ -976,6 +1108,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
     _require((root / "manifest" / "launch_plan.json").is_file(), "run-cell requires a frozen launch plan")
     _require_offline_runtime()
     cell = _cell_for_index(manifest, cell_index)
+    _require(cell_index in _execution_cell_indices(manifest), "retained cell cannot be re-run")
     expected_rows = _load_records_from_run(manifest)
     cell_root = root / "cells" / str(cell["cell_id"])
     _require(not cell_root.exists() and not cell_root.is_symlink(), "cell output path already exists")
@@ -989,8 +1122,8 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
             "cell": cell,
             "batch_size": 16,
             "num_fewshot": 5,
-            "tasks": "mmlu" if manifest["mode"] == "formal" else ",".join(DEBUG_TASKS),
-            "limit": None if manifest["mode"] == "formal" else 2,
+            "tasks": "mmlu" if _is_formal_mode(str(manifest["mode"])) else ",".join(DEBUG_TASKS),
+            "limit": None if _is_formal_mode(str(manifest["mode"])) else 2,
             "outcome_aggregates_computed": False,
         },
     )
@@ -1028,9 +1161,9 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
             result = run_lm_eval(
                 model_repo=str(cell["model_repo"]),
-                tasks="mmlu" if manifest["mode"] == "formal" else ",".join(DEBUG_TASKS),
+                tasks="mmlu" if _is_formal_mode(str(manifest["mode"])) else ",".join(DEBUG_TASKS),
                 output_dir=cell_root,
-                limit=None if manifest["mode"] == "formal" else 2,
+                limit=None if _is_formal_mode(str(manifest["mode"])) else 2,
                 num_fewshot=5,
                 batch_size="16",
                 dtype="bfloat16",
@@ -1264,7 +1397,8 @@ def run_pool(*, run_root: Path, pool_index: int) -> Dict[str, Any]:
 
 
 def _outcome_rows_for_cell(root: Path, cell: Mapping[str, Any], expected: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
-    cell_root = root / "cells" / str(cell["cell_id"])
+    manifest = _load_run(root)
+    cell_root = _cell_artifact_root(root, manifest, cell)
     allowed_names = {"command.json", "model_revision.json", "outcomes.jsonl", "producer_receipt.json", "resource.json"}
     observed_names = {path.name for path in cell_root.iterdir()}
     _require(observed_names == allowed_names, "cell artifact barrier differs")
@@ -1293,7 +1427,7 @@ def verify_preoutcome(run_root: Path) -> Dict[str, Any]:
     verify_static(root)
     expected = _load_records_from_run(manifest)
     cells = list(manifest["cells"])
-    formal = manifest["mode"] == "formal"
+    formal = _is_formal_mode(str(manifest["mode"]))
     if formal:
         validate_cells(cells, formal=True)
         _require((root / "manifest" / "submission.json").is_file(), "formal pre-outcome closure requires a submission receipt")
@@ -1318,6 +1452,8 @@ def verify_preoutcome(run_root: Path) -> Dict[str, Any]:
         "record_count_per_cell": len(expected),
         "subject_count_per_cell": len({row["subject"] for row in expected}),
         "formal_panel_counts": ({key: sum(1 for cell in cells if cell["model_key"] == key) for key in EXPECTED_MODELS} if formal else None),
+        "execution_cell_count": len(_execution_cell_indices(manifest)),
+        "retained_cell_count": len(_retained_cell_roots(manifest)),
         "outcome_aggregates_computed": False,
         "created_at": utc_now(),
     }
@@ -1403,7 +1539,7 @@ def _cell_analysis(baseline: Sequence[Mapping[str, Any]], candidate: Sequence[Ma
 def build_scientific_projection(run_root: Path) -> Dict[str, Any]:
     root = _run_root(run_root)
     manifest = _load_run(root)
-    _require(manifest["mode"] == "formal", "combined analysis only accepts formal outcomes")
+    _require(_is_formal_mode(str(manifest["mode"])), "combined analysis only accepts formal outcomes")
     pre = _read_json(root / "manifest" / "preoutcome_verifier_receipt.json")
     _require(isinstance(pre, Mapping) and pre.get("status") == "PASS", "pre-outcome completeness is not closed")
     expected = _load_records_from_run(manifest)

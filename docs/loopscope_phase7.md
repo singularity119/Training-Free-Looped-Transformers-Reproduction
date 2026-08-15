@@ -155,6 +155,25 @@ headroom.  Only the highest passing bounded concurrency may be used by the
 formal worker pools.  All children retain independent model instances, logs,
 outputs, and write-once cell paths; `batch_size=16` never changes.
 
+If a formal worker-pool attempt has an ordinary resource or launcher failure,
+preserve that root and never rerun a completed cell.  A fresh `formal_retry`
+root may reference only the completed cell artifact roots from the preserved
+attempt, while scheduling only the remaining invalid/missing indices:
+
+```bash
+PYTHONPATH=src python scripts/loopscope/run_phase7_gate_e_panel.py prepare \
+  --mode formal_retry --run-root <fresh-retry-root> --expected-commit <commit> \
+  --retry-source-run-root <preserved-formal-root> \
+  --retained-cell-indices <comma-separated-completed-indices>
+```
+
+The retry root rechecks the frozen card and canonical membership, retains
+read-only references rather than copying outcome rows, and permits the
+pre-outcome verifier and one later paired analysis only after all 35 logical
+cells are complete.  Its generated Slurm launcher tolerates compute nodes
+where the optional modules profile is absent, while still loading the audited
+venv and remaining offline.
+
 After the formal worker pools are complete, run the fresh verifier without
 printing or aggregating partial outcome values:
 

@@ -10,6 +10,23 @@ from tflt.loopscope import phase7_outcome as outcome
 
 
 class Phase7OutcomeTests(unittest.TestCase):
+    def _formal_records(self) -> list[dict[str, object]]:
+        records = []
+        next_index = {"subject_%02d" % index: 0 for index in range(outcome.EXPECTED_SUBJECTS)}
+        for ordinal in range(outcome.EXPECTED_POPULATION):
+            subject = "subject_%02d" % (ordinal % outcome.EXPECTED_SUBJECTS)
+            test_index = next_index[subject]
+            next_index[subject] += 1
+            records.append(
+                {
+                    "canonical_identity": "mmlu_%s:test:%d" % (subject, test_index),
+                    "subject": subject,
+                    "task_name": "mmlu_%s" % subject,
+                    "test_index": test_index,
+                }
+            )
+        return records
+
     def test_exact_332_card_expands_to_35_unique_cells(self) -> None:
         card = outcome.load_card()
         cells = outcome.expand_cells(card)
@@ -126,20 +143,7 @@ class Phase7OutcomeTests(unittest.TestCase):
             self.assertEqual(receipt["record_count"], 4)
 
     def test_prepare_formal_freezes_exact_35_cell_panel_before_forwards(self) -> None:
-        records = []
-        next_index = {"subject_%02d" % index: 0 for index in range(outcome.EXPECTED_SUBJECTS)}
-        for ordinal in range(outcome.EXPECTED_POPULATION):
-            subject = "subject_%02d" % (ordinal % outcome.EXPECTED_SUBJECTS)
-            test_index = next_index[subject]
-            next_index[subject] += 1
-            records.append(
-                {
-                    "canonical_identity": "mmlu_%s:test:%d" % (subject, test_index),
-                    "subject": subject,
-                    "task_name": "mmlu_%s" % subject,
-                    "test_index": test_index,
-                }
-            )
+        records = self._formal_records()
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "formal"
             with mock.patch.object(outcome, "validate_git", return_value={"commit": "abc", "clean": True}), mock.patch.object(
@@ -151,6 +155,98 @@ class Phase7OutcomeTests(unittest.TestCase):
             self.assertEqual(result["cell_count"], 35)
             self.assertTrue((root / "manifest" / "static_preoutcome_receipt.json").is_file())
             self.assertEqual(outcome.verify_static(root)["status"], "PASS")
+
+    def test_formal_retry_reuses_a_completed_cell_without_relaunching_it(self) -> None:
+        card = outcome.load_card()
+        cells = outcome.expand_cells(card)
+        records = self._formal_records()
+        with tempfile.TemporaryDirectory() as temporary:
+            source_root = Path(temporary) / "source"
+            for name in ("inputs", "manifest", "cells"):
+                (source_root / name).mkdir(parents=True, exist_ok=False)
+            identity_path = source_root / "inputs" / "canonical_test_manifest.json"
+            identity_path.write_text(json.dumps({"records": records}), encoding="utf-8")
+            source_root.joinpath("manifest", "run_manifest.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": outcome.RUN_SCHEMA,
+                        "gate": "E",
+                        "mode": "formal",
+                        "git": {"expected_commit": "source"},
+                        "panel_card": card,
+                        "identity_manifest": str(identity_path),
+                        "cells": cells,
+                        "execution_cell_indices": list(range(35)),
+                        "retained_cell_roots": {},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            retained = cells[0]
+            cell_root = source_root / "cells" / retained["cell_id"]
+            cell_root.mkdir()
+            (cell_root / "command.json").write_text("{}", encoding="utf-8")
+            (cell_root / "model_revision.json").write_text(
+                json.dumps(
+                    {
+                        "repo_id": retained["model_repo"],
+                        "model_commit": retained["model_revision"],
+                        "tokenizer_commit": retained["model_revision"],
+                        "manifest_commit": retained["model_revision"],
+                        "match": True,
+                        "lm_eval_version": "0.4.11",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (cell_root / "outcomes.jsonl").write_text("{}\n", encoding="utf-8")
+            (cell_root / "resource.json").write_text("{}", encoding="utf-8")
+            (cell_root / "producer_receipt.json").write_text(
+                json.dumps(
+                    {
+                        "status": "COMPLETED",
+                        "cell_id": retained["cell_id"],
+                        "outcome_aggregates_computed": False,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            retry_root = Path(temporary) / "retry"
+            with mock.patch.object(outcome, "validate_git", return_value={"commit": "retry", "clean": True}):
+                prepared = outcome.prepare_run(
+                    mode="formal_retry",
+                    run_root=retry_root,
+                    expected_commit="retry",
+                    retry_source_run_root=source_root,
+                    retained_cell_indices=[0],
+                )
+            self.assertEqual(prepared["cell_count"], 35)
+            self.assertEqual(prepared["execution_cell_count"], 34)
+            self.assertEqual(prepared["retained_cell_count"], 1)
+            static = outcome.verify_static(retry_root)
+            self.assertEqual(static["execution_cell_count"], 34)
+            self.assertEqual(static["retained_cell_count"], 1)
+            retry_manifest = outcome._load_run(retry_root)
+            self.assertEqual(outcome._cell_artifact_root(retry_root, retry_manifest, cells[0]), cell_root.resolve())
+
+    def test_sbatch_handles_compute_nodes_without_modules_profile(self) -> None:
+        text = outcome._sbatch_text(
+            {"mode": "formal_retry", "run_root": "/tmp/gate-e"},
+            {
+                "pools": [{"pool_index": 0, "cell_indices": [1]}],
+                "scheduler": {
+                    "partition": "emergency_gpu",
+                    "time_limit": "04:00:00",
+                    "cpus_per_task": 8,
+                    "memory": "192G",
+                    "gpu_type": "a800",
+                    "qos": "emergency_gpu",
+                },
+                "child_cpu_threads": 1,
+            },
+        )
+        self.assertIn("if [[ -r /etc/profile.d/modules.sh ]]; then source /etc/profile.d/modules.sh; fi", text)
+        self.assertIn("if command -v module >/dev/null 2>&1; then module load anaconda3 cuda/12.4; fi", text)
 
     def test_fresh_analysis_verifier_recomputes_scientific_projection(self) -> None:
         scientific = {

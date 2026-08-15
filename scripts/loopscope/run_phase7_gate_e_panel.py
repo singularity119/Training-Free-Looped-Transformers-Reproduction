@@ -41,12 +41,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
 
     prepare = sub.add_parser("prepare", help="Freeze one fresh static run root before model forwards.")
-    prepare.add_argument("--mode", choices=("debug", "formal"), required=True)
+    prepare.add_argument("--mode", choices=("debug", "formal", "debug_retry", "formal_retry"), required=True)
     prepare.add_argument("--run-root", required=True)
     prepare.add_argument("--expected-commit", required=True)
     prepare.add_argument("--cache-dir", default=None)
     prepare.add_argument("--formal-identity-manifest", default=None)
     prepare.add_argument("--debug-indices", type=_indices, default=None)
+    prepare.add_argument("--retry-source-run-root", default=None)
+    prepare.add_argument("--retained-cell-indices", type=_indices, default=None)
     prepare.add_argument("--card", default=None)
 
     launch = sub.add_parser("build-launch", help="Freeze a bounded Slurm worker-pool launch plan.")
@@ -91,6 +93,8 @@ def main(argv: list[str] | None = None) -> int:
                 cache_dir=args.cache_dir,
                 formal_identity_manifest=(Path(args.formal_identity_manifest) if args.formal_identity_manifest else None),
                 debug_indices=args.debug_indices,
+                retry_source_run_root=(Path(args.retry_source_run_root) if args.retry_source_run_root else None),
+                retained_cell_indices=args.retained_cell_indices,
                 card_path=(Path(args.card) if args.card else None),
             )
         elif args.command == "build-launch":
