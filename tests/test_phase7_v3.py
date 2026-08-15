@@ -1,3 +1,4 @@
+import copy
 import unittest
 
 from tflt.loopscope.phase7_schema import Phase7ContractError
@@ -76,6 +77,50 @@ class Phase7V3Tests(unittest.TestCase):
         payload["gold_label"] = "D"
         with self.assertRaisesRegex(Phase7ContractError, "BLOCK_INFORMATION_BARRIER_VIOLATION"):
             validate_v3_payload(payload, expected_layer_count=20)
+
+    def test_safe_aggregate_source_data_is_complete_and_diagnostics_do_not_change_selector(self):
+        records = [
+            make_trajectory_record(20, "a-0", "alpha", 0.0),
+            make_trajectory_record(20, "a-1", "alpha", 0.5),
+            make_trajectory_record(20, "b-0", "beta", 1.0),
+        ]
+        payload = analyze_records(records, layer_count=20, replicates=8, seed=17)
+        validate_v3_payload(payload, expected_layer_count=20, require_source_data=True)
+        source = payload["aggregate_source_data"]
+        self.assertEqual(source["record_count"], 3)
+        self.assertEqual(source["subject_count"], 2)
+        self.assertEqual(source["boundary_count"], 21)
+        self.assertEqual(source["transition_count"], 20)
+        self.assertEqual(
+            set(source["boundary_metrics"]),
+            {
+                "choice_entropy",
+                "kl_to_final",
+                "hidden_rms_l2_to_final",
+                "hidden_cosine_to_final",
+                "hidden_cosine_distance_to_final",
+            },
+        )
+        self.assertEqual(set(source["transition_metrics"]), {"adjacent_angular_distance"})
+        self.assertEqual(
+            len(source["boundary_metrics"]["choice_entropy"]["point_mean"]),
+            21,
+        )
+        self.assertEqual(
+            len(source["transition_metrics"]["adjacent_angular_distance"]["point_mean"]),
+            20,
+        )
+
+        changed_records = copy.deepcopy(records)
+        changed_records[0]["boundaries"][0]["hidden_rms_l2_to_final"] += 3.0
+        changed = analyze_records(changed_records, layer_count=20, replicates=8, seed=17)
+        self.assertEqual(payload["candidates"], changed["candidates"])
+        self.assertEqual(payload["selector_decision"], changed["selector_decision"])
+        self.assertEqual(payload["selected_window"], changed["selected_window"])
+        self.assertNotEqual(
+            payload["aggregate_source_data"]["boundary_metrics"]["hidden_rms_l2_to_final"]["point_mean"],
+            changed["aggregate_source_data"]["boundary_metrics"]["hidden_rms_l2_to_final"]["point_mean"],
+        )
 
 
 if __name__ == "__main__":

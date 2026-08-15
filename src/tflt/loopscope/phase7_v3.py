@@ -36,6 +36,14 @@ LEGAL_TERMINAL_STATES = (
     "ABSTAIN_NO_V3_ELIGIBLE",
     "ABSTAIN_COMBINED_RANK_UNSTABLE",
 )
+BOUNDARY_SOURCE_METRICS = (
+    "choice_entropy",
+    "kl_to_final",
+    "hidden_rms_l2_to_final",
+    "hidden_cosine_to_final",
+    "hidden_cosine_distance_to_final",
+)
+TRANSITION_SOURCE_METRICS = ("adjacent_angular_distance",)
 
 
 class V3Error(Phase7ContractError):
@@ -79,6 +87,37 @@ def project_records(
     return projected
 
 
+def _source_metric_records(
+    records: Sequence[Mapping[str, Any]], *, expected_layer_count: int
+) -> List[Dict[str, Any]]:
+    """Project sanitized scalar diagnostics for the plotting-only source data.
+
+    This projection is deliberately separate from :func:`project_records`:
+    V3 eligibility and ranking continue to consume only identity/category/H/D.
+    """
+
+    rows: List[Dict[str, Any]] = []
+    seen = set()
+    for record in records:
+        validate_sanitized_record(record, expected_layer_count=expected_layer_count)
+        identity = str(record["canonical_identity"])
+        if identity in seen:
+            raise V3Error("BLOCK_INVALID_V3_INPUT: duplicate identity")
+        seen.add(identity)
+        row: Dict[str, Any] = {
+            "identity": identity,
+            "category": str(record["subject"]),
+        }
+        for metric in BOUNDARY_SOURCE_METRICS:
+            row[metric] = [_finite(boundary[metric], metric) for boundary in record["boundaries"]]
+        for metric in TRANSITION_SOURCE_METRICS:
+            row[metric] = [_finite(transition[metric], metric) for transition in record["transitions"]]
+        rows.append(row)
+    if not rows:
+        raise V3Error("BLOCK_INVALID_V3_INPUT: no records")
+    return rows
+
+
 def _layout(
     projected: Sequence[Mapping[str, Any]],
 ) -> Tuple[List[str], Dict[str, List[Mapping[str, Any]]]]:
@@ -114,6 +153,114 @@ def macro_curves(projected: Sequence[Mapping[str, Any]]) -> Tuple[List[str], Lis
         h_bar.append(math.fsum(h_by_category) / len(categories))
         d_bar.append(math.fsum(d_by_category) / len(categories))
     return categories, h_bar, d_bar
+
+
+def _macro_curve_for_metric(
+    rows: Sequence[Mapping[str, Any]], metric: str
+) -> Tuple[List[str], List[float]]:
+    categories, groups = _layout(rows)
+    length = len(rows[0][metric])
+    if length < 1 or any(len(row[metric]) != length for row in rows):
+        raise V3Error("BLOCK_INVALID_V3_INPUT: source metric lengths differ")
+    curve: List[float] = []
+    for index in range(length):
+        by_category = [
+            math.fsum(float(row[metric][index]) for row in groups[category]) / len(groups[category])
+            for category in categories
+        ]
+        curve.append(math.fsum(by_category) / len(categories))
+    return categories, curve
+
+
+def _bootstrap_metric_curves(
+    rows: Sequence[Mapping[str, Any]], metrics: Sequence[str], replicates: int, seed: int
+) -> Dict[str, List[List[float]]]:
+    """Bootstrap plotting metrics with the same canonical category draw map.
+
+    The selector's H/D bootstrap remains unchanged.  This companion routine
+    replays the identical seeded category/index draws for source-data CIs while
+    keeping diagnostic metrics outside all selector calculations.
+    """
+
+    if isinstance(replicates, bool) or not isinstance(replicates, int) or replicates < 2:
+        raise V3Error("bootstrap replicates must be an integer >= 2")
+    categories, groups = _layout(rows)
+    lengths = {metric: len(rows[0][metric]) for metric in metrics}
+    if any(length < 1 for length in lengths.values()) or any(
+        len(row[metric]) != lengths[metric] for row in rows for metric in metrics
+    ):
+        raise V3Error("BLOCK_INVALID_V3_INPUT: source metric lengths differ")
+    rng = random.Random(seed)
+    output: Dict[str, List[List[float]]] = {metric: [] for metric in metrics}
+    for _replicate in range(replicates):
+        category_curves: Dict[str, List[List[float]]] = {metric: [] for metric in metrics}
+        for category in categories:
+            group = groups[category]
+            choices = [rng.randrange(len(group)) for _ in group]
+            for metric in metrics:
+                category_curves[metric].append(
+                    [
+                        math.fsum(float(group[index][metric][position]) for index in choices) / len(group)
+                        for position in range(lengths[metric])
+                    ]
+                )
+        for metric in metrics:
+            output[metric].append(
+                [
+                    math.fsum(curve[position] for curve in category_curves[metric]) / len(categories)
+                    for position in range(lengths[metric])
+                ]
+            )
+    return output
+
+
+def _aggregate_curve(point: Sequence[float], bootstrap: Sequence[Sequence[float]]) -> Dict[str, List[Optional[float]]]:
+    if not point or len(bootstrap) < 2 or any(len(curve) != len(point) for curve in bootstrap):
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: aggregate curve shape differs")
+    lower = [_quantile([float(curve[index]) for curve in bootstrap], 0.025) for index in range(len(point))]
+    upper = [_quantile([float(curve[index]) for curve in bootstrap], 0.975) for index in range(len(point))]
+    return {
+        "point_mean": [float(value) for value in point],
+        "ci95_lower": lower,
+        "ci95_upper": upper,
+        "mean_change_from_previous": [None]
+        + [float(point[index]) - float(point[index - 1]) for index in range(1, len(point))],
+    }
+
+
+def aggregate_source_data(
+    records: Sequence[Mapping[str, Any]], *, layer_count: int, replicates: int, seed: int
+) -> Dict[str, Any]:
+    """Create plotting-safe category-macro aggregates from sealed scalar records."""
+
+    rows = _source_metric_records(records, expected_layer_count=layer_count)
+    categories, _groups = _layout(rows)
+    boundary_bootstrap = _bootstrap_metric_curves(rows, BOUNDARY_SOURCE_METRICS, replicates, seed)
+    transition_bootstrap = _bootstrap_metric_curves(rows, TRANSITION_SOURCE_METRICS, replicates, seed)
+    boundary_metrics = {}
+    for metric in BOUNDARY_SOURCE_METRICS:
+        metric_categories, point = _macro_curve_for_metric(rows, metric)
+        if metric_categories != categories or len(point) != layer_count + 1:
+            raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: boundary aggregate differs")
+        boundary_metrics[metric] = _aggregate_curve(point, boundary_bootstrap[metric])
+    transition_metrics = {}
+    for metric in TRANSITION_SOURCE_METRICS:
+        metric_categories, point = _macro_curve_for_metric(rows, metric)
+        if metric_categories != categories or len(point) != layer_count:
+            raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: transition aggregate differs")
+        transition_metrics[metric] = _aggregate_curve(point, transition_bootstrap[metric])
+    return {
+        "aggregation": "equal_category_macro",
+        "ci_method": "within-category resample, equal-category-macro percentile bootstrap 95%",
+        "replicates": replicates,
+        "seed": seed,
+        "record_count": len(rows),
+        "subject_count": len(categories),
+        "boundary_count": layer_count + 1,
+        "transition_count": layer_count,
+        "boundary_metrics": boundary_metrics,
+        "transition_metrics": transition_metrics,
+    }
 
 
 def bootstrap_macro_curves(
@@ -560,16 +707,119 @@ def analyze_records(
     seed: int = FORMAL_BOOTSTRAP_SEED,
     formal: bool = False,
 ) -> Dict[str, Any]:
-    return analyze_projected(
+    payload = analyze_projected(
         project_records(records, expected_layer_count=layer_count),
         layer_count=layer_count,
         replicates=replicates,
         seed=seed,
         formal=formal,
     )
+    payload["subject_count"] = int(payload["category_count"])
+    payload["aggregate_source_data"] = aggregate_source_data(
+        records,
+        layer_count=layer_count,
+        replicates=replicates,
+        seed=seed,
+    )
+    payload["selector_summary"] = {
+        "terminal_state": payload["selector_decision"],
+        "candidate_count": payload["candidate_count"],
+        "point_operational_winner": payload["point_operational_winner"],
+        "combined_rank_selection_frequency": payload["combined_rank_selection_frequency"],
+        "selected_window": payload["selected_window"],
+    }
+    payload["analysis_provenance"] = {
+        "input_projection": ["identity", "subject", "H", "D"],
+        "formal_invocation": bool(formal),
+        "model_forward_executed": False,
+        "loop_executed": False,
+        "test_split_accessed": False,
+        "validation_target_accessed": False,
+    }
+    validate_v3_payload(
+        payload,
+        expected_layer_count=layer_count,
+        require_source_data=True,
+    )
+    return payload
 
 
-def validate_v3_payload(payload: Mapping[str, Any], *, expected_layer_count: Optional[int] = None) -> None:
+def _validate_aggregate_curve(value: Any, expected_length: int) -> None:
+    if not isinstance(value, Mapping) or set(value) != {
+        "point_mean",
+        "ci95_lower",
+        "ci95_upper",
+        "mean_change_from_previous",
+    }:
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: aggregate curve schema differs")
+    for field in ("point_mean", "ci95_lower", "ci95_upper"):
+        series = value[field]
+        if not isinstance(series, Sequence) or isinstance(series, (str, bytes)) or len(series) != expected_length:
+            raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: aggregate curve length differs")
+        for item in series:
+            _finite(item, "aggregate source %s" % field)
+    changes = value["mean_change_from_previous"]
+    if not isinstance(changes, Sequence) or isinstance(changes, (str, bytes)) or len(changes) != expected_length:
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: aggregate change length differs")
+    if changes[0] is not None:
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: first aggregate change must be null")
+    for item in changes[1:]:
+        _finite(item, "aggregate source mean change")
+
+
+def _validate_aggregate_source_data(
+    value: Any,
+    *,
+    layer_count: int,
+    record_count: int,
+    subject_count: int,
+    replicates: int,
+    seed: int,
+) -> None:
+    if not isinstance(value, Mapping):
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: source data is not an object")
+    expected_keys = {
+        "aggregation",
+        "ci_method",
+        "replicates",
+        "seed",
+        "record_count",
+        "subject_count",
+        "boundary_count",
+        "transition_count",
+        "boundary_metrics",
+        "transition_metrics",
+    }
+    if set(value) != expected_keys:
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: source data schema differs")
+    if (
+        value.get("aggregation") != "equal_category_macro"
+        or value.get("replicates") != replicates
+        or value.get("seed") != seed
+        or value.get("record_count") != record_count
+        or value.get("subject_count") != subject_count
+        or value.get("boundary_count") != layer_count + 1
+        or value.get("transition_count") != layer_count
+    ):
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: source data provenance differs")
+    boundary_metrics = value.get("boundary_metrics")
+    transition_metrics = value.get("transition_metrics")
+    if not isinstance(boundary_metrics, Mapping) or set(boundary_metrics) != set(BOUNDARY_SOURCE_METRICS):
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: boundary metrics differ")
+    if not isinstance(transition_metrics, Mapping) or set(transition_metrics) != set(TRANSITION_SOURCE_METRICS):
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: transition metrics differ")
+    for aggregate in boundary_metrics.values():
+        _validate_aggregate_curve(aggregate, layer_count + 1)
+    for aggregate in transition_metrics.values():
+        _validate_aggregate_curve(aggregate, layer_count)
+
+
+def validate_v3_payload(
+    payload: Mapping[str, Any],
+    *,
+    expected_layer_count: Optional[int] = None,
+    require_source_data: bool = False,
+) -> None:
     if not isinstance(payload, Mapping):
         raise V3Error("V3 payload must be an object")
     scan_forbidden_fields(payload)
@@ -614,6 +864,18 @@ def validate_v3_payload(payload: Mapping[str, Any], *, expected_layer_count: Opt
         raise V3Error("selected terminal must have exactly one selected row")
     if payload["selector_decision"] != "SELECTED_WINDOW" and selected_rows:
         raise V3Error("ABSTAIN terminal cannot mark a selected row")
+    source_data = payload.get("aggregate_source_data")
+    if require_source_data and source_data is None:
+        raise V3Error("BLOCK_INVALID_V3_SOURCE_DATA: aggregate source data is missing")
+    if source_data is not None:
+        _validate_aggregate_source_data(
+            source_data,
+            layer_count=layer_count,
+            record_count=int(payload["record_count"]),
+            subject_count=int(payload.get("subject_count", payload["category_count"])),
+            replicates=int(payload["replicates"]),
+            seed=int(payload["seed"]),
+        )
 
 
 __all__ = [
@@ -625,6 +887,7 @@ __all__ = [
     "METHOD_VERSION",
     "Q_THRESHOLD",
     "V3Error",
+    "aggregate_source_data",
     "analyze_projected",
     "analyze_records",
     "bootstrap_macro_curves",

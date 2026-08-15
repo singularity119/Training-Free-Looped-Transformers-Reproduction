@@ -44,7 +44,11 @@ def _load_json(path: Path) -> Dict[str, Any]:
 
 def verify(args: argparse.Namespace) -> int:
     expected = _load_json(Path(args.analysis))
-    validate_v3_payload(expected, expected_layer_count=args.layer_count)
+    validate_v3_payload(
+        expected,
+        expected_layer_count=args.layer_count,
+        require_source_data=True,
+    )
     recomputed = analyze_records(
         _load_jsonl(Path(args.input)),
         layer_count=args.layer_count,
