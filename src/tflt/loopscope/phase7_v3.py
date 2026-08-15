@@ -730,7 +730,6 @@ def analyze_records(
     }
     payload["analysis_provenance"] = {
         "input_projection": ["identity", "subject", "H", "D"],
-        "formal_invocation": bool(formal),
         "model_forward_executed": False,
         "loop_executed": False,
         "test_split_accessed": False,

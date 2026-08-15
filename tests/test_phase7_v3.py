@@ -3,6 +3,8 @@ import unittest
 
 from tflt.loopscope.phase7_schema import Phase7ContractError
 from tflt.loopscope.phase7_v3 import (
+    FORMAL_BOOTSTRAP_REPLICATES,
+    FORMAL_BOOTSTRAP_SEED,
     analyze_records,
     fit_turn,
     macro_curves,
@@ -121,6 +123,28 @@ class Phase7V3Tests(unittest.TestCase):
             payload["aggregate_source_data"]["boundary_metrics"]["hidden_rms_l2_to_final"]["point_mean"],
             changed["aggregate_source_data"]["boundary_metrics"]["hidden_rms_l2_to_final"]["point_mean"],
         )
+
+    def test_formal_payload_matches_the_fresh_verifier_recomputation_mode(self):
+        records = [
+            make_trajectory_record(20, "a-0", "alpha", 0.0),
+            make_trajectory_record(20, "a-1", "alpha", 0.5),
+            make_trajectory_record(20, "b-0", "beta", 1.0),
+        ]
+        formal = analyze_records(
+            records,
+            layer_count=20,
+            replicates=FORMAL_BOOTSTRAP_REPLICATES,
+            seed=FORMAL_BOOTSTRAP_SEED,
+            formal=True,
+        )
+        recomputed = analyze_records(
+            records,
+            layer_count=20,
+            replicates=FORMAL_BOOTSTRAP_REPLICATES,
+            seed=FORMAL_BOOTSTRAP_SEED,
+            formal=False,
+        )
+        self.assertEqual(formal, recomputed)
 
 
 if __name__ == "__main__":
