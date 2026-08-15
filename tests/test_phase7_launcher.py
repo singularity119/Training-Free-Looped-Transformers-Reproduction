@@ -1,4 +1,6 @@
 import importlib.util
+import io
+import json
 import unittest
 from pathlib import Path
 
@@ -86,6 +88,29 @@ class Phase7LauncherTests(unittest.TestCase):
     def test_runtime_fails_closed_without_cuda(self):
         with self.assertRaisesRegex(Phase7ContractError, "BLOCK_CUDA_UNAVAILABLE"):
             MODULE._require_cuda_device(FakeTorch(available=False))
+
+    def test_progress_counter_contains_only_safe_integer_metadata(self):
+        stream = io.StringIO()
+        MODULE._emit_progress(25, 765, stream=stream)
+        self.assertEqual(
+            stream.getvalue(),
+            "event=phase7_progress completed_records=25 total_records=765\n",
+        )
+
+    def test_progress_counter_does_not_change_jsonl_serialization_or_order(self):
+        records = [{"canonical_identity": "first"}, {"canonical_identity": "second"}]
+        before = "".join(
+            json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n"
+            for row in records
+        )
+        stream = io.StringIO()
+        MODULE._emit_progress(2, 2, stream=stream)
+        after = "".join(
+            json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n"
+            for row in records
+        )
+        self.assertEqual(after, before)
+        self.assertEqual([row["canonical_identity"] for row in records], ["first", "second"])
 
 
 if __name__ == "__main__":

@@ -11,8 +11,9 @@ from __future__ import annotations
 import argparse
 import importlib
 import json
+import sys
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional
+from typing import Any, Dict, List, Mapping, Optional, TextIO
 
 from tflt.loopscope.phase7_producer import admit_choice_surfaces, produce_record
 from tflt.loopscope.phase7_schema import (
@@ -94,6 +95,19 @@ def _write_once(path: Path, text: str) -> None:
         raise Phase7ContractError("BLOCK_WRITE_ONCE_VIOLATION: %s" % path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
+
+
+def _emit_progress(
+    completed_records: int, total_records: int, *, stream: Optional[TextIO] = None
+) -> None:
+    if completed_records < 1 or total_records < 1 or completed_records > total_records:
+        raise Phase7ContractError("progress counter is outside the active manifest")
+    stream = sys.stderr if stream is None else stream
+    stream.write(
+        "event=phase7_progress completed_records=%d total_records=%d\n"
+        % (completed_records, total_records)
+    )
+    stream.flush()
 
 
 def _pretrained_load_kwargs(cache_dir: Optional[str]) -> Dict[str, Any]:
@@ -203,7 +217,8 @@ def run(args: argparse.Namespace) -> int:
     model.eval()
     choice_admission = admit_choice_surfaces(tokenizer)
     output_rows: List[Dict[str, Any]] = []
-    for row in records:
+    total_records = len(records)
+    for completed_records, row in enumerate(records, start=1):
         rendered = render(row, tokenizer)
         if not isinstance(rendered, Mapping):
             raise Phase7ContractError("renderer must return a mapping")
@@ -226,6 +241,8 @@ def run(args: argparse.Namespace) -> int:
                 choice_admission=choice_admission,
             )
         )
+        if completed_records % 25 == 0 or completed_records == total_records:
+            _emit_progress(completed_records, total_records)
     _write_once(
         Path(args.output),
         "".join(json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n" for row in output_rows),

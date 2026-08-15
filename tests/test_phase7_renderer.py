@@ -1,5 +1,7 @@
 import unittest
+from unittest import mock
 
+from tflt.loopscope import phase7_renderer
 from tflt.loopscope.phase7_renderer import (
     MANIFEST_KEYS,
     canonical_identity,
@@ -38,6 +40,10 @@ def _rows():
 
 
 class Phase7RendererTests(unittest.TestCase):
+    def tearDown(self):
+        phase7_renderer._TASK_MAP_CACHE = None
+        phase7_renderer._RENDER_STATE.clear()
+
     def test_common_manifest_uses_first_two_subjects_and_two_rows_each(self):
         rows = select_smoke_manifest_rows(_rows())
         self.assertEqual(len(rows), 4)
@@ -72,6 +78,34 @@ class Phase7RendererTests(unittest.TestCase):
         invalid[0]["canonical_identity"] = "wrong"
         with self.assertRaises(Phase7ContractError):
             select_smoke_manifest_rows(invalid)
+
+    def test_two_subjects_build_the_complete_task_map_once(self):
+        tasks = {"mmlu_subject_%02d" % index: object() for index in range(57)}
+
+        manager = mock.Mock()
+        manager.load_task_or_group.return_value = tasks
+        backend = mock.Mock()
+        backend._task_manager.return_value = manager
+        backend._flatten_tasks.side_effect = lambda loaded: loaded
+        safe_pairs = {
+            "mmlu_subject_00": (object(), object()),
+            "mmlu_subject_01": (object(), object()),
+        }
+
+        with mock.patch.object(phase7_renderer, "_backend", return_value=backend), mock.patch.object(
+            phase7_renderer,
+            "_safe_dataset_pair",
+            side_effect=lambda task, cache_dir: safe_pairs[
+                next(name for name, value in tasks.items() if value is task)
+            ],
+        ):
+            phase7_renderer._state_for_subject("mmlu_subject_00", cache_dir="/datasets")
+            phase7_renderer._state_for_subject("mmlu_subject_01", cache_dir="/datasets")
+
+        manager.load_task_or_group.assert_called_once_with("mmlu")
+        backend._task_manager.assert_called_once_with()
+        backend._flatten_tasks.assert_called_once_with(tasks)
+        self.assertEqual(list(phase7_renderer._task_map()), sorted(tasks))
 
 
 if __name__ == "__main__":

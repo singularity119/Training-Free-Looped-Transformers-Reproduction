@@ -106,7 +106,7 @@ def _backend() -> Any:
     return LmEvalMMLURendererBackend()
 
 
-def _task_map() -> Dict[str, Any]:
+def _build_task_map() -> Dict[str, Any]:
     backend = _backend()
     manager = backend._task_manager()
     loaded = manager.load_task_or_group(TASK_GROUP)
@@ -115,6 +115,18 @@ def _task_map() -> Dict[str, Any]:
     if len(tasks) != EXPECTED_SUBJECT_COUNT:
         raise Phase7ContractError("lm-eval MMLU task count differs")
     return dict(sorted(tasks.items()))
+
+
+_TASK_MAP_CACHE: Dict[str, Any] | None = None
+
+
+def _task_map() -> Dict[str, Any]:
+    """Build the frozen 57-task map once per producer process."""
+
+    global _TASK_MAP_CACHE
+    if _TASK_MAP_CACHE is None:
+        _TASK_MAP_CACHE = _build_task_map()
+    return _TASK_MAP_CACHE
 
 
 def _dataset_cache_root(cache_dir: str | None = None) -> str:
