@@ -35,6 +35,7 @@ DATASET_REPO = "cais/mmlu"
 DATASET_REVISION = "c30699e8356da336a370243923dbaf21066bb9fe"
 EXPECTED_MODELS = ("qwen25_3b", "llama32_3b", "gemma2_2b")
 EXPECTED_COUNTS = {"qwen25_3b": 13, "llama32_3b": 13, "gemma2_2b": 9}
+FROZEN_BATCH_SIZES = {"qwen25_3b": 16, "llama32_3b": 16, "gemma2_2b": 8}
 FROZEN_MODELS = {
     "qwen25_3b": {
         "repo": "Qwen/Qwen2.5-3B",
@@ -303,7 +304,8 @@ def validate_card(card: Mapping[str, Any]) -> None:
     _require(
         runtime.get("dtype") == "bfloat16"
         and runtime.get("quantization") == "none"
-        and runtime.get("batch_size") == 16,
+        and runtime.get("batch_size") == 16
+        and runtime.get("batch_size_by_model") == FROZEN_BATCH_SIZES,
         "Gate E runtime contract differs",
     )
     _require(isinstance(grid, Mapping), "Gate E card lacks loop grid")
@@ -356,9 +358,11 @@ def expand_cells(card: Mapping[str, Any]) -> List[Dict[str, Any]]:
 
     validate_card(card)
     grid = card["loop_grid"]
+    batch_sizes = card["runtime"]["batch_size_by_model"]
     cells: List[Dict[str, Any]] = []
     for model in card["models"]:
         key = str(model["model_key"])
+        batch_size = int(batch_sizes[key])
         cells.append(
             {
                 "cell_id": "%s__no_loop" % key,
@@ -379,6 +383,7 @@ def expand_cells(card: Mapping[str, Any]) -> List[Dict[str, Any]]:
                 "beta": None,
                 "decode_mode": None,
                 "dtype": "bfloat16",
+                "batch_size": batch_size,
             }
         )
         for window in model["windows"]:
@@ -408,6 +413,7 @@ def expand_cells(card: Mapping[str, Any]) -> List[Dict[str, Any]]:
                             "beta": float(grid["beta"]),
                             "decode_mode": str(grid["decode_mode"]),
                             "dtype": "bfloat16",
+                            "batch_size": batch_size,
                         }
                     )
     for index, cell in enumerate(cells):
@@ -416,7 +422,7 @@ def expand_cells(card: Mapping[str, Any]) -> List[Dict[str, Any]]:
     return cells
 
 
-def validate_cells(cells: Sequence[Mapping[str, Any]], *, formal: bool) -> None:
+def validate_cells(cells: Sequence[Mapping[str, Any]], *, formal: bool, allow_legacy_batch: bool = False) -> None:
     _require(isinstance(cells, Sequence) and not isinstance(cells, (str, bytes)), "cell list is invalid")
     seen_ids = set()
     per_model: Dict[str, List[Mapping[str, Any]]] = {key: [] for key in EXPECTED_MODELS}
@@ -429,6 +435,11 @@ def validate_cells(cells: Sequence[Mapping[str, Any]], *, formal: bool) -> None:
         _require(key in per_model, "cell model key differs")
         seen_ids.add(cell_id)
         per_model[key].append(cell)
+        observed_batch = cell.get("batch_size")
+        if allow_legacy_batch and observed_batch is None:
+            observed_batch = 16
+        expected_batch = 16 if allow_legacy_batch else FROZEN_BATCH_SIZES[key]
+        _require(observed_batch == expected_batch, "cell batch size differs")
         loop = cell.get("loop_enabled")
         _require(isinstance(loop, bool), "loop_enabled must be boolean")
         if not loop:
@@ -669,8 +680,34 @@ def _validate_retained_cell_metadata(root: Path, manifest: Mapping[str, Any], ce
         and receipt.get("outcome_aggregates_computed") is False,
         "retained cell producer receipt differs",
     )
+    _validate_cell_batch_metadata(cell_root, cell)
     _validate_model_revision(cell_root / "model_revision.json", cell)
     return cell_root
+
+
+def _validate_cell_batch_metadata(cell_root: Path, cell: Mapping[str, Any]) -> int:
+    """Close the actual evaluator batch while accepting legacy batch-16 receipts."""
+
+    expected = cell.get("batch_size")
+    _require(expected == FROZEN_BATCH_SIZES.get(str(cell.get("model_key"))), "cell batch binding differs")
+    command = _read_json(cell_root / "command.json")
+    _require(isinstance(command, Mapping) and command.get("batch_size") == expected, "cell command batch differs")
+    for name in ("producer_receipt.json", "resource.json"):
+        payload = _read_json(cell_root / name)
+        observed = payload.get("batch_size") if isinstance(payload, Mapping) else None
+        legacy_batch_16 = observed is None and expected == 16
+        _require(observed == expected or legacy_batch_16, "%s batch differs" % name)
+    return int(expected)
+
+
+def _retry_cards_compatible(source: Mapping[str, Any], current: Mapping[str, Any]) -> bool:
+    source_copy = json.loads(json.dumps(source))
+    current_copy = json.loads(json.dumps(current))
+    for payload in (source_copy, current_copy):
+        runtime = payload.get("runtime")
+        if isinstance(runtime, dict):
+            runtime.pop("batch_size_by_model", None)
+    return source_copy == current_copy
 
 
 def _write_static_receipt(root: Path, manifest: Mapping[str, Any]) -> Dict[str, Any]:
@@ -765,10 +802,13 @@ def prepare_run(
         source_root = _run_root(Path(retry_source_run_root))
         source_manifest = _load_run(source_root)
         _require(_base_mode(str(source_manifest["mode"])) == _base_mode(mode), "retry source mode differs")
-        _require(source_manifest.get("panel_card") == card, "retry source card differs")
+        source_card = source_manifest.get("panel_card")
+        _require(isinstance(source_card, Mapping) and _retry_cards_compatible(source_card, card), "retry source card differs")
         source_cells = list(source_manifest.get("cells", []))
+        source_runtime = source_card.get("runtime")
+        legacy_source_batch = not isinstance(source_runtime, Mapping) or "batch_size_by_model" not in source_runtime
         if _is_formal_mode(mode):
-            validate_cells(source_cells, formal=True)
+            validate_cells(source_cells, formal=True, allow_legacy_batch=legacy_source_batch)
         else:
             _require(source_cells and all(cell.get("model_key") in EXPECTED_MODELS for cell in source_cells), "retry debug cells differ")
         identity_path = Path(source_manifest["identity_manifest"]).expanduser().resolve()
@@ -780,6 +820,12 @@ def prepare_run(
             expected_subjects=EXPECTED_SUBJECTS if _is_formal_mode(mode) else 2,
         )
         selected = [dict(cell) for cell in source_cells]
+        for cell in selected:
+            key = str(cell.get("model_key"))
+            _require(key in FROZEN_BATCH_SIZES, "retry cell model differs")
+            cell["batch_size"] = FROZEN_BATCH_SIZES[key]
+        if _is_formal_mode(mode):
+            validate_cells(selected, formal=True)
         retained = sorted(set(retained_cell_indices))
         _require(retained and len(retained) < len(selected), "retry retained cell set is invalid")
         _require(all(isinstance(index, int) and not isinstance(index, bool) and 0 <= index < len(selected) for index in retained), "retry retained cell index is invalid")
@@ -787,8 +833,10 @@ def prepare_run(
         _require(execution_indices, "retry execution set is empty")
         for index in retained:
             source_cell = _cell_for_index(source_manifest, index)
-            source_cell_root = _validate_retained_cell_metadata(source_root, source_manifest, source_cell)
-            retained_roots[str(source_cell["cell_id"])] = str(source_cell_root)
+            current_cell = selected[index]
+            _require(source_cell.get("cell_id") == current_cell.get("cell_id"), "retry retained cell identity differs")
+            source_cell_root = _validate_retained_cell_metadata(source_root, source_manifest, current_cell)
+            retained_roots[str(current_cell["cell_id"])] = str(source_cell_root)
         retry_metadata = {
             "source_run_root": str(source_root),
             "source_mode": str(source_manifest["mode"]),
@@ -991,7 +1039,8 @@ def build_launch(
             "allocator_headroom_fraction": 0.10,
             "bounded_worker_pool": True,
             "shared_model_or_tensor_state": False,
-            "batch_size_changed": False,
+            "batch_size_changed": True,
+            "batch_size_by_model": dict(FROZEN_BATCH_SIZES),
         },
         "created_at": utc_now(),
     }
@@ -1146,10 +1195,19 @@ def project_sanitized_outcomes(result: Mapping[str, Any], expected_rows: Sequenc
     return rows
 
 
-def _resource_snapshot(torch_module: Any, *, started: float, record_count: int, status: str, error: Optional[BaseException]) -> Dict[str, Any]:
+def _resource_snapshot(
+    torch_module: Any,
+    *,
+    started: float,
+    record_count: int,
+    status: str,
+    error: Optional[BaseException],
+    batch_size: int,
+) -> Dict[str, Any]:
     payload: Dict[str, Any] = {
         "schema_version": "loopscope.phase7.gate-e-process-resource.v1",
         "status": status,
+        "batch_size": batch_size,
         "elapsed_seconds": max(0.0, time.monotonic() - started),
         "record_count": record_count,
         "throughput_records_per_second": None,
@@ -1199,6 +1257,8 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
     cell = _cell_for_index(manifest, cell_index)
     _require(cell_index in _execution_cell_indices(manifest), "retained cell cannot be re-run")
     expected_rows = _load_records_from_run(manifest)
+    batch_size = int(cell["batch_size"])
+    _require(batch_size == FROZEN_BATCH_SIZES[str(cell["model_key"])], "runtime cell batch differs")
     cell_root = root / "cells" / str(cell["cell_id"])
     _require(not cell_root.exists() and not cell_root.is_symlink(), "cell output path already exists")
     cell_root.mkdir(parents=False, exist_ok=False)
@@ -1209,7 +1269,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
             "gate": GATE,
             "mode": manifest["mode"],
             "cell": cell,
-            "batch_size": 16,
+            "batch_size": batch_size,
             "num_fewshot": 5,
             "tasks": "mmlu" if _is_formal_mode(str(manifest["mode"])) else ",".join(DEBUG_TASKS),
             "limit": None if _is_formal_mode(str(manifest["mode"])) else 2,
@@ -1254,7 +1314,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
                 output_dir=cell_root,
                 limit=None if _is_formal_mode(str(manifest["mode"])) else 2,
                 num_fewshot=5,
-                batch_size="16",
+                batch_size=str(batch_size),
                 dtype="bfloat16",
                 loop_config=loop_config,
                 revision=str(cell["model_revision"]),
@@ -1271,6 +1331,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
                 "status": "COMPLETED",
                 "cell_id": cell["cell_id"],
                 "mode": manifest["mode"],
+                "batch_size": batch_size,
                 "record_count": len(sanitized),
                 "subject_count": len({row["subject"] for row in sanitized}),
                 "outcome_aggregates_computed": False,
@@ -1288,11 +1349,13 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
                 record_count=len(sanitized),
                 status="COMPLETED" if error is None else "FAILED",
                 error=error,
+                batch_size=batch_size,
             )
         else:
             resource = {
                 "schema_version": "loopscope.phase7.gate-e-process-resource.v1",
                 "status": "FAILED",
+                "batch_size": batch_size,
                 "elapsed_seconds": max(0.0, time.monotonic() - started),
                 "record_count": len(sanitized),
                 "throughput_records_per_second": None,
@@ -1493,6 +1556,7 @@ def _outcome_rows_for_cell(root: Path, cell: Mapping[str, Any], expected: Sequen
     _require(observed_names == allowed_names, "cell artifact barrier differs")
     receipt = _read_json(cell_root / "producer_receipt.json")
     _require(isinstance(receipt, Mapping) and receipt.get("status") == "COMPLETED", "cell producer receipt is not complete")
+    _validate_cell_batch_metadata(cell_root, cell)
     _validate_model_revision(cell_root / "model_revision.json", cell)
     rows = _read_jsonl(cell_root / "outcomes.jsonl")
     _require(len(rows) == len(expected), "outcome row count differs")
@@ -1529,12 +1593,19 @@ def verify_canary(run_root: Path, cell_indices: Sequence[int]) -> Dict[str, Any]
         cell = _cell_for_index(manifest, index)
         rows = _outcome_rows_for_cell(root, cell, expected)
         resource = _read_json(_cell_artifact_root(root, manifest, cell) / "resource.json")
-        _require(resource.get("status") == "COMPLETED" and resource.get("oom_detected") is False, "canary resource receipt differs")
+        _require(
+            resource.get("status") == "COMPLETED"
+            and resource.get("oom_detected") is False
+            and resource.get("batch_size") in (None, cell["batch_size"])
+            and not (resource.get("batch_size") is None and cell["batch_size"] != 16),
+            "canary resource receipt differs",
+        )
         completed.append(
             {
                 "cell_index": index,
                 "cell_id": cell["cell_id"],
                 "model_key": cell["model_key"],
+                "batch_size": cell["batch_size"],
                 "record_count": len(rows),
                 "subject_count": len({row["subject"] for row in rows}),
                 "peak_memory_allocated_bytes": resource.get("peak_memory_allocated_bytes"),
@@ -1575,6 +1646,7 @@ def verify_preoutcome(run_root: Path) -> Dict[str, Any]:
             {
                 "cell_id": cell["cell_id"],
                 "model_key": cell["model_key"],
+                "batch_size": cell["batch_size"],
                 "record_count": len(rows),
                 "subject_count": len({row["subject"] for row in rows}),
             }

@@ -23,7 +23,12 @@
   "runtime": {
     "dtype": "bfloat16",
     "quantization": "none",
-    "batch_size": 16
+    "batch_size": 16,
+    "batch_size_by_model": {
+      "qwen25_3b": 16,
+      "llama32_3b": 16,
+      "gemma2_2b": 8
+    }
   },
   "loop_grid": {
     "k": [2, 3],

@@ -37,6 +37,10 @@ class Phase7OutcomeTests(unittest.TestCase):
         )
         self.assertEqual(sum(not cell["loop_enabled"] for cell in cells), 3)
         self.assertEqual(len({cell["cell_id"] for cell in cells}), 35)
+        self.assertEqual(
+            {key: {cell["batch_size"] for cell in cells if cell["model_key"] == key} for key in outcome.EXPECTED_MODELS},
+            {"qwen25_3b": {16}, "llama32_3b": {16}, "gemma2_2b": {8}},
+        )
         qwen = [cell for cell in cells if cell["model_key"] == "qwen25_3b" and cell["loop_enabled"]]
         self.assertEqual(
             [(cell["window_half_open"], cell["k"], cell["cache_strategy"]) for cell in qwen[:4]],
@@ -159,6 +163,11 @@ class Phase7OutcomeTests(unittest.TestCase):
     def test_formal_retry_reuses_a_completed_cell_without_relaunching_it(self) -> None:
         card = outcome.load_card()
         cells = outcome.expand_cells(card)
+        legacy_card = json.loads(json.dumps(card))
+        legacy_card["runtime"].pop("batch_size_by_model")
+        legacy_cells = [dict(cell) for cell in cells]
+        for cell in legacy_cells:
+            cell.pop("batch_size")
         records = self._formal_records()
         with tempfile.TemporaryDirectory() as temporary:
             source_root = Path(temporary) / "source"
@@ -173,19 +182,19 @@ class Phase7OutcomeTests(unittest.TestCase):
                         "gate": "E",
                         "mode": "formal",
                         "git": {"expected_commit": "source"},
-                        "panel_card": card,
+                        "panel_card": legacy_card,
                         "identity_manifest": str(identity_path),
-                        "cells": cells,
+                        "cells": legacy_cells,
                         "execution_cell_indices": list(range(35)),
                         "retained_cell_roots": {},
                     }
                 ),
                 encoding="utf-8",
             )
-            retained = cells[0]
+            retained = legacy_cells[0]
             cell_root = source_root / "cells" / retained["cell_id"]
             cell_root.mkdir()
-            (cell_root / "command.json").write_text("{}", encoding="utf-8")
+            (cell_root / "command.json").write_text(json.dumps({"batch_size": 16}), encoding="utf-8")
             (cell_root / "model_revision.json").write_text(
                 json.dumps(
                     {
@@ -228,6 +237,10 @@ class Phase7OutcomeTests(unittest.TestCase):
             self.assertEqual(static["retained_cell_count"], 1)
             retry_manifest = outcome._load_run(retry_root)
             self.assertEqual(outcome._cell_artifact_root(retry_root, retry_manifest, cells[0]), cell_root.resolve())
+            self.assertEqual(
+                {key: {cell["batch_size"] for cell in retry_manifest["cells"] if cell["model_key"] == key} for key in outcome.EXPECTED_MODELS},
+                {"qwen25_3b": {16}, "llama32_3b": {16}, "gemma2_2b": {8}},
+            )
 
     def test_sbatch_is_self_contained_on_compute_nodes(self) -> None:
         text = outcome._sbatch_text(
@@ -303,12 +316,29 @@ class Phase7OutcomeTests(unittest.TestCase):
                 record_count=0,
                 status="FAILED",
                 error=error,
+                batch_size=8,
             )
         self.assertEqual(snapshot["error_type"], "PermissionError")
         self.assertEqual(snapshot["error_errno"], 13)
         self.assertEqual(snapshot["error_filename"], "/restricted/path")
         self.assertEqual(snapshot["error_frames"][-1]["function"], "fail")
+        self.assertEqual(snapshot["batch_size"], 8)
         self.assertNotIn("error_message", snapshot)
+
+    def test_gemma_batch_receipts_must_match_the_frozen_binding(self) -> None:
+        cell = {"model_key": "gemma2_2b", "batch_size": 8}
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for name, payload in (
+                ("command.json", {"batch_size": 8}),
+                ("producer_receipt.json", {"batch_size": 8}),
+                ("resource.json", {"batch_size": 8}),
+            ):
+                (root / name).write_text(json.dumps(payload), encoding="utf-8")
+            self.assertEqual(outcome._validate_cell_batch_metadata(root, cell), 8)
+            (root / "command.json").write_text(json.dumps({"batch_size": 16}), encoding="utf-8")
+            with self.assertRaises(outcome.Phase7OutcomeError):
+                outcome._validate_cell_batch_metadata(root, cell)
 
     def test_submit_run_can_select_a_frozen_pool_subset(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -349,7 +379,7 @@ class Phase7OutcomeTests(unittest.TestCase):
                 "schema_version": outcome.RUN_SCHEMA,
                 "gate": "E",
                 "mode": "formal_retry",
-                "cells": [{"index": 0, "cell_id": "qwen25_3b__no_loop", "model_key": "qwen25_3b"}],
+                "cells": [{"index": 0, "cell_id": "qwen25_3b__no_loop", "model_key": "qwen25_3b", "batch_size": 16}],
                 "execution_cell_indices": [0],
             }
             (root / "manifest" / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
@@ -358,6 +388,7 @@ class Phase7OutcomeTests(unittest.TestCase):
                 json.dumps(
                     {
                         "status": "COMPLETED",
+                        "batch_size": 16,
                         "oom_detected": False,
                         "peak_memory_allocated_bytes": 10,
                         "peak_memory_reserved_bytes": 20,
