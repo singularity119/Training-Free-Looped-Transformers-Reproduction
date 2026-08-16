@@ -187,3 +187,25 @@ PYTHONPATH=src python scripts/loopscope/verify_phase7_gate_e_panel.py \
 Only a `PASS` pre-outcome receipt permits the single combined paired analysis
 and its separate fresh-process verifier.  Gate E does not re-score V3, add a
 window, produce plots, or update the final Chinese report.
+
+## Gate F V3 point-rank Top-2 outcome panel
+
+Gate F reuses the verified Gate E no-loop baselines and executes only 24 new
+width-three loop cells: the two frozen model-local V3.1 point-rank windows for
+each model, crossed with `k={2,3}` and `cache={first,last}`.  Its card is
+`configs/loopscope/phase7_gate_f_outcome_card.json`; the three retained
+baselines plus those new cells form the 27-cell analysis panel.  Before the
+single analysis/verifier pass, use the Gate F entrypoints and the same
+pre-outcome completeness barrier as Gate E:
+
+```bash
+PYTHONPATH=src python scripts/loopscope/run_phase7_gate_f_panel.py prepare \
+  --mode formal --run-root <fresh-formal-root> --expected-commit <commit> \
+  --cache-dir "$HF_DATASETS_CACHE"
+
+PYTHONPATH=src python scripts/loopscope/verify_phase7_gate_f_panel.py \
+  preoutcome --run-root <formal-root>
+```
+
+The Gate F card is post-terminal exploratory.  It must not rerun a baseline,
+alter the frozen point-rank panel, inspect partial outcomes, or create plots.

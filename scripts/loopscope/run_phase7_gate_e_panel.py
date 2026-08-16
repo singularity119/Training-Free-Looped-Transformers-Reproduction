@@ -15,6 +15,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from tflt.loopscope.phase7_outcome import (  # noqa: E402
+    GATE,
     Phase7OutcomeError,
     analyze_once,
     build_launch,
@@ -37,7 +38,7 @@ def _indices(text: str) -> list[int]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Phase 7 Gate E frozen outcome panel launcher.")
+    parser = argparse.ArgumentParser(description="Phase 7 Gate %s frozen outcome panel launcher." % GATE)
     sub = parser.add_subparsers(dest="command", required=True)
 
     prepare = sub.add_parser("prepare", help="Freeze one fresh static run root before model forwards.")

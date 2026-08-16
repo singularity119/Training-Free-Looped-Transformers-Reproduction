@@ -1,4 +1,4 @@
-"""Gate E's minimal, outcome-barriered MMLU 5-shot panel runner.
+"""Phase 7's minimal, outcome-barriered MMLU 5-shot panel runner.
 
 The module intentionally keeps the full lm-eval result only in memory.  It
 persists a readable test membership plus the minimal per-identity correctness
@@ -26,17 +26,60 @@ import traceback
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 
 
-GATE = "E"
-CARD_RELATIVE = Path("configs/loopscope/phase7_gate_e_outcome_card.json")
-CARD_SCHEMA = "loopscope.phase7.gate-e-card.v1"
-RUN_SCHEMA = "loopscope.phase7.gate-e-run.v1"
-OUTCOME_SCHEMA = "loopscope.phase7.gate-e-outcome-row.v1"
+PROFILE = os.environ.get("LOOPSCOPE_PHASE7_OUTCOME_PROFILE", "gate_e")
+_require_profile = PROFILE in {"gate_e", "gate_f"}
+if not _require_profile:
+    raise RuntimeError("unsupported Phase 7 outcome profile: %s" % PROFILE)
+
+GATE = "F" if PROFILE == "gate_f" else "E"
+GATE_SLUG = "gate-f" if PROFILE == "gate_f" else "gate-e"
+CARD_RELATIVE = Path(
+    "configs/loopscope/phase7_gate_f_outcome_card.json"
+    if PROFILE == "gate_f"
+    else "configs/loopscope/phase7_gate_e_outcome_card.json"
+)
+CARD_SCHEMA = "loopscope.phase7.%s-card.v1" % GATE_SLUG
+RUN_SCHEMA = "loopscope.phase7.%s-run.v1" % GATE_SLUG
+OUTCOME_SCHEMA = "loopscope.phase7.%s-outcome-row.v1" % GATE_SLUG
+RUNNER_RELATIVE = Path(
+    "scripts/loopscope/run_phase7_gate_f_panel.py"
+    if PROFILE == "gate_f"
+    else "scripts/loopscope/run_phase7_gate_e_panel.py"
+)
 DATASET_REPO = "cais/mmlu"
 DATASET_REVISION = "c30699e8356da336a370243923dbaf21066bb9fe"
 EXPECTED_MODELS = ("qwen25_3b", "llama32_3b", "gemma2_2b")
-EXPECTED_COUNTS = {"qwen25_3b": 13, "llama32_3b": 13, "gemma2_2b": 9}
+EXPECTED_COUNTS = {"qwen25_3b": 9, "llama32_3b": 9, "gemma2_2b": 9} if PROFILE == "gate_f" else {"qwen25_3b": 13, "llama32_3b": 13, "gemma2_2b": 9}
 FROZEN_BATCH_SIZES = {"qwen25_3b": 16, "llama32_3b": 16, "gemma2_2b": 8}
-FROZEN_MODELS = {
+FROZEN_WINDOW_WIDTH = 3 if PROFILE == "gate_f" else 4
+FORMAL_PANEL_CELL_COUNT = 27 if PROFILE == "gate_f" else 35
+GATE_F_BASELINE_ROOT = Path(
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/"
+    "runs/phase7-gate-e-20260816T041724Z-formal-remaining24-gitless"
+)
+FROZEN_MODELS = ({
+    "qwen25_3b": {
+        "repo": "Qwen/Qwen2.5-3B",
+        "revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+        "terminal": "SELECTED_WINDOW",
+        "interpretation": "POST_TERMINAL_V3_POINT_RANK_TOP2_OUTCOME_EXPLORATORY",
+        "windows": ((14, 17), (12, 15)),
+    },
+    "llama32_3b": {
+        "repo": "meta-llama/Llama-3.2-3B",
+        "revision": "13afe5124825b4f3751f836b40dafda64c1ed062",
+        "terminal": "SELECTED_WINDOW",
+        "interpretation": "POST_TERMINAL_V3_POINT_RANK_TOP2_OUTCOME_EXPLORATORY",
+        "windows": ((11, 14), (10, 13)),
+    },
+    "gemma2_2b": {
+        "repo": "google/gemma-2-2b",
+        "revision": "c5ebcd40d208330abc697524c919956e692655cf",
+        "terminal": "ABSTAIN_COMBINED_RANK_UNSTABLE",
+        "interpretation": "POST_TERMINAL_V3_POINT_RANK_TOP2_OUTCOME_EXPLORATORY",
+        "windows": ((13, 16), (10, 13)),
+    },
+} if PROFILE == "gate_f" else {
     "qwen25_3b": {
         "repo": "Qwen/Qwen2.5-3B",
         "revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
@@ -58,7 +101,7 @@ FROZEN_MODELS = {
         "interpretation": "post_ranking_exploratory_after_abstain",
         "windows": ((10, 14), (12, 16)),
     },
-}
+})
 EXPECTED_POPULATION = 14042
 EXPECTED_SUBJECTS = 57
 DEBUG_TASKS = ("mmlu_abstract_algebra", "mmlu_anatomy")
@@ -180,12 +223,12 @@ def validate_git(expected_commit: str, *, require_clean: bool) -> Dict[str, Any]
         text=True,
     ).returncode
     status = _run_command((git_binary, "status", "--porcelain"), cwd=root)
-    _require(top == str(root), "repository root differs from the Gate E clone")
-    _require(branch == "loopscope", "Gate E must run on loopscope branch")
+    _require(top == str(root), "repository root differs from the Gate %s clone" % GATE)
+    _require(branch == "loopscope", "Gate %s must run on loopscope branch" % GATE)
     _require(commit == expected, "working commit differs from the frozen launcher commit")
     _require(ancestry == 0, "required LoopScope ancestry is absent")
     if require_clean:
-        _require(status == "", "remote Gate E checkout must be clean")
+        _require(status == "", "remote Gate %s checkout must be clean" % GATE)
     return {
         "repository": str(root),
         "branch": branch,
@@ -263,15 +306,15 @@ def _finite_number(value: Any, label: str) -> float:
 def load_card(path: Optional[Path] = None) -> Dict[str, Any]:
     card_path = Path(path) if path is not None else repository_root() / CARD_RELATIVE
     card = _read_json(card_path)
-    _require(isinstance(card, dict), "Gate E card root must be an object")
+    _require(isinstance(card, dict), "Gate %s card root must be an object" % GATE)
     validate_card(card)
     return dict(card)
 
 
 def validate_card(card: Mapping[str, Any]) -> None:
-    _require(isinstance(card, Mapping), "Gate E card must be an object")
-    _require(card.get("schema_version") == CARD_SCHEMA, "unsupported Gate E card schema")
-    _require(card.get("gate") == GATE and card.get("phase") == 7, "Gate E card identity differs")
+    _require(isinstance(card, Mapping), "Gate %s card must be an object" % GATE)
+    _require(card.get("schema_version") == CARD_SCHEMA, "unsupported Gate %s card schema" % GATE)
+    _require(card.get("gate") == GATE and card.get("phase") == 7, "Gate %s card identity differs" % GATE)
     dataset = card.get("dataset")
     evaluator = card.get("evaluator")
     runtime = card.get("runtime")
@@ -317,8 +360,8 @@ def validate_card(card: Mapping[str, Any]) -> None:
         and _finite_number(grid.get("alpha"), "loop alpha") == 1.0
         and _finite_number(grid.get("beta"), "loop beta") == 0.0
         and grid.get("decode_mode") == "full"
-        and grid.get("window_width") == 4,
-        "Gate E loop grid differs",
+        and grid.get("window_width") == FROZEN_WINDOW_WIDTH,
+        "Gate %s loop grid differs" % GATE,
     )
     _require(isinstance(analysis, Mapping), "Gate E card lacks analysis")
     _require(
@@ -327,6 +370,16 @@ def validate_card(card: Mapping[str, Any]) -> None:
         and analysis.get("paired_bootstrap") == "subject_stratified_percentile_95",
         "Gate E paired analysis contract differs",
     )
+    if GATE == "F":
+        baseline_policy = card.get("baseline_policy")
+        _require(isinstance(baseline_policy, Mapping), "Gate F card lacks baseline reuse policy")
+        _require(
+            baseline_policy.get("mode") == "reuse_verified_gate_e_same_model_baseline"
+            and baseline_policy.get("source_run_root") == str(GATE_F_BASELINE_ROOT)
+            and baseline_policy.get("retained_baseline_count") == 3
+            and baseline_policy.get("rerun_forbidden") is True,
+            "Gate F baseline reuse policy differs",
+        )
     _require(isinstance(models, list) and len(models) == len(EXPECTED_MODELS), "Gate E model membership differs")
     _require(tuple(str(item.get("model_key")) for item in models if isinstance(item, Mapping)) == EXPECTED_MODELS, "Gate E model order differs")
     for model in models:
@@ -339,14 +392,14 @@ def validate_card(card: Mapping[str, Any]) -> None:
         _require(model.get("outcome_interpretation") == frozen["interpretation"], "model outcome interpretation differs")
         _require(model.get("expected_cell_count") == EXPECTED_COUNTS[key], "per-model cell count differs")
         windows = model.get("windows")
-        expected_windows = 3 if key != "gemma2_2b" else 2
+        expected_windows = len(FROZEN_MODELS[key]["windows"])
         _require(isinstance(windows, list) and len(windows) == expected_windows, "model window count differs")
         seen = []
         for rank, window in enumerate(windows, start=1):
             _require(isinstance(window, Mapping), "window entry must be an object")
             start = window.get("start")
             stop = window.get("stop_exclusive")
-            _require(isinstance(start, int) and isinstance(stop, int) and stop - start == 4, "window width differs")
+            _require(isinstance(start, int) and isinstance(stop, int) and stop - start == FROZEN_WINDOW_WIDTH, "window width differs")
             _require(window.get("rank") == rank, "window rank/order differs")
             _require((start, stop) not in seen, "duplicate model window")
             seen.append((start, stop))
@@ -454,7 +507,7 @@ def validate_cells(cells: Sequence[Mapping[str, Any]], *, formal: bool, allow_le
             _require(cell.get("strategy") == "euler", "loop strategy differs")
             _require(cell.get("decode_mode") == "full", "loop decode differs")
     if formal:
-        _require(len(cells) == 35, "formal panel does not contain 35 cells")
+        _require(len(cells) == FORMAL_PANEL_CELL_COUNT, "formal panel cell count differs")
         for key, expected in EXPECTED_COUNTS.items():
             rows = per_model[key]
             _require(len(rows) == expected, "per-model formal cell count differs")
@@ -462,7 +515,7 @@ def validate_cells(cells: Sequence[Mapping[str, Any]], *, formal: bool, allow_le
             loop_rows = [item for item in rows if item["loop_enabled"]]
             _require(len(loop_rows) == expected - 1, "loop panel count differs")
             expected_grid = {(item["window_half_open"], item["k"], item["cache_strategy"]) for item in loop_rows}
-            window_count = 3 if key != "gemma2_2b" else 2
+            window_count = len(FROZEN_MODELS[key]["windows"])
             _require(len(expected_grid) == window_count * 4, "loop Cartesian grid is incomplete")
 
 
@@ -731,7 +784,7 @@ def _write_static_receipt(root: Path, manifest: Mapping[str, Any]) -> Dict[str, 
         _require(len(cells) >= 1, "debug run has no cells")
         _require(all(cell["model_key"] in EXPECTED_MODELS for cell in cells), "debug model membership differs")
     receipt = {
-        "schema_version": "loopscope.phase7.gate-e-static-receipt.v1",
+        "schema_version": "loopscope.phase7.%s-static-receipt.v1" % GATE_SLUG,
         "status": "PASS",
         "mode": mode,
         "run_root": str(root),
@@ -746,6 +799,42 @@ def _write_static_receipt(root: Path, manifest: Mapping[str, Any]) -> Dict[str, 
     }
     _write_new_json(root / "manifest" / "static_preoutcome_receipt.json", receipt)
     return receipt
+
+
+def _gate_f_baseline_references(card: Mapping[str, Any], cells: Sequence[Mapping[str, Any]]) -> Dict[str, str]:
+    """Bind Gate F baselines to the verified Gate E artifacts without reading outcomes."""
+
+    _require(GATE == "F", "external baseline references are only valid for Gate F")
+    policy = card["baseline_policy"]
+    source_root = _run_root(Path(str(policy["source_run_root"])))
+    source_manifest = _read_json(source_root / "manifest" / "run_manifest.json")
+    _require(
+        isinstance(source_manifest, Mapping)
+        and source_manifest.get("gate") == "E"
+        and source_manifest.get("schema_version") == "loopscope.phase7.gate-e-run.v1",
+        "Gate F baseline source is not a Gate E formal run",
+    )
+    _require(_is_formal_mode(str(source_manifest.get("mode"))), "Gate F baseline source mode differs")
+    source_cells = source_manifest.get("cells")
+    _require(isinstance(source_cells, list), "Gate F baseline source cells are invalid")
+    source_by_id = {str(cell.get("cell_id")): cell for cell in source_cells if isinstance(cell, Mapping)}
+    current_baselines = [cell for cell in cells if not bool(cell["loop_enabled"])]
+    _require(len(current_baselines) == 3, "Gate F baseline membership differs")
+    references: Dict[str, str] = {}
+    for cell in current_baselines:
+        source = source_by_id.get(str(cell["cell_id"]))
+        _require(isinstance(source, Mapping), "Gate E baseline cell is absent")
+        _require(
+            source.get("role") == "no_loop_baseline"
+            and source.get("model_repo") == cell.get("model_repo")
+            and source.get("model_revision") == cell.get("model_revision"),
+            "Gate E baseline provenance differs",
+        )
+        source_root_for_cell = _cell_artifact_root(source_root, source_manifest, source)
+        _validate_retained_cell_metadata(source_root, source_manifest, source)
+        references[str(cell["cell_id"])] = str(source_root_for_cell)
+    _require(len(references) == int(policy["retained_baseline_count"]), "Gate F retained baseline count differs")
+    return references
 
 
 def prepare_run(
@@ -772,13 +861,20 @@ def prepare_run(
     for name in ("inputs", "manifest", "cells", "logs", "resource", "slurm"):
         (root / name).mkdir(exist_ok=False)
     retained_roots: Dict[str, str] = {}
+    external_baseline_cell_ids: List[str] = []
     retry_metadata: Optional[Dict[str, Any]] = None
     if mode == "formal":
         records = build_canonical_test_manifest(cache_dir=cache_dir)
         identity_path = root / "inputs" / "canonical_test_manifest.json"
         _write_new_json(identity_path, {"records": records})
         selected = list(formal_cells)
-        execution_indices = list(range(len(selected)))
+        if GATE == "F":
+            retained_roots = _gate_f_baseline_references(card, selected)
+            external_baseline_cell_ids = sorted(retained_roots)
+            execution_indices = [index for index, cell in enumerate(selected) if bool(cell["loop_enabled"])]
+            _require(len(execution_indices) == 24, "Gate F execution panel differs")
+        else:
+            execution_indices = list(range(len(selected)))
     elif mode == "debug":
         _require(formal_identity_manifest is not None, "debug preparation requires frozen formal identity manifest")
         source = _read_json(Path(formal_identity_manifest))
@@ -858,6 +954,7 @@ def prepare_run(
         "cells": selected,
         "execution_cell_indices": execution_indices,
         "retained_cell_roots": retained_roots,
+        "external_baseline_cell_ids": external_baseline_cell_ids,
         "retry": retry_metadata,
         "outcome_aggregates_computed": False,
         "created_at": utc_now(),
@@ -893,6 +990,11 @@ def verify_static(run_root: Path) -> Dict[str, Any]:
     _require(set(retained_roots) == expected_retained, "retry retained-cell membership differs")
     if _is_formal_mode(str(manifest["mode"])):
         validate_cells(manifest["cells"], formal=True)
+        if GATE == "F":
+            external = manifest.get("external_baseline_cell_ids")
+            expected_external = {str(cell["cell_id"]) for cell in cells if not bool(cell["loop_enabled"])}
+            _require(isinstance(external, list) and set(external) == expected_external, "Gate F external baseline membership differs")
+            _require(expected_retained == expected_external, "Gate F baseline cells must not be rerun")
     return {
         "status": "PASS",
         "mode": manifest["mode"],
@@ -941,11 +1043,11 @@ def _sbatch_text(manifest: Mapping[str, Any], launch: Mapping[str, Any]) -> str:
     if _base_mode(mode) == "debug":
         _require(scheduler["partition"] == "debug", "debug launch must use debug partition")
         _require(_parse_slurm_seconds(str(scheduler["time_limit"])) < 30 * 60, "debug time must be under 30 minutes")
-    job_name = "loopscope-p7-e-%s" % mode
+    job_name = "loopscope-p7-%s-%s" % (GATE.lower(), mode)
     parent_count = len(launch["pools"])
     lines = [
         "#!/usr/bin/env bash",
-        "# Gate E worker-pool launcher generated from a frozen read-only card.",
+        "# Gate %s worker-pool launcher generated from a frozen read-only card." % GATE,
         "#SBATCH --job-name=%s" % job_name,
         "#SBATCH --partition=%s" % scheduler["partition"],
         "#SBATCH --array=0-%d%%%d" % (parent_count - 1, parent_count),
@@ -985,7 +1087,7 @@ def _sbatch_text(manifest: Mapping[str, Any], launch: Mapping[str, Any]) -> str:
             "exec %s %s run-pool --run-root %s --pool-index \"$SLURM_ARRAY_TASK_ID\""
             % (
                 shlex.quote(str(AUDITED_VENV / "bin/python")),
-                shlex.quote(str(REMOTE_REPO / "scripts/loopscope/run_phase7_gate_e_panel.py")),
+                shlex.quote(str(REMOTE_REPO / RUNNER_RELATIVE)),
                 shlex.quote(str(manifest["run_root"])),
             ),
             "",
@@ -1021,7 +1123,7 @@ def build_launch(
     execution_indices = _execution_cell_indices(manifest)
     pools = _pool_groups_from_indices(execution_indices, parent_count)
     launch = {
-        "schema_version": "loopscope.phase7.gate-e-launch.v1",
+        "schema_version": "loopscope.phase7.%s-launch.v1" % GATE_SLUG,
         "run_root": str(root),
         "mode": manifest["mode"],
         "max_concurrency_per_gpu": concurrency,
@@ -1045,7 +1147,7 @@ def build_launch(
         "created_at": utc_now(),
     }
     _write_new_json(root / "manifest" / "launch_plan.json", launch)
-    sbatch_path = root / "slurm" / "gate_e_pool.sbatch"
+    sbatch_path = root / "slurm" / ("gate_%s_pool.sbatch" % GATE.lower())
     _require(not sbatch_path.exists(), "Slurm launcher already exists")
     with sbatch_path.open("x", encoding="utf-8") as handle:
         handle.write(_sbatch_text(manifest, launch))
@@ -1066,7 +1168,7 @@ def submit_run(run_root: Path, pool_indices: Optional[Sequence[int]] = None) -> 
     _require(isinstance(launch, Mapping), "launch plan is invalid")
     submission_path = root / "manifest" / "submission.json"
     _require(not submission_path.exists(), "run already has a submission receipt")
-    sbatch = root / "slurm" / "gate_e_pool.sbatch"
+    sbatch = root / "slurm" / ("gate_%s_pool.sbatch" % GATE.lower())
     _require(sbatch.is_file() and not sbatch.is_symlink(), "Slurm launcher is absent")
     sbatch_binary = "/opt/slurm/bin/sbatch" if Path("/opt/slurm/bin/sbatch").is_file() else "sbatch"
     pool_count = len(launch["pools"])
@@ -1091,7 +1193,7 @@ def submit_run(run_root: Path, pool_indices: Optional[Sequence[int]] = None) -> 
     job_id = raw.split(";", 1)[0].strip()
     _require(job_id and job_id.isdigit(), "scheduler did not return a real job id")
     receipt = {
-        "schema_version": "loopscope.phase7.gate-e-submission.v1",
+        "schema_version": "loopscope.phase7.%s-submission.v1" % GATE_SLUG,
         "status": "SUBMITTED",
         "mode": manifest["mode"],
         "job_id": job_id,
@@ -1284,7 +1386,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
     _write_new_json(
         cell_root / "command.json",
         {
-            "schema_version": "loopscope.phase7.gate-e-cell-command.v1",
+            "schema_version": "loopscope.phase7.%s-cell-command.v1" % GATE_SLUG,
             "gate": GATE,
             "mode": manifest["mode"],
             "cell": cell,
@@ -1349,7 +1451,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
         _write_new_json(
             cell_root / "producer_receipt.json",
             {
-                "schema_version": "loopscope.phase7.gate-e-cell-producer.v1",
+                "schema_version": "loopscope.phase7.%s-cell-producer.v1" % GATE_SLUG,
                 "status": "COMPLETED",
                 "cell_id": cell["cell_id"],
                 "mode": manifest["mode"],
@@ -1375,7 +1477,7 @@ def run_cell(*, run_root: Path, cell_index: int) -> Dict[str, Any]:
             )
         else:
             resource = {
-                "schema_version": "loopscope.phase7.gate-e-process-resource.v1",
+                "schema_version": "loopscope.phase7.%s-process-resource.v1" % GATE_SLUG,
                 "status": "FAILED",
                 "batch_size": batch_size,
                 "elapsed_seconds": max(0.0, time.monotonic() - started),
@@ -1449,7 +1551,7 @@ def _start_gpu_sampler(path: Path, *, interval_seconds: float) -> tuple[threadin
     _require(not path.exists(), "GPU sample path already exists")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.touch(exist_ok=False)
-    thread = threading.Thread(target=sample_loop, name="gate-e-gpu-sampler", daemon=True)
+    thread = threading.Thread(target=sample_loop, name="%s-gpu-sampler" % GATE_SLUG, daemon=True)
     thread.start()
     return stop, thread, errors
 
@@ -1497,7 +1599,7 @@ def run_pool(*, run_root: Path, pool_index: int) -> Dict[str, Any]:
                 stderr = (root / "logs" / ("%s.stderr.log" % cell["cell_id"])).open("x", encoding="utf-8")
                 command = [
                     sys.executable,
-                    str(repository_root() / "scripts" / "loopscope" / "run_phase7_gate_e_panel.py"),
+                    str(repository_root() / RUNNER_RELATIVE),
                     "run-cell",
                     "--run-root",
                     str(root),
@@ -1549,7 +1651,7 @@ def run_pool(*, run_root: Path, pool_index: int) -> Dict[str, Any]:
             stdout.close()
             stderr.close()
     receipt = {
-        "schema_version": "loopscope.phase7.gate-e-worker-pool.v1",
+        "schema_version": "loopscope.phase7.%s-worker-pool.v1" % GATE_SLUG,
         "status": "COMPLETED" if failure is None else "FAILED",
         "mode": manifest["mode"],
         "pool_index": pool_index,
@@ -1582,10 +1684,14 @@ def _outcome_rows_for_cell(root: Path, cell: Mapping[str, Any], expected: Sequen
     _validate_model_revision(cell_root / "model_revision.json", cell)
     rows = _read_jsonl(cell_root / "outcomes.jsonl")
     _require(len(rows) == len(expected), "outcome row count differs")
+    allowed_schemas = {OUTCOME_SCHEMA}
+    external = manifest.get("external_baseline_cell_ids", [])
+    if GATE == "F" and isinstance(external, list) and str(cell["cell_id"]) in external:
+        allowed_schemas.add("loopscope.phase7.gate-e-outcome-row.v1")
     normalized: List[Dict[str, Any]] = []
     for observed, source in zip(rows, expected):
         _require(isinstance(observed, Mapping) and set(observed) == {"schema_version", "canonical_identity", "subject", "task_name", "test_index", "correctness"}, "outcome row fields differ")
-        _require(observed.get("schema_version") == OUTCOME_SCHEMA, "outcome row schema differs")
+        _require(observed.get("schema_version") in allowed_schemas, "outcome row schema differs")
         for key in ("canonical_identity", "subject", "task_name", "test_index"):
             _require(observed.get(key) == source.get(key), "outcome membership/order differs")
         _require(isinstance(observed.get("correctness"), bool), "outcome correctness is not boolean")
@@ -1641,7 +1747,7 @@ def verify_canary(run_root: Path, cell_indices: Sequence[int]) -> Dict[str, Any]
             }
         )
     receipt = {
-        "schema_version": "loopscope.phase7.gate-e-canary-verifier.v1",
+        "schema_version": "loopscope.phase7.%s-canary-verifier.v1" % GATE_SLUG,
         "status": "PASS",
         "mode": manifest["mode"],
         "run_root": str(root),
@@ -1679,7 +1785,7 @@ def verify_preoutcome(run_root: Path) -> Dict[str, Any]:
             }
         )
     receipt = {
-        "schema_version": "loopscope.phase7.gate-e-preoutcome-verifier.v1",
+        "schema_version": "loopscope.phase7.%s-preoutcome-verifier.v1" % GATE_SLUG,
         "status": "PASS",
         "mode": manifest["mode"],
         "run_root": str(root),
@@ -1811,7 +1917,7 @@ def build_scientific_projection(run_root: Path) -> Dict[str, Any]:
             }
         )
     return {
-        "schema_version": "loopscope.phase7.gate-e-combined-analysis.v1",
+        "schema_version": "loopscope.phase7.%s-combined-analysis.v1" % GATE_SLUG,
         "panel_cell_count": len(manifest["cells"]),
         "population": {"records": len(expected), "subjects": len({row["subject"] for row in expected})},
         "primary_metric": "standard_accuracy",
@@ -1826,7 +1932,7 @@ def analyze_once(run_root: Path) -> Dict[str, Any]:
     _require(not analysis_path.exists(), "combined analysis already exists")
     scientific = build_scientific_projection(root)
     payload = {
-        "schema_version": "loopscope.phase7.gate-e-analysis-artifact.v1",
+        "schema_version": "loopscope.phase7.%s-analysis-artifact.v1" % GATE_SLUG,
         "status": "COMPLETED",
         "run_root": str(root),
         "scientific": scientific,
@@ -1844,7 +1950,7 @@ def verify_analysis(run_root: Path) -> Dict[str, Any]:
     expected = build_scientific_projection(root)
     _require(observed["scientific"] == expected, "fresh combined analysis recomputation differs")
     receipt = {
-        "schema_version": "loopscope.phase7.gate-e-analysis-verifier.v1",
+        "schema_version": "loopscope.phase7.%s-analysis-verifier.v1" % GATE_SLUG,
         "status": "PASS",
         "run_root": str(root),
         "analysis": str(analysis_path),

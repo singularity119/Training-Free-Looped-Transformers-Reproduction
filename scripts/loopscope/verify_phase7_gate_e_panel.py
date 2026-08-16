@@ -15,6 +15,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from tflt.loopscope.phase7_outcome import (  # noqa: E402
+    GATE,
     Phase7OutcomeError,
     verify_analysis,
     verify_canary,
@@ -24,7 +25,7 @@ from tflt.loopscope.phase7_outcome import (  # noqa: E402
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Phase 7 Gate E fresh-process verifier.")
+    parser = argparse.ArgumentParser(description="Phase 7 Gate %s fresh-process verifier." % GATE)
     sub = parser.add_subparsers(dest="command", required=True)
     for name, help_text in (
         ("static", "Verify frozen card, static cell panel, and canonical membership."),
