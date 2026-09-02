@@ -1,1 +1,0 @@
-phase6/loopscope_phase6_gate_d2_scientific_amendment_3_handoff.md

@@ -36,15 +36,16 @@
 唯一真实副本位于 `<repo>/.planning/`；旧设备 `<repo>/../.planning` 是指向它的兼容链接。
 原 `AGENTS.md` 未修改，所以新设备也需要按接续说明建立该链接。
 
-根目录中的 50 个 `loopscope_phase*` 条目是指向 `phaseN/` 文件的相对符号链接，
-用于旧记录的短路径兼容，不是重复文件。新引用使用 `phaseN/` 下的规范路径。
+根目录原有的 50 个 `loopscope_phase*` 短路径软链接已于 2026-09-02 清理。
+现在根目录只保留本索引、`phase1/` 至 `phase7/` 和 `selector_rules/`；实际历史文档没有删除。
+所有新引用和程序入口使用 `phaseN/` 下的规范路径。
 
 历史正文中的路径以当时工作区为基准，不能一律按当前 Markdown 所在目录拼接：
 
 | 原文写法 | 迁移后的查找方式 |
 | --- | --- |
 | `.planning/phaseN/...` | 相对 Git 根查找 `.planning/phaseN/...` |
-| `.planning/loopscope_phaseN_...` | 使用仓库 `.planning` 根中的兼容链接，或按文件名在 `phaseN/` 中查找 |
+| `.planning/loopscope_phaseN_...` | 旧链接已删除；按文件名中的阶段号查找 `phaseN/loopscope_phaseN_...` |
 | `../loopscope-tflt/AGENTS.md`、`loopscope-tflt/docs/...` | 对应当前 Git 根的 `AGENTS.md`、`docs/...` |
 | 历史 control 中 `./loopscope_phaseN_control.md` | 查找对应 `phaseN/loopscope_phaseN_control.md` |
 | `/Users/huangxutao/...` | 旧设备 provenance；本地仓库路径映射到当前 checkout，不能照抄为新设备命令 |

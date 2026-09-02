@@ -59,8 +59,8 @@ PY
 
 这只是让旧地址访问同一份文档，不创建第二份可独立修改的 control。
 若设备不支持符号链接，应先解决该兼容要求；不要复制两份 planning 并分别维护。
-仓库内 `.planning` 根目录原有的 50 个短路径链接也应由 Git 按 symlink 检出；
-如果它们被检出为仅含目标字符串的普通文件，应启用该设备的 Git symlink 支持后重新检出。
+仓库内 `.planning` 根目录的 50 个旧短路径链接已经删除，文件只在 `phaseN/` 中保留。
+这里需要的只是仓库外层的一个目录兼容链接；历史正文里的短路径按阶段号映射到规范路径。
 
 ## 3. 在 Codex 中建立新任务
 
@@ -100,14 +100,15 @@ git diff --check
 
 ## 5. 本次迁移保存和未包含的内容
 
-- `.planning` 的 102 个原始 Markdown 文件及 50 个兼容链接移入 Git；
+- `.planning` 的 102 个原始 Markdown 文件移入 Git；曾一起迁入的 50 个根目录短路径软链接已清理。
   除索引 README 外，原始 control、contract、handoff、supplement、规则与审计原文保留。
 - 新增 `PROJECT_MEMORY.md` 和本文，更新 README 与阶段 runbook 的导航/路径。
 - 旧设备的外层 `.planning` 改为指向仓库内目录的链接。
 - 原 `AGENTS.md` 内容保持迁移前本地版本；按用户追加授权，它已有的本地改动随此次提交保存。
-- 两个原有 Phase 4 代码文件的未提交改动保留原样：
+- 删除短路径软链接时，一起提交了两个 Phase 4 文件已有的路径修正：
   `scripts/loopscope/run_qwen4_phase4_p4b.py`、`src/tflt/loopscope/phase4_outcome.py`。
-  它们是旧 planning 分阶段路径的改动，本次未改写历史运行时冻结检查；不属于新设备 clone 的已提交代码。
+  三处 control 引用改为 `.planning/phase4/loopscope_phase4_control.md`，历史冻结检查逻辑保持不变，
+  避免删除旧链接后因找不到 control 而跳过检查。
 - 五个历史阶段 runbook 中的导航更新随本次迁移保存，既有报告目录修正保留。
 - 外层 `资产/` 中的中文报告、图片和 source-data 没有上传；可按需单独复制。
 - 不包含模型、数据、运行目录、完整日志、venv、个人 Codex memory 或凭据。

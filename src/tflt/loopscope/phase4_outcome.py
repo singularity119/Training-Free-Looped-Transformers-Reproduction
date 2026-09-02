@@ -218,7 +218,7 @@ def _load_card(card_path: Path) -> Dict[str, Any]:
     if receipt.get("manifest_sha256") != P4A_VERIFIER_MANIFEST_SHA256:
         raise P4CError("P4-A verifier manifest identity differs")
     if remote_required_control_path(path):
-        control = path.parents[3] / ".planning/loopscope_phase4_control.md"
+        control = path.parents[3] / ".planning/phase4/loopscope_phase4_control.md"
         if file_sha256(control) != CONTROL_BYTE_SHA256:
             raise P4CError("Phase 4 control byte hash differs")
     return card
@@ -227,7 +227,7 @@ def _load_card(card_path: Path) -> Dict[str, Any]:
 def remote_required_control_path(card_path: Path) -> bool:
     """The mutable control exists beside the local clone, not in the HPC clone."""
 
-    return (card_path.parents[3] / ".planning/loopscope_phase4_control.md").is_file()
+    return (card_path.parents[3] / ".planning/phase4/loopscope_phase4_control.md").is_file()
 
 
 def validate_frozen_inputs() -> Dict[str, Any]:

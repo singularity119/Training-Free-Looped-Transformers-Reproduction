@@ -1,1 +1,0 @@
-phase6/loopscope_phase6_gate_j_handoff.md

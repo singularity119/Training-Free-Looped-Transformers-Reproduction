@@ -110,4 +110,4 @@ Gate E 的微小正点估计 CI 跨零；Gate F 的 Qwen/Llama contrasts 全为�
 只在阶段终态、关键结论、方法版本或主要下一步发生变化时更新本文；每个结论附证据入口。
 新增阶段后更新本文当前 control 链接和 `.planning/README.md` 的索引，旧 Gate 记录按历史保留。
 不要追加逐命令日志，不将个人 Codex memory 或聊天全文复制进项目；旧设备路径和线程 ID 仅作来源线索。
-新设备接续时以 Git 实际已提交内容为准；未提交的旧设备工作区改动见 [迁移说明](docs/new_device_handoff.md)。
+新设备接续时以 Git 实际已提交内容为准；迁移范围和历史路径映射见 [迁移说明](docs/new_device_handoff.md)。

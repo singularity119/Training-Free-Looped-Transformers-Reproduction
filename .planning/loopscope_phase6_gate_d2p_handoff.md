@@ -1,1 +1,0 @@
-phase6/loopscope_phase6_gate_d2p_handoff.md

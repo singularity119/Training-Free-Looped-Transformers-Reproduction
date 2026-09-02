@@ -157,7 +157,7 @@ def _card(card_path: Path) -> Dict[str, Any]:
     # is present and hash-checked in the local executor workspace; the dedicated
     # HPC clone binds the same hash through this committed constant and every
     # Gate artifact without fabricating a remote planning-file copy.
-    control_path = root.parent / ".planning/loopscope_phase4_control.md"
+    control_path = root.parent / ".planning/phase4/loopscope_phase4_control.md"
     if control_path.exists() and file_sha256(control_path) != CONTROL_BYTE_SHA256:
         raise P4BError("frozen upstream/control byte hash differs")
     return load_phase4_card(card_path)

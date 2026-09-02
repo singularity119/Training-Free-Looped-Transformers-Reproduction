@@ -1,1 +1,0 @@
-phase6/loopscope_phase6_gate_d2_operational_supplement_1.md

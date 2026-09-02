@@ -1,1 +1,0 @@
-phase5/loopscope_phase5_gate_i_angular_trajectory_handoff.md
