@@ -11,8 +11,8 @@ Slurm, outcome reads, or execution beyond the current exact Gate handoff.
 Authoritative layers:
 
 - stable policy: `AGENTS.md`;
-- mutable Phase 4 state: `../../.planning/loopscope_phase4_control.md` after activation;
-- science plan: `../../资产/报告/LoopScope_第四阶段总体目标与Gate计划.md`;
+- mutable Phase 4 state: `../.planning/phase4/loopscope_phase4_control.md` after activation;
+- science plan: `../../资产/报告/phase4/LoopScope_第四阶段总体目标与Gate计划.md`;
 - exact Gate permission: the current `GATE_P4X_HANDOFF`;
 - factual evidence: Git, tests, scheduler records, and write-once artifacts.
 

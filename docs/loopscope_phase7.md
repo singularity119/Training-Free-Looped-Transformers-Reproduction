@@ -1,4 +1,8 @@
-# LoopScope Phase 7 Gate A sidecar
+# LoopScope Phase 7 trajectory, V3 and outcome runbook
+
+> Phase 7 is closed after Gate F. [Current control](../.planning/phase7/loopscope_phase7_control.md)
+> and [project memory](../PROJECT_MEMORY.md) take precedence over historical Gate descriptions below.
+> This runbook does not grant execution authority.
 
 This sidecar closes the producer, verifier, and depth-general V3 contracts for
 the three frozen Base repositories. It is outcome-blind: the persisted
@@ -103,7 +107,7 @@ Phase 7 deliberately persists no historical selector digest; the frozen
 method/version, seed, and candidate/ranking fields are sufficient for this
 Gate A sidecar contract.
 
-## Current Gate A admission state
+## Historical Gate A admission state
 
 The repair closes the causal-LM output path without requiring
 `last_hidden_state`: the producer captures the native FinalNorm output from the

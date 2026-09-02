@@ -6,6 +6,16 @@ This repository is intentionally code-only. Model weights, datasets, dependency
 environments, eval logs, and result tables should live on the lab server or
 `hpc2-hkustgz`, not on this Mac.
 
+## LoopScope 项目接续入口
+
+在 `loopscope` 分支接续研究时，请先读 [AGENTS.md](AGENTS.md) 和
+[PROJECT_MEMORY.md](PROJECT_MEMORY.md)，再查 [.planning 索引](.planning/README.md)
+及当前 control。历史 Gate 记录不授予新的执行权限。
+
+换设备请按 [新设备接续说明](docs/new_device_handoff.md) 获取既有分支并建立 planning
+兼容链接。原 `AGENTS.md` 按用户要求保持原样；当前阶段与迁移后的路径解释由上述入口提供。
+本分支除代码、配置和测试外也保存项目文档与 planning 历史；模型、数据和完整运行工件仍留在 HPC。
+
 ## Scope
 
 - Package: `tflt`

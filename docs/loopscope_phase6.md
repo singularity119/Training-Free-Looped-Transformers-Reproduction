@@ -1,8 +1,9 @@
 # LoopScope Phase 6: Pre-answer trajectory window selection
 
-Phase 6 is activated under a standing phase-continuation mandate. The authoritative mutable state
-is `../../.planning/loopscope_phase6_control.md`; this runbook never records current Gate/executor
-state and never grants execution authority.
+Phase 6 is closed. The controlling record is
+[Phase 6 control](../.planning/phase6/loopscope_phase6_control.md); this historical runbook
+describes its branches and never grants execution authority. Read
+[project memory](../PROJECT_MEMORY.md) before interpreting an older branch as current.
 
 ## Current MMLU 0-shot prefix branch
 
@@ -259,5 +260,5 @@ tests/test_loopscope_phase6_*.py
 ## Authorization
 
 This runbook never records live Gate or executor state and does not grant execution authority.
-Consult `../../.planning/loopscope_phase6_control.md` and the matching current-Gate handoff. If
+Consult `../.planning/phase6/loopscope_phase6_control.md` and the matching current-Gate handoff. If
 they disagree, stop.

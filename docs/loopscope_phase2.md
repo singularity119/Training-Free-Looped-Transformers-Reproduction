@@ -1,6 +1,6 @@
 # LoopScope Phase 2：可迭代精炼区 H1 V2 实验 Runbook
 
-本文件说明第二阶段轻量 Gate 的执行对象、证据与禁止项。它不是当前授权；动态状态只看 `../../.planning/loopscope_phase2_control.md`，长期规则只看 `../AGENTS.md`。
+本文件说明第二阶段轻量 Gate 的执行对象、证据与禁止项。它不是当前授权；动态状态只看 `../.planning/phase2/loopscope_phase2_control.md`，长期规则只看 `../AGENTS.md`。
 
 ## 1. 核心问题
 

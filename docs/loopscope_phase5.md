@@ -1,9 +1,9 @@
 # LoopScope Phase 5 runbook
 
-> `PHASE5_ACTIVE / GATE_D_AUTHORIZED`. This runbook is procedure, not execution authority.
-> The controlling planning file is `../../.planning/loopscope_phase5_control.md` at the
-> parent workspace level. Only the executor and Gate named there may act; later Gates remain
-> locked until the planning/audit task issues their exact authorization.
+> This is the historical Phase 5 runbook, not execution authority.
+> The controlling record is [Phase 5 control](../.planning/phase5/loopscope_phase5_control.md).
+> Read [project memory](../PROJECT_MEMORY.md) for the latest phase and current control.
+> Historical Gate instructions below do not reactivate an executor or a later Gate.
 
 ## 1. Experiment identity
 
@@ -245,7 +245,7 @@ High3-Low3 enrichment was `+4.156578 pp` with subject-stratified paired-bootstra
 These results preserve the distinction between relative ranking enrichment and positive absolute
 gain: Phase 5 does not claim a selected success or a universal cross-model automatic window
 selector. The canonical Chinese report is
-`../../资产/报告/LoopScope_第五阶段实验结果与结论.md`; write-once
+`../../资产/报告/phase5/LoopScope_第五阶段实验结果与结论.md`; write-once
 analysis artifacts remain under the Gate C run root's `gate_d/` directory.
 
 ## 7. Gate terminal packet

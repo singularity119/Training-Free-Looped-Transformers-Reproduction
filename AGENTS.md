@@ -13,13 +13,14 @@
 ## 0. 计划与信息源
 
 - `AGENTS.md` 只保存长期稳定的项目边界、工程规则和 Gate 验收标准，不记录临时进度、当前执行线程或逐次工具日志。
-- `../.planning/loopscope_phase1_control.md` 至 `../.planning/loopscope_phase4_control.md` 是已关闭第一至第四阶段的历史控制面；`../.planning/loopscope_phase5_control.md` 是第五阶段当前唯一的可变全局控制文件。当前 Gate、Gate 决策、executor 绑定、已审计 commit/run 与下一步 admission 均以 Phase 5 control 为准。
+- `../.planning/phase1/loopscope_phase1_control.md` 至 `../.planning/phase6/loopscope_phase6_control.md` 是已关闭第一至第六阶段的历史控制面；`../.planning/phase7/loopscope_phase7_control.md` 是第七阶段当前唯一的可变全局控制文件。当前 Gate、Gate 决策、executor 绑定、已审计 commit/run 与下一步 admission 均以 Phase 7 control 为准。
+- `../.planning/selector_rules/` 保存可跨阶段复用的版本化选窗方法；它只定义方法，不授予 Gate、executor、GPU/Slurm、outcome 或文件写入权限。每个 Phase 仍须在自己的 contract/control 中冻结具体方法版本和 cell-specific 参数。
 - 旧工作区 `.planning/` 包、历史 handoff、线程聊天和 Codex memory 只作历史证据或辅助回忆；如果与当前代码或控制文件冲突，不得据此覆盖当前事实。
 - 单线程内的临时步骤优先使用 Codex 原生 plan/goal，不把每一步复制到项目文件。
 - 不得自动调用 `planning-with-files` skill。只有用户在当前请求中明确点名或明确要求启用该工作流时才可使用。
 - 仅在 Gate 决策、执行线程变更、审计 commit 变更、实验配方变更或授权边界变更时更新控制文件；不得按每次读取、命令或工具调用追加流水账。
 - 面向用户、导师或论文阅读者的人类交付物统一放在专用 clone 外层的 `../资产/`：
-  中文报告和结果表放在 `../资产/报告/`；图片、绘图脚本、source-data、QA 和
+  中文报告和结果表放在对应的 `../资产/报告/phase<N>/`；图片、绘图脚本、source-data、QA 和
   PNG/PDF/SVG 等展示输出放在 `../资产/figures/`。不得在 Git 项目内新建或镜像
   `报告/`、`figures/` 或其他人类交付目录；这些输出默认不进入代码仓库提交。
 - `research-gate-orchestrator` 的协作上下文继续按信息分层保存：稳定规则在本
@@ -41,6 +42,8 @@
 - 第三阶段目标：固定 Qwen3-1.7B × MMLU × K=2 配方，只利用 validation 全量 1,531 条样本的一次 no-loop 层级 choice trajectory，检验局部 entropy–KL 双重反转能否在同一 model-task cell 内恢复、富集或排除 loop windows；测试/full outcome 不得进入 selector。
 - 第四阶段目标：直接在 Qwen3-4B-Instruct-2507 × MMLU-Pro 5-shot CoT 上检验，能否仅凭生成首 token 前的一次普通 no-loop prefix forward 全词表 entropy–KL trajectory，前瞻性预测完整 CoT decoding 的 width-4 loop window；同一 12,032 test identity 总体可同时承担 outcome-blind selector 与后续 outcome，但必须按时间和字段严格隔离。
 - 第五阶段目标：在 `Qwen3-4B-Base × MMLU 5-shot` 上填补与第三阶段同任务的尺度迁移 cell；仅用 validation-1531 一次 native no-loop choice/hidden trajectory 冻结 width-4 selector，再在与其样本级隔离的 test-14042 sealed panel 上区分 ranking enrichment、absolute gain、known-comparator competitiveness 和 `ABSTAIN`。
+- 第六阶段已终态：在完成 `Qwen/Qwen3-4B-Instruct-2507 × MMLU 0-shot`、MMLU 5-shot prefix trajectory 与 V3 selector 后，固定四个 loop 窗口加 no-loop baseline 的 MMLU 5-shot test-14042 panel 已完成。`15:18` 是唯一 paired bootstrap 95% CI 全部高于零的 cell（`+0.5697 pp`，CI `[+0.1496,+0.9970]`）；V3 selected `14:16` 为 `+0.0926 pp` 且 CI 跨零。该 outcome 不回写 selector，也不授权继续加窗、调参或启动下一 Gate；旧 V2 `ABSTAIN` 与此前终止的 MMLU-Pro D-2 分支继续作为独立历史证据。
+- 第七阶段目标：在 `Qwen/Qwen2.5-3B`、`meta-llama/Llama-3.2-3B`、`google/gemma-2-2b` 三个 Base 模型上，对同一 MMLU validation-1531、plain 5-shot `Answer:` 末端 probe 采集一次 native zero-loop 逐层轨迹，按 V3.1 分别产生模型内 `SELECTED_WINDOW` 或合法 `ABSTAIN`，由 planning 先完成 outcome-blind 绘图后，再在 MMLU test-14042 运行按有限 width-4 V3 score 形成的 3/3/2 不对称 fixed exploratory outcome panel：Qwen/Llama 各取 top-3，Gemma 取全部 top-2，共 35 cells。`Qwen3-1.7B-Base` 与 `Qwen3-4B-Base` 仅作历史背景，不在本阶段重采集、重评分、重绘或加入 Gate E。
 - 基础复现分支 `main` 是固定对照，不接受 LoopScope 功能提交。
 - 新 clone 的默认 `main` 也只作只读引用；clone 后首次工作分支必须是从固定基点新建的 `loopscope`。
 
@@ -180,7 +183,8 @@ wheelhouse=/hpc2hdd/home/xhuang225/shared/wheelhouse/tflt-cu121
 - 工程 smoke 可以使用极小固定 prompt 集，但不能据此判断指标优劣。
 - 正式 probe pool 必须记录来源、split、样本 ID/hash、生成 seed、prompt 模板和数量。
 - 正式测试集样本不得进入 window 选择或阈值调节。
-- 上一条是 Phase 1–3 的默认边界。Phase 4 的唯一例外由本文件第 13 节和 `../.planning/loopscope_phase4_control.md` 冻结：允许同一 MMLU-Pro test-12032 identity 总体用于无标签 prefix selector 与后续 outcome，但 selector freeze 前不得读取 target `cot_content`、gold/answer、生成 token/答案、correctness 或任何 baseline/loop outcome。
+- 上一条是 Phase 1–3 的默认边界。Phase 4 的唯一例外由本文件第 13 节和 `../.planning/phase4/loopscope_phase4_control.md` 冻结：允许同一 MMLU-Pro test-12032 identity 总体用于无标签 prefix selector 与后续 outcome，但 selector freeze 前不得读取 target `cot_content`、gold/answer、生成 token/答案、correctness 或任何 baseline/loop outcome。
+- Phase 6 MMLU 5-shot selector 阶段只读 validation-1531 的 prompt/choice identity 与 sanitized choice/hidden trajectory；标准 renderer 可读取 dev split 的五个 demonstrations 及其示例答案。Gate N PASS 后，用户另行授权 Gate O 在与 validation selector 隔离的 canonical MMLU test-14042 上运行固定 outcome panel；只有五个 cells 全部完成并通过 identity/completeness closure 后才可一次性读取 gold/correctness/accuracy/gain。已完成的 0-shot 与已终止的 MMLU-Pro 分支都只作历史对照，不得把其 trajectory 或 outcome 混入 Gate O。
 - 推荐从非测试 split 构建 500–1000 条多选格式校准池；如果找不到可证明隔离的 split，停止并报告，不得静默改用 MMLU test。
 - probe 报告不得依赖 gold label；gold label 只允许在冻结选择规则后的收益评估中使用。
 
@@ -344,7 +348,7 @@ Gate 终态经规划/审计线程判定后，只撤销该 executor 对 Git、数
 - selector 只读取逐层四选项 choice distribution、entropy、KL-to-final、CE 及其局部 SHIFT/FLANK/CONSENSUS 结构；target gold、correctness、loop residual、full accuracy 与答案翻转均禁止进入 selector producer。
 - 正式 loop outcome 固定使用与 validation-1531 样本级不相交的 MMLU test-14042 paired evidence；历史 13 窗只作 development，尚未查看 outcome 的 12 窗才承担 width-4 blind completion。
 - 核心 loop 配方继续冻结为 `K=2、block、damped_euler、alpha=1、beta=0、cache_strategy=last、decode_mode=bypass`；任何 K、alpha、strategy、model 或 task 变化必须另立科学卡。
-- Phase 3 Gate 名称和当前状态以 `../.planning/loopscope_phase3_control.md` 为准；本文件第 9 节 A–E 是 Phase 1 历史门，不得用来推断 Phase 3 当前授权。
+- Phase 3 Gate 名称和当前状态以 `../.planning/phase3/loopscope_phase3_control.md` 为准；本文件第 9 节 A–E 是 Phase 1 历史门，不得用来推断 Phase 3 当前授权。
 - 第三阶段不设置 GPU 数量、GPU-hours 或墙钟硬上限。GPU Gate 只有在明确授权、科学矩阵冻结并满足 admission 后，才能按 HPC 空闲资源合理并行并尽快提交；资源变化不得改变样本、窗口、配方、统计或 retry 语义。
 
 ## 13. 第四阶段稳定科学与治理边界
@@ -355,7 +359,7 @@ Gate 终态经规划/审计线程判定后，只撤销该 executor 对 Git、数
 - width-4 主组覆盖 33 个候选、其中 25 个具备严格 CONSENSUS 支持，并独占 selected、blind high3/low3 与 Phase 4 outcome。width `2..8` 的 strict-154 与 edge-aware-224 仅作 outcome-blind 次要排名；不得自动进入 Phase 4 full-decode outcome。
 - selector 与 outcome 共用一个 canonical MMLU-Pro test-12032 identity manifest。隔离对象是信息与时间而非样本身份；任何正结论都必须限定为 `same-population outcome-blind transductive`，不得声称 unseen-sample generalization。
 - Phase 4 Gate 顺序固定为 P4-A 本地最小实现、P4-B 真实 prefix acquisition/selector freeze、P4-C width-4 frozen panel outcome acquisition、P4-D 一次性 unseal/analysis/phase-end audit。每 Gate 一个独立 executor；只有 planning/audit thread 可以裁决并授权下一 Gate。
-- Phase 4 的动态状态、exact executor、commit/run identity、权限和 admission 只以 `../.planning/loopscope_phase4_control.md` 为准；详细命令与工件合同见 `docs/loopscope_phase4.md`。
+- Phase 4 的动态状态、exact executor、commit/run identity、权限和 admission 只以 `../.planning/phase4/loopscope_phase4_control.md` 为准；详细命令与工件合同见 `docs/loopscope_phase4.md`。
 
 ## 14. 第五阶段稳定科学与治理边界
 
@@ -368,4 +372,36 @@ Gate 终态经规划/审计线程判定后，只撤销该 executor 对 Git、数
 - success 与 ranking 必须分开：selected-baseline 要求 point gain>0；selected 对 `15:18` 的 non-inferiority margin 为 0.30 pp 且 panel regret<=0.30 pp；High3−Low3 为正不得单独宣称 selection success。
 - bootstrap 冻结 2,000 replicates；trajectory seed=`20260722`，outcome seed=`20260723`。禁止 K sweep、variable-width outcome、dynamic gating、selector 调权、Orthogonal Residual、template projection、CAST、SEAL、PASTA、SADI 或其他 representation intervention。
 - Phase 5 Gate 顺序为 A 合同/provenance、B validation trajectory/selector freeze、C sealed test outcomes、D one-shot unseal/terminal analysis。每 Gate 一个独立 executor，只有 planning/audit 任务可裁决并授权下一 Gate。
-- Phase 5 动态状态、exact executor、commit/run identity、权限和 admission 只以 `../.planning/loopscope_phase5_control.md` 为准；详细命令与工件合同见 `docs/loopscope_phase5.md`。
+- Phase 5 动态状态、exact executor、commit/run identity、权限和 admission 只以 `../.planning/phase5/loopscope_phase5_control.md` 为准；详细命令与工件合同见 `docs/loopscope_phase5.md`。
+
+## 15. 第六阶段稳定科学与治理边界
+
+- 用户已终止原 `Qwen3-4B-Instruct-2507 × MMLU-Pro 5-shot CoT` pre-answer D-2 分支。已完成 6/8 shard、失败/取消 shard、D-2P `EXPLORATORY_PARTIAL_6_OF_8` 与全部 write-once roots 仅作历史证据；不得补齐、merge、正式选窗、unseal、转成 selected-window 结论或与当前分支混合。
+- 当前 Phase 6 follow-up 冻结 cell 为 `Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554 × cais/mmlu@c30699e8356da336a370243923dbaf21066bb9fe × 5-shot`。Evaluator 使用 lm-eval 0.4.11 标准 MMLU choice-loglikelihood、plain prompt、`num_fewshot=5`、`fewshot_split=dev`、`apply_chat_template=false`、`fewshot_as_multiturn=false`，不生成 CoT 或答案文本；continuation surfaces 仍为 exact ` A/ B/ C/ D`。0-shot 的 model/tokenizer/choice-token closure 可复用，但 5-shot rendered prompt projection 与 hash 必须 fresh acquisition。
+- Probe position 是 rendered prefix 的最后一个非 padding token。每个 validation identity 只做一次 `use_cache=false`、zero-loop native forward，并从同一 forward 采集 raw `B0...B36`；B0...B35 只应用一次 final norm，B36 不得 double norm。逐层 choice distribution 使用 exact A/B/C/D logits 的 stable float64 softmax。Selector 输入仅为 choice entropy `H` 与 `KL(p_l||p_36)`；hidden RMS-L2-to-final、hidden cosine-to-final、cosine-distance-to-final 与 raw adjacent angular distance 只作诊断，不得进入 eligibility、ranking、frequency 或 panel membership。
+- Selector source 固定为 MMLU validation 全量 1,531 identities / 57 subjects。Validation gold、test split、correctness、accuracy、gain、flip 与任何 baseline/loop outcome 全程禁止读取；本分支不创建 outcome panel、不运行 test-14042。标准 evaluator 只允许 frozen dev 5-shot demonstrations，不授权生成式 direct-letter fallback、chat template、multiturn 或 CoT。
+- Gate O 的 TFLT 配方冻结为 bfloat16、K=3、block Euler、step size=1/3、total horizon=1、cache=first、decode=full；固定 cells 为 no-loop、inclusive `14:16`、`13:16`、`15:18`、`12:16`。标准 MMLU 5-shot 采用 full-sequence choice-loglikelihood；当前 wrapper 的 `bypass` 只跳过 cached incremental one-token decode，因此在该 evaluator 路径上 `full` 与 `bypass` 预期执行等价，但 Gate O 只运行用户指定的 `full`，不新增 decode 消融。
+- Phase 6 当前 V3 重打分采用 `.planning/selector_rules/aggregate_common_turn_v3_absolute_rate.md` 中冻结的 `AGGREGATE_COMMON_TURN_V3_ABSOLUTE_RATE@3.1.0`：中央 blocks `11...24` 内 width 3/4/5/6 共 42 candidates；category-macro point/bootstrap estimand、`NetPositive`、`RateStable`、`AggregateCommonTurn`、`S_RATE_TURN=sqrt(G_H*G_K*Q_H*Q_K)`、2,000 次 bootstrap、seed `20260801`、combined-rank frequency `>=0.80` 和 V3 终态必须按 exact shared-rule hash 复算。旧 V1/V2 的 `BiphasicStable`、direction margins、`tau_pair_frequency` 与 `SoftRelativeStable` 不得进入 V3 admission 或 ranking。合法 V3 `ABSTAIN` 是终态，不得为获得窗口而调规则。
+- 0-shot 的 Gate H/I/J、5-shot 的 Gate K/L/M、V3 rescore Gate N 与 fixed-panel outcome Gate O 均已闭合。Gate M 的 V2 `ABSTAIN_NO_RATE_STABLE_ELIGIBLE`、Gate N 的 V3 selected inclusive `14:16` 与 Gate O 的五-cell test outcome 必须分别解释；Gate O 后没有授权其他 loop 实验。每 Gate 一个独立 executor，只有 planning/audit task 可裁决。
+- Phase 6 executor-owned 低风险工程修复次数不限，但必须保持在同一 Gate、冻结科学合同、授权路径/权限、protected state、信息屏障与已授权 fresh-retry 语义内，并持续取得材料性进展；该规则不授权科学修改、outcome 读取、正式节点重跑、破坏性操作或跨 Gate。
+- 所有工程 debug 与 smoke 实验必须使用 `debug` partition；所有正式长任务必须先有同 commit/launcher/env/model/data/producer/verifier 的 `<30min` debug preflight PASS。5-shot Gate M 正式任务按用户指令冻结 A800，并使用普通用户合法的最高优先级 A800 partition/QoS；正式 job ID 核实后即启用唯一 full 60 分钟 heartbeat（含 PENDING），debug heartbeat 仅在稳定 RUNNING 约 60 秒后启用。smoke/probe/full cadence分别为 10/30/60 分钟。
+- Phase 6 动态状态、exact executor、commit/run identity、权限、seed、panel 和 admission 只以 `../.planning/phase6/loopscope_phase6_control.md` 为准；runbook 见 `docs/loopscope_phase6.md`。
+
+## 16. 第七阶段稳定科学与治理边界
+
+- Phase 7 正式新模型 membership 仅为 `Qwen/Qwen2.5-3B`、`meta-llama/Llama-3.2-3B`、`google/gemma-2-2b`。Gate A–D 的共同 selector 任务为 `cais/mmlu` validation 全量 1,531 identities / 57 subjects、标准 plain non-chat 5-shot renderer、dev demonstrations、batch size 1、bfloat16、无量化；这些 Gate 与 planning plotting checkpoint 不得运行 test、loop、generation 或 outcome panel。用户追加的 Gate E 仅在 plotting checkpoint 完成后运行独立 `cais/mmlu` test 全量 14,042 identities / 57 subjects outcome panel。
+- Probe 固定在当前 validation query 完整 5-shot rendered prefix 的最后一个非 padding token，即答案 continuation 尚未加入时 `Answer:` 结尾的 tokenizer-final token。每条 identity 只做一次 native zero-loop、`use_cache=false` forward；不得改成 demonstration answer、目标答案字母、生成 token、EOS 或 padding。
+- 对每模型真实 `L`，raw residual boundaries 为 embedding output `B0` 和每个 decoder block 后、FinalNorm 前的 `B1...BL`。若原生 `hidden_states[-1]` 已 post-norm，使用临时 FinalNorm forward-prehook 捕获 raw `B_L`，每次 forward 恰好调用一次并在 `finally` 移除；`FinalNorm(raw B_L)` 必须闭合原生 final hidden，禁止 double norm。
+- 四个 continuation surfaces 精确为 `" A"/" B"/" C"/" D"`，每个 tokenizer 上都必须各为一个且彼此不同的 token；任一模型失败即 `BLOCK_CHOICE_SURFACE_NOT_SINGLE_TOKEN`，不得自行采用多 token、首 token、裸字母、chat template 或模型特定 prompt fallback。
+- V3 selector 唯一输入为四选项 stable-float64 softmax 的 Choice Entropy `H` 与 `KL(p_l||p_L)`。hidden RMS-L2-to-final、hidden cosine-to-final、cosine distance `1-cosine` 和 FinalNorm 前相邻 raw residual angular distance 只作诊断与绘图，不得进入 eligibility、ranking、frequency、tie-break 或终态。
+- 跨深度候选域按每模型真实 `L` 生成：`t(L)=ceil(0.30L)`，允许 blocks 为闭区间 `[t(L), L-t(L)-1]`，widths 为 `{3,4,5,6}`，只发布完整包含于该区间的半开窗口，并按 width、start 升序枚举。V3 方法固定为 `AGGREGATE_COMMON_TURN_V3_ABSOLUTE_RATE@3.1.0`，2,000 次 within-category equal-category-macro joint bootstrap、seed `20260801`、三模型共用 canonical draw map但独立评分，combined-rank frequency 门槛为 `0.80`；不得跨模型汇总 score 或强制共同窗口。
+- 每模型唯一合法科学终态为 `SELECTED_WINDOW`、`ABSTAIN_NO_V3_ELIGIBLE` 或 `ABSTAIN_COMBINED_RANK_UNSTABLE`。合法 `ABSTAIN` 不触发调参；输入、membership、公式或 independent verifier 不闭合是工程 `BLOCK`，不能伪装成科学弃权。
+- Gate 顺序固定为 A provenance/最小实现、B 每模型四 identity 的 `debug` GPU preflight、C 三模型 validation-1531 正式 acquisition、D CPU-only V3.1 分析与 source-data verifier、planning-owned outcome-blind plotting/QA checkpoint、E 三模型 test-14042 full outcome。每 Gate 一个新的独立用户可见 executor；只有 planning/audit task 可判定 `PASS/PASS_WITH_FIXES/BLOCK` 并授权下一 Gate。
+- Phase 7 executor 标题保持相同 Project 与 Phase，并严格使用 `execute-<Project>-<Gate-local-topic>-第<Phase>阶段-Gate <Gate>`：Gate B=`Debug-Smoke`、Gate C=`Full-Acquisition`、Gate D=`V3-Scoring`、Gate E=`TopAvailable-Outcome`；已完成的 Gate A 历史标题保留。替代 executor 仍使用该科学 Gate 的同一 canonical title，恢复/重试编号只写入 exact thread ID、control 或 recovery 文件名，不得擅自改成 `Gate C-2`。每个 executor 须在执行前完整重读 `research-gate-orchestrator`，以最短可信实验主线、材料性和 deletion test 为准；不得把 Gate 扩展成通用框架、重复全量审计或非正常路径防御平台。
+- Phase 7 以后每次启动新 Gate executor，handoff 的首个机器可读区块必须显式声明 `COLLABORATION_PROTOCOL=MANDATORY_RESEARCH_GATE_ORCHESTRATOR`，并紧接着说明：exact executor ID 与 canonical title、问题/ordinary operational permission 只报告 planning thread、不得绕过 planning 直接向用户停摆、subagent 不拥有 Git/remote-write/GPU/Slurm/terminal 权限、长任务唯一 heartbeat 及 terminal self-wake 路由、唯一 `GATE_X_FINAL_AUDIT`/真正 `BLOCK`、可见投递确认与 `TERMINAL_DELIVERY_UNCONFIRMED` fallback。Planning 在 dispatch 前必须从 phase plan 的 canonical mapping 生成标题，创建后立即用 title 工具返回值核对 exact string，再绑定 control、投递完整 handoff 并确认一次；任一项未闭合不得把 Gate 描述为已 dispatch。
+- Phase 7 executor 可在确实缩短当前 Gate 时使用 subagent，任一时刻最多三个。Subagent 只能承接 handoff 明确委派的当前 Gate 内窄任务，不得跨 Gate、改科学合同、独立执行 Git integration/GPU/Slurm、发送 terminal event 或替代绑定 executor 的整合和终态责任。
+- Gate A 可用 `ClearAllForwardings=yes` 只读访问 HPC2 项目代码、环境、缓存、配置与 provenance 以闭合背景信息，但不授权远端写入、GPU、Slurm、模型 forward 或数据 acquisition。所有后续 debug/smoke 只能使用 `debug` partition 且 `<30min`；正式长任务必须先有同 commit/launcher/env/model/runtime/producer/verifier 的有效 preflight，之后使用普通用户合法可用的最高优先级 partition/QoS，并依据显存适配、实测运行时间、当前可用性、排队估计与 time-to-result 选择合适 GPU，不预先锁死卡型。
+- Gate D `PASS` 后先由 Phase 7 planning thread 亲自完成 trajectory/V3 绘图、图表 QA、outcome-blind 中文报告，并从每模型 Gate D candidate table 过滤 `width=4`、按 finite `S_RATE_TURN` 降序及 frozen tie-break 取 top available；该 checkpoint 不读取 test/outcome。用户已在 blocker 出现后明确批准 3/3/2 科学修订：Qwen/Llama 各取 top-3，Gemma 取仅有的 top-2。Gate E 分别固定 13/13/9 cells：每模型一个 no-loop baseline，加每个冻结窗口的 `k={2,3} × cache={first,last} × mode=block`；三模型合计 35 cells。Gemma 的结果只能称为 ABSTAIN 后的 post-ranking exploratory outcome。
+- Gate E 使用标准 MMLU 5-shot test 全量 14,042 identities / 57 subjects。35/35 cells、共同 identity/completeness closure 和 pre-outcome verifier 全部闭合前不得读取部分 accuracy/gain 或据 outcome 改 panel；完整后只做一次 combined analysis 与 fresh verifier。正式任务必须先有同 immutable decision-critical path 的 `debug` `<30min` preflight，并把“代码路径正确”与“资源形态具有代表性”分别闭合：未真正形成冻结 `batch_size=16` 与代表性长序列/激活峰值的小样本或 underfilled batch 只能证明代码路径，不能用于估算 formal 显存。Packing 必须按模型及资源行为不同的 cell family 分别取证，不得从 Gate C、其他模型、小样本 A40 或其他 GPU 类型直接外推。若 debug 无法复现 formal 资源形态或计算节点镜像，正式运行先提交最小、可保留并计入 35 cells 的 formal canary，canary PASS 后才扩展剩余任务；launcher 修复后同样先验证一个 child/canary，不得立即重铺完整数组。计算节点 launcher 必须自包含，固定解释器与 shell，不依赖 Git executable、Modules 安装或登录节点 PATH；完整 Git/clean 校验在提交前闭合。正式资源遵循 normal-user 合法最高优先级，并以不 OOM 为硬边界最大化有效显存占用和总体吞吐，允许经上述证据证明的有界 worker-pool/backfill，但不得以调大 batch size、跨 cell batch 或共享 model/tensor state 改变科学路径。用户主动取消与异常退出必须分别记录。GPU 仍按显存/runtime/availability/queue/time-to-result 选择，并由 Gate E executor 使用唯一 60-minute full heartbeat。Gate E planning `PASS` 后由 planning 更新 outcome 报告、完成 consolidated audit 并终结 Phase 7；不自动创建 Gate F。
+- 用户在 Gate E terminal 后明确追加 Gate F，覆盖上一条默认停止分支但不改变 Gate A–E 结论。Gate F canonical title 为 `execute-LoopScope-V3-Top2-Outcome-第7阶段-Gate F`；每模型取 Gate D V3.1 全候选 point-rank 前两名：Qwen `[14,17)`/`[12,15)`、Llama `[11,14)`/`[10,13)`、Gemma `[13,16)`/`[10,13)`，逐窗遍历 `k={2,3} × cache={first,last} × mode=block`，共 24 个新 loop cells。复用 Gate E 三个已验证 no-loop baselines，不重跑；Qwen/Llama batch 16、Gemma batch 8。24/24 新 cells 与三个 baseline 的共同 completeness/pre-outcome barrier 闭合前不得读取局部 outcome，闭合后仅做一次 combined analysis 与 fresh verifier。结果必须标记 `POST_TERMINAL_V3_POINT_RANK_TOP2_OUTCOME_EXPLORATORY`；Gate F planning PASS 后重新封存 Phase 7，不自动创建 Gate G。
+- Phase 7 新证据使用可读路径、配置、model/data identifiers、命令、job IDs、manifest membership 和独立复算；不得新增、要求或比较 cryptographic/content digest。Phase 7 动态状态、exact executor、权限、audited commit/run 与 admission 只以 `../.planning/phase7/loopscope_phase7_control.md` 为准；科学合同与总体计划分别见同目录的 `loopscope_phase7_scientific_contract.md` 和 `loopscope_phase7_plan.md`。
