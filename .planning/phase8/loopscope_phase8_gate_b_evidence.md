@@ -2,7 +2,7 @@
 
 Date: 2026-09-05. Executor: `01a0704b-5798-7680-80a2-f1145f35f9ba`.
 Planning/terminal recipient: `01a06fe9-c7bb-7d72-a906-234f301de317`.
-Current execution result: **RESUMED; debug job 12645346 submitted, verification pending**.
+Current execution result: **1.7B debug verified; 4B job12645484 PENDING**.
 This is executor evidence, not a planning PASS decision.
 
 ## Authorized start and implemented increment
@@ -222,3 +222,52 @@ exact planning fallback and no scheduling/scientific/next-Gate authority.
 No second job or overlapping monitor exists. The first model must expose a valid
 real path before the remaining4B debug is dispatched. Queue waiting now belongs
 to this monitor; no manual polling loop or planning polling is required.
+
+## 1.7B completed and verified; 4B continuation
+
+The first heartbeat encountered a temporary `No route to host` and correctly did
+not call the job failed. User later reported job12645346 completed, directly
+resuming this executor. The VPN source had changed from10.21.0.80 to10.21.0.230;
+read-only ifconfig followed by per-command source binding restored SSH. No network
+configuration was edited. Monitor was PAUSED with automation_update confirmation
+before subsequent implementation/scheduling; no extra self-wake was needed because
+the user had already resumed the exact executor.
+
+Fresh sacct: job12645346 and batch/extern steps COMPLETED, exit0:0, elapsed00:01:21,
+nodegpu3-9. In-job verifier and separate fresh-process verifier both returned
+VERIFIED_DEBUG for all four 1.7B cells, at unchanged producerc7e4e1f.
+Actual env: torch2.3.1+cu121 / transformers4.51.3 / lm_eval0.4.11 / datasets5.0.0;
+exact model/tokenizer revisionea980cb..., model dtypefloat16, A40 total50899648512
+bytes, HFLM max_length32768. Producer elapsed44.0029824s, 92 prompt-scoring calls,
+2.09076737calls/s; peak allocated5245561344 bytes, reserved5899288576 bytes, OOM0.
+
+All native-repeat, native-adapter and Loop-vs-None-vs-zero comparisons were exact
+score equality (no tolerance). All real continuations have length1; pre-answer
+positions are2887,2898,2940,2953. Every K2 collector has8 rows (4 per t), everyK4
+collector16 rows (4 per t); duplicate_calls=0 throughout. Four SMOKE_ONLY bases are
+2048-dimensional, each fit from4 source identities at t1, with save/load and
+transform roundtrip successful. Synthetic FP16/BF16 parallel/orthogonal/t0/other-token
+checks all true. Spectral score changes are finite and nonzero, demonstrating the
+actual path is affected, without reading gold or drawing accuracy conclusions:
+
+| Cell | Maximum absolute raw choice-score change Spectral vs Loop |
+| --- | --- |
+| 12:15 K2 | 0.2578125 |
+| 12:15 K4 | 0.38671875 |
+| 6:9 K2 | 0.09375 |
+| 6:9 K4 | 0.1015625 |
+
+Following the successful first real path, submitted **12645484**, model-index0
+(4B), same pool/code/launcher, four frozen window/K cells, debug29min/1GPU/8CPU/128G.
+Estimated runtime before execution: within5min, based on measured1.7B44s producer,
+roughly2.3x model parameter scale and additional loading headroom, comfortably
+below29min. This does not replace the required4B measured memory/throughput.
+Run root: `runs/phase8-gate-b-20260905T072208Z-q4-a1`.
+Logs: `staging/phase8-gate-b-20260905T072208Z-gpu2/slurm-12645484.{out,err}`.
+Fresh state: PENDING/MaxJobsPerAccount, no assigned node. No 1.7B rerun.
+
+Updated the SAME automation `loopscope-phase8-gate-b-smoke` to job12645484/q4-a1/gpu2
+and current verified VPN source10.21.0.230, statusACTIVE, 10min cadence; tool success
+confirmed. Prior job12645346 is preserved as completed evidence. On 4B terminal,
+pause monitor, verify/recover this exact attempt, then finish Gate B evidence and
+send the restored GATE_B_FINAL_AUDIT to planning; C remains locked.
