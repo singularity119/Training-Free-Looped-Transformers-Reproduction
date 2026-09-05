@@ -21,7 +21,8 @@ AUDITED_COMMIT=3fe34c46e3ac9774907349bdbf1702ab2180919f
 LATEST_ACCEPTANCE=.planning/phase8/loopscope_phase8_gate_a_acceptance.md
 ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_b_handoff.md
 SCIENTIFIC_CONTRACT=.planning/phase8/loopscope_phase8_contract_v1.md
-ACTIVE_SUPPLEMENT=.planning/phase8/loopscope_phase8_gate_b_platform_permission_resume.md
+ACTIVE_SUPPLEMENT=.planning/phase8/loopscope_phase8_gate_b_pending_monitor_supplement.md
+PRIOR_OPERATIONAL_SUPPLEMENTS=loopscope_phase8_gate_b_push_approval_resume.md;loopscope_phase8_gate_b_platform_permission_resume.md
 FROZEN_USER_CHOICES=QWEN3_4B_BASE_12_15_13_16_CACHE_FIRST;QWEN3_1_7B_BASE_12_15_6_9_CACHE_LAST;MMLU_5SHOT;DAMPED_EULER;ALPHA_1_ALL_K_FIXED_HORIZON;VALIDATION512_FIT_TEST14042_EVAL;K2_PRIMARY_K4_SECONDARY;RANK1_LAMBDA0_5
 PENDING_USER_CHOICES=NONE
 BLOCKER=NONE
@@ -63,3 +64,7 @@ PASS后立即撤销B权限，创建满足admission的独立C任务。资源/工�
 ## 直接授权和平台更新已核实
 
 用户在规划任务确认已在B手动授权；planning有界读取B最新回合，看到直接userMessage“我授权所有权限”及executor收到自身平台danger-full-access/never更新的回传。当前补充的恢复条件已满足，Gate B恢复原handoff范围内普通push、HPC快进同步和debug；不扩大科学/资源范围，不进入C。历史BLOCK记录保持。
+
+## Gate B 排队观察补充
+
+为真实job12645346的未知PENDING等待，授权exactexecutor唯一10分钟smoke monitor从排队期启动，运行后沿用。仅观察启动时机例外，不改变账户/partition/QOS/资源/取消/重试权限。详见当前supplement；planning不例行轮询。
