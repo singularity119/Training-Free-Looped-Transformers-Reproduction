@@ -1,13 +1,13 @@
 # LoopScope 第八阶段：双模型固定窗口的谱软衰减实验计划
 
-> 更新：2026-09-05。Gate A/B 已验收 PASS，双模型 debug 已完成；当前授权 Gate C 正式512题校准与8方向拟合，test和accuracy评估尚未运行。
-> [总体计划](../.planning/phase8/loopscope_phase8_plan.md) 描述研究方案，[control](../.planning/phase8/loopscope_phase8_control.md) 决定当前权限，[科学合同](../.planning/phase8/loopscope_phase8_contract_v1.md) 固定参数，[Gate C handoff](../.planning/phase8/loopscope_phase8_gate_c_handoff.md) 指导当前执行任务。
+> 更新：2026-09-05。Gate A/B/C 已验收 PASS，8个正式校准方向已完成；当前授权 Gate D 完整18配置test评测，accuracy尚无结果。
+> [总体计划](../.planning/phase8/loopscope_phase8_plan.md) 描述研究方案，[control](../.planning/phase8/loopscope_phase8_control.md) 决定当前权限，[科学合同](../.planning/phase8/loopscope_phase8_contract_v1.md) 固定参数，[Gate D handoff](../.planning/phase8/loopscope_phase8_gate_d_handoff.md) 指导当前执行任务。
 
 ## 1. 本阶段要回答什么
 
 固定模型和循环窗口后，在每轮更新中削弱一个主要残差方向，能否提高 MMLU 5-shot 准确率？主要比较是同一个模型、同一个窗口、同一批题目下，加入谱软衰减后的循环与原版 Euler 循环之间的 acc 差异。
 
-导师分享的 SFA 论文提供了“寻找主要方向，再减去该方向投影”的思路。这里把它迁移到冻结语言模型的循环残差上。原论文是训练期随机特征增强；我们的首版方案是独立校准后固定方向的推理期软衰减，因此称为 **SFA-inspired residual spectral damping**。目前没有第八阶段结果，不能先认定主方向有害。
+导师分享的 SFA 论文提供了“寻找主要方向，再减去该方向投影”的思路。这里把它迁移到冻结语言模型的循环残差上。原论文是训练期随机特征增强；我们的首版方案是独立校准后固定方向的推理期软衰减，因此称为 **SFA-inspired residual spectral damping**。目前只有校准与工程验证结果，尚无准确率结果，不能先认定主方向有害。
 
 ## 2. 已确定的模型、窗口和原版循环
 
@@ -140,3 +140,12 @@ Gate B 的两模型debug作业已完成，原版/关闭干预/零强度scores一
 同版本双模型debug先覆盖512内首两题和最长两题。正式scope拟合512行，debug scope不得用于D。
 `verify_phase8_calibration.py --cell-roots <roots...> --pool <pool> --scope FORMAL_CALIBRATION --require-all --output <fresh verification.json>`
 在独立进程检查8配置身份、张量与Rayleigh/eigen residual（相对容差1e-4），不重复完整SVD。
+
+
+## Gate D 当前执行安排
+
+八个固定方向已通过校准验收。接下来在同一完整test 14,042题上运行18个配置：每模型一个普通不循环基线，加上四个模型—窗口组合在K=2/K=4下各自的原版Loop和Spectral。全部配置完成后才统一计算准确率及逐题的错转对、对转错，并分别报告K=2主结果和K=4补充结果。
+
+Gate C发现4B长程显存峰比四题短debug更高，三进程并发仅约4.5%余量。D会重测实际test上尾长度和长期显存，A40初始最多两进程，在保留安全余量后扩展剩余采集。先通过同版debug，再保留小批正式canary，随后完成全量。不得为利用率改batch或dtype。
+
+当前尚无acc提升结论；最终中文结果和紧凑表格放外层`资产/报告/phase8/`，本页继续保留总体计划与运行说明。

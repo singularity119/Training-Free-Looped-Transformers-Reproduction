@@ -7,8 +7,8 @@
 ## 当前控制入口
 
 最新阶段的唯一动态控制入口是 [Phase 8 control](phase8/loopscope_phase8_control.md)。
-用户已授权本规划任务逐 Gate 推进至阶段终态；Gate A/B 已 PASS，当前授权 Gate C 正式512题校准与8个方向拟合；test评测仍锁在Gate D。
-[总体计划](phase8/loopscope_phase8_plan.md) / [科学合同](phase8/loopscope_phase8_contract_v1.md) / [Gate C handoff](phase8/loopscope_phase8_gate_c_handoff.md) / [易读阶段报告](../docs/loopscope_phase8.md)。
+用户已授权本规划任务逐 Gate 推进至阶段终态；Gate A/B/C 已 PASS，当前授权 Gate D 完整18配置test采集，全部闭合后一次配对统计。
+[总体计划](phase8/loopscope_phase8_plan.md) / [科学合同](phase8/loopscope_phase8_contract_v1.md) / [Gate D handoff](phase8/loopscope_phase8_gate_d_handoff.md) / [易读阶段报告](../docs/loopscope_phase8.md)。
 Phase 7 保持历史终态，旧 control/handoff 不赋予新实验权限。
 
 ## 阶段和方法索引

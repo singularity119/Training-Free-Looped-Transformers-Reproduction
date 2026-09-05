@@ -2,26 +2,28 @@
 
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
-STATUS=ACTIVE_GATE_C_RESUMED_AFTER_CONNECTIVITY_RESTORATION
+STATUS=ACTIVE_GATE_D
 PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
-ACTIVE_GATE=C
-AUTHORIZED_EXECUTOR=01a070f0-158e-72f2-9d06-5ba47c02e2bd
+ACTIVE_GATE=D
+AUTHORIZED_EXECUTOR=01a071e9-d133-7742-8826-e0cf5993a1f1
+LAST_GATE_C_EXECUTOR=01a070f0-158e-72f2-9d06-5ba47c02e2bd
 LAST_GATE_B_EXECUTOR=01a0704b-5798-7680-80a2-f1145f35f9ba
 LAST_GATE_A_EXECUTOR=01a07030-6413-7660-b712-c18d9e93d26e
-AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-Residual-Calibration-第8阶段-Gate C
-CURRENT_DECISION=GATE_C_RESUME_EXISTING_JOBS_AFTER_SSH_VERIFICATION
+AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-Paired-Accuracy-第8阶段-Gate D
+CURRENT_DECISION=GATE_C_PASS_AUTHORIZE_GATE_D
 GATE_A_STATE=PASS
 GATE_B_STATE=PASS
-GATE_C_STATE=AUTHORIZED
-GATE_D_STATE=LOCKED
+GATE_C_STATE=PASS
+GATE_D_STATE=AUTHORIZED
 STANDING_PHASE_CONTINUATION=USER_AUTHORIZED_ADVANCE_SERIAL_GATES_UNTIL_PHASE8_TERMINAL
 OPERATIONAL_PERMISSION_DECISIONS=PLANNING_GATE_SCOPED_PER_PROJECT_DELEGATION
 EXECUTOR_MODEL=INHERIT_USER_CONFIGURATION
 BASE_COMMIT=b53ff067992e41b66a8df01794dfb106c61b29d0
-AUDITED_COMMIT=c7e4e1f5e0b38874ee4e7eb1ac19dd5c7b6e59ba
+AUDITED_COMMIT=6d6214f6ad912b1984b1e0994015270acf627f59
+AUDITED_GATE_C_FINAL_COMMIT=8c8ef434a4be2025f9603ce7690b90d4abb2f330
 AUDITED_GATE_B_FINAL_COMMIT=ef54d2cdafa92483ed65575d0c5788b7980d60f3
-LATEST_ACCEPTANCE=.planning/phase8/loopscope_phase8_gate_b_acceptance.md
-ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_c_handoff.md
+LATEST_ACCEPTANCE=.planning/phase8/loopscope_phase8_gate_c_acceptance.md
+ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_d_handoff.md
 SCIENTIFIC_CONTRACT=.planning/phase8/loopscope_phase8_contract_v1.md
 ACTIVE_SUPPLEMENT=NONE
 PRIOR_OPERATIONAL_SUPPLEMENTS=loopscope_phase8_gate_b_push_approval_resume.md;loopscope_phase8_gate_b_platform_permission_resume.md
@@ -31,17 +33,15 @@ BLOCKER=NONE
 PRESERVED_GATE_C_COMMIT=51e48d8c33fbadb985783804100bfbbd82f66fd6
 PRESERVED_GATE_C_JOBS=12649531,12649532
 PRESERVED_GATE_B_COMMIT=e6da2f8790e5ef7612104c41c68a2a7d79138692
-NEXT_ADMISSION=GATE_C_PASS_8_FORMAL_BASES_AND_512_IDENTITY_CLOSURE
+NEXT_ADMISSION=GATE_D_FULL_18_CELL_CLOSURE_PAIRED_ANALYSIS_AND_PHASE_END_AUDIT
 PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED_MATERIAL_STOP
 ```
 
 ## 当前授权
 
-Gate B已[PASS](loopscope_phase8_gate_b_acceptance.md)，两个debug jobs/8cell经planning直接验收。当前授权独立Gate C：复用合同v1及B固定512 identity，按8配置采集正式无干预answer residual、拟合8basis及无标签诊断。实现基线ef54d2c（B producer c7e4e1f），允许本轮planning的纯文档提交前置。
+Gate C已[PASS](loopscope_phase8_gate_c_acceptance.md)，八个正式basis及512身份准入Gate D。A/B/C executor全部撤权并保留只读；下文历史运行授权均已过期。
 
-具体路径、科学和资源以[Gate C handoff](loopscope_phase8_gate_c_handoff.md)为准。新producer先debug，再按普通用户合法资源正式校准；上限同时2GPU、每GPU1–3独立进程、每job2h、总16GPU-hours，packing须测量。仅同一512验证集，不读test/gold/accuracy，无Gate D权限。用户源码提交授权继续用于当前项目loopscope分支。
-
-B executor已撤权；下文历史B授权/阻塞/恢复记录不再授予B执行权限。每新任务首条消息/handoff强调实际读取skill；C终态由唯一monitor主动唤醒executor，executor继续闭合并发送planning，不能仅宣布恢复后结束。
+当前独立D executor获准按[Gate D handoff](loopscope_phase8_gate_d_handoff.md)实现gold-free testpool/18配置评测、HPC debug及正式采集，在全部18配置闭合后一次解封test gold并配对统计、报告。科学合同v1不变。最多同时2GPU、每job≤6h、累计≤64GPUh；4B长程显存重新测量，A40初始packing≤2。源码普通提交/push延续用户授权。planning不替executor实现或例行监控。
 
 ## 已结束的 Gate B 运行历史
 
