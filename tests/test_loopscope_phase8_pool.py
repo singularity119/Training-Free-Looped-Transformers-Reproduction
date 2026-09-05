@@ -19,6 +19,7 @@ class Phase8PoolTests(unittest.TestCase):
             'mmlu_algebra': {'type':'task','yaml_path':'/tasks/mmlu/default/mmlu_algebra.yaml'},
             'mmlu_flan_algebra': {'type':'task','yaml_path':'/tasks/mmlu/flan_n_shot/mmlu_flan_algebra.yaml'},
             'mmlu_stem': {'type':'group','yaml_path':'/tasks/mmlu/default/_mmlu_stem.yaml'},
+            'mmlu_stem_tasks': {'type':'tag','yaml_path':-1},
         }
         self.assertEqual(standard_task_names(index), ['mmlu_algebra'])
 

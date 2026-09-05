@@ -21,9 +21,10 @@ def standard_task_names(task_index):
     """Select the installed standard MMLU YAMLs, excluding named variants."""
     result = []
     for name, entry in task_index.items():
+        if not name.startswith("mmlu_") or entry.get("type") != "task":
+            continue
         path = Path(entry.get("yaml_path", ""))
-        if (name.startswith("mmlu_") and entry.get("type") == "task"
-                and path.parent.name == "default" and path.parent.parent.name == "mmlu"):
+        if path.parent.name == "default" and path.parent.parent.name == "mmlu":
             result.append(name)
     return sorted(result)
 
