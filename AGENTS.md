@@ -12,6 +12,8 @@
 
 ## 新阶段适用规则
 
+每次创建独立 Gate 执行任务时，规划任务必须在创建首条消息和正式 handoff 中显式强调：“按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行”，要求执行任务实际读取该 skill；涉及终态交付、监控或协议边界时读取其 `references/protocol.md`。不能仅依赖继承上下文或项目中已有的间接引用。该要求适用于每个新 Gate，且不扩大该 Gate 的具体权限。
+
 从 Phase 8 起，按用户明确指定的 research-gate-orchestrator 协议执行。当前阶段入口由 `.planning/README.md` 指向匹配 `phase<N>/` 的 control；下文“当前 Phase 7”及各历史阶段科学规则是历史范围，不授权新阶段。所有新阶段专属规划文件进入 `.planning/phase<N>/`。
 
 对新 Gate，使用可读 sample identity、配置、repository revision、job ID 和直接文件证据；不新增内容摘要值或相关绑定要求。采用有材料性依据的针对性测试、最小 debug preflight、一次轻量 Gate 验收和阶段末综合审计，不继承旧通用门中的强制全套测试或禁止一切失败重试。允许 exact handoff 内保留失败尝试后的低风险工程修复/新路径重试；下一 Gate 仍需新独立 executor 和规划授权。历史冻结工件保持原样。
