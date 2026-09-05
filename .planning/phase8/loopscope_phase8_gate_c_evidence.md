@@ -61,3 +61,30 @@ concurrent GPU peaks/throughput; choose safe packing; formal jobs under allowed
 highest A40 emergency priority if still legally admitted; retarget same monitor
 30min including PENDING; complete eight512 bases and final verifier, report,
 commit/push, and confirmed terminal delivery. Formal work not yet submitted.
+
+## New-producer debug passed; formal submitted
+
+Monitor observed both debug jobs COMPLETED0:0 (batch/extern too),47s+23s,
+gpu3-9; paused itself and successfully delivered AUTOMATION_TERMINAL_RESUME to
+exact executor. Executor directly read both verification.json and8summaries/envs.
+All8 PREFLIGHT_ONLY cells contain4identities (first2 + longest2 of512), max2954tokens,
+unit norm errors below1.2e-7, eigen residual relative errors below3.4e-8.
+A40 total50899648512bytes; 4B per-process reserved12685672448bytes, global telemetry
+peak37383MiB (~23% free); 1.7B reserved7683964928–7721713664bytes, peak23145MiB.
+OOM0. Three-process trajectories/s sums:4B3.372 vs solitary K4 cell2.650;
+1.7B4.754 vs solitary K4 cell4.787 (roughly preserves throughput; small debug
+sample and different window/K mix limit exact comparisons). Concurrent model load
+also shortens elapsed work. Packing3 retained; identical8CPU/thread environment,
+A40 hardware type, producer/launcher/runtime. No extra debug rerun.
+
+Formal jobs12649531(model0) and12649532(model1) submitted successfully with
+account root, emergency_gpua40 partition/QOS (ordinary-user permitted Tier300),
+1A40 GPU,8CPU,128G,2h maximum each; same launcher producer6d6214f, packing3,
+allcell0..3, FORMAL_CALIBRATION. Initial queue PENDING(Priority). Fresh roots:
+- `runs/phase8-gate-c-20260905T100000Z-formal-q4-a1`
+- `runs/phase8-gate-c-20260905T100000Z-formal-q17-a1`
+under dedicated workspace. Logs staging/phase8-gate-c-20260905T100000Z-a1/formal-<model>-%j.log.
+Even maximum allocation of both formal jobs plus debug remains below16GPUh.
+Same unique monitor updated ACTIVE probe30min at verified job submission,
+covering PENDING; pause/self-wake/final closure route retained and tool confirmed.
+Pending formal completeness/verifier/resource accounting/terminal delivery.
