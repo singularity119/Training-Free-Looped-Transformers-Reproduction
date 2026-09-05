@@ -2,15 +2,15 @@
 
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
-STATUS=ACTIVE_GATE_B
+STATUS=GATE_B_BLOCKED_ON_GITHUB_PUSH_APPROVAL
 PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
 ACTIVE_GATE=B
 AUTHORIZED_EXECUTOR=01a0704b-5798-7680-80a2-f1145f35f9ba
 LAST_GATE_A_EXECUTOR=01a07030-6413-7660-b712-c18d9e93d26e
 AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-Intervention-Debug-第8阶段-Gate B
-CURRENT_DECISION=GATE_B_AUTHORIZED_AFTER_GATE_A_PASS
+CURRENT_DECISION=GATE_B_BLOCK_OPERATIONAL_APPROVAL_REQUIRED
 GATE_A_STATE=PASS
-GATE_B_STATE=AUTHORIZED
+GATE_B_STATE=BLOCK
 GATE_C_STATE=LOCKED
 GATE_D_STATE=LOCKED
 STANDING_PHASE_CONTINUATION=USER_AUTHORIZED_ADVANCE_SERIAL_GATES_UNTIL_PHASE8_TERMINAL
@@ -23,7 +23,9 @@ ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_b_handoff.md
 SCIENTIFIC_CONTRACT=.planning/phase8/loopscope_phase8_contract_v1.md
 ACTIVE_SUPPLEMENT=NONE
 FROZEN_USER_CHOICES=QWEN3_4B_BASE_12_15_13_16_CACHE_FIRST;QWEN3_1_7B_BASE_12_15_6_9_CACHE_LAST;MMLU_5SHOT;DAMPED_EULER;ALPHA_1_ALL_K_FIXED_HORIZON;VALIDATION512_FIT_TEST14042_EVAL;K2_PRIMARY_K4_SECONDARY;RANK1_LAMBDA0_5
-PENDING_USER_CHOICES=NONE
+PENDING_USER_CHOICES=EXPLICIT_GITHUB_PUSH_APPROVAL
+BLOCKER=AUTO_REVIEW_REJECTED_GITHUB_SOURCE_HISTORY_EXPORT
+PRESERVED_GATE_B_COMMIT=726c31ca47e89397a17a8c81bc3273836f594170
 NEXT_ADMISSION=GATE_B_PASS_AND_VALID_CALIBRATION_PRODUCER_PREFLIGHT
 PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED_MATERIAL_STOP
 ```
@@ -37,3 +39,11 @@ Gate A [验收PASS](loopscope_phase8_gate_a_acceptance.md) 已闭合，原execut
 B的实现起点是A的3fe34c4加规划提交2e56e05及本次仅科学/规划/配置激活提交；具体READY commit由下发消息给出，executor须核对。Gate B不得写control/科学合同/AGENTS。
 
 PASS后立即撤销B权限，创建满足admission的独立C任务。资源/工程缺项由planning授予最小补充，科学变化另立决定。所有任务创建消息和handoff必须显式要求实际读取research-gate-orchestrator及适用protocol。规划只做1–3个决定性验收，阶段末一次综合审计，不轮询executor。
+
+## Gate B 暂停决定：GitHub 推送审批
+
+收到绑定executor的唯一BLOCK终态包，核对其身份、local clean HEAD726c31c、origin实际地址与ahead4列表，以及 [Gate B证据](loopscope_phase8_gate_b_evidence.md)。规划决定BLOCK，范围仅GitHub推送的外部审批；不判定实现失败，也不判定B通过。HPC连接已恢复；未同步、未运行真实debug，无job/heartbeat。
+
+自动审批两次拒绝普通 `git push origin loopscope`，executor报告的理由是handoff本身不能建立可信用户授权来向GitHub导出源码/历史。目标为 `git@github.com:singularity119/Training-Free-Looped-Transformers-Reproduction.git` 的 `loopscope` 分支。现有实现/规划提交为2e56e05、9210582、d1dfcb8、726c31c，仅项目代码、测试、配置与文档；无模型、数据、残差、basis或完整运行日志。本条规划状态提交同属文档范围。
+
+请求用户明确批准该项目/分支的第八阶段源码、测试、配置、规划/运行文档普通推送。未批准前不重试、不由planning代推、不用其他传输渠道绕过审批。Gate B绑定保留，暂停变更和外部执行；批准后给同一executor发恢复补充，继续原debug任务，C仍锁住。当前尚未做B最终工程验收。
