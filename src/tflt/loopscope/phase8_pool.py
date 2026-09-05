@@ -147,6 +147,9 @@ def build_debug_pool(model_config: Mapping[str, Any], cache_dir: str) -> dict[st
 
     def safe_download(task: Any, *args: Any, **kwargs: Any) -> None:
         dataset, evidence = _load_safe_dataset(task, backend, cache_dir)
+        # Standard MMLU YAML names test only. Route this builder's initialization
+        # to the authorized safe validation projection; rendering stays standard.
+        task.config.validation_split = "validation"
         subject = backend._config_value(task.config, "dataset_name")
         safe_datasets[subject] = dataset
         sources.append(evidence)
