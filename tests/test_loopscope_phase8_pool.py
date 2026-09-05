@@ -13,6 +13,15 @@ from tflt.loopscope.phase8_pool import (
 
 
 class Phase8PoolTests(unittest.TestCase):
+    def test_standard_task_selection_excludes_mmlu_variants(self):
+        from tflt.loopscope.phase8_pool import standard_task_names
+        index = {
+            'mmlu_algebra': {'type':'task','yaml_path':'/tasks/mmlu/default/mmlu_algebra.yaml'},
+            'mmlu_flan_algebra': {'type':'task','yaml_path':'/tasks/mmlu/flan_n_shot/mmlu_flan_algebra.yaml'},
+            'mmlu_stem': {'type':'group','yaml_path':'/tasks/mmlu/default/_mmlu_stem.yaml'},
+        }
+        self.assertEqual(standard_task_names(index), ['mmlu_algebra'])
+
     def test_proportional_allocation_and_one_shared_rng(self):
         counts = {"zebra": 13, "algebra": 7, "biology": 10}
         rows = select_calibration(counts, count=11)

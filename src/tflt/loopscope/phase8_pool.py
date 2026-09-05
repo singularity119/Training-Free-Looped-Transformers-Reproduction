@@ -17,6 +17,17 @@ SEED = 20260905
 SAFE_COLUMNS = ("question", "subject", "choices")
 
 
+def standard_task_names(task_index):
+    """Select the installed standard MMLU YAMLs, excluding named variants."""
+    result = []
+    for name, entry in task_index.items():
+        path = Path(entry.get("yaml_path", ""))
+        if (name.startswith("mmlu_") and entry.get("type") == "task"
+                and path.parent.name == "default" and path.parent.parent.name == "mmlu"):
+            result.append(name)
+    return sorted(result)
+
+
 def identity(subject: str, doc_index: int) -> str:
     return f"{DATASET_REPO}@{DATASET_REVISION}:validation:{subject}:{doc_index}"
 
@@ -116,8 +127,7 @@ def build_debug_pool(model_config: Mapping[str, Any], cache_dir: str) -> dict[st
     if len(tokenizers) != 2:
         raise ValueError("Phase 8 requires the two frozen model tokenizers")
     manager = backend._task_manager()
-    names = sorted(name for name, entry in manager.task_index.items()
-                   if name.startswith("mmlu_") and entry.get("type") == "task")
+    names = standard_task_names(manager.task_index)
     if len(names) != 57:
         raise ValueError(f"expected 57 MMLU subjects, found {len(names)}")
     sources = []
