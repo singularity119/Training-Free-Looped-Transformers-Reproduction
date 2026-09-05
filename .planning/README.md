@@ -6,10 +6,10 @@
 
 ## 当前控制入口
 
-最新阶段的唯一动态控制入口是 [Phase 7 control](phase7/loopscope_phase7_control.md)。
-2026-09-02 迁移核对时，其状态为 `PHASE7_TERMINAL_PASS_AFTER_GATE_F`，
-`ACTIVE_GATE=NONE`，`AUTHORIZED_EXECUTOR=NONE`。后续若有更新，以 control 顶部状态区块为准。
-旧文件中“当前”“已激活”“允许执行”都是写入当时的语境，不能单独视为今天的授权。
+最新阶段的唯一动态控制入口是 [Phase 8 control](phase8/loopscope_phase8_control.md)。
+用户已授权本规划任务逐 Gate 推进至阶段终态；当前仅 Gate A 获授权。模型窗口/cache 与 Euler 基线已确认，评测 split 和 K/SFA 提案仍待回复；不得提前运行模型实验。
+[总体计划](phase8/loopscope_phase8_plan.md) / [Gate A handoff](phase8/loopscope_phase8_gate_a_handoff.md) / [易读阶段报告](../docs/loopscope_phase8.md)。
+Phase 7 保持历史终态，旧 control/handoff 不赋予新实验权限。
 
 ## 阶段和方法索引
 
@@ -22,6 +22,7 @@
 | `phase5/` | Qwen3-4B-Base 尺度迁移、选窗规则和几何诊断 | [control](phase5/loopscope_phase5_control.md) | [runbook](../docs/loopscope_phase5.md) |
 | `phase6/` | 已终止 MMLU-Pro 分支、MMLU 0/5-shot、V3 与五-cell outcome | [control](phase6/loopscope_phase6_control.md) | [runbook](../docs/loopscope_phase6.md) |
 | `phase7/` | 三种 Base 架构、V3.1 与 Gate E/F outcome | [control](phase7/loopscope_phase7_control.md) | [runbook](../docs/loopscope_phase7.md) |
+| `phase8/` | 双 Base 模型四窗口的谱软衰减与配对 acc | [control](phase8/loopscope_phase8_control.md) | [阶段报告](../docs/loopscope_phase8.md) / [总体计划](phase8/loopscope_phase8_plan.md) |
 | `selector_rules/` | 跨阶段版本化方法定义；不授予实验权限 | [规则索引](selector_rules/README.md) | [V3.1.0](selector_rules/aggregate_common_turn_v3_absolute_rate.md) |
 
 最近的终态依据：

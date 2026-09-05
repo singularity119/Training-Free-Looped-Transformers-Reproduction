@@ -10,6 +10,14 @@
 
 > 本文件只适用于 LoopScope 专用 clone 的 `loopscope` 分支。它定义 LoopScope 第一阶段及后续阶段增量实现、HPC2 验证和实验的长期强制边界；阶段进度与动态授权分别记录在对应 control 文件中。原有本地/HPC2 固定复现 checkout 均为只读参照。发现本文件与用户最新明确指令冲突时，以用户最新指令为准并先暂停报告。
 
+## 新阶段适用规则
+
+从 Phase 8 起，按用户明确指定的 research-gate-orchestrator 协议执行。当前阶段入口由 `.planning/README.md` 指向匹配 `phase<N>/` 的 control；下文“当前 Phase 7”及各历史阶段科学规则是历史范围，不授权新阶段。所有新阶段专属规划文件进入 `.planning/phase<N>/`。
+
+对新 Gate，使用可读 sample identity、配置、repository revision、job ID 和直接文件证据；不新增内容摘要值或相关绑定要求。采用有材料性依据的针对性测试、最小 debug preflight、一次轻量 Gate 验收和阶段末综合审计，不继承旧通用门中的强制全套测试或禁止一切失败重试。允许 exact handoff 内保留失败尝试后的低风险工程修复/新路径重试；下一 Gate 仍需新独立 executor 和规划授权。历史冻结工件保持原样。
+
+用户已指定 Phase 8 易读阶段计划放在 `docs/loopscope_phase8.md`，保留此明确例外；其他人类结果交付继续按下述资产目录规则。动态 executor、配方和授权只记录在 Phase 8 control/handoff。除 handoff 明确批准的最小变更外，protected runtime 路径仍只读。
+
 ## 0. 计划与信息源
 
 - `AGENTS.md` 只保存长期稳定的项目边界、工程规则和 Gate 验收标准，不记录临时进度、当前执行线程或逐次工具日志。
