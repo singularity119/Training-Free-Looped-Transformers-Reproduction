@@ -93,3 +93,32 @@ GPU.csv peak/15percent headroom and runtime. Preserve valid first512 per cell.
 Only after valid canary, expand remaining[512,14042), respecting two GPUs,
 6h/job,64GPUh cumulative and fresh failed-shard paths. Retarget this same monitor.
 No formal remainder, target gold unseal, analysis or Gate terminal occurred yet.
+
+## Canary complete; remaining formal panel submitted
+
+User completion notification triggered exact-executor continuation. Fresh sacct:
+12650740 COMPLETED0:0 elapsed545s,12650741 COMPLETED0:0 elapsed241s,
+batch/extern also0:0. Paused the unique monitor with visible confirmation before
+continuing. Fresh `phase8_accuracy_verify.verify` read saved raw scores and
+closed9cells×512 per model,9216 total scores, without outcomes.
+GPU.csv sustained q4 packing2 peak22460/49140MiB (54.29percent headroom);
+q17 packing3 peak20301/49140MiB (58.69percent). All18 summaries OOM0;
+concurrent worst per-cell throughput about5.25/7.01samples/s respectively.
+Preserve all first512 per cell; no resubmission or outcome read.
+Debug+canary elapsed901GPU-seconds=0.250278GPUh. Remainder estimate from canary
+throughput and waves is roughly3.6h q4/1.6h q17 plus length/load variation;
+6h/job bounds and at most12 additionalGPUh stay below64GPUh total.
+
+Remote remains clean producer2dd3dfd; later local evidence-only commit need not
+replace this unchanged preflight/runtime checkout. Fresh user queue empty.
+Submitted same producer/launcher on highest eligible A40 tier300 emergency
+partition/QOS,account root,GPU1/CPU8/mem128G/time06:00:00 each:
+-12651219: q4 nine cells,packing2,canonical[512,14042).
+-12651220: q17 nine cells,packing3,canonical[512,14042).
+Roots `runs/phase8-gate-d-20260905T173200Z-remaining-{q4,q17}-a1`;
+logs `staging/phase8-gate-d-20260905T173200Z-remaining-a1/{q4,q17}-%j.log`.
+Both real job IDs verified PENDING(Resources/Priority). Pool/panel paths unchanged.
+Exactly the same monitor retargeted and ACTIVE full60min, including PENDING;
+visible update confirmation retained. Terminal continuation must combine these
+remainders with the preserved canaries and verify18×14042 before gold access.
+No Gate-level final event yet; current state is waiting for formal remainder.
