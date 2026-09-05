@@ -175,7 +175,7 @@ def build_debug_pool(model_config: Mapping[str, Any], cache_dir: str) -> dict[st
             if backend._config_value(config, "process_docs") not in (None, ""):
                 raise ValueError("unexpected MMLU process_docs")
             fewshot_config = backend._config_value(config, "fewshot_config")
-            if not isinstance(fewshot_config, Mapping) or fewshot_config.get("sampler") != "first_n":
+            if backend._config_value(fewshot_config, "sampler") != "first_n":
                 raise ValueError("MMLU must use the standard first_n demonstration sampler")
             dev = task.dataset["dev"]
             if len(dev) != 5:
