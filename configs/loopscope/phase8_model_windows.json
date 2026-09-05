@@ -1,5 +1,5 @@
 {
-  "status": "PARTIAL_CONFIRMED_NOT_RUNTIME_CONTRACT",
+  "status": "FROZEN_PHASE8_CONTRACT_V1",
   "task": "mmlu",
   "num_fewshot": 5,
   "prompt_style": "plain",
@@ -66,16 +66,29 @@
       "historical_runtime_dtype": "float16"
     }
   ],
-  "pending": {
-    "evaluation_split": "PENDING_USER",
-    "K_scope": "PENDING_USER: proposed K=2 primary and possible K=4 supplement",
-    "SFA": "PENDING_USER: proposed rank=1, lambda=0.5",
-    "runtime_scoring_dtype_budget": "PENDING_PLANNING_FREEZE",
-    "basis_fit_K_and_application_K": "PENDING_PLANNING_FREEZE"
-  },
-  "proposed_basis": "uncentered, no row normalization, calibration t=1 residual top right singular vector per model/window",
-  "proposed_intervention": "pre-answer prompt token only, t>=1",
-  "proposed_uniform_control": "per-vector matched spectral-damped norm; panel inclusion pending",
   "alpha": 1.0,
-  "alpha_status": "FROZEN_USER_ALL_K"
+  "alpha_status": "FROZEN_USER_ALL_K",
+  "contract": ".planning/phase8/loopscope_phase8_contract_v1.md",
+  "K": [
+    2,
+    4
+  ],
+  "primary_K": 2,
+  "secondary_K": 4,
+  "calibration_split": "validation",
+  "calibration_count": 512,
+  "evaluation_split": "test",
+  "evaluation_count": 14042,
+  "rank": 1,
+  "strength": 0.5,
+  "basis_fit_K": "same_as_application_K",
+  "basis_count": 8,
+  "batch_size": 1,
+  "iteration_mode": "block",
+  "decode_mode": "bypass",
+  "seed": 20260905,
+  "formal_unique_configs": 18,
+  "basis": "uncentered, no row normalization, calibration t=1 residual top right singular vector per model/window/K",
+  "intervention": "pre-answer prompt token only, t>=1",
+  "uniform_control": "math_reference_only_not_in_formal_panel"
 }

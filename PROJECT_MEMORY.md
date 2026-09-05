@@ -1,4 +1,4 @@
-> 2026-09-05 接续更新：[Phase 8 control](.planning/phase8/loopscope_phase8_control.md) 已激活，用户授权规划任务逐 Gate 推进；Gate A 已 PASS，等待剩余科学选择后下发 Gate B，尚无模型实验权限。下文 2026-09-02 的 Phase 7 “当前”叙述是归档快照。
+> 2026-09-05 接续更新：[Phase 8 control](.planning/phase8/loopscope_phase8_control.md) 已激活，用户授权规划任务逐 Gate 推进；Gate A 已 PASS，科学配方已确认；当前 Gate B 获准最小实现和双模型 debug，正式校准/test 尚未授权。下文 2026-09-02 的 Phase 7 “当前”叙述是归档快照。
 
 # LoopScope 项目记忆与接续入口
 
