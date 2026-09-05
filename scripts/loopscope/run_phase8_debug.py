@@ -93,14 +93,17 @@ def main(argv=None):
         job_id=os.environ.get('SLURM_JOB_ID'), partition=os.environ.get('SLURM_JOB_PARTITION'),
         gpu=torch.cuda.get_device_name(), total_memory=torch.cuda.get_device_properties(0).total_memory,
         source_commit=args.commit))
+    scoring_count = [0]
 
     def original(row):
+        scoring_count[0] += 1
         requests = [Instance(request_type='loglikelihood', doc={}, arguments=(row['prompt'], ' '+letter),
                              idx=i, metadata=('phase8', row['identity'], 1))
                     for i, letter in enumerate('ABCD')]
         return finite_scores([float(x[0]) for x in vanilla.loglikelihood(requests, disable_tqdm=True)])
 
     def adapted(row, runtime=None):
+        scoring_count[0] += 1
         previous = adapter.phase8_runtime
         adapter.phase8_runtime = runtime
         try:
@@ -147,6 +150,12 @@ def main(argv=None):
         loaded = load_basis(cell_dir / 'basis.json', expected_metadata=metadata)
         if basis != loaded:
             raise ValueError('basis serialization did not preserve values')
+        probe = torch.arange(len(basis['direction']), dtype=torch.float32, device='cuda')
+        probe = probe.reshape(1,1,-1).to(model.dtype)
+        before, after = Phase8Runtime(basis['direction']), Phase8Runtime(loaded['direction'])
+        with before.context('basis-roundtrip',0), after.context('basis-roundtrip',0):
+            if not torch.equal(before(probe,1),after(probe,1)):
+                raise ValueError('basis roundtrip changed transform output')
         # Only bounded answer-position rows are persisted, never full hidden states.
         torch.save(dict(identities=collector.identities, t1=collector.matrix(), metadata=metadata), cell_dir / 'residual_t1.pt')
         results = []
@@ -176,6 +185,7 @@ def main(argv=None):
         semantic_checks=semantic, cell_names=[r['name'] for r in reports],
         elapsed_seconds=elapsed, peak_allocated_bytes=torch.cuda.max_memory_allocated(),
         peak_reserved_bytes=torch.cuda.max_memory_reserved(), oom_count=0,
+        prompt_scoring_calls=scoring_count[0], prompt_scoring_calls_per_second=scoring_count[0]/elapsed,
         verified_identity_count=len(verify_rows), fit_identity_count=len(fit_rows))
     write_json(args.run_root / 'summary.json',summary)
     print(json.dumps(summary, indent=2))

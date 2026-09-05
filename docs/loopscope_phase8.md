@@ -92,3 +92,34 @@ Gate A 不提交模型作业。以后 debug/smoke 一律在 debug partition、�
 ## 9. 留给后续阶段的动机
 
 逐 prompt 在线估计方向已经讨论，但不纳入第八阶段。后续可研究同一 prompt 的多 token 或跨步残差，估计输入特定方向再衰减。本阶段先完成离线共享方向的明确配方，避免同时改变方向来源和干预方式。
+
+## 10. Gate B 运行入口与工件
+
+以下入口仅服务当前 Gate B；是否已实际通过双模型 debug，以 Gate B evidence 和规划验收为准。
+在专用 HPC clone、现有解释器与离线缓存环境下生成共享池：
+
+```bash
+PYTHONPATH=src .venv-loopscope-cu121-20260711/bin/python scripts/loopscope/build_phase8_debug_pool.py --cache-dir /hpc2hdd/home/xhuang225/shared/datasets --output-dir <fresh-phase8-gate-b-input-dir>
+```
+
+该步骤仅生成 512 个 validation 身份和 8 个 debug prompt，加载对应版本 tokenizer，
+不运行模型。`debug_pool.json` 的前四题用于 SMOKE_ONLY 拟合，后四题为双 tokenizer
+最大长度排名选出的上尾验证题；`calibration_identities.json` 仅保存正式拟合候选身份清单。
+
+完成 clean commit/推送/专用远端 clone 的 fast-forward 核对后，以 `/opt/slurm/bin/sbatch`
+提交 `scripts/loopscope/phase8_debug.sbatch <model-index> <pool-json> <fresh-run-root> <checked-commit>`。
+model-index 0 为 4B、1 为 1.7B。脚本固定 debug/29分钟/1GPU/8CPU/128G；可用第五参数 cell-index
+0–3 按窗口再 K 顺序拆分小作业，须保持已有效结果不重跑和 Gate 的最多两作业并行上限。
+提交前仍需按实际上尾长度与资源完成少于30分钟的估计；本入口本身不证明资源准入。
+
+运行后验证：
+
+```bash
+PYTHONPATH=src .venv-loopscope-cu121-20260711/bin/python scripts/loopscope/verify_phase8_debug.py --run-root <completed-run-root>
+```
+
+每个 run root 保存 `command_args.json`、`env.json`、`native.json`、`summary.json`；
+各 `w<start>-<end>-k<K>/` 保存 `basis.json`、仅含 answer-position t1 行的 `residual_t1.pt`
+及 `debug.json`。basis 明确标记 SMOKE_ONLY，不能作为 Gate C 正式 512 方向。
+得分只用于原 HFLM、None/zero 与有限性核查，不读取目标标签或计算准确率。
+峰值显存、scoring 吞吐和真实 job/partition 位于运行证据中，不能从 dry-run 推断。
