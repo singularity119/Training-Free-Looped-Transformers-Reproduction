@@ -88,3 +88,25 @@ Even maximum allocation of both formal jobs plus debug remains below16GPUh.
 Same unique monitor updated ACTIVE probe30min at verified job submission,
 covering PENDING; pause/self-wake/final closure route retained and tool confirmed.
 Pending formal completeness/verifier/resource accounting/terminal delivery.
+
+## BLOCK: connectivity prevents formal closure (2026-09-05 13:13 UTC)
+
+Last confirmed formal scheduler state at11:39UTC: both PENDING(Priority).
+12:10 source-bound SSH returned No route to host;12:40/13:11 hostname resolution
+failed. Current ifconfig shows VPN10.21.0.39 onutun7. Read-only diagnosis:
+scutil DNS has HPC split resolver10.90.63.2/.3; route to10.90.63.3 and previously
+observed HPC10.120.18.63 instead goes via198.18.0.1/utun4. Source-bound
+`dig -b 10.21.0.39 +time=2 +tries=1 @10.90.63.3 hpc2login.hpc.hkust-gz.edu.cn`
+timed out. Public resolver returned NXDOMAIN. No network/hosts/trust mutation.
+
+Unique monitor paused with tool confirmation and successfully delivered the
+visibility-blocker AUTOMATION_TERMINAL_RESUME to exact executor. Executor completed
+bounded read-only diagnosis above. Existing Gate handoff forbids network changes;
+current permitted alias/source-binding cannot reach DNS/HPC. Need restoration of
+VPN/split routing by user or separately authorized network workflow, then resume
+this same executor. Cannot infer either job failed/completed or safely redo work.
+
+Preserve jobs12649531/12649532, all formal/debug/input roots, producer6d6214f,
+contract v1 and test barrier. No retry/cancel or test/gold/accuracy/D action.
+Formal artifacts and actual GPU-hour completion currently unknown; maximum
+submitted allocation still4GPUh plus70seconds debug, below16GPUh.
