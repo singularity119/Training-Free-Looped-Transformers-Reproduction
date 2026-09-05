@@ -1,7 +1,7 @@
 # Phase 8 Gate C execution evidence
 
 Executor `01a070f0-158e-72f2-9d06-5ba47c02e2bd`; planning recipient
-`01a06fe9-c7bb-7d72-a906-234f301de317`. Status: EXECUTING, not a Gate decision.
+`01a06fe9-c7bb-7d72-a906-234f301de317`. Status: AUDIT_REQUESTED after connectivity restoration; not a Gate decision. Earlier pending/BLOCK sections below are preserved history.
 
 Start clean `loopscope` at `4fff325c2273cdc1602745b05c2252b037a61c91`.
 The diff from accepted B terminal `ef54d2cdafa92483ed65575d0c5788b7980d60f3`
@@ -110,3 +110,69 @@ Preserve jobs12649531/12649532, all formal/debug/input roots, producer6d6214f,
 contract v1 and test barrier. No retry/cancel or test/gold/accuracy/D action.
 Formal artifacts and actual GPU-hour completion currently unknown; maximum
 submitted allocation still4GPUh plus70seconds debug, below16GPUh.
+
+
+## Final closure after authorized connectivity restoration
+
+Independent network task restored EasyConnect via user-authorized UI; planning
+verified strict alias SSH and committed recovery control a10fce4. Executor reread
+AUTHORIZED/BLOCKER=NONE, preserved both planning commits and original producer.
+Original formal jobs both COMPLETED0:0 on gpu3-13, including batch/extern:
+12649531 elapsed386s;12649532 elapsed176s. No attempts repeated or cancelled.
+Total actual allocated GPU time including debug=(386+176+47+23)/3600=0.17556GPUh,
+well below16GPUh; maximum concurrent2GPUs/6independent model processes.
+
+Final fresh process command exit0 (dedicated remote source, PYTHONPATH=src,
+PYTHONDONTWRITEBYTECODE=1, OMP_NUM_THREADS=2, audited venv Python):
+```bash
+python scripts/loopscope/verify_phase8_calibration.py --cell-roots <formal-q4>/cell-{0,1,2,3} <formal-q17>/cell-{0,1,2,3} --pool <pool>/calibration_pool.json --scope FORMAL_CALIBRATION --require-all --output <closure>/verification.json
+```
+Exact placeholders are the canonical roots above; closure is dedicated workspace
+`artifacts/phase8-gate-c-20260905T100000Z-closure-a1`.
+All8cells have identical canonical512 identity order, FORMAL_CALIBRATION scope,
+correct actual dtype/model/source, valid unit directions and all finite FP32
+residual matrices. Total4096 trajectories,12288 residual rows; duplicate_calls0.
+4B hidden width2560;1.7B2048. Basis load uses existing phase8_runtime.load_basis;
+files retain its v1 schema. Every cell basis.json is under respective formal root
+cell0..3; residuals.pt holds all t matrices and positions in identity order.
+Maximum eigen relative residual3.452e-8 vs1e-4 tolerance, no repeated full SVD.
+No SMOKE_ONLY/PREFLIGHT_ONLY direction enters formal set.
+
+### Unlabelled in-sample descriptions
+
+| Model | Cell/window/K | t1 top energy fraction | singular1-singular2 gap |
+|---|---|---:|---:|
+|4B|0 /12:15/K2|0.718343|240.6433|
+|4B|1 /12:15/K4|0.757252|320.5392|
+|4B|2 /13:16/K2|0.850645|397.7304|
+|4B|3 /13:16/K4|0.834827|440.9173|
+|1.7B|0 /12:15/K2|0.826242|2758.5293|
+|1.7B|1 /12:15/K4|0.826982|2805.6128|
+|1.7B|2 /6:9/K2|0.832768|740.0468|
+|1.7B|3 /6:9/K4|0.866105|867.3908|
+
+Per-identity projections/norms/cumulative h*sum repeated projections are saved in
+each diagnostics.json. All K4 adjacent nonzero repeated-step projection pairs have
+same sign, coherence1; undefined coherence count0. K2 has only one repeated step,
+so its coherence1 is not accumulation evidence. Direction signs are conventional;
+negative cumulative means do not mean harmful residuals. Spectral concentration
+and coherence describe the fitting set only, not generalization or accuracy.
+No direction/window/K was admitted or removed based on these values.
+
+### Resource deviation and limits
+
+Formal4B each-process reserved15,858,663,424bytes; measured global GPU peak46,346MiB
+(~4.5% free), above debug37,383MiB. Formal1.7B reserved11,169,431,552bytes,
+global peak32,930MiB. OOM0. The longer varied-length run accumulated more allocator
+reservation than the four-prompt upper-tail debug; the 20% headroom assumption did
+not hold on4B formal. Results completed and are retained without rerun, but packing3
+must not be treated as a safe resource prescription for Gate D; measure long-run
+allocator behavior anew. Three-process acquisition aggregate throughput4B7.795
+trajectories/s vs solitary last-cell6.898;1.7B15.531 vs12.246. These compare different
+window/K mix and are descriptive, not a controlled throughput benchmark.
+
+No test/target gold/accuracy/outcome read, intervention or Gate D execution.
+No model/data/basis/residual/full logs in Git. Only authorized implementation and
+documentation changed. Unique monitor remains PAUSED; no future jobs scheduled.
+This completed packet supersedes connectivity BLOCK after exact planning resume.
+Final commit/push and terminal message receipt are recorded in task tool output.
