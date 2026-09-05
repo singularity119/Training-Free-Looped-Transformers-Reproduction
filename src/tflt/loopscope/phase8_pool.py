@@ -112,7 +112,8 @@ def _load_safe_dataset(task: Any, backend: Any, cache_dir: str) -> tuple[Any, di
     return DatasetDict(splits), evidence
 
 
-def build_debug_pool(model_config: Mapping[str, Any], cache_dir: str) -> dict[str, Any]:
+def _build_pool(model_config: Mapping[str, Any], cache_dir: str,
+                gate_b_identities: Mapping[str, Any] | None = None) -> dict[str, Any]:
     """Remote-only builder; exact revisions and existing offline cache required.
 
     Task construction is scoped to validation/dev: the normal download hook is
@@ -199,12 +200,17 @@ def build_debug_pool(model_config: Mapping[str, Any], cache_dir: str) -> dict[st
     if sum(subject_counts.values()) != 1531:
         raise ValueError("validation population differs from 1531")
     calibration = select_calibration(subject_counts)
+    selected = (select_debug(rows, calibration, list(tokenizers))
+                if gate_b_identities is None else
+                select_calibration_rows(rows, calibration, gate_b_identities))
     package = importlib.import_module("lm_eval")
     return {
-        "schema_version": "loopscope.phase8.debug_pool.v1", "status": "SMOKE_ONLY",
+        "schema_version": ("loopscope.phase8.debug_pool.v1" if gate_b_identities is None
+                           else "loopscope.phase8.calibration_pool.v1"),
+        "status": "SMOKE_ONLY" if gate_b_identities is None else "FORMAL_CALIBRATION",
         "dataset": {"repo": DATASET_REPO, "revision": DATASET_REVISION, "split": "validation"},
         "seed": SEED, "calibration_identities": [row["identity"] for row in calibration],
-        "rows": select_debug(rows, calibration, list(tokenizers)),
+        "rows": selected,
         "source_evidence": {"subject_counts": subject_counts, "datasets": sources,
             "lm_eval_version": "0.4.11", "lm_eval_package": str(package.__file__),
             "renderer_source": inspect.getsourcefile(ConfigurableTask.fewshot_context),
@@ -225,6 +231,62 @@ def write_debug_pool(bundle: Mapping[str, Any], output_dir: str) -> None:
                   "count": len(bundle["calibration_identities"]),
                   "identities": bundle["calibration_identities"]}
     for name, value in (("debug_pool.json", bundle), ("calibration_identities.json", identities)):
+        with (root / name).open("x", encoding="utf-8") as handle:
+            json.dump(value, handle, ensure_ascii=False, indent=2, allow_nan=False)
+            handle.write("\n")
+
+
+def select_calibration_rows(rows: Sequence[Mapping[str, Any]],
+                            calibration: Sequence[Mapping[str, Any]],
+                            gate_b_identities: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Check the regenerated ordered selection against B before exporting it."""
+    expected = {"dataset": {"repo": DATASET_REPO, "revision": DATASET_REVISION,
+                            "split": "validation"}, "seed": SEED, "count": 512,
+                "identities": [row["identity"] for row in calibration]}
+    if len(calibration) != 512 or len(set(expected["identities"])) != 512:
+        raise ValueError("formal calibration requires exactly 512 unique identities")
+    if any(gate_b_identities.get(key) != value for key, value in expected.items()):
+        raise ValueError("regenerated calibration differs from Gate B identities/order/seed/dataset")
+    by_id = {row["identity"]: row for row in rows}
+    if len(by_id) != len(rows):
+        raise ValueError("duplicate validation identity")
+    selected = []
+    for member in calibration:
+        row = by_id.get(member["identity"])
+        if row is None or any(row.get(key) != member[key]
+                              for key in ("subject", "doc_index", "split")):
+            raise ValueError("calibration row identity fields do not match selection")
+        selected.append(dict(row, role="fit"))
+    return selected
+
+
+def build_debug_pool(model_config: Mapping[str, Any], cache_dir: str) -> dict[str, Any]:
+    """Preserve Gate B's eight-row smoke selection and rendering."""
+    return _build_pool(model_config, cache_dir)
+
+
+def build_calibration_pool(model_config: Mapping[str, Any], cache_dir: str,
+                           gate_b_identities: Mapping[str, Any]) -> dict[str, Any]:
+    """Render the formal 512 with the same offline, gold-free path as Gate B."""
+    return _build_pool(model_config, cache_dir, gate_b_identities)
+
+
+def write_calibration_pool(bundle: Mapping[str, Any], output_dir: str) -> None:
+    """Persist only the 512 formal target rows, once in a fresh directory."""
+    if (bundle.get("schema_version") != "loopscope.phase8.calibration_pool.v1"
+            or bundle.get("status") != "FORMAL_CALIBRATION"):
+        raise ValueError("formal calibration pool scope required")
+    identities = {"dataset": bundle["dataset"], "seed": bundle["seed"],
+                  "count": len(bundle["calibration_identities"]),
+                  "identities": bundle["calibration_identities"]}
+    rows = bundle["rows"]
+    if len(rows) != 512 or [row["identity"] for row in rows] != identities["identities"]:
+        raise ValueError("formal pool rows must match all 512 ordered identities")
+    select_calibration_rows(rows, rows, identities)
+    root = Path(output_dir)
+    root.mkdir(parents=True, exist_ok=False)
+    for name, value in (("calibration_pool.json", bundle),
+                        ("calibration_identities.json", identities)):
         with (root / name).open("x", encoding="utf-8") as handle:
             json.dump(value, handle, ensure_ascii=False, indent=2, allow_nan=False)
             handle.write("\n")

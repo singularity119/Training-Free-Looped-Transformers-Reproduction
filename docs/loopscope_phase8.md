@@ -127,3 +127,16 @@ PYTHONPATH=src .venv-loopscope-cu121-20260711/bin/python scripts/loopscope/verif
 ## Gate B 验收与 Gate C 入口
 
 Gate B 的两模型debug作业已完成，原版/关闭干预/零强度scores一致，8个窗口/K组合的语义检查通过。这是工程有效性证据，还不是acc提升结果。Gate C复用B保存的512身份清单，正式按每模型/窗口/K拟合方向；新增采集入口经过debug后运行完整校准。输出包括8个basis、512身份与有限无标签谱/跨步诊断；不读取test正确答案。
+
+## Gate C 执行入口
+
+`build_phase8_calibration_pool.py --gate-b-identities <B calibration_identities.json>`
+以原安全 renderer 重建512题并逐项核对原身份顺序。正式采集入口
+`run_phase8_calibration.py --model-index <0|1> --cell-index <0..3> --pool <calibration_pool.json> --run-root <fresh cell> --commit <source> --scope <PREFLIGHT_ONLY|FORMAL_CALIBRATION>`。
+每cell只保存native答案前残差、positions、basis、无标签diagnostics和资源summary；不保存choice scores。
+
+`phase8_calibration.sbatch <model> <pool> <fresh group> <commit> <scope> <packing 1..3> <cell indices...>`
+按固定packing分波启动独立进程，失败保留有效cell；partition/time由授权sbatch参数指定。
+同版本双模型debug先覆盖512内首两题和最长两题。正式scope拟合512行，debug scope不得用于D。
+`verify_phase8_calibration.py --cell-roots <roots...> --pool <pool> --scope FORMAL_CALIBRATION --require-all --output <fresh verification.json>`
+在独立进程检查8配置身份、张量与Rayleigh/eigen residual（相对容差1e-4），不重复完整SVD。
