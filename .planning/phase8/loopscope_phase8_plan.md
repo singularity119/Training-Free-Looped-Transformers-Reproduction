@@ -1,6 +1,6 @@
 # LoopScope 第八阶段总体计划：双模型固定方向谱软衰减
 
-> v0.3，2026-09-05。Gate A 已PASS，用户确认科学配方，当前下发Gate B。
+> v0.3，2026-09-05。Gate A/B 已PASS，当前下发Gate C正式512校准。
 > [科学合同v1](loopscope_phase8_contract_v1.md) 是完整参数/样本/方法的唯一来源；[control](loopscope_phase8_control.md)是动态授权唯一来源。原推导保存在[v0.1历史设计](loopscope_phase8_design_v0_1.md)，旧网格不执行。
 
 ## 1. 目标与已确认范围
@@ -35,8 +35,8 @@ K=2主实验、K=4补充；所有K固定alpha=1，h=1/K，总时长1。保留blo
 | Gate / 独立任务topic | 目标 | admission |
 | --- | --- | --- |
 | A / Recipe-and-Spectral-Core | 只读provenance、数学核心、窗口映射、最小接入方案 | 已PASS，commit3fe34c4 |
-| B / Intervention-Debug | 真正residual opt-in接入、双模型8题内debug、评分/关闭路径一致 | A PASS、用户配方已确认；当前授权 |
-| C / Residual-Calibration | 同一512身份采集8配置无干预残差、拟合冻结8basis及有限跨步诊断 | B PASS，producer同版本debug有效 |
+| B / Intervention-Debug | 真正residual opt-in接入、双模型8题内debug、评分/关闭路径一致 | 已PASS，producer c7e4e1f |
+| C / Residual-Calibration | 同一512身份采集8配置无干预残差、拟合冻结8basis及有限跨步诊断 | B已PASS；当前授权，C新增producer先debug |
 | D / Paired-Accuracy | 完整18配置test采集、一次配对统计与报告 | C PASS，basis及test身份冻结、资源预算下发 |
 
 每Gate创建首条消息和handoff显式强调读取research-gate-orchestrator。只有当前Gate独立executor获得权限，不能由子agent代替。PASS后规划立即推进满足admission的下一Gate；阶段末完成一次跨Gate终审，不要求正acc才能结束。

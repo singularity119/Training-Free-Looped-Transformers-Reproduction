@@ -2,44 +2,46 @@
 
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
-STATUS=ACTIVE_GATE_B_RESUMED_DIRECT_APPROVAL
+STATUS=ACTIVE_GATE_C
 PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
-ACTIVE_GATE=B
-AUTHORIZED_EXECUTOR=01a0704b-5798-7680-80a2-f1145f35f9ba
+ACTIVE_GATE=C
+AUTHORIZED_EXECUTOR=01a070f0-158e-72f2-9d06-5ba47c02e2bd
+LAST_GATE_B_EXECUTOR=01a0704b-5798-7680-80a2-f1145f35f9ba
 LAST_GATE_A_EXECUTOR=01a07030-6413-7660-b712-c18d9e93d26e
-AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-Intervention-Debug-第8阶段-Gate B
-CURRENT_DECISION=GATE_B_RESUME_DIRECT_USER_APPROVAL_AND_PLATFORM_UPDATE
+AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-Residual-Calibration-第8阶段-Gate C
+CURRENT_DECISION=GATE_C_AUTHORIZED_AFTER_GATE_B_PASS
 GATE_A_STATE=PASS
-GATE_B_STATE=AUTHORIZED
-GATE_C_STATE=LOCKED
+GATE_B_STATE=PASS
+GATE_C_STATE=AUTHORIZED
 GATE_D_STATE=LOCKED
 STANDING_PHASE_CONTINUATION=USER_AUTHORIZED_ADVANCE_SERIAL_GATES_UNTIL_PHASE8_TERMINAL
 OPERATIONAL_PERMISSION_DECISIONS=PLANNING_GATE_SCOPED_PER_PROJECT_DELEGATION
 EXECUTOR_MODEL=INHERIT_USER_CONFIGURATION
 BASE_COMMIT=b53ff067992e41b66a8df01794dfb106c61b29d0
-AUDITED_COMMIT=3fe34c46e3ac9774907349bdbf1702ab2180919f
-LATEST_ACCEPTANCE=.planning/phase8/loopscope_phase8_gate_a_acceptance.md
-ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_b_handoff.md
+AUDITED_COMMIT=c7e4e1f5e0b38874ee4e7eb1ac19dd5c7b6e59ba
+AUDITED_GATE_B_FINAL_COMMIT=ef54d2cdafa92483ed65575d0c5788b7980d60f3
+LATEST_ACCEPTANCE=.planning/phase8/loopscope_phase8_gate_b_acceptance.md
+ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_c_handoff.md
 SCIENTIFIC_CONTRACT=.planning/phase8/loopscope_phase8_contract_v1.md
-ACTIVE_SUPPLEMENT=.planning/phase8/loopscope_phase8_gate_b_pending_monitor_supplement.md
+ACTIVE_SUPPLEMENT=NONE
 PRIOR_OPERATIONAL_SUPPLEMENTS=loopscope_phase8_gate_b_push_approval_resume.md;loopscope_phase8_gate_b_platform_permission_resume.md
 FROZEN_USER_CHOICES=QWEN3_4B_BASE_12_15_13_16_CACHE_FIRST;QWEN3_1_7B_BASE_12_15_6_9_CACHE_LAST;MMLU_5SHOT;DAMPED_EULER;ALPHA_1_ALL_K_FIXED_HORIZON;VALIDATION512_FIT_TEST14042_EVAL;K2_PRIMARY_K4_SECONDARY;RANK1_LAMBDA0_5
 PENDING_USER_CHOICES=NONE
 BLOCKER=NONE
 PRESERVED_GATE_B_COMMIT=e6da2f8790e5ef7612104c41c68a2a7d79138692
-NEXT_ADMISSION=GATE_B_PASS_AND_VALID_CALIBRATION_PRODUCER_PREFLIGHT
+NEXT_ADMISSION=GATE_C_PASS_8_FORMAL_BASES_AND_512_IDENTITY_CLOSURE
 PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED_MATERIAL_STOP
 ```
 
 ## 当前授权
 
-用户已确认 validation512 拟合、test14042完整评测、K2主/K4补充、全部alpha1、rank1/lambda0.5。四个模型窗口/cache保持不变，逐prompt在线方向仅为后续动机。科学唯一来源是 [contract v1](loopscope_phase8_contract_v1.md)，不是旧v0.1设计。
+Gate B已[PASS](loopscope_phase8_gate_b_acceptance.md)，两个debug jobs/8cell经planning直接验收。当前授权独立Gate C：复用合同v1及B固定512 identity，按8配置采集正式无干预answer residual、拟合8basis及无标签诊断。实现基线ef54d2c（B producer c7e4e1f），允许本轮planning的纯文档提交前置。
 
-Gate A [验收PASS](loopscope_phase8_gate_a_acceptance.md) 已闭合，原executor撤权。当前独立Gate B executor与 [handoff](loopscope_phase8_gate_b_handoff.md) 精确绑定，允许最小config.py/strategies.py opt-in修改及Phase8适配器、专用HPC clone快进同步、最多8个validation身份的debug模型验证。debug仅29分钟/1GPU/8CPU/128G每job、最多2job并行；失败新路径保留并按handoff修复。没有正式512采集、test forward、outcome或下一Gate权限。
+具体路径、科学和资源以[Gate C handoff](loopscope_phase8_gate_c_handoff.md)为准。新producer先debug，再按普通用户合法资源正式校准；上限同时2GPU、每GPU1–3独立进程、每job2h、总16GPU-hours，packing须测量。仅同一512验证集，不读test/gold/accuracy，无Gate D权限。用户源码提交授权继续用于当前项目loopscope分支。
 
-B的实现起点是A的3fe34c4加规划提交2e56e05及本次仅科学/规划/配置激活提交；具体READY commit由下发消息给出，executor须核对。Gate B不得写control/科学合同/AGENTS。
+B executor已撤权；下文历史B授权/阻塞/恢复记录不再授予B执行权限。每新任务首条消息/handoff强调实际读取skill；C终态由唯一monitor主动唤醒executor，executor继续闭合并发送planning，不能仅宣布恢复后结束。
 
-PASS后立即撤销B权限，创建满足admission的独立C任务。资源/工程缺项由planning授予最小补充，科学变化另立决定。所有任务创建消息和handoff必须显式要求实际读取research-gate-orchestrator及适用protocol。规划只做1–3个决定性验收，阶段末一次综合审计，不轮询executor。
+## 已结束的 Gate B 运行历史
 
 ## Gate B 暂停决定：GitHub 推送审批
 
@@ -68,3 +70,7 @@ PASS后立即撤销B权限，创建满足admission的独立C任务。资源/工�
 ## Gate B 排队观察补充
 
 为真实job12645346的未知PENDING等待，授权exactexecutor唯一10分钟smoke monitor从排队期启动，运行后沿用。仅观察启动时机例外，不改变账户/partition/QOS/资源/取消/重试权限。详见当前supplement；planning不例行轮询。
+
+## Gate B 已验收关闭
+
+[Gate B验收](loopscope_phase8_gate_b_acceptance.md)为PASS，两个debug作业及8cell证据经planning直接核对。B权限撤销，历史正文中的B运行权限已过期。C admission成立，接下来绑定新的独立C executor。

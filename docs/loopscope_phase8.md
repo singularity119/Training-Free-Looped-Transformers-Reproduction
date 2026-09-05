@@ -1,7 +1,7 @@
 # LoopScope 第八阶段：双模型固定窗口的谱软衰减实验计划
 
-> 更新：2026-09-05。阶段已经获准逐 Gate 推进，Gate A 工程准备已验收 PASS，科学配方已确认，当前授权 Gate B 进行真实干预接入与双模型 debug，正式校准和 test 尚未运行。
-> [总体计划](../.planning/phase8/loopscope_phase8_plan.md) 描述研究方案，[control](../.planning/phase8/loopscope_phase8_control.md) 决定当前权限，[科学合同](../.planning/phase8/loopscope_phase8_contract_v1.md) 固定参数，[Gate B handoff](../.planning/phase8/loopscope_phase8_gate_b_handoff.md) 指导当前执行任务。
+> 更新：2026-09-05。Gate A/B 已验收 PASS，双模型 debug 已完成；当前授权 Gate C 正式512题校准与8方向拟合，test和accuracy评估尚未运行。
+> [总体计划](../.planning/phase8/loopscope_phase8_plan.md) 描述研究方案，[control](../.planning/phase8/loopscope_phase8_control.md) 决定当前权限，[科学合同](../.planning/phase8/loopscope_phase8_contract_v1.md) 固定参数，[Gate C handoff](../.planning/phase8/loopscope_phase8_gate_c_handoff.md) 指导当前执行任务。
 
 ## 1. 本阶段要回答什么
 
@@ -123,3 +123,7 @@ PYTHONPATH=src .venv-loopscope-cu121-20260711/bin/python scripts/loopscope/verif
 及 `debug.json`。basis 明确标记 SMOKE_ONLY，不能作为 Gate C 正式 512 方向。
 得分只用于原 HFLM、None/zero 与有限性核查，不读取目标标签或计算准确率。
 峰值显存、scoring 吞吐和真实 job/partition 位于运行证据中，不能从 dry-run 推断。
+
+## Gate B 验收与 Gate C 入口
+
+Gate B 的两模型debug作业已完成，原版/关闭干预/零强度scores一致，8个窗口/K组合的语义检查通过。这是工程有效性证据，还不是acc提升结果。Gate C复用B保存的512身份清单，正式按每模型/窗口/K拟合方向；新增采集入口经过debug后运行完整校准。输出包括8个basis、512身份与有限无标签谱/跨步诊断；不读取test正确答案。
