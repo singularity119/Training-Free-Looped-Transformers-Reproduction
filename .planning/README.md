@@ -7,7 +7,7 @@
 ## 当前控制入口
 
 最新阶段的唯一动态控制入口是 [Phase 8 control](phase8/loopscope_phase8_control.md)。
-用户已授权本规划任务逐 Gate 推进至阶段终态；当前仅 Gate A 获授权。模型窗口/cache 与 Euler 基线已确认，评测 split 和 K/SFA 提案仍待回复；不得提前运行模型实验。
+用户已授权本规划任务逐 Gate 推进至阶段终态；Gate A 已 PASS，当前无执行任务获授权，Gate B 等待剩余科学选择。模型窗口/cache 与 Euler 基线已确认，评测 split 和 K/SFA 提案仍待回复；不得提前运行模型实验。
 [总体计划](phase8/loopscope_phase8_plan.md) / [Gate A handoff](phase8/loopscope_phase8_gate_a_handoff.md) / [易读阶段报告](../docs/loopscope_phase8.md)。
 Phase 7 保持历史终态，旧 control/handoff 不赋予新实验权限。
 

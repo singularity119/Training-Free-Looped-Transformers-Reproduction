@@ -1,6 +1,6 @@
 # LoopScope 第八阶段：双模型固定窗口的谱软衰减实验计划
 
-> 更新：2026-09-05。阶段已经获准逐 Gate 推进，当前为 Gate A 工程准备，尚未运行模型实验。
+> 更新：2026-09-05。阶段已经获准逐 Gate 推进，Gate A 工程准备已验收 PASS，Gate B 等待剩余科学选择，尚未运行模型实验。
 > [总体计划](../.planning/phase8/loopscope_phase8_plan.md) 描述研究方案，[control](../.planning/phase8/loopscope_phase8_control.md) 决定当前权限，[Gate A handoff](../.planning/phase8/loopscope_phase8_gate_a_handoff.md) 指导首个执行任务。
 
 ## 1. 本阶段要回答什么
