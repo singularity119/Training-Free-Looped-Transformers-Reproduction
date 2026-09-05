@@ -2,7 +2,7 @@
 
 Date: 2026-09-05. Executor: `01a0704b-5798-7680-80a2-f1145f35f9ba`.
 Planning/terminal recipient: `01a06fe9-c7bb-7d72-a906-234f301de317`.
-Current execution result: **BLOCKED_ON_EXTERNAL_PUSH_APPROVAL; real debug NOT RUN**.
+Current execution result: **RESUMED; debug job 12645346 submitted, verification pending**.
 This is executor evidence, not a planning PASS decision.
 
 ## Authorized start and implemented increment
@@ -149,3 +149,65 @@ and prior successful local checks remain unchanged. Approval must be supplied
 through a channel the automatic reviewer recognizes as trusted; the executor
 cannot turn a cross-task relay into such authorization. Preserve this exact task
 and resume Gate B only after that approval route is resolved.
+
+## Direct platform/user authorization and actual resumed execution
+
+This executor subsequently directly received developer `danger-full-access` /
+`approval_policy=never` and user “我授权所有权限”. The exact conditional resume
+supplement admitted continuation. Ordinary push succeeded to the unchanged
+origin/loopscope, first through `72148f4`, then planning-only state updates through
+`619c127` and the bounded fixes below. The earlier approval failures remain history.
+
+Remote clone was rechecked clean/loopscope and fast-forwarded normally, with no
+reset or alternative code-transfer route. Final current producer revision is
+`c7e4e1f5e0b38874ee4e7eb1ac19dd5c7b6e59ba`, shared local/origin/remote at submission.
+Remote Phase8 tests at that revision: **27 passed**, exit0.
+
+Five CPU builder failures and the successful sixth attempt are preserved under
+`staging/phase8-gate-b-20260905T072208Z-pool{1..6}/build.log` in the authorized HPC
+workspace. These were initialization/provenance-interface failures, not GPU runs:
+
+| Attempt | Observed cause | Minimal repair |
+| --- | --- | --- |
+| pool1 | Registry prefix matched 1882 standard/variant tasks | Select standard mmlu/default YAML task entries (`a73efcb`) |
+| pool2 | Registry tag yaml_path is integer -1 | Filter non-task entries before Path (`e206f07`) |
+| pool3 | Historical exact-version cache has no source URL metadata | Check actual loaded cache version directory, rejecting mismatches (`737a90a`) |
+| pool4 | Standard YAML only names test split | Route builder initialization to safe validation projection (`81c0212`) |
+| pool5 | Fewshot config is typed, not populated dict | Use existing attribute-aware config reader (`c7e4e1f`) |
+| pool6 | Success | No science changes or new downloads |
+
+Successful input root:
+`/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase8-gate-b-20260905T072208Z-retry6`.
+Contains `debug_pool.json` and `calibration_identities.json`. Actual counts:
+57 subjects / 1531 validation / 512 selected identities / 8 debug rows.
+Fit identities: abstract_algebra indices1,4,5,9 (331/336/349/357 tokens).
+Upper-tail verify identities: high_school_european_history indices15,3,9,0
+(2954/2941/2899/2888 tokens). Both exact tokenizers produced these same lengths.
+No target gold or test questions were loaded or persisted.
+
+The next SSH attempt timed out before connecting; another reported
+`Can't assign requested address`. Read-only route inspection found active VPN
+IPv4 `10.21.0.80` on utun7. Per-command `ssh -b 10.21.0.80` to the same validated
+alias succeeded (mgmt-4); no network/hosts/SSH config modification. A fresh queue
+check showed no jobs before the first submission. All later connection commands
+retain BatchMode, ConnectTimeout and ClearAllForwardings.
+
+First GPU debug submission: **12645346**, model-index1 (1.7B), all four frozen
+window/K cells, commit `c7e4e1f...`, script `scripts/loopscope/phase8_debug.sbatch`.
+Run root: `runs/phase8-gate-b-20260905T072208Z-q17-a1`.
+Logs: `staging/phase8-gate-b-20260905T072208Z-gpu1/slurm-12645346.{out,err}`.
+Resources: debug / 00:29:00 / one GPU / 8CPU / 128G. Estimate before submission:
+about10min for 1.7B, based on 92 bounded prompt-scoring calls with upper-tail<=2954
+tokens, batch1, and A40 capacity; full-sequence FP32 vocabulary logits are about
+1.8GB per2954-token tensor, with ample room beyond model weights on48GB A40.
+This is a provisional runtime/memory estimate, not measured formal packing.
+Actual resource/score/tensor/basis verification is still pending.
+
+Queue admission snapshot after submission: job12645346 is PENDING with
+`Reason=MaxJobsPerAccount`, `StartTime=Unknown`, accountroot/QOSdebug. Read-only
+`sacctmgr show assoc where user=xhuang225` confirms root is this user's association;
+QOSdebug has MaxJobsPA8 / MaxJobsPU10 / MaxSubmitJobsPU8. This is shared-account
+queueing, not a launcher failure or evidence of invalid resources. No account/QOS
+change or cancellation was performed. Sent planning a narrow nonterminal request
+to permit the single10min smoke heartbeat while this debug job is PENDING, since
+the usual RUNNING-for-one-minute creation condition cannot cover this wait.
