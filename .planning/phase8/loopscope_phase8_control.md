@@ -2,17 +2,17 @@
 
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
-STATUS=GATE_C_BLOCKED_ON_VPN_ROUTING
+STATUS=ACTIVE_GATE_C_RESUMED_AFTER_CONNECTIVITY_RESTORATION
 PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
 ACTIVE_GATE=C
 AUTHORIZED_EXECUTOR=01a070f0-158e-72f2-9d06-5ba47c02e2bd
 LAST_GATE_B_EXECUTOR=01a0704b-5798-7680-80a2-f1145f35f9ba
 LAST_GATE_A_EXECUTOR=01a07030-6413-7660-b712-c18d9e93d26e
 AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-Residual-Calibration-第8阶段-Gate C
-CURRENT_DECISION=GATE_C_BLOCK_CONNECTIVITY_RESTORATION_REQUIRED
+CURRENT_DECISION=GATE_C_RESUME_EXISTING_JOBS_AFTER_SSH_VERIFICATION
 GATE_A_STATE=PASS
 GATE_B_STATE=PASS
-GATE_C_STATE=BLOCK
+GATE_C_STATE=AUTHORIZED
 GATE_D_STATE=LOCKED
 STANDING_PHASE_CONTINUATION=USER_AUTHORIZED_ADVANCE_SERIAL_GATES_UNTIL_PHASE8_TERMINAL
 OPERATIONAL_PERMISSION_DECISIONS=PLANNING_GATE_SCOPED_PER_PROJECT_DELEGATION
@@ -27,7 +27,7 @@ ACTIVE_SUPPLEMENT=NONE
 PRIOR_OPERATIONAL_SUPPLEMENTS=loopscope_phase8_gate_b_push_approval_resume.md;loopscope_phase8_gate_b_platform_permission_resume.md
 FROZEN_USER_CHOICES=QWEN3_4B_BASE_12_15_13_16_CACHE_FIRST;QWEN3_1_7B_BASE_12_15_6_9_CACHE_LAST;MMLU_5SHOT;DAMPED_EULER;ALPHA_1_ALL_K_FIXED_HORIZON;VALIDATION512_FIT_TEST14042_EVAL;K2_PRIMARY_K4_SECONDARY;RANK1_LAMBDA0_5
 PENDING_USER_CHOICES=NONE
-BLOCKER=CAMPUS_DNS_AND_HPC_ROUTED_TO_CLASH_TUN
+BLOCKER=NONE
 PRESERVED_GATE_C_COMMIT=51e48d8c33fbadb985783804100bfbbd82f66fd6
 PRESERVED_GATE_C_JOBS=12649531,12649532
 PRESERVED_GATE_B_COMMIT=e6da2f8790e5ef7612104c41c68a2a7d79138692
@@ -84,3 +84,9 @@ B executor已撤权；下文历史B授权/阻塞/恢复记录不再授予B执行
 planning现场只读确认VPN utun7/10.21.0.39仍存在，但10.90.63.2/.3及历史HPC地址10.120.18.63路由指向198.18.0.1/utun4；split resolver仍存在。尝试只对校园DNS .3添加临时utun7 host route，命令 `sudo -n /sbin/route -n add -host 10.90.63.3 -interface utun7` 在执行修改前退出1，提示sudo需要密码；没有路由/hosts/Clash配置变更。
 
 请求用户重新连接EasyConnect以恢复VPN路由（如需管理员验证由用户本机完成，不向agent提供密码）。恢复后planning作一次有界连接核对并唤醒同一C executor，检查已有jobs/artifacts再继续verifier/closure或原范围修复；不能重提、取消或替换未知状态作业。冻结科学与D锁定保持。
+
+## Gate C 连接恢复与原作业续接
+
+独立诊断任务报告用户授权重登EasyConnect后路由恢复；planning随后实际执行严格alias的只读hostname探针，exit0返回mgmt-4，确认SSH可达。连接BLOCK解除，恢复同一C executor按既有handoff检查jobs12649531/12649532与原工件。作业是否完成尚由executor查询，不把网络恢复当作实验PASS。
+
+先查原job状态与有效输出：若terminal则直接完成verifier/资源记账/8basis完整性与证据闭合；若仍等待则恢复同一个已暂停probe monitor。不得因为断网而重提/取消/替换作业。真实无效attempt按原Gate C修复授权处理，不扩大资源/科学范围，D仍锁定。完成后主动向planning送恢复后的GATE_C_FINAL_AUDIT及送达确认。
