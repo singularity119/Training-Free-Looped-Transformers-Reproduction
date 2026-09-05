@@ -17,7 +17,9 @@
 
 层索引从 0 开始。B_s 是进入 layer s 前的 residual stream；layer s 的输出是 B_(s+1)。例如 12:15 执行代码层 12、13、14、15，不额外减一。
 
-用户已确认普通循环使用原计划 damped_euler，h=alpha/K；euler 是代码别名。K 包含首次调用，t=0 是首次，t>=1 是重复。当前主方案 K=2、alpha=1、block、beta=0、batch=1、decode=bypass。K 范围和评测 split 正等待用户回复，Gate A 不依赖这两项，也不运行真实模型。
+用户已确认普通循环使用原计划 damped_euler，所有 K 固定 alpha=1，h=1/K、总时长 K·h=1；euler 是代码别名。K 包含首次调用，t=0 是首次，t>=1 是重复。当前主方案 K=2、alpha=1、block、beta=0、batch=1、decode=bypass。K 范围和评测 split 正等待用户回复，Gate A 不依赖这两项，也不运行真实模型。
+
+K=2 时 h=0.5，K=3 时 h=1/3，K=4 时 h=0.25。不同 K 比较的是同一总时长下的离散步数变化，不能解释为增加总演化时长。本阶段不运行 K=4/alpha=2 的固定步长分支。由于步长不同，K=2 与 K=4 的中间状态/残差前缀一般不同；不能直接截取 K=4 前两步充当 K=2 校准轨迹。若纳入多个 K，须在 Gate B 前明确 basis 的拟合 K 与复用范围，并在工件标注，不继承旧固定步长方案的前缀复用假设。
 
 ## 2. 方法与公平比较
 

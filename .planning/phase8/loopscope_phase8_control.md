@@ -18,7 +18,8 @@ EXECUTOR_MODEL=INHERIT_USER_CONFIGURATION
 BASE_COMMIT=b53ff067992e41b66a8df01794dfb106c61b29d0
 AUDITED_COMMIT=NONE
 ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_a_handoff.md
-FROZEN_USER_CHOICES=QWEN3_4B_BASE_12_15_13_16_CACHE_FIRST;QWEN3_1_7B_BASE_12_15_6_9_CACHE_LAST;MMLU_5SHOT;DAMPED_EULER
+ACTIVE_SUPPLEMENT=.planning/phase8/loopscope_phase8_gate_a_fixed_horizon_supplement.md
+FROZEN_USER_CHOICES=QWEN3_4B_BASE_12_15_13_16_CACHE_FIRST;QWEN3_1_7B_BASE_12_15_6_9_CACHE_LAST;MMLU_5SHOT;DAMPED_EULER;ALPHA_1_ALL_K_FIXED_HORIZON
 PENDING_USER_CHOICES=EVALUATION_SPLIT;K_SCOPE_AND_SFA_PROPOSAL_CONFIRMATION
 NEXT_ADMISSION=GATE_A_PASS_AND_SCIENTIFIC_CONTRACT_FROZEN
 PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED_MATERIAL_STOP
@@ -26,7 +27,7 @@ PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED
 
 ## 权限与事实来源
 
-用户 2026-09-05 明确授权本任务规划、逐 Gate 创建执行任务、验收并持续到第八阶段完成；后续回复确认普通循环为原计划 Euler 步。四个窗口按层编号解释，12:15=B12→B16。详细方案见 [总体计划](loopscope_phase8_plan.md)。Gate A 允许在科学选择未完成时推进独立工程准备；不授权真实模型实验。
+用户 2026-09-05 明确授权本任务规划、逐 Gate 创建执行任务、验收并持续到第八阶段完成；后续回复确认普通循环为原计划 Euler 步。用户进一步确认所有 K 固定 alpha=1，h=1/K，总时长为 1；固定步长而随 K 增大 alpha 的方案不进入本阶段。四个窗口按层编号解释，12:15=B12→B16。详细方案见 [总体计划](loopscope_phase8_plan.md)。Gate A 允许在科学选择未完成时推进独立工程准备；不授权真实模型实验。
 
 本轮起点是 loopscope 分支 b53ff067，前序规划任务留下的 `.planning/README.md`、`.planning/phase8/` 和 `docs/loopscope_phase8.md` 文档修改由本规划任务所有。本次激活另外修改 AGENTS.md 与 PROJECT_MEMORY.md 的入口。这些文档可纳入单一规划提交；executor 不得把它们误当作自己的实现或回滚。
 
