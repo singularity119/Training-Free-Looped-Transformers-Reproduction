@@ -211,3 +211,14 @@ queueing, not a launcher failure or evidence of invalid resources. No account/QO
 change or cancellation was performed. Sent planning a narrow nonterminal request
 to permit the single10min smoke heartbeat while this debug job is PENDING, since
 the usual RUNNING-for-one-minute creation condition cannot cover this wait.
+
+Planning granted `loopscope_phase8_gate_b_pending_monitor_supplement.md`, bound by
+control at `f1c56f124efd2de17886d52513bf612fd62b6109`. Executor rechecked actual
+job12645346 still PENDING/MaxJobsPerAccount, then created the single10min heartbeat
+**loopscope-phase8-gate-b-smoke**, statusACTIVE, destination exact executor task.
+Creation was confirmed by automation_update. Prompt freezes job/run/log/host,
+source-bound read-only SSH, quiet healthy checks, pause-before-terminal-self-wake,
+exact planning fallback and no scheduling/scientific/next-Gate authority.
+No second job or overlapping monitor exists. The first model must expose a valid
+real path before the remaining4B debug is dispatched. Queue waiting now belongs
+to this monitor; no manual polling loop or planning polling is required.
