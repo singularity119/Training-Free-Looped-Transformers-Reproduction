@@ -2,7 +2,7 @@
 
 Date: 2026-09-05. Executor: `01a0704b-5798-7680-80a2-f1145f35f9ba`.
 Planning/terminal recipient: `01a06fe9-c7bb-7d72-a906-234f301de317`.
-Current execution result: **1.7B debug verified; 4B job12645484 PENDING**.
+Current execution result: **AUDIT_REQUESTED — both models and all eight cells verified**.
 This is executor evidence, not a planning PASS decision.
 
 ## Authorized start and implemented increment
@@ -271,3 +271,56 @@ and current verified VPN source10.21.0.230, statusACTIVE, 10min cadence; tool su
 confirmed. Prior job12645346 is preserved as completed evidence. On 4B terminal,
 pause monitor, verify/recover this exact attempt, then finish Gate B evidence and
 send the restored GATE_B_FINAL_AUDIT to planning; C remains locked.
+
+## Final Gate B verification and delivery readiness
+
+Fresh executor verification on 2026-09-05 confirmed job12645484 COMPLETED,
+exit0:0, elapsed00:01:42 on gpu3-9; job12645346 remains COMPLETED0:0,
+00:01:21. Both batch/extern steps also completed successfully. No GPU retries.
+The 4B in-job verifier and independent fresh-process verifier both report
+VERIFIED_DEBUG for w12-15-k2/k4 and w13-16-k2/k4. Exact command, from the remote
+project root, was:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv-loopscope-cu121-20260711/bin/python scripts/loopscope/verify_phase8_debug.py --run-root /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-b-20260905T072208Z-q4-a1
+/opt/slurm/bin/sacct -j 12645346,12645484 --format=JobID,State,Elapsed,ExitCode,NodeList -P
+```
+
+4B environment confirms BF16, cachefirst in recipe, exact model/tokenizer revision
+906bfd4b4dc7f14ee4320094d8b41684abff8539, A40 with50899648512 bytes, max_length32768,
+and the same torch/transformers/lm_eval/datasets versions reported above.
+Measured producer time78.91437857598066s, 92 scoring calls,
+1.1658204963423768calls/s, peak allocated9905588736 bytes,
+reserved10880024576 bytes, OOM0. All semantic checks true. Native/adapter and
+original/None/zero scores match exactly; Spectral scores are finite.
+
+| 4B cell | Maximum absolute raw choice-score change Spectral vs Loop |
+| --- | --- |
+| 12:15 K2 | 0.21875 |
+| 12:15 K4 | 0.4140625 |
+| 13:16 K2 | 0.234375 |
+| 13:16 K4 | 0.375 |
+
+A bounded CPU read of all eight residual_t1.pt artifacts additionally confirmed
+finite FP32 matrices, shapes4x2048 for1.7B and4x2560 for4B, and exact ordered
+identity agreement with each basis.json. Every collector duplicate_calls=0.
+The verifier checks basis model/window/K, fit_t1, four source identities disjoint
+from verification identities, unit direction through load_basis, save/load
+roundtrip, per-t counts, bound positions and t>=1 application.
+
+Both jobs retain immutable producer commit
+c7e4e1f5e0b38874ee4e7eb1ac19dd5c7b6e59ba. Later local/origin commits update only
+documentation/control/evidence; no rerun is needed to align documentation HEAD.
+The single monitor loopscope-phase8-gate-b-smoke is PAUSED, confirmed by
+automation_update (isError=false). Its terminal self-message was delivered, but
+the previous turn ended before final executor closure; the user's follow-up
+resumed closure directly. This handoff delay did not affect jobs or artifacts.
+
+All authorized Gate B implementation and debug checks are complete. Prior push
+BLOCKs are resolved history. The final packet will report final clean Git HEAD
+and confirmed delivery to the exact planning task. Only planning may decide PASS.
+Limits: eight shared debug identities, four fit/four verification, eight
+SMOKE_ONLY bases; no formal512 residual acquisition, test forward, target gold,
+accuracy or Gate C execution. Real continuations are single-token; synthetic
+adapter tests cover multi-token and truncation positioning. Measured debug
+resources do not by themselves authorize future formal packing.
