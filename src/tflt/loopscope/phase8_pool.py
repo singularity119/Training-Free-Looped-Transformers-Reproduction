@@ -89,13 +89,24 @@ def _load_safe_dataset(task: Any, backend: Any, cache_dir: str) -> tuple[Any, di
         # readable source URLs, not cache fingerprints or content digests.
         source_urls = sorted(str(url) for url in
                              (getattr(raw.info, "download_checksums", None) or {}))
-        if not source_urls or any(DATASET_REVISION not in url for url in source_urls):
-            raise ValueError("cached MMLU source URLs do not prove the exact frozen revision")
+        cache_files = [str(item["filename"]) for item in raw.cache_files]
+        if source_urls:
+            if any(DATASET_REVISION not in url for url in source_urls):
+                raise ValueError("cached MMLU source URLs differ from frozen revision")
+            revision_evidence = "source_urls"
+        else:
+            # Historical offline cache records the source version as its builder
+            # directory, with no download URL metadata. Check the actual loaded
+            # files rather than accepting the generic 'latest cached' message.
+            if not cache_files or any(Path(path).parent.name != DATASET_REVISION for path in cache_files):
+                raise ValueError("loaded MMLU cache directory differs from frozen revision")
+            revision_evidence = "loaded_cache_version_directory"
         # Arrow column projection precedes iteration, indexing, or conversion.
         safe = raw.select_columns(list(columns))
         splits[split] = safe
         evidence["splits"][split] = {
             "count": len(safe), "columns": list(safe.column_names), "source_urls": source_urls,
+            "revision_evidence": revision_evidence,
             "cache_files": [str(item["filename"]) for item in safe.cache_files],
         }
     return DatasetDict(splits), evidence

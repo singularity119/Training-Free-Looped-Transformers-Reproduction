@@ -51,12 +51,17 @@ class Phase8PoolTests(unittest.TestCase):
 
     def test_target_column_projection_before_row_access(self):
         calls = []
+        source_mode = "urls"
         class Dataset:
             def __init__(self, split, columns=None):
                 self.split = split
                 self.info = SimpleNamespace(download_checksums={"hf://datasets/cais/mmlu@" + DATASET_REVISION + "/" + split: {}})
                 self.column_names = columns or ["question", "subject", "choices", "answer"]
                 self.cache_files = [{"filename": "/cache/" + split + ".arrow"}]
+                if source_mode != "urls":
+                    self.info.download_checksums = {}
+                    version = DATASET_REVISION if source_mode == "directory" else "other-version"
+                    self.cache_files = [{"filename": "/cache/" + version + "/" + split + ".arrow"}]
             def select_columns(self, columns):
                 calls.append(("projection", self.split, columns))
                 return Dataset(self.split, columns)
@@ -81,6 +86,13 @@ class Phase8PoolTests(unittest.TestCase):
         self.assertNotIn("answer", datasets["validation"].column_names)
         self.assertIn("answer", datasets["dev"].column_names)
         self.assertEqual(evidence["subject"], "math")
+        source_mode = "directory"
+        with patch.dict("sys.modules", {"datasets": fake}):
+            _, evidence = _load_safe_dataset(task, backend, "/cache")
+        self.assertEqual(evidence["splits"]["validation"]["revision_evidence"], "loaded_cache_version_directory")
+        source_mode = "wrong"
+        with patch.dict("sys.modules", {"datasets": fake}), self.assertRaises(ValueError):
+            _load_safe_dataset(task, backend, "/cache")
 
     def test_write_identity_manifest_contains_no_other_target_prompts(self):
         bundle = {"dataset": {"split": "validation"}, "seed": SEED,
