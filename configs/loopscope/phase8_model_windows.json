@@ -1,0 +1,81 @@
+{
+  "status": "PARTIAL_CONFIRMED_NOT_RUNTIME_CONTRACT",
+  "task": "mmlu",
+  "num_fewshot": 5,
+  "prompt_style": "plain",
+  "strategy": "damped_euler",
+  "step_semantics": "h=1/K; total horizon=1; K includes t=0; cross-K residual prefixes differ",
+  "indexing": "zero-based inclusive layers; [start,end] maps B_start to B_(end+1)",
+  "models": [
+    {
+      "model": "Qwen/Qwen3-4B-Base",
+      "cache_strategy": "first",
+      "windows": [
+        {
+          "layers": [
+            12,
+            15
+          ],
+          "boundaries": [
+            12,
+            16
+          ]
+        },
+        {
+          "layers": [
+            13,
+            16
+          ],
+          "boundaries": [
+            13,
+            17
+          ]
+        }
+      ],
+      "observed_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "observed_num_hidden_layers": 36,
+      "historical_runtime_dtype": "bfloat16"
+    },
+    {
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "cache_strategy": "last",
+      "windows": [
+        {
+          "layers": [
+            12,
+            15
+          ],
+          "boundaries": [
+            12,
+            16
+          ]
+        },
+        {
+          "layers": [
+            6,
+            9
+          ],
+          "boundaries": [
+            6,
+            10
+          ]
+        }
+      ],
+      "observed_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "observed_num_hidden_layers": 28,
+      "historical_runtime_dtype": "float16"
+    }
+  ],
+  "pending": {
+    "evaluation_split": "PENDING_USER",
+    "K_scope": "PENDING_USER: proposed K=2 primary and possible K=4 supplement",
+    "SFA": "PENDING_USER: proposed rank=1, lambda=0.5",
+    "runtime_scoring_dtype_budget": "PENDING_PLANNING_FREEZE",
+    "basis_fit_K_and_application_K": "PENDING_PLANNING_FREEZE"
+  },
+  "proposed_basis": "uncentered, no row normalization, calibration t=1 residual top right singular vector per model/window",
+  "proposed_intervention": "pre-answer prompt token only, t>=1",
+  "proposed_uniform_control": "per-vector matched spectral-damped norm; panel inclusion pending",
+  "alpha": 1.0,
+  "alpha_status": "FROZEN_USER_ALL_K"
+}
