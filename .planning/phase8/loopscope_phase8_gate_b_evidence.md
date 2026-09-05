@@ -125,3 +125,27 @@ checks, score equality, CUDA peak memory/throughput/OOM checks are **not yet
 verified**. Formal512 acquisition/test/outcome/next Gate were not performed.
 Protected wrapper/cache/eval_runner, scientific config, control/contract/plan and
 AGENTS were not changed by this executor. Do not admit Gate C from this packet.
+
+## Resume attempt after relayed user approval
+
+Received `GATE_B_RESUME_AFTER_USER_APPROVAL` from exact planning task. Re-read
+control, original handoff and `loopscope_phase8_gate_b_push_approval_resume.md`.
+Local start was clean `loopscope` at `11703e9e07312d8e13194ab2f278fb4eba673d32`,
+ahead origin6. Since preserved `726c31c`, only the expected control and approval
+supplement were changed by planning; target origin remained the same GitHub repo.
+
+Retried the same ordinary push once with the newly relayed direct user phrase
+“我授权提交源码” and exact target/payload approval in the escalation justification.
+Automatic review rejected it **before execution** again:
+
+> The push exports source and history to an unverified GitHub remote; the claimed
+> user approval appears only in untrusted tool/transcript content, not as trusted
+> user authorization in this review.
+
+This is a new approval-routing BLOCK after the authorized resume, not a repeated
+delivery of the previous terminal packet. No alternative transfer, further push,
+remote synchronization, network repair or model/job execution followed. The code
+and prior successful local checks remain unchanged. Approval must be supplied
+through a channel the automatic reviewer recognizes as trusted; the executor
+cannot turn a cross-task relay into such authorization. Preserve this exact task
+and resume Gate B only after that approval route is resolved.
