@@ -49,6 +49,7 @@ class LoopConfig:
     anderson_m: int = 5
     anderson_lambda: float = 1e-4
     audit_collector: Any = None
+    residual_transform: Any = None
 
     def __post_init__(self) -> None:
         a, b = self.window
@@ -70,6 +71,11 @@ class LoopConfig:
             raise ValueError("anderson_m must be >= 2")
         if self.anderson_lambda < 0:
             raise ValueError("anderson_lambda must be >= 0")
+        if self.residual_transform is not None:
+            if not callable(self.residual_transform):
+                raise ValueError("residual_transform must be callable or None")
+            if self.strategy not in {"damped_euler", "euler"} or self.iteration_mode != "block":
+                raise ValueError("residual_transform supports only Euler block iteration")
 
     @property
     def start(self) -> int:

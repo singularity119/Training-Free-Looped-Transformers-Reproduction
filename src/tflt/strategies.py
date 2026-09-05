@@ -34,7 +34,7 @@ def run_loop(operator: Operator, x0: TensorLike, config: LoopConfig) -> TensorLi
     if strategy in {"naive", "uniform_loop"}:
         return _naive(operator, x0, config.k)
     if strategy == "damped_euler":
-        return _damped_euler(operator, x0, config.k, config.alpha)
+        return _damped_euler(operator, x0, config.k, config.alpha, config.residual_transform)
     if strategy == "heavy_ball":
         return _heavy_ball(operator, x0, config.k, config.alpha, config.beta)
     if strategy == "heun":
@@ -56,10 +56,16 @@ def _naive(operator: Operator, x: TensorLike, k: int) -> TensorLike:
     return x
 
 
-def _damped_euler(operator: Operator, x: TensorLike, k: int, alpha: float) -> TensorLike:
+def _damped_euler(operator: Operator, x: TensorLike, k: int, alpha: float, transform=None) -> TensorLike:
     step = alpha / float(k)
-    for _ in range(k):
-        x = x + step * residual(operator, x)  # type: ignore[operator]
+    if transform is None:
+        for _ in range(k):
+            x = x + step * residual(operator, x)  # type: ignore[operator]
+        return x
+    for t in range(k):
+        delta = residual(operator, x)
+        delta = transform(delta, t)
+        x = x + step * delta  # type: ignore[operator]
     return x
 
 
