@@ -122,3 +122,29 @@ Exactly the same monitor retargeted and ACTIVE full60min, including PENDING;
 visible update confirmation retained. Terminal continuation must combine these
 remainders with the preserved canaries and verify18×14042 before gold access.
 No Gate-level final event yet; current state is waiting for formal remainder.
+
+## User-requested migration to A800
+
+Read planning operational resume, live control and A800 supplement at1c8554b;
+ordinary push of that planning commit succeeded. Paused unique monitor before
+resource migration. Fresh scheduler showed both12651219/12651220 PENDING and
+both planned remainder roots absent. `scancel --state=PENDING` cancelled only
+these jobs; subsequent sacct confirmed both CANCELLED by204599,elapsed0.
+Classification USER_REQUESTED_RESOURCE_MIGRATION, not engineering failure.
+All prior valid A40 first512/cell remain preserved. No duplicate scores acquired.
+
+Fresh association permits emergency_gpu,account root(ordinary user); partition
+UP,RootOnlyNO,PriorityTier/JobFactor300. No admin priority changes. Remote clean
+producer2dd3dfd/launcher/runtime unchanged; same-producer functional debug reused.
+Submitted A800 resource canaries with original launcher,FORMAL_TEST [512,1024),
+nine cells/model,1GPU:a800,CPU8,mem128G,time1h,emergency_gpu partition/QoS:
+-12652573 q4,packing2,latest RUNNING gpu1-11 after36s.
+-12652574 q17,packing3,latest PENDING(Resources).
+Roots `runs/phase8-gate-d-20260906T031200Z-a800-canary-{q4,q17}-a1`;
+logs `staging/phase8-gate-d-20260906T031200Z-a800-a1/{q4,q17}-%j.log`.
+Actual A800 memory/runtime will be measured before expanding[1024,14042).
+Pair arms share the same per-model hardware/interval schedule; mixed A40/A800
+provenance will be reported without interpreting hardware as treatment effect.
+Unique monitor retargeted ACTIVE full60min,with terminal self-wake unchanged.
+Planning received switch packet via send_message_to_thread with visible success.
+Budget before A8000.250278GPUh; no gold or partial outcome access.
