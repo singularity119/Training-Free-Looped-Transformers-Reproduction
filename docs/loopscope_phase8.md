@@ -1,13 +1,13 @@
 # LoopScope 第八阶段：双模型固定窗口的谱软衰减实验计划
 
-> 更新：2026-09-05。Gate A/B/C 已验收 PASS，8个正式校准方向已完成；当前授权 Gate D 完整18配置test评测，accuracy尚无结果。
+> 更新：2026-09-06。Gate D 已完成18×14042采集、一次配对分析和fresh验证，等待规划验收。K2四个主比较与K4四个次比较均未通过Holm校正，所有nominal95%CI跨零；不宣称谱软衰减提升准确率。
 > [总体计划](../.planning/phase8/loopscope_phase8_plan.md) 描述研究方案，[control](../.planning/phase8/loopscope_phase8_control.md) 决定当前权限，[科学合同](../.planning/phase8/loopscope_phase8_contract_v1.md) 固定参数，[Gate D handoff](../.planning/phase8/loopscope_phase8_gate_d_handoff.md) 指导当前执行任务。
 
 ## 1. 本阶段要回答什么
 
 固定模型和循环窗口后，在每轮更新中削弱一个主要残差方向，能否提高 MMLU 5-shot 准确率？主要比较是同一个模型、同一个窗口、同一批题目下，加入谱软衰减后的循环与原版 Euler 循环之间的 acc 差异。
 
-导师分享的 SFA 论文提供了“寻找主要方向，再减去该方向投影”的思路。这里把它迁移到冻结语言模型的循环残差上。原论文是训练期随机特征增强；我们的首版方案是独立校准后固定方向的推理期软衰减，因此称为 **SFA-inspired residual spectral damping**。目前只有校准与工程验证结果，尚无准确率结果，不能先认定主方向有害。
+导师分享的 SFA 论文提供了“寻找主要方向，再减去该方向投影”的思路。这里把它迁移到冻结语言模型的循环残差上。原论文是训练期随机特征增强；我们的首版方案是独立校准后固定方向的推理期软衰减，因此称为 **SFA-inspired residual spectral damping**。现已完成全部配对准确率比较，未获得稳定收益证据，不能据校准谱集中认定主方向有害。
 
 ## 2. 已确定的模型、窗口和原版循环
 
@@ -87,7 +87,7 @@ Gate A 不提交模型作业。以后 debug/smoke 一律在 debug partition、�
 
 ## 8. 面向导师的简述
 
-第八阶段准备固定 Qwen3-4B-Base 和 Qwen3-1.7B-Base 的四个窗口，在相同 MMLU 5-shot 配方下比较原版 Euler 循环与加入谱软衰减的循环。方法是先用独立校准题识别重复窗口残差的主要方向，再在推理中削弱该方向的更新。我们先验证干预确实进入原计算路径，再看配对准确率和错对翻转。本轮先完成原版与 SFA 的直接比较，同范数对照可作为后续增量。目前还没有效果结论，目标是明确这种处理在固定窗口上是否有稳定收益，以及无效时是机制还是工程路径的问题。
+第八阶段已完成双模型四窗口的18配置MMLU 5-shot评测。离线512题拟合8个固定残差方向后，在test14042比较谱软衰减与原版Loop：K2四个主比较及K4四个次比较的95%区间全部跨零，分别Holm校正后均不显著。最大K2正点估计是4B窗口13:16的+0.1709pp，但证据不足，且仍低于Native。当前结果不支持这组离线共享方向配方有可靠收益；同范数和在线方向均未实施。
 
 ## 9. 留给后续阶段的动机
 
@@ -149,3 +149,19 @@ Gate B 的两模型debug作业已完成，原版/关闭干预/零强度scores一
 Gate C发现4B长程显存峰比四题短debug更高，三进程并发仅约4.5%余量。D会重测实际test上尾长度和长期显存，A40初始最多两进程，在保留安全余量后扩展剩余采集。先通过同版debug，再保留小批正式canary，随后完成全量。不得为利用率改batch或dtype。
 
 当前尚无acc提升结论；最终中文结果和紧凑表格放外层`资产/报告/phase8/`，本页继续保留总体计划与运行说明。
+
+
+## Gate D 完整结果与复核入口
+
+全部18配置各14042题/57subjects，三段[0,512)、[512,1024)、[1024,14042)唯一闭合后一次解封。原始分数留HPC；人类中文报告位于专用clone外层`资产/报告/phase8/LoopScope_Phase8_配对结果报告.md`，紧凑表为`cells.csv`和`contrasts.csv`。
+
+| 模型/窗口 | K2 Spectral−Loop pp | nominal95%CI pp | Holm p |
+|---|---:|---|---:|
+| 4B 12:15 | +0.0214 | [-0.1852,+0.2350] | 1.0000 |
+| 4B 13:16 | +0.1709 | [-0.0641,+0.4059] | 0.6888 |
+| 1.7B 12:15 | -0.0641 | [-0.3062,+0.1923] | 1.0000 |
+| 1.7B 6:9 | -0.0499 | [-0.2065,+0.1139] | 1.0000 |
+
+K4四个差值按相同窗口顺序为+0.0142、-0.0641、+0.1282、+0.0285pp，均CI跨零、Holm p=1。主次family独立，Native比较探索性。无matched-norm对照；历史开发域，非untouched benchmark。
+
+HPC workspace下`artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verification.json`为完整闭合；`artifacts/phase8-gate-d-20260906T131600Z-analysis-a1/analysis.json`为正式一次分析，fresh统计验证VERIFIED。source producer2dd3dfd，最终jobs12652622/12652623均COMPLETED0:0；全Gate4.3381GPUh，OOM0，唯一monitor已暂停。详细执行记录见[Gate D evidence](../.planning/phase8/loopscope_phase8_gate_d_evidence.md)。Gate决策由planning作出，本页不self-PASS。

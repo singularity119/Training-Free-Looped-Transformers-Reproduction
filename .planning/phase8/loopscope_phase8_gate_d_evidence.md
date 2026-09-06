@@ -176,3 +176,55 @@ visible confirmation. Planning received canary/remaining-submission packet.
 Final closure must join all three disjoint intervals[0,512),[512,1024),[1024,14042)
 for all18cells before gold access. No rerun of valid outputs, no extra arms or
 Gate transition; current task waits for final A800 remainder.
+
+## Full panel closure and one-shot analysis complete
+
+Monitor bounded read confirmed final12652622/12652623 COMPLETED0:0,9103s/5061s,
+batch/extern0:0. It PAUSED itself via tool success and actively delivered
+AUTOMATION_TERMINAL_RESUME to exact executor with visible confirmation. Executor
+fresh-read current control, clean local269bc8e and remote clean producer2dd3dfd,
+all scheduler elapsed/exit states. All8 allocated debug/formal jobs COMPLETED0:0;
+2 queued migration cancellations consumed0. Total15617GPU-seconds=4.33805556GPUh.
+
+Fresh CPU `phase8_accuracy_verify.verify(...,full_panel=True)` combined all54
+shards across three disjoint canonical intervals. FULL_PANEL_CLOSED,18cells,
+252756samples,57subjects,target_gold_loaded=false; no overlap/missing identities,
+configuration/basis/raw finite-score/runtime revision checks passed. Preserved at
+`artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verification.json` with
+resources.json. Directory timestamp is a path label; actual chronology is saved_at.
+Final A800 peak q4 packing2=42948/81920MiB (47.57percent headroom),q17 packing3=
+50794/81920MiB (38.00percent),all54shards OOM0. No extra GPU work required.
+
+Executed once,exit0,under unchanged remote producer:
+`PYTHONPATH=src .venv-loopscope-cu121-20260711/bin/python scripts/loopscope/analyze_phase8_accuracy.py --closure W/artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verification.json --output-dir W/artifacts/phase8-gate-d-20260906T131600Z-analysis-a1`
+with frozen existing HF_HOME/HF_DATASETS_CACHE and offline env. Log:
+`staging/phase8-gate-d-20260906T032700Z-a800-remaining-a1/analysis.log`.
+Analyzer fresh pre-outcome closure saved2026-09-06T13:16:36.606559Z;
+gold_load_started13:16:38.081938Z,completed13:16:56.522255Z. No partial outcome,
+no outcome-driven repair/tuning/resubmission. One analysis18cells/24contrasts,
+fresh verification VERIFIED: scalar argmax/correctN,discordance/pp,subjectmacro,
+independent scipy exact McNemar,sorted Holm,and bootstrap from fresh flags using
+the same tested algorithm. The latter is not a second independent implementation.
+
+K2 Spectral−Loop ordered q4 12:15,q4 13:16,q17 12:15,q17 6:9:
+-+0.021364pp,114gains/111losses,CI[-0.185159,+0.235009],Holm1.
+-+0.170916pp,154/130,CI[-0.064093,+0.405925],Holm0.688832.
+--0.064093pp,156/165,CI[-0.306224,+0.192280],Holm1.
+--0.049850pp,61/68,CI[-0.206523,+0.113944],Holm1.
+K4 same order:+0.014243,-0.064093,+0.128187,+0.028486pp;allCIcross0,Holm1.
+All8nominal CIs cross0,neither primary nor secondary family significant. No
+reliable spectral improvement claim. q4 native10262/14042; q17 native8813/14042.
+Largest K2positive point remains below native and is uncertain.
+
+Human report and compact18cell/24contrast CSVs copied as aggregate-only artifacts
+to outer `资产/报告/phase8/`; no raw per-sample scores/gold/basis copied into Git
+or local report. Report names source/version,offline512fit,Kfixedhorizon,mixed
+A40/A800 intervals,negative/uncertain outcomes,nominalCI/multiplicity and absence
+ofmatchednorm control. docs/loopscope_phase8.md updated with result/navigation.
+An initial SCP brace path did not expand and copied nothing; explicit four paths
+succeeded. No scientific or acquisition retry. Original scores remain HPC.
+
+Completion: full frozen panel,statistics,fresh verification,resource accounting,
+Chinese report and versioned evidence. Unique monitor PAUSED. No self-PASS,
+no Phase9/newarm/science changes,protected runtime unchanged. Terminal packet
+will request planning acceptance and phase-end audit; task-local final is fallback.
