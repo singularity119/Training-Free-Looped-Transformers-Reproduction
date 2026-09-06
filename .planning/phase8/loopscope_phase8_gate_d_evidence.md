@@ -148,3 +148,31 @@ provenance will be reported without interpreting hardware as treatment effect.
 Unique monitor retargeted ACTIVE full60min,with terminal self-wake unchanged.
 Planning received switch packet via send_message_to_thread with visible success.
 Budget before A8000.250278GPUh; no gold or partial outcome access.
+
+## A800 canary closed; final remainder submitted
+
+User/planning completion notice resumed exact executor. Current control/supplement
+and clean local cb7181e checked. Both A800 canaries12652573/12652574 and batch/extern
+COMPLETED0:0,369s/183s. Paused same monitor before continuation. Fresh verifier
+combined prior[0,512) and new[512,1024) for each model:9cells×1024 unique finite
+scores,18432 total, no outcome access. All summaries actual NVIDIA A800-SXM4-80GB,
+OOM0. GPU.csv q4 packing2 peak29427/81920MiB,64.08percent headroom;
+q17 packing3 peak30722/81920MiB,62.50percent. Concurrent K4 throughput about
+8.33/9.44samples/s respectively. Retain same measured packing for final remainder.
+Cumulative debug/canaries1453GPU-seconds=0.403611GPUh; user-cancelled queued jobs0.
+
+Remote unchanged clean producer2dd3dfd,queue empty before submit. Submitted only
+canonical[1024,14042),13018/model-cell,all9cells/model,original launcher:
+-12652622 q4,packing2; latest RUNNING gpu1-11 at28s.
+-12652623 q17,packing3; latest PENDING(Resources).
+Both emergency_gpu partition/QoS Tier300,ordinary account root,GPU:a800:1,CPU8,
+mem128G,time06:00:00. Based on measured rates,roughly2.2h/1.2h active execution
+plus loading/length variation;6h bound permits at most12 additionalGPUh.
+Roots `runs/phase8-gate-d-20260906T032700Z-a800-remaining-{q4,q17}-a1`;
+logs `staging/phase8-gate-d-20260906T032700Z-a800-remaining-a1/{q4,q17}-%j.log`.
+Unique monitor updated ACTIVE full60min with these jobs and exact self-wake;
+visible confirmation. Planning received canary/remaining-submission packet.
+
+Final closure must join all three disjoint intervals[0,512),[512,1024),[1024,14042)
+for all18cells before gold access. No rerun of valid outputs, no extra arms or
+Gate transition; current task waits for final A800 remainder.
