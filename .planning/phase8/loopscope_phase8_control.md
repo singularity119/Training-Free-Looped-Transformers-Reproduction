@@ -10,7 +10,7 @@ LAST_GATE_C_EXECUTOR=01a070f0-158e-72f2-9d06-5ba47c02e2bd
 LAST_GATE_B_EXECUTOR=01a0704b-5798-7680-80a2-f1145f35f9ba
 LAST_GATE_A_EXECUTOR=01a07030-6413-7660-b712-c18d9e93d26e
 AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-Paired-Accuracy-第8阶段-Gate D
-CURRENT_DECISION=GATE_C_PASS_AUTHORIZE_GATE_D
+CURRENT_DECISION=GATE_D_USER_AUTHORIZED_A800_HIGHEST_ELIGIBLE_PRIORITY
 GATE_A_STATE=PASS
 GATE_B_STATE=PASS
 GATE_C_STATE=PASS
@@ -25,7 +25,7 @@ AUDITED_GATE_B_FINAL_COMMIT=ef54d2cdafa92483ed65575d0c5788b7980d60f3
 LATEST_ACCEPTANCE=.planning/phase8/loopscope_phase8_gate_c_acceptance.md
 ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_d_handoff.md
 SCIENTIFIC_CONTRACT=.planning/phase8/loopscope_phase8_contract_v1.md
-ACTIVE_SUPPLEMENT=NONE
+ACTIVE_SUPPLEMENT=.planning/phase8/loopscope_phase8_gate_d_a800_supplement.md
 PRIOR_OPERATIONAL_SUPPLEMENTS=loopscope_phase8_gate_b_push_approval_resume.md;loopscope_phase8_gate_b_platform_permission_resume.md
 FROZEN_USER_CHOICES=QWEN3_4B_BASE_12_15_13_16_CACHE_FIRST;QWEN3_1_7B_BASE_12_15_6_9_CACHE_LAST;MMLU_5SHOT;DAMPED_EULER;ALPHA_1_ALL_K_FIXED_HORIZON;VALIDATION512_FIT_TEST14042_EVAL;K2_PRIMARY_K4_SECONDARY;RANK1_LAMBDA0_5
 PENDING_USER_CHOICES=NONE
@@ -42,6 +42,10 @@ PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED
 Gate C已[PASS](loopscope_phase8_gate_c_acceptance.md)，八个正式basis及512身份准入Gate D。A/B/C executor全部撤权并保留只读；下文历史运行授权均已过期。
 
 当前独立D executor获准按[Gate D handoff](loopscope_phase8_gate_d_handoff.md)实现gold-free testpool/18配置评测、HPC debug及正式采集，在全部18配置闭合后一次解封test gold并配对统计、报告。科学合同v1不变。最多同时2GPU、每job≤6h、累计≤64GPUh；4B长程显存重新测量，A40初始packing≤2。源码普通提交/push延续用户授权。planning不替executor实现或例行监控。
+
+## Gate D 调度更新
+
+用户2026-09-06要求切换A800、最高合法优先级。授权同一D executor按[A800补充](loopscope_phase8_gate_d_a800_supplement.md)核实并迁移未完成工作，取消仍排队的本Gate A40旧jobs12651219/12651220，保留第一512有效canary，更新唯一monitor。科学合同、完整性/解封、总资源上限不变；新A800卡型先可保留小批实测，再完成余量。
 
 ## 已结束的 Gate B 运行历史
 
