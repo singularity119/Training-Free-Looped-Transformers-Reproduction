@@ -1,4 +1,4 @@
-> 2026-09-05 接续更新：[Phase 8 control](.planning/phase8/loopscope_phase8_control.md) 已激活，用户授权规划任务逐 Gate 推进；Gate A/B/C 已 PASS；当前 Gate D 获准完整18配置test采集及全panel闭合后一次配对统计。下文 2026-09-02 的 Phase 7 “当前”叙述是归档快照。
+> 2026-09-06 接续更新：[Phase 8 control](.planning/phase8/loopscope_phase8_control.md) 已终态，A-D与[阶段终审](.planning/phase8/loopscope_phase8_gate_d_and_phase_final_audit.md)均PASS；18配置×14042题完成，8项谱衰减对比均CI跨零/Holm不显著。无活动executor或下一阶段授权。下文2026-09-02 Phase7内容为历史快照。
 
 # LoopScope 项目记忆与接续入口
 

@@ -1,7 +1,7 @@
 # LoopScope 第八阶段：双模型固定窗口的谱软衰减实验计划
 
 > 更新：2026-09-06。Gate D 已完成18×14042采集、一次配对分析和fresh验证，等待规划验收。K2四个主比较与K4四个次比较均未通过Holm校正，所有nominal95%CI跨零；不宣称谱软衰减提升准确率。
-> [总体计划](../.planning/phase8/loopscope_phase8_plan.md) 描述研究方案，[control](../.planning/phase8/loopscope_phase8_control.md) 决定当前权限，[科学合同](../.planning/phase8/loopscope_phase8_contract_v1.md) 固定参数，[Gate D handoff](../.planning/phase8/loopscope_phase8_gate_d_handoff.md) 指导当前执行任务。
+> [总体计划](../.planning/phase8/loopscope_phase8_plan.md) 描述研究方案，[control](../.planning/phase8/loopscope_phase8_control.md) 决定当前权限，[科学合同](../.planning/phase8/loopscope_phase8_contract_v1.md) 固定参数，[Gate D handoff](../.planning/phase8/loopscope_phase8_gate_d_handoff.md) 保留已结束执行范围；最终决定见[阶段终审](../.planning/phase8/loopscope_phase8_gate_d_and_phase_final_audit.md)。
 
 ## 1. 本阶段要回答什么
 
@@ -142,7 +142,7 @@ Gate B 的两模型debug作业已完成，原版/关闭干预/零强度scores一
 在独立进程检查8配置身份、张量与Rayleigh/eigen residual（相对容差1e-4），不重复完整SVD。
 
 
-## Gate D 当前执行安排
+## Gate D 执行安排（已完成）
 
 八个固定方向已通过校准验收。接下来在同一完整test 14,042题上运行18个配置：每模型一个普通不循环基线，加上四个模型—窗口组合在K=2/K=4下各自的原版Loop和Spectral。全部配置完成后才统一计算准确率及逐题的错转对、对转错，并分别报告K=2主结果和K=4补充结果。
 
