@@ -2,10 +2,10 @@
 
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
-STATUS=ACTIVE_GATE_E_EXPLORATORY_SUPPLEMENT
+STATUS=ACTIVE_PARALLEL_GATE_E_F_USER_AUTHORIZED
 PLANNING_THREAD=01a08024-3556-75c1-8209-64e89345b940
 HISTORICAL_PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
-ACTIVE_GATE=E
+ACTIVE_GATE=E,F
 AUTHORIZED_EXECUTOR=01a08031-a85e-7101-b150-60916abdc4ac
 LAST_GATE_D_EXECUTOR=01a071e9-d133-7742-8826-e0cf5993a1f1
 LAST_GATE_C_EXECUTOR=01a070f0-158e-72f2-9d06-5ba47c02e2bd
@@ -38,7 +38,7 @@ BLOCKER=NONE
 PRESERVED_GATE_C_COMMIT=51e48d8c33fbadb985783804100bfbbd82f66fd6
 PRESERVED_GATE_C_JOBS=12649531,12649532
 PRESERVED_GATE_B_COMMIT=e6da2f8790e5ef7612104c41c68a2a7d79138692
-NEXT_ADMISSION=GATE_E_PASS_THEN_EXPLICIT_GATE_F_RUN_RELEASE
+NEXT_ADMISSION=E_AND_F_ACCEPTANCE_AND_SUPPLEMENT_RECLOSURE
 PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED_MATERIAL_STOP
 ```
 
@@ -112,3 +112,6 @@ planning现场只读确认VPN utun7/10.21.0.39仍存在，但10.90.63.2/.3及历
 用户明确要求现在创建新线程：双模型各两窗K2/3/4，t0拟合四份方向跨K复用。绑定 `01a08053-81a4-70b1-a306-a721189018a2`，title `execute-LoopScope-T0-Shared-Direction-第8阶段-Gate F`；[完整handoff](loopscope_phase8_gate_f_handoff.md)。
 GATE_F_STATE=PREPARATION_AUTHORIZED；当前E执行权保持，F仅独立新文件/只读准备，无提交、共享代码写入、远程写入或模型/GPU权限。用户明确创建请求作为提前绑定特例；不是并发正式实验授权。E PASS后planning主动发送GATE_F_RUN_RELEASE并变更当前executor，F不得自解锁。F准备阶段可发送一次F_PREPARATION_READY，不是terminal。
 F冻结36逻辑cell（12组×Loop/t1/t0），20旧cell复用，16新增；4t0共享basis与补齐1.7B K3的2t1 basis。其他原配方保持；详细科学/48GPUh待释放运行包由F handoff唯一持有。终点改为E及F验收完成后的追加综合结案，无Phase9授权。
+
+## Current superseding user authorization: parallel E/F
+User explicitly permits concurrent E/F without waiting for E acceptance. This overrides the preceding F preparation restriction. GATE_F_STATE=AUTHORIZED; F_EXECUTOR=01a08053-81a4-70b1-a306-a721189018a2; F_ACTIVE_HANDOFF=loopscope_phase8_gate_f_handoff.md. Existing singular AUTHORIZED_EXECUTOR/ACTIVE_HANDOFF fields retain E binding; this paragraph binds F independently. Full F implementation/Git/HPC authority is effective now, with 48 GPUh and at most 2 GPUs; E retains 24 GPUh and at most 2 GPUs. Coordinate shared-source/Git writes and preserve E immutable runtime. F waits only for valid E comparator artifacts at final paired closure, not for execution admission. No Phase9 authority.

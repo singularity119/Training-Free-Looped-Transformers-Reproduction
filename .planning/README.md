@@ -65,3 +65,6 @@ Phase 7 保持历史终态，旧 control/handoff 不赋予新实验权限。
 - 方法版本已冻结时，科学变更新增版本，不追溯覆盖原实例。
 - `PROJECT_MEMORY.md` 保留关键结论和证据链接；这里保留可检索的详细历史。
 - 不追加逐工具调用日志，不提交凭据、原始聊天、模型、数据或完整运行输出。
+
+
+2026-09-08 current override: user explicitly authorized E/F concurrent execution. Gate F full execution is now active; preceding preparation-only restrictions are superseded. See Phase8 control and Gate F handoff.

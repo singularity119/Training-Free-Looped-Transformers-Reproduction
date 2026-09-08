@@ -1,5 +1,10 @@
 # Gate F：t=0 共享方向与 t=1 配对比较
 
+## SUPERSEDING AUTHORIZATION - current effective scope
+User explicitly authorizes E and F to run concurrently; no E PASS or GATE_F_RUN_RELEASE is required. FULL_EXECUTION_AUTHORIZED now overrides every preparation-only, no-commit, no-remote-write, and wait-for-E restriction below. All specified implementation, Git, HPC, data, budget and analysis permissions are effective immediately. E retains its own executor and authority. F coordinates shared Git and remote-source changes with E before mutation, preserves E immutable producer and active jobs, and never overwrites another thread's dirty files. If E launchers use mutable source, coordinate a stable E source copy or wait only for the affected process to finish before sync; do not cancel E or force it onto F code.
+F runs its 16 new cells independently now. Only final paired closure awaits valid E K3 comparator scores; no duplicate E runs or polling. Planning delivers accepted E evidence by event. Separate monitors and roots; each Gate at most 2 GPUs (combined 4), E 24 GPUh and F 48 GPUh. This explicit user exception applies only to E/F.
+
+
 ## 身份、状态与入场
 按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行；实际读取 skill 和 references/protocol.md。
 Planning：01a08024-3556-75c1-8209-64e89345b940。

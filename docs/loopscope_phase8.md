@@ -186,3 +186,6 @@ HPC workspace下`artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verificatio
 2026-09-08追加：两个模型各自原两窗口覆盖K=2、3、4，alpha始终为1。每个模型/窗口只用validation512的t=0残差拟合一个方向，四份方向分别跨三个K复用；仍只在后续t>=1步骤衰减，rank1、lambda0.5不变。比较普通Loop、t1拟合、t0拟合，共12组36个逻辑配置。复用已验收的D/E逐题对照，另补1.7B K3普通Loop/t1及12个t0配置，共16个新增完整test运行。
 
 先完成工程准备，E验收后运行debug和正式HPC实验。报告t0相对t1及普通Loop的配对准确率差、翻转、置信区间和多重比较结果。该追加属于已知前期结果后的探索性实验，不能据此倒改原主实验。执行合同见 `.planning/phase8/loopscope_phase8_gate_f_handoff.md`。
+
+
+2026-09-08 current override: user explicitly authorized E/F concurrent execution. Gate F full execution is now active; preceding preparation-only restrictions are superseded. See Phase8 control and Gate F handoff.
