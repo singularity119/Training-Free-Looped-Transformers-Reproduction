@@ -47,6 +47,10 @@ PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED
 
 原A-D终审/18配置结论保留，旧executor不恢复。新结果属于已知旧结果后的探索性追加，不改原family或主结论；完成E后简洁重结案，无F/Phase9授权。下文历史操作权限均已过期。
 
+## Gate E 排队观察补充（2026-09-08）
+
+授权唯一 E executor `01a08031-a85e-7101-b150-60916abdc4ac` 为已提交 debug job `12687173`（run root `W/runs/phase8-gate-e-20260908T085637Z-debug-a1`）从真实 PENDING 状态启动唯一 10 分钟 smoke monitor，RUNNING 后沿用。此条仅替换 handoff 中该 job 必须稳定 RUNNING 约一分钟才启动监控的条件。观察权限、终态暂停及主动触发 exact executor 的约定不变；不改变 partition、QoS、账户、资源、科学、重试或取消权限，不重提原 job。转换到后续 probe/full 时更新同一个 monitor；planning 不例行轮询。
+
 ## Gate D 调度更新
 
 用户2026-09-06要求切换A800、最高合法优先级。授权同一D executor按[A800补充](loopscope_phase8_gate_d_a800_supplement.md)核实并迁移未完成工作，取消仍排队的本Gate A40旧jobs12651219/12651220，保留第一512有效canary，更新唯一monitor。科学合同、完整性/解封、总资源上限不变；新A800卡型先可保留小批实测，再完成余量。

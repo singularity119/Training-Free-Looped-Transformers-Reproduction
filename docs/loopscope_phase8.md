@@ -167,3 +167,15 @@ Gate C发现4B长程显存峰比四题短debug更高，三进程并发仅约4.5%
 K4四个差值按相同窗口顺序为+0.0142、-0.0641、+0.1282、+0.0285pp，均CI跨零、Holm p=1。主次family独立，Native比较探索性。无matched-norm对照；历史开发域，非untouched benchmark。
 
 HPC workspace下`artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verification.json`为完整闭合；`artifacts/phase8-gate-d-20260906T131600Z-analysis-a1/analysis.json`为正式一次分析，fresh统计验证VERIFIED。source producer2dd3dfd，最终jobs12652622/12652623均COMPLETED0:0；全Gate4.3381GPUh，OOM0，唯一monitor已暂停。详细执行记录见[Gate D evidence](../.planning/phase8/loopscope_phase8_gate_d_evidence.md)。Gate决策由planning作出，本页不self-PASS。
+
+## Gate E：4B K3 探索性追加运行入口
+
+依据 [Gate E amendment](../.planning/phase8/loopscope_phase8_gate_e_amendment.md)，固定两窗12:15/13:16、K3/alpha1/cachefirst/BF16、rank1/lambda0.5，复用原512有序校准身份分别拟合两个方向，再运行四个Loop/Spectral完整test配置。原A-D及其主次分析保持冻结；新增结果属于已知K2/K4结果后的探索性追加。
+
+`phase8_gate_e_debug.sbatch <calibration pool> <test pool> <fresh group> <commit>` 串行调用正式同一校准/评分入口的PREFLIGHT_ONLY路径，覆盖上尾长度；预检方向不能用于正式评分。
+
+`phase8_gate_e_calibration.sbatch <original calibration pool> <fresh group> <commit> <scope> <packing> 0 1` 拟合两窗K3方向，并独立验证两cell的t0/t1/t2残差及身份。
+
+`build_phase8_gate_e_accuracy_manifest.py --pool <original test pool> --basis-root <verified formal calibration group> --scope FORMAL_TEST --output <fresh panel>` 冻结四cell。`phase8_gate_e_accuracy.sbatch <panel> <test pool> <fresh group> <commit> <scope> <packing> <start> <end> <cell IDs...>` 保留不重叠分片。
+
+全部四cell×14042经 `verify_phase8_gate_e_accuracy.py --full-panel` 闭合后，才使用 `analyze_phase8_gate_e_accuracy.py --closure <closure> --output-dir <fresh analysis>` 一次解封及统计。两项Spectral−Loop归属独立K3_EXPLORATORY Holm family。独立追加报告放外层`资产/报告/phase8/gate_e/`，运行证据见 [Gate E evidence](../.planning/phase8/loopscope_phase8_gate_e_evidence.md)。
