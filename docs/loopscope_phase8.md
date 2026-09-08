@@ -179,3 +179,10 @@ HPC workspace下`artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verificatio
 `build_phase8_gate_e_accuracy_manifest.py --pool <original test pool> --basis-root <verified formal calibration group> --scope FORMAL_TEST --output <fresh panel>` 冻结四cell。`phase8_gate_e_accuracy.sbatch <panel> <test pool> <fresh group> <commit> <scope> <packing> <start> <end> <cell IDs...>` 保留不重叠分片。
 
 全部四cell×14042经 `verify_phase8_gate_e_accuracy.py --full-panel` 闭合后，才使用 `analyze_phase8_gate_e_accuracy.py --closure <closure> --output-dir <fresh analysis>` 一次解封及统计。两项Spectral−Loop归属独立K3_EXPLORATORY Holm family。独立追加报告放外层`资产/报告/phase8/gate_e/`，运行证据见 [Gate E evidence](../.planning/phase8/loopscope_phase8_gate_e_evidence.md)。
+
+
+## Gate F：用首次窗口残差拟合跨K共享方向
+
+2026-09-08追加：两个模型各自原两窗口覆盖K=2、3、4，alpha始终为1。每个模型/窗口只用validation512的t=0残差拟合一个方向，四份方向分别跨三个K复用；仍只在后续t>=1步骤衰减，rank1、lambda0.5不变。比较普通Loop、t1拟合、t0拟合，共12组36个逻辑配置。复用已验收的D/E逐题对照，另补1.7B K3普通Loop/t1及12个t0配置，共16个新增完整test运行。
+
+先完成工程准备，E验收后运行debug和正式HPC实验。报告t0相对t1及普通Loop的配对准确率差、翻转、置信区间和多重比较结果。该追加属于已知前期结果后的探索性实验，不能据此倒改原主实验。执行合同见 `.planning/phase8/loopscope_phase8_gate_f_handoff.md`。

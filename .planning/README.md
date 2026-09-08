@@ -1,3 +1,5 @@
+> 2026-09-08：新增 [Gate F t0共享方向计划](phase8/loopscope_phase8_gate_f_handoff.md)，两模型各两窗 K2/3/4；当前仅独立准备，E验收后由planning放行运行。动态权限以control为准。
+
 # LoopScope planning 索引
 
 这里保存随 Git 同步的阶段控制、冻结合同、Gate handoff、修订补充与审计记录。

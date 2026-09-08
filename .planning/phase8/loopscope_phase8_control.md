@@ -38,7 +38,7 @@ BLOCKER=NONE
 PRESERVED_GATE_C_COMMIT=51e48d8c33fbadb985783804100bfbbd82f66fd6
 PRESERVED_GATE_C_JOBS=12649531,12649532
 PRESERVED_GATE_B_COMMIT=e6da2f8790e5ef7612104c41c68a2a7d79138692
-NEXT_ADMISSION=GATE_E_ACCEPTANCE_AND_SUPPLEMENT_RECLOSURE
+NEXT_ADMISSION=GATE_E_PASS_THEN_EXPLICIT_GATE_F_RUN_RELEASE
 PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED_MATERIAL_STOP
 ```
 
@@ -46,7 +46,7 @@ PHASE_TERMINAL=COMPLETE_FROZEN_PAIRED_PANEL_AND_PLANNING_PHASE_AUDIT_OR_DECLARED
 
 2026-09-08用户明确新增4B K3实验，其他配置不变。按[科学追加](loopscope_phase8_gate_e_amendment.md)和[Gate E handoff](loopscope_phase8_gate_e_handoff.md)授权新独立executor完成2个K3方向拟合、4个完整test配置和探索性配对统计。alpha1/h1/3、两窗/cachefirst/BF16/rank1/lambda0.5保持。正式优先最高合法A800，24GPUh预算、同时≤2GPU。
 
-原A-D终审/18配置结论保留，旧executor不恢复。新结果属于已知旧结果后的探索性追加，不改原family或主结论；完成E后简洁重结案，无F/Phase9授权。下文历史操作权限均已过期。
+原A-D终审/18配置结论保留，旧executor不恢复。新结果属于已知旧结果后的探索性追加，不改原family或主结论；该历史终点被下述用户新增F计划取代；E本身不获F权限。下文历史操作权限均已过期。
 
 ## Gate E 排队观察补充（2026-09-08）
 
@@ -107,3 +107,8 @@ planning现场只读确认VPN utun7/10.21.0.39仍存在，但10.90.63.2/.3及历
 ## Gate E规划身份纠正（2026-09-08）
 
 用户直接向E执行任务纠正当前规划身份为`01a08024-3556-75c1-8209-64e89345b940`。本次同步control及E handoff终态recipient；旧规划ID仅保留历史，不再作为E终态或monitor relay目标。executor、debug12687173及既有科学/资源权限不变，monitor由exactexecutor同步。
+
+## Gate F 用户新增与提前准备特例（2026-09-08）
+用户明确要求现在创建新线程：双模型各两窗K2/3/4，t0拟合四份方向跨K复用。绑定 `01a08053-81a4-70b1-a306-a721189018a2`，title `execute-LoopScope-T0-Shared-Direction-第8阶段-Gate F`；[完整handoff](loopscope_phase8_gate_f_handoff.md)。
+GATE_F_STATE=PREPARATION_AUTHORIZED；当前E执行权保持，F仅独立新文件/只读准备，无提交、共享代码写入、远程写入或模型/GPU权限。用户明确创建请求作为提前绑定特例；不是并发正式实验授权。E PASS后planning主动发送GATE_F_RUN_RELEASE并变更当前executor，F不得自解锁。F准备阶段可发送一次F_PREPARATION_READY，不是terminal。
+F冻结36逻辑cell（12组×Loop/t1/t0），20旧cell复用，16新增；4t0共享basis与补齐1.7B K3的2t1 basis。其他原配方保持；详细科学/48GPUh待释放运行包由F handoff唯一持有。终点改为E及F验收完成后的追加综合结案，无Phase9授权。
