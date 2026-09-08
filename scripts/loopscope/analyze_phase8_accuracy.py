@@ -84,7 +84,7 @@ def aligned_cells(closure, manifest, pool_rows):
             for cell in manifest['cells']]
 
 
-def independent_count_check(cells, gold, subjects, result):
+def independent_count_check(cells, gold, subjects, result, families=('K2_PRIMARY', 'K4_SECONDARY')):
     """Fresh scalar recomputation from saved raw scores; no cached correctness."""
     from scipy.stats import binomtest
     correct = {}
@@ -134,7 +134,7 @@ def independent_count_check(cells, gold, subjects, result):
         for key in ('ci_low_pp', 'ci_high_pp'):
             if bootstrap[key] != row['bootstrap'][key]:
                 raise ValueError('fresh bootstrap CI recomputation failed')
-    for family in ('K2_PRIMARY', 'K4_SECONDARY'):
+    for family in families:
         rows = [r for r in result['contrasts'] if r['family'] == family]
         rows.sort(key=lambda r: fresh_pvalues[(r['reference'], r['treatment'])])
         running = 0.0
@@ -172,7 +172,7 @@ def write_tables(output_dir, result):
                                              ('ci_low_pp', 'ci_high_pp')}) if 'bootstrap' in row else row)
 
 
-def main():
+def main(gate_e=False):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--closure', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
@@ -184,7 +184,7 @@ def main():
     if closure.get('status') != 'FULL_PANEL_CLOSED' or closure.get('target_gold_loaded') is not False:
         raise ValueError('gold access requires saved full pre-outcome panel closure')
     from tflt.loopscope.phase8_accuracy_verify import verify
-    fresh = verify(closure['cell_roots'], closure['pool'], closure['manifest'], full_panel=True)
+    fresh = verify(closure['cell_roots'], closure['pool'], closure['manifest'], full_panel=True, gate_e=gate_e)
     if fresh['status'] != 'FULL_PANEL_CLOSED' or fresh['target_gold_loaded'] is not False:
         raise ValueError('fresh full-panel verification did not close')
     args.output_dir.mkdir(parents=True, exist_ok=False)
@@ -195,13 +195,15 @@ def main():
     cells = aligned_cells(closure, manifest, pool_rows)
     gold_load_started = now()
     gold, sources = load_frozen_gold(pool_rows, args.cache_dir)
-    result = analyze_panel(cells, gold, [row['subject'] for row in pool_rows])
-    result.update(schema='loopscope.phase8.accuracy_analysis.v1',
+    if gate_e:
+        from tflt.loopscope.phase8_gate_e_accuracy import analyze_panel as analyze_e
+    result = (analyze_e if gate_e else analyze_panel)(cells, gold, [row['subject'] for row in pool_rows])
+    result.update(schema='loopscope.phase8.gate_e.accuracy_analysis.v1' if gate_e else 'loopscope.phase8.accuracy_analysis.v1',
                   closure=str(args.closure), manifest=closure['manifest'], pool=closure['pool'],
                   cell_roots=closure['cell_roots'], gold_load_started=gold_load_started,
                   completed_at=now(), dataset={'repo': DATASET_REPO, 'revision': DATASET_REVISION,
                                                'split': 'test'}, gold_source_evidence=sources)
-    result['fresh_count_verification'] = independent_count_check(cells, gold, [row['subject'] for row in pool_rows], result)
+    result['fresh_count_verification'] = independent_count_check(cells, gold, [row['subject'] for row in pool_rows], result, families=('K3_EXPLORATORY',) if gate_e else ('K2_PRIMARY','K4_SECONDARY'))
     write_json(args.output_dir / 'analysis.json', result)
     write_tables(args.output_dir, result)
     print(json.dumps({'status': 'ANALYZED', 'output_dir': str(args.output_dir),

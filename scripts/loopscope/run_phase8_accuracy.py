@@ -11,7 +11,7 @@ import sys
 import time
 from tflt.loopscope.phase8_accuracy import panel,select_rows,checked_basis,write_json
 
-def main():
+def main(gate_e=False):
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--manifest',type=Path,required=True)
     p.add_argument('--pool',type=Path,required=True)
@@ -25,13 +25,17 @@ def main():
     manifest=json.loads(a.manifest.read_text())
     repo=Path(__file__).resolve().parents[2]
     config=json.loads((repo/'configs/loopscope/phase8_model_windows.json').read_text())
-    if manifest['cells']!=panel(config): raise ValueError('manifest differs from frozen panel')
+    if not gate_e and manifest['cells']!=panel(config): raise ValueError('manifest differs from frozen panel')
     cell=next(c for c in manifest['cells'] if c['cell_id']==a.cell_id)
     pool=json.loads(a.pool.read_text())
+    if gate_e:
+        from tflt.loopscope.phase8_gate_e_accuracy import validate_manifest, checked_basis as checked_e_basis
+        validate_manifest(manifest,pool,a.pool)
+        if a.scope != manifest['scope']: raise ValueError('Gate E manifest scope mismatch')
     rows=select_rows(pool,cell,a.scope,a.start,a.end)
     if not os.environ.get('SLURM_JOB_ID') or (a.scope=='PREFLIGHT_ONLY' and os.environ.get('SLURM_JOB_PARTITION')!='debug'):
         raise RuntimeError('GPU scoring requires Slurm, preflight requires debug')
-    basis=checked_basis(cell) if cell['arm']=='Spectral' else None
+    basis=(checked_e_basis(cell,a.scope) if gate_e else checked_basis(cell)) if cell['arm']=='Spectral' else None
     a.run_root.mkdir(parents=True,exist_ok=False)
     metadata=dict(cell=cell,scope=a.scope,start=a.start,end=a.end,source_commit=a.commit,pool=str(a.pool),manifest=str(a.manifest))
     write_json(a.run_root/'command_args.json',metadata)
@@ -57,6 +61,9 @@ def main():
         manager=looped_model(model,cfg)
     write_json(a.run_root/'env.json',dict(source_commit=a.commit,model_revision=model.config._commit_hash,model_dtype=str(model.dtype),python=sys.executable,versions={n:importlib.metadata.version(n) for n in ('torch','transformers','lm_eval','datasets')},job_id=os.environ['SLURM_JOB_ID'],partition=os.environ.get('SLURM_JOB_PARTITION'),gpu=torch.cuda.get_device_name(),total_memory=torch.cuda.get_device_properties(0).total_memory))
     positions=dict(max_input_length=0,left_truncated_requests=0,multitoken_requests=0,callback_calls=0,applied_calls=0)
+    if gate_e and runtime:
+        positions['callback_by_t']={str(t):0 for t in range(3)}
+        positions['applied_by_t']={str(t):0 for t in range(3)}
     acquisition=time.monotonic()
     with manager,(a.run_root/'scores.jsonl').open('x') as out:
         for i,row in enumerate(rows):
@@ -69,6 +76,13 @@ def main():
                 positions['multitoken_requests']+=int(pos['continuation_length']>1)
             if runtime:
                 if not runtime.calls or not any(c['applied'] for c in runtime.calls): raise ValueError('spectral path did not apply')
+                if gate_e:
+                    counts={t:sum(c['t']==t for c in runtime.calls) for t in range(3)}
+                    if set(c['t'] for c in runtime.calls)!={0,1,2} or len(set(counts.values()))!=1 or any(c['applied']!=(c['t'] in (1,2)) for c in runtime.calls):
+                        raise ValueError('Gate E requires equal t0/t1/t2 callbacks with only t1/t2 applied')
+                    for call in runtime.calls:
+                        positions['callback_by_t'][str(call['t'])]+=1
+                        positions['applied_by_t'][str(call['t'])]+=int(call['applied'])
                 positions['callback_calls']+=len(runtime.calls)
                 positions['applied_calls']+=sum(c['applied'] for c in runtime.calls)
                 runtime.calls.clear()

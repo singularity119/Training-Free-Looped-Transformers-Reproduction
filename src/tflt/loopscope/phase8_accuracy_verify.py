@@ -31,12 +31,16 @@ def validate_manifest(manifest, pool, pool_path):
     return {cell['cell_id']: cell for cell in manifest['cells']}
 
 
-def verify(cell_roots, pool, manifest, full_panel=False):
+def verify(cell_roots, pool, manifest, full_panel=False, *, gate_e=False):
     """Verify shards without computing predictions, correctness or accuracy."""
     pool_path, manifest_path = Path(pool), Path(manifest)
     bundle, panel = _read(pool_path), _read(manifest_path)
     validate_test_pool(bundle)
-    cells = validate_manifest(panel, bundle, pool_path)
+    if gate_e:
+        from .phase8_gate_e_accuracy import validate_manifest as validate_e
+        cells = validate_e(panel, bundle, pool_path)
+    else:
+        cells = validate_manifest(panel, bundle, pool_path)
     canonical = bundle['rows']
     covered, records, commits, scopes = {}, [], set(), set()
     for root in map(Path, cell_roots):
@@ -60,6 +64,8 @@ def verify(cell_roots, pool, manifest, full_panel=False):
         scope = metadata['scope']
         _require(scope in ('PREFLIGHT_ONLY', 'FORMAL_TEST'), 'invalid shard scope')
         scopes.add(scope)
+        if gate_e:
+            _require(scope == panel['scope'], 'Gate E shard/manifest scope mismatch')
         if scope == 'FORMAL_TEST':
             start, end = metadata['start'], metadata['end']
             _require(type(start) is int and type(end) is int and 0 <= start < end <= len(canonical),
@@ -94,7 +100,7 @@ def verify(cell_roots, pool, manifest, full_panel=False):
     _require(len(scopes) == 1, 'preflight and formal shards cannot be mixed')
     if full_panel:
         _require(scopes == {'FORMAL_TEST'}, 'full closure requires formal test shards')
-        _require(set(covered) == set(cells), 'full closure requires all 18 cells')
+        _require(set(covered) == set(cells), f'full closure requires all {len(cells)} cells')
         _require(all(indices == set(range(14042)) for indices in covered.values()),
                  'every cell requires all 14042 canonical identities')
     return {'status': 'FULL_PANEL_CLOSED' if full_panel else 'SHARDS_CLOSED',

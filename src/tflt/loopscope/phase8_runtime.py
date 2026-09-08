@@ -25,8 +25,8 @@ class AnswerResidualCollector:
         self.keys = [identity_key(x) for x in self.identities]
         if not self.keys or len(set(self.keys)) != len(self.keys):
             raise ValueError("collector identities must be nonempty and unique")
-        if k not in (2, 4):
-            raise ValueError("Phase 8 collector K must be 2 or 4")
+        if k not in (2, 3, 4):
+            raise ValueError("Phase 8 collector K must be 2, 3 or 4")
         self.rows = {}
         self.duplicate_calls = 0
         self.positions = {}
@@ -156,7 +156,7 @@ def save_basis(path, basis):
 def load_basis(path, expected_metadata=None):
     with Path(path).open(encoding="utf-8") as handle:
         basis = json.load(handle)
-    if basis.get("schema") != "loopscope-phase8-basis-v1" or basis.get("k") not in (2, 4):
+    if basis.get("schema") != "loopscope-phase8-basis-v1" or basis.get("k") not in (2, 3, 4):
         raise ValueError("unexpected Phase 8 basis schema or K")
     if expected_metadata is not None and basis["metadata"] != expected_metadata:
         raise ValueError("basis metadata differs from requested model/window/K provenance")
