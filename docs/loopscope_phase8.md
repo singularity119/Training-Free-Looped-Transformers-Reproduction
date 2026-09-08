@@ -189,3 +189,7 @@ HPC workspace下`artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verificatio
 
 
 2026-09-08 current override: user explicitly authorized E/F concurrent execution. Gate F full execution is now active; preceding preparation-only restrictions are superseded. See Phase8 control and Gate F handoff.
+
+### Gate E 已完成的结果（待planning验收）
+
+4×14042完整闭合后一次统计：12:15 Spectral−Loop +0.0214pp，nominal95%CI[-0.1996,+0.2493]，Holm p0.90151；13:16 +0.2777pp，CI[+0.0427,+0.5199]，Holm p0.05046。两项独立K3_EXPLORATORY family均未过0.05；后者只能作为探索性nominal信号，不改原A-D结论。4个correct依次10118/10121/10151/10190，N均14042。总1.37GPUh、OOM0。独立报告：外层资产/报告/phase8/gate_e/LoopScope_Phase8_GateE_K3_追加报告.md；closure和analysis入口见E evidence。
