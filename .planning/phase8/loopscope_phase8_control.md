@@ -3,7 +3,8 @@
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
 STATUS=ACTIVE_GATE_E_EXPLORATORY_SUPPLEMENT
-PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
+PLANNING_THREAD=01a08024-3556-75c1-8209-64e89345b940
+HISTORICAL_PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
 ACTIVE_GATE=E
 AUTHORIZED_EXECUTOR=01a08031-a85e-7101-b150-60916abdc4ac
 LAST_GATE_D_EXECUTOR=01a071e9-d133-7742-8826-e0cf5993a1f1
@@ -102,3 +103,7 @@ planning现场只读确认VPN utun7/10.21.0.39仍存在，但10.90.63.2/.3及历
 独立诊断任务报告用户授权重登EasyConnect后路由恢复；planning随后实际执行严格alias的只读hostname探针，exit0返回mgmt-4，确认SSH可达。连接BLOCK解除，恢复同一C executor按既有handoff检查jobs12649531/12649532与原工件。作业是否完成尚由executor查询，不把网络恢复当作实验PASS。
 
 先查原job状态与有效输出：若terminal则直接完成verifier/资源记账/8basis完整性与证据闭合；若仍等待则恢复同一个已暂停probe monitor。不得因为断网而重提/取消/替换作业。真实无效attempt按原Gate C修复授权处理，不扩大资源/科学范围，D仍锁定。完成后主动向planning送恢复后的GATE_C_FINAL_AUDIT及送达确认。
+
+## Gate E规划身份纠正（2026-09-08）
+
+用户直接向E执行任务纠正当前规划身份为`01a08024-3556-75c1-8209-64e89345b940`。本次同步control及E handoff终态recipient；旧规划ID仅保留历史，不再作为E终态或monitor relay目标。executor、debug12687173及既有科学/资源权限不变，monitor由exactexecutor同步。

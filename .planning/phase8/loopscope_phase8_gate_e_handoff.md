@@ -1,6 +1,6 @@
 # GATE_E_HANDOFF — 4B K3 Spectral Supplement
 
-Planning：01a06fe9-c7bb-7d72-a906-234f301de317。
+Planning：01a08024-3556-75c1-8209-64e89345b940。
 唯一executor：01a08031-a85e-7101-b150-60916abdc4ac。
 标题：execute-LoopScope-4B-K3-Spectral-Supplement-第8阶段-Gate E。
 必须按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行，实际读取skill和references/protocol.md；HPC操作读hpc2-hkustgz-ssh。AGENTS是稳定边界，control绑定当前权限；科学采用contract_v1加[Gate E追加](loopscope_phase8_gate_e_amendment.md)，后者仅替换明确K3/4B/4cell部分。
@@ -51,4 +51,4 @@ planning接受时只独立核对1–3决定性事实：K3配方/两basis与原id
 
 真实formal job返回ID后即创建唯一E executor-owned monitor（含PENDING），probe30min、full60min；debug稳定RUNNING约1min才建smoke10min，短作业无需monitor。转换类型更新同一个monitor，旧D monitor保持PAUSED。健康无变化安静；attempt terminal先暂停monitor，再用send_message_to_thread触发exact executor01a08031-a85e-7101-b150-60916abdc4ac，AUTOMATION_TERMINAL_RESUME含job/root/状态/下一授权动作；executor必须继续验证或有权修复/提交余量，不只说ready便结束。送达失败发AUTOMATION_RELAY_REQUIRED给planning。
 
-完成后暂停monitor，向planning01a06fe9-c7bb-7d72-a906-234f301de317发送唯一GATE_E_FINAL_AUDIT，Result=AUDIT_REQUESTED，含起点/finalcommit/dirty/push、变更/实际测试、jobs/roots、2basis/4cell闭合、新增两项K3结果/限制、资源/失败/报告路径，保留送达成功响应。本地final只作副本；无法送达明确TERMINAL_DELIVERY_UNCONFIRMED。不得self-PASS，不进入Gate F/Phase9。
+完成后暂停monitor，向planning01a08024-3556-75c1-8209-64e89345b940发送唯一GATE_E_FINAL_AUDIT，Result=AUDIT_REQUESTED，含起点/finalcommit/dirty/push、变更/实际测试、jobs/roots、2basis/4cell闭合、新增两项K3结果/限制、资源/失败/报告路径，保留送达成功响应。本地final只作副本；无法送达明确TERMINAL_DELIVERY_UNCONFIRMED。不得self-PASS，不进入Gate F/Phase9。
