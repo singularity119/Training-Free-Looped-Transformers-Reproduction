@@ -115,3 +115,5 @@ F冻结36逻辑cell（12组×Loop/t1/t0），20旧cell复用，16新增；4t0共
 
 ## Current superseding user authorization: parallel E/F
 User explicitly permits concurrent E/F without waiting for E acceptance. This overrides the preceding F preparation restriction. GATE_F_STATE=AUTHORIZED; F_EXECUTOR=01a08053-81a4-70b1-a306-a721189018a2; F_ACTIVE_HANDOFF=loopscope_phase8_gate_f_handoff.md. Existing singular AUTHORIZED_EXECUTOR/ACTIVE_HANDOFF fields retain E binding; this paragraph binds F independently. Full F implementation/Git/HPC authority is effective now, with 48 GPUh and at most 2 GPUs; E retains 24 GPUh and at most 2 GPUs. Coordinate shared-source/Git writes and preserve E immutable runtime. F waits only for valid E comparator artifacts at final paired closure, not for execution admission. No Phase9 authority.
+
+F concurrent runtime isolation: approved fixed committed source snapshot under its own W/staging/phase8-gate-f-* root; E shared source remains at a818dbb. See F handoff source isolation supplement.
