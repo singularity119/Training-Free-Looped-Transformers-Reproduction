@@ -1,3 +1,5 @@
+> 2026-09-08最新：用户追加Phase8 Gate E（4B两窗K3，其他配方不变），当前授权见[control](.planning/phase8/loopscope_phase8_control.md)。原A-D结果及终审保持，不将追加称为原预定主实验。
+
 > 2026-09-06 接续更新：[Phase 8 control](.planning/phase8/loopscope_phase8_control.md) 已终态，A-D与[阶段终审](.planning/phase8/loopscope_phase8_gate_d_and_phase_final_audit.md)均PASS；18配置×14042题完成，8项谱衰减对比均CI跨零/Holm不显著。无活动executor或下一阶段授权。下文2026-09-02 Phase7内容为历史快照。
 
 # LoopScope 项目记忆与接续入口

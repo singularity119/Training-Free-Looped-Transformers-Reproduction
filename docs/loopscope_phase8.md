@@ -1,3 +1,5 @@
+> 2026-09-08追加更新：已授权Gate E补做4B两个窗口K=3，alpha=1、h=1/3；重新拟合2个方向并新增4个完整评测配置。当前尚无K3结果。原A-D完成结论保留，见[Gate E计划](../.planning/phase8/loopscope_phase8_gate_e_handoff.md)。
+
 # LoopScope 第八阶段：双模型固定窗口的谱软衰减实验计划
 
 > 更新：2026-09-06。Gate D 已完成18×14042采集、一次配对分析和fresh验证，等待规划验收。K2四个主比较与K4四个次比较均未通过Holm校正，所有nominal95%CI跨零；不宣称谱软衰减提升准确率。

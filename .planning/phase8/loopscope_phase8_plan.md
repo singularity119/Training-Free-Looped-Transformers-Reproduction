@@ -46,3 +46,7 @@ K=2主实验、K=4补充；所有K固定alpha=1，h=1/K，总时长1。保留blo
 debug/smoke一律debugpartition、每job<30分钟。正式需同commit/launcher/env/runtime/producer的成功debug，资源按现场合法优先级、上尾长度和显存吞吐决定，禁止为利用率改变batch/科学。executor持有一个smoke10分钟/probe30分钟/full60分钟heartbeat；正常安静，attempt终态暂停并唤醒exactexecutor，最终GATE_X_FINAL_AUDIT或真正BLOCK送planning并确认。planning不轮询。
 
 逐prompt在线方向作为后续阶段动机：可从同prompt多token或跨步residual自适应估计，但本阶段不实施。本阶段结果和实现限制将用于决定后续是否值得研究该方向，而非提前扩大当前panel。
+
+## 2026-09-08追加Gate E
+
+用户授权4B K3补充，topic=4B-K3-Spectral-Supplement。两窗口重新校准K3方向，原版Loop/Spectral共4全test配置，其他参数沿用v1。按[追加](loopscope_phase8_gate_e_amendment.md)及[handoff](loopscope_phase8_gate_e_handoff.md)执行；原A-D终态保留，E为post-outcome exploratory supplement，E验收后再次关闭追加范围。
