@@ -18,3 +18,17 @@ Four t0 bases use retained C K2 residuals, source scope/identities/native FP32 r
 Strict key-only forwarding-disabled SSH reached mgmt-3; dedicated HPC source clean `a818dbb`. C cell-0 residuals and metadata exist with512 validation source. Current emergency_gpu is A800, PriorityTier300, RootOnly=NO; user association account root includes emergency_gpu/debug QoS (account name does not imply administrator privileges). Debug provides A40, 30min limit. F bounds48GPUh including debug/retries, <=2GPUs, <=6h perjob; no changes to E jobs.
 
 Planned debug: two independent model jobs, each 1A40/8CPU/128G/29min, expected <10min from four preflight calibration identities and six test identities per cell. Both windows exercise exact t0 equality K2/3/4, shared loading and real intervention, saved-C fitting path, raw standard scores and verifier; q17 covers new K3 t1 too. Formal blocked until both pass. A800 canary uses retainable first512 before expanding packing from actual memory/throughput.
+
+## Producer snapshot and submitted debug
+
+Producer `e5b8c8f418d9947a27967da5d13454cc13858745`; ordinary `git push origin loopscope` exit0 (`3d1cd80..e5b8c8f`). E dirty evidence preserved and excluded. Fixed source exported with `git archive e5b8c8f418d9947a27967da5d13454cc13858745 | ssh ... 'mkdir W/staging/phase8-gate-f-20260908T093426Z-source-a1 && tar -xf - -C <same>'`, exit0. No remote dedicated-source Git mutation.
+
+In snapshot: `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src <original-venv>/bin/python -m unittest discover -s tests -p 'test_phase8_gate_f*.py'`:16tests,3.316s,exit0. All F Python entrypoints compile and launcher shell syntax checks pass.
+
+Submission exit0 for both, with `/opt/slurm/bin/sbatch --parsable --partition=debug --qos=debug --account=root --job-name=p8-f-debug-<mi> --output=W/staging/phase8-gate-f-20260908T093426Z-debug-a1/model-<mi>-%j.out --error=<same>.err <snapshot>/scripts/loopscope/phase8_gate_f_debug.sbatch <snapshot> W/inputs/phase8-gate-c-20260905T100000Z-a1/calibration_pool.json W/inputs/phase8-gate-d-20260905T142900Z-a1/test_pool.json W/runs/phase8-gate-f-20260908T093426Z-debug-m<mi>-a1 e5b8c8f418d9947a27967da5d13454cc13858745 <mi>`.
+
+`mi=0` job12687439; `mi=1` job12687440. Initial real states PENDING/MaxJobsPerAccount, elapsed0; no failure inferred. Requested planning observation-only exception for queue-phase10min single monitor; no cancel/retry/resubmit or altered resource request. Formal remains blocked until the two actual preflights succeed.
+
+Planning queue-observer exception committed `c12049c`. Single executor-owned automation `loopscope-phase8-gate-f-debug-observer` created ACTIVE, 10min smoke interval; creation tool confirmed. Prompt binds exact executor/planning, both debug jobs/source/run roots and terminal pause → active AUTOMATION_TERMINAL_RESUME routing; healthy wakes stay quiet. The first create request lacked thread destination and returned argument error without creating an automation; corrected request explicitly targets this thread, succeeded once. No duplicate monitor.
+
+Critical reused producer paths compared directly with E producer a818dbb: original Phase8 runtime/adapter, wrapper/strategies/cache/config and model/window config unchanged. New F scope does not change retained D/E scoring behavior. Formal basis/scoring and gold analysis have not started.
