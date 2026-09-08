@@ -30,3 +30,15 @@ Submitted job `12687173`, `debug` / QoS `debug` / ordinary association `root`, A
 Initial scheduler state PENDING (MaxJobsPerAccount), no log created yet. This is queue admission, not producer failure. Asked planning for the minimal queue-phase monitor observation exception; no resource/account/QoS change or resubmission.
 
 Planning approved queue-phase observation in control on 2026-09-08. Created sole heartbeat `loopscope-phase8-gate-e-monitor`, ACTIVE, 10-minute smoke cadence, exact executor/job binding above; tool confirmed creation and planning acknowledgement delivered. Attempt terminal pauses monitor then actively sends AUTOMATION_TERMINAL_RESUME; later scopes update this same monitor. Original monitors remain PAUSED. This is a scheduling wait, not Gate completion.
+
+## Planning correction and debug completion
+
+User corrected current planning to `01a08024-3556-75c1-8209-64e89345b940`; planning control/handoff commit `f110233` records this. Earlier recipient in admission history is historical only. Monitor now uses current planning for every terminal/relay route; executor remains unchanged.
+
+Debug12687173 COMPLETED0:0,154s=0.0427778GPUh,A40x1,OOM0. Saved separate-process calibration verifier checks 2 K3 preflight bases,4 identities each,t0/t1/t2 counts4. Score verifier closes4cells×6=24 finite records,target_gold_loaded=false. Longest input3096tokens,no truncation/multitoken continuation. Spectral actual callbacks per window t0/t1/t2=6/6/6, applied=0/6/6. Max per-process reserved calibration12626952192bytes,score11020533760bytes. Debug monitor paused after terminal discovery by active executor; no redundant self-wake required.
+
+## Formal calibration
+
+Submitted12687223 to emergency_gpu/QoS emergency_gpu/account root,A800x1,CPU8,128G,01:00:00,packing2. Run root W/runs/phase8-gate-e-20260908T091052Z-calibration-a1; logs matching W/staging directory/slurm-12687223.out,.err. Same immutable producer a818dbb; remote clean remains on that version (later local commits are documents only). Command is phase8_gate_e_calibration.sbatch with original512 calibration pool, this fresh root, producer, FORMAL_CALIBRATION 2 0 1. Submission exit0. Both actual memory and throughput will be checked before downstream test packing; no A40-to-A800 peak extrapolation used to expand beyond approved conservative packing2.
+
+Sole monitor loopscope-phase8-gate-e-monitor updated ACTIVE probe30min immediately after verified jobID, includesPENDING; current planning confirmation delivered. Next action: verify two complete512 K3 bases,then4cell retained test512 canary. No new outcome read.
