@@ -1,3 +1,5 @@
+> 2026-09-09结果更新：E已PASS；F的36配置统一分析已生成、7作业已完成，planning正在完成终态验收。E K3两项Holm未显著；F t0−t1与t0−Loop两组12项Holm均未显著。人类新增总报告：外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md。下方旧状态为历史。
+
 > 2026-09-08：新增 [Gate F t0共享方向计划](phase8/loopscope_phase8_gate_f_handoff.md)，两模型各两窗 K2/3/4；当前仅独立准备，E验收后由planning放行运行。动态权限以control为准。
 
 # LoopScope planning 索引

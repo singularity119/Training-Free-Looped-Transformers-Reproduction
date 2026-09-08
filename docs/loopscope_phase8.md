@@ -191,3 +191,10 @@ HPC workspace下`artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verificatio
 2026-09-08 current override: user explicitly authorized E/F concurrent execution. Gate F full execution is now active; preceding preparation-only restrictions are superseded. See Phase8 control and Gate F handoff.
 
 Gate E已完成四配置完整采集与一次统计，等待planning验收。12:15 Spectral−Loop +0.0214pp，13:16 +0.2777pp；后者nominal95%CI为[+0.0427,+0.5199]pp，但两项Holm p=0.050457未达0.05。新增组保持post-outcome exploratory，不改原A-D结论。外层`资产/报告/phase8/gate_e/LoopScope_Phase8_GateE_K3_追加报告.md`保存完整四cell及统计；HPC分析目录`artifacts/phase8-gate-e-20260908T190200Z-analysis-a1/`。总1.37GPUh、OOM0，唯一monitor PAUSED。
+
+
+## 2026-09-09增量结果与阅读入口
+
+E已验收：4B K3两窗谱衰减相对Loop为+0.0214/+0.2777pp；后者nominalCI正但Holm p=0.05046，未达到0.05。F已完成16新增cell和D16+E4复用的36配置分析：t0−t1为2正10负，t0−Loop为3正8负1持平，两组各12项Holm均未显著。F终态验收单独记录，不把工程完成等同方法收益。
+
+导师阅读优先：外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md；完整数值见gate_e/LoopScope_Phase8_GateE_K3_追加报告.md与gate_f/Gate_F_结果报告.md及各CSV。Notion导师页：https://app.notion.com/p/3d57d1c8d46f80e0bf8ec6d391e326ad 。原A–D报告保留，新增总报告解释四份t0方向跨K共享、干预仍t>=1，以及36逻辑配置并非全部新跑。
