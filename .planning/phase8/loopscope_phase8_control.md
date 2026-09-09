@@ -144,3 +144,6 @@ Planning strict SSH succeeded on2026-09-09; direct squeue/sacct/scontrol confirm
 
 ## User override: manual monitoring only
 User requests all timers off and will report completion manually. Do not create or resume timers, heartbeats or background polling without renewed explicit user authorization. This overrides all earlier monitor rules, including later Gate G transitions. Preserve existing HPC jobs/artifacts; resume same executor on manual event and verify original job first. This is not cancellation of computation.
+
+## Gate G immediate full experiment / batch-size update
+User explicitly requests full submission now and larger batch size for memory use. Superseding scope in loopscope_phase8_gate_g_full_submission_supplement.md: allow targeted actual batch2/4/8 validation, preserve scoring/identity/intervention semantics and at least15%headroom, then submit complete remaining panel without another user confirmation. If true batching is materially blocked, validated independent packing2–3 is permitted and must be labeled accurately. Existing valid first512 retained; no duplicated acquisition or gold tuning. Same executor/resource budget/science and manual-only timer prohibition remain.
