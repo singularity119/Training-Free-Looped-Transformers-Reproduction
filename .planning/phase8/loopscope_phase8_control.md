@@ -2,7 +2,7 @@
 
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
-STATUS=GATE_G_BLOCKED_CONNECTIVITY
+STATUS=ACTIVE_GATE_G_WINDOW_SUPPLEMENT
 PLANNING_THREAD=01a08024-3556-75c1-8209-64e89345b940
 HISTORICAL_PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
 ACTIVE_GATE=G
@@ -34,7 +34,7 @@ ACTIVE_SUPPLEMENT=.planning/phase8/loopscope_phase8_gate_e_amendment.md
 PRIOR_OPERATIONAL_SUPPLEMENTS=loopscope_phase8_gate_b_push_approval_resume.md;loopscope_phase8_gate_b_platform_permission_resume.md
 FROZEN_USER_CHOICES=QWEN3_4B_BASE_12_15_13_16_CACHE_FIRST;QWEN3_1_7B_BASE_12_15_6_9_CACHE_LAST;MMLU_5SHOT;DAMPED_EULER;ALPHA_1_ALL_K_FIXED_HORIZON;VALIDATION512_FIT_TEST14042_EVAL;K2_PRIMARY_K4_SECONDARY;RANK1_LAMBDA0_5
 PENDING_USER_CHOICES=NONE
-BLOCKER=G_VPN_CONNECTIVITY_JOB12692413_UNKNOWN
+BLOCKER=NONE
 PRESERVED_GATE_C_COMMIT=51e48d8c33fbadb985783804100bfbbd82f66fd6
 PRESERVED_GATE_C_JOBS=12649531,12649532
 PRESERVED_GATE_B_COMMIT=e6da2f8790e5ef7612104c41c68a2a7d79138692
@@ -138,3 +138,6 @@ Planning grants exact G executor01a08443-1e4f-7623-aa1b-69d3dbae406e permission 
 
 ## Gate G access-only BLOCK (2026-09-09)
 Planning accepts the exact bound G executor BLOCK packet and directly rereads its committed evidence at712f227. G_STATE=BLOCK; reason is absent authenticated campus VPN connectivity, not a failed experiment. Debug12692339 is reported verified; calibration12692413 state is UNKNOWN. No formal test yet. Preserve all source/run roots, job12692413 and PAUSED monitor. No cancellation or resubmission due to loss of access. Restore EasyConnect connectivity, then planning resumes SAME executor01a08443-1e4f-7623-aa1b-69d3dbae406e to inspect originaljob/artifacts first and continue unchanged handoff. Do not create replacement executor or nextGate. No new network/auth mutation authority is granted.
+
+## Gate G connectivity restored and original queue resumed
+Planning strict SSH succeeded on2026-09-09; direct squeue/sacct/scontrol confirm12692413 PENDING Reason=Priority, no dependency, Restarts0, requested1A800/8CPU128G/1h in emergency_gpu. Access BLOCK resolved, G_STATE=AUTHORIZED under original handoff. Same executor resumes the original single probe30min observer immediately includingPENDING and preserves job. Scheduler estimated start2026-09-11T14:58:25 is tentative, not a guarantee. No cancellation/resubmission or resource/science change authorized by this status check.
