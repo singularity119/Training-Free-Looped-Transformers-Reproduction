@@ -141,3 +141,6 @@ Planning accepts the exact bound G executor BLOCK packet and directly rereads it
 
 ## Gate G connectivity restored and original queue resumed
 Planning strict SSH succeeded on2026-09-09; direct squeue/sacct/scontrol confirm12692413 PENDING Reason=Priority, no dependency, Restarts0, requested1A800/8CPU128G/1h in emergency_gpu. Access BLOCK resolved, G_STATE=AUTHORIZED under original handoff. Same executor resumes the original single probe30min observer immediately includingPENDING and preserves job. Scheduler estimated start2026-09-11T14:58:25 is tentative, not a guarantee. No cancellation/resubmission or resource/science change authorized by this status check.
+
+## User override: manual monitoring only
+User requests all timers off and will report completion manually. Do not create or resume timers, heartbeats or background polling without renewed explicit user authorization. This overrides all earlier monitor rules, including later Gate G transitions. Preserve existing HPC jobs/artifacts; resume same executor on manual event and verify original job first. This is not cancellation of computation.
