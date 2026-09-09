@@ -122,3 +122,6 @@ Gate E 的微小正点估计 CI 跨零；Gate F 的 Qwen/Llama contrasts 全为�
 
 
 2026-09-08 current override: user explicitly authorized E/F concurrent execution. Gate F full execution is now active; preceding preparation-only restrictions are superseded. See Phase8 control and Gate F handoff.
+
+
+2026-09-09追加Gate G：Qwen3-4B-Base15–18层（B15→B19），K2/3/4各跑Loop/t1/t0共9新配置，alpha1/cachefirst/BF16/rank1/lambda0.5不变。新拟合3份t1和1份跨K共享t0；Native复用。当前授权与执行入口见Phase8 control及gate_g_handoff，实验尚未完成。

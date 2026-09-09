@@ -2,16 +2,16 @@
 
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
-STATUS=ACTIVE_GATE_F_FINAL_ANALYSIS
+STATUS=ACTIVE_GATE_G_WINDOW_SUPPLEMENT
 PLANNING_THREAD=01a08024-3556-75c1-8209-64e89345b940
 HISTORICAL_PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
-ACTIVE_GATE=F
-AUTHORIZED_EXECUTOR=01a08053-81a4-70b1-a306-a721189018a2
+ACTIVE_GATE=G
+AUTHORIZED_EXECUTOR=01a08443-1e4f-7623-aa1b-69d3dbae406e
 LAST_GATE_D_EXECUTOR=01a071e9-d133-7742-8826-e0cf5993a1f1
 LAST_GATE_C_EXECUTOR=01a070f0-158e-72f2-9d06-5ba47c02e2bd
 LAST_GATE_B_EXECUTOR=01a0704b-5798-7680-80a2-f1145f35f9ba
 LAST_GATE_A_EXECUTOR=01a07030-6413-7660-b712-c18d9e93d26e
-AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-T0-Shared-Direction-第8阶段-Gate F
+AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-4B-Window15-18-第8阶段-Gate G
 CURRENT_DECISION=USER_AUTHORIZED_4B_K3_GATE_E
 SCIENTIFIC_RESULT=NO_RELIABLE_SPECTRAL_GAIN_IN_FROZEN_PANEL
 GATE_A_STATE=PASS
@@ -28,7 +28,7 @@ AUDITED_GATE_D_FINAL_COMMIT=8bf0748c7d4576da4d1708c72a645dc5574a9148
 AUDITED_GATE_C_FINAL_COMMIT=8c8ef434a4be2025f9603ce7690b90d4abb2f330
 AUDITED_GATE_B_FINAL_COMMIT=ef54d2cdafa92483ed65575d0c5788b7980d60f3
 LATEST_ACCEPTANCE=.planning/phase8/loopscope_phase8_gate_d_and_phase_final_audit.md
-ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_f_handoff.md
+ACTIVE_HANDOFF=.planning/phase8/loopscope_phase8_gate_g_handoff.md
 SCIENTIFIC_CONTRACT=.planning/phase8/loopscope_phase8_contract_v1.md
 ACTIVE_SUPPLEMENT=.planning/phase8/loopscope_phase8_gate_e_amendment.md
 PRIOR_OPERATIONAL_SUPPLEMENTS=loopscope_phase8_gate_b_push_approval_resume.md;loopscope_phase8_gate_b_platform_permission_resume.md
@@ -129,3 +129,6 @@ E reports VPN utun7 at 10.21.0.217 while campus DNS 10.90.63.2/.3 routes through
 
 ## Gate E accepted; F comparator admission satisfied
 Planning PASS recorded in loopscope_phase8_gate_e_acceptance.md after direct HPC basis/closure/analysis/sacct checks. E authority revoked; monitor stays paused. F receives accepted E closure artifacts/phase8-gate-e-20260908T190114Z-closure-a1/verification.json and may proceed with 36-cell paired closure and the already frozen one-shot analysis. Final E documentation remains locally committed but unpushed due GitHub authentication; accepted non-material delivery deviation, no experiment rerun. Next: F final audit and one consolidated supplementary phase closure.
+
+## Gate G current authorization
+User explicitly requests new independent 4B15:18 window experiment, matching prior windows. G_STATE=AUTHORIZED, executor01a08443-1e4f-7623-aa1b-69d3dbae406e; gate_g_handoff freezes K2/3/4 x Loop/t1/t0, 4fresh bases,9new full test cells,Native reused. F computational work and planning direct evidence checks complete; only F terminal-delivery/acceptance closure remains, with no new F implementation/GPU authority. G does not depend on F outcome for its new-window calculation; admitted now under user's explicit new task request. Prior singular F authority superseded. Next terminal is G acceptance plus pending F administrative closure and consolidated Phase8 supplement audit. No Phase9.
