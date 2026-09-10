@@ -2,11 +2,11 @@
 
 ```text
 CONTROL_ID=LOOPSCOPE_PHASE8_CONTROL_V1
-STATUS=ACTIVE_GATE_G_WINDOW_SUPPLEMENT
+STATUS=GATE_G_PASS_PENDING_F_DELIVERY_CLOSURE
 PLANNING_THREAD=01a08024-3556-75c1-8209-64e89345b940
 HISTORICAL_PLANNING_THREAD=01a06fe9-c7bb-7d72-a906-234f301de317
-ACTIVE_GATE=G
-AUTHORIZED_EXECUTOR=01a08443-1e4f-7623-aa1b-69d3dbae406e
+ACTIVE_GATE=NONE
+AUTHORIZED_EXECUTOR=NONE
 LAST_GATE_D_EXECUTOR=01a071e9-d133-7742-8826-e0cf5993a1f1
 LAST_GATE_C_EXECUTOR=01a070f0-158e-72f2-9d06-5ba47c02e2bd
 LAST_GATE_B_EXECUTOR=01a0704b-5798-7680-80a2-f1145f35f9ba
@@ -147,3 +147,6 @@ User requests all timers off and will report completion manually. Do not create 
 
 ## Gate G immediate full experiment / batch-size update
 User explicitly requests full submission now and larger batch size for memory use. Superseding scope in loopscope_phase8_gate_g_full_submission_supplement.md: allow targeted actual batch2/4/8 validation, preserve scoring/identity/intervention semantics and at least15%headroom, then submit complete remaining panel without another user confirmation. If true batching is materially blocked, validated independent packing2–3 is permitted and must be labeled accurately. Existing valid first512 retained; no duplicated acquisition or gold tuning. Same executor/resource budget/science and manual-only timer prohibition remain.
+
+## Gate G PASS
+Planning directly accepted complete9cell panel and six terminaljobs; see loopscope_phase8_gate_g_acceptance.md. G authority revoked, no nextGate, all timers remain off. Only F terminal-delivery administrative closure remains for consolidated Phase8 supplement finalization.

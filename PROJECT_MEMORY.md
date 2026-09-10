@@ -125,3 +125,6 @@ Gate E 的微小正点估计 CI 跨零；Gate F 的 Qwen/Llama contrasts 全为�
 
 
 2026-09-09追加Gate G：Qwen3-4B-Base15–18层（B15→B19），K2/3/4各跑Loop/t1/t0共9新配置，alpha1/cachefirst/BF16/rank1/lambda0.5不变。新拟合3份t1和1份跨K共享t0；Native复用。当前授权与执行入口见Phase8 control及gate_g_handoff，实验尚未完成。
+
+
+2026-09-10：Gate G已PASS，4B15–18窗口9完整配置无可靠谱衰减增益；普通Loop K2=73.6932%，高于Native仅描述。新增报告见外层资产/报告/phase8/gate_g；G执行权限关闭、timer继续关闭。F终态交付收尾待单独完成。
