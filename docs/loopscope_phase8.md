@@ -200,7 +200,18 @@ E已验收：4B K3两窗谱衰减相对Loop为+0.0214/+0.2777pp；后者nominalC
 导师阅读优先：外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md；完整数值见gate_e/LoopScope_Phase8_GateE_K3_追加报告.md与gate_f/Gate_F_结果报告.md及各CSV。Notion导师页：https://app.notion.com/p/3d57d1c8d46f80e0bf8ec6d391e326ad 。原A–D报告保留，新增总报告解释四份t0方向跨K共享、干预仍t>=1，以及36逻辑配置并非全部新跑。
 
 
-2026-09-09追加Gate G：Qwen3-4B-Base15–18层（B15→B19），K2/3/4各跑Loop/t1/t0共9新配置，alpha1/cachefirst/BF16/rank1/lambda0.5不变。新拟合3份t1和1份跨K共享t0；Native复用。当前授权与执行入口见Phase8 control及gate_g_handoff，实验尚未完成。
+2026-09-09追加Gate G：Qwen3-4B-Base15–18层（B15→B19），K2/3/4各跑Loop/t1/t0共9新配置，alpha1/cachefirst/BF16/rank1/lambda0.5不变。新拟合3份t1和1份跨K共享t0；Native复用。当前授权与执行入口见Phase8 control及gate_g_handoff，该条为提交时历史状态；结果现已完成并经G验收。
 
 
 2026-09-10：Gate G已PASS，4B15–18窗口9完整配置无可靠谱衰减增益；普通Loop K2=73.6932%，高于Native仅描述。新增报告见外层资产/报告/phase8/gate_g；G执行权限关闭、timer继续关闭。F终态交付收尾待单独完成。
+
+
+## 15–18层结果速览（Gate G，已PASS）
+
+| 模型 | 层窗口 | K | Native acc | Loop acc | t1 acc | t0 acc | t0−t1 pp | t0−Loop pp |
+|---|---|---|---|---|---|---|---|---|
+| Qwen3-4B-Base | 15–18 | 2 | 73.0808% | 73.6932% | 73.6220% | 73.5365% | -0.0855 | -0.1567 |
+| Qwen3-4B-Base | 15–18 | 3 | 73.0808% | 73.4511% | 73.6291% | 73.5223% | -0.1068 | +0.0712 |
+| Qwen3-4B-Base | 15–18 | 4 | 73.0808% | 73.5864% | 73.4083% | 73.5080% | +0.0997 | -0.0783 |
+
+同一MMLU5shot完整14042题；Native复用D。alpha1、BF16/cachefirst、rank1/lambda0.5保持，15–18对应B15→B19。该窗三种方法的点估计均高于Native，但Native差值仅描述；全部9项谱方法配对CI跨零、三类各3项Holm不显著。实际batch1/packing2、3.025GPUh、OOM0。G完整闭合后一次分析，原D/E/F family保持。

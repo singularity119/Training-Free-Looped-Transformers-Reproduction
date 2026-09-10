@@ -50,3 +50,7 @@ debug/smoke一律debugpartition、每job<30分钟。正式需同commit/launcher/
 ## 2026-09-08追加Gate E
 
 用户授权4B K3补充，topic=4B-K3-Spectral-Supplement。两窗口重新校准K3方向，原版Loop/Spectral共4全test配置，其他参数沿用v1。按[追加](loopscope_phase8_gate_e_amendment.md)及[handoff](loopscope_phase8_gate_e_handoff.md)执行；原A-D终态保留，E为post-outcome exploratory supplement，E验收后再次关闭追加范围。
+
+
+## 增量进度与当前边界（2026-09-10）
+E新增4B两窗K3已PASS；F完成双模型原四窗K2/3/4三方法36逻辑配置分析，终态交付收尾仍单独记录；G新增4B15:18三K三方法9配置已PASS。累计47唯一测试配置含2Native，659974条配置—样本评分（复用合表不重复计数）。没有新的实施/GPU任务授权。全体定时器按用户要求关闭，后续仅手动事件续接。G acceptance、各Gate evidence为证据入口；人类完整对照见docs/loopscope_phase8.md及外层增量实验总结。
