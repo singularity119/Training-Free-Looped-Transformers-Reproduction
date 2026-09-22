@@ -11,7 +11,8 @@ EXECUTOR_REASONING=max
 BASE_BRANCH=loopscope
 SOURCE_BASE_COMMIT=b281ebba85ae8febdcccedd0d201cc5185721552
 ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_a_handoff.md
-ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_gate_a_scope_supplement.md
+ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_gate_a_git_merge_supplement.md
+SCIENTIFIC_SCOPE_SUPPLEMENT=.planning/phase9/loopscope_phase9_gate_a_scope_supplement.md
 SCIENTIFIC_CONTRACT=.planning/phase9/loopscope_phase9_contract_v2.md
 CURRENT_DECISION=USER_AUTHORIZED_SERIAL_PHASE9_EXECUTION
 STANDING_PHASE_CONTINUATION=ADVANCE_SERIAL_GATES_UNTIL_PHASE9_TERMINAL
@@ -25,3 +26,5 @@ PHASE_TERMINAL=FROZEN_47_CELL_PANEL_REPORT_AND_PLANNING_PHASE_AUDIT_OR_EXPLICIT_
 只有当前A执行权限有效；A允许本地增量实现/测试/普通Git提交推送与HPC只读和有界CPU检查，不允许模型推理、GPU/Slurm提交、test或gold读取。B/C/D待前门验收逐个创建绑定。常规操作权限由planning在本阶段范围内决定；不能自行更改冻结科学或跨Gate。
 
 用户最新明确移除4B/12:15与1.7B/6:9：保留三窗口K2/3/4，47逻辑配置、18新配置；统计family同步缩为每K六项主/次比较及18项共享方向探索比较。此前等待范围确认已解除，同一Gate A executor按scope supplement继续，不创建新executor，不修改Phase8历史。
+
+Gate A普通Git同步补充：planning核对远端独有ae40ce6仅历史E报告文字，授权同一executor普通merge保留双方历史后push；科学和下一Gate边界不变。详见git_merge_supplement。
