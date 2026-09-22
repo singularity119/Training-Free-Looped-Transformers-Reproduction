@@ -62,6 +62,14 @@ def assert_flags(value: Mapping[str, Any]) -> None:
         raise ValueError("artifact reports test split access")
 
 
+def assert_context_trajectory(contexts: Sequence[Mapping[str, Any]], k: int, expected_count: int) -> None:
+    if len(contexts) != expected_count:
+        raise ValueError("Phase 9 candidate-context count differs from the frozen scorer path")
+    for context in contexts:
+        if context.get("call_count") != k or context.get("timesteps") != list(range(k)):
+            raise ValueError("Phase 9 candidate context does not contain exactly K callbacks")
+
+
 def verify_debug_cell(value: Mapping[str, Any], identities: Sequence[str], k: int) -> Dict[str, Any]:
     if value.get("status") != "DEBUG_CELL_COMPLETE" or value.get("k") != k:
         raise ValueError("debug cell status or K differs from the requested cell")
@@ -91,6 +99,14 @@ def verify_debug_cell(value: Mapping[str, Any], identities: Sequence[str], k: in
     records = diagnostic.get("records", ())
     if len(records) != 4:
         raise ValueError("debug diagnostic fit pool is incomplete")
+    assert_context_trajectory(diagnostic.get("runtime", {}).get("context_summaries", ()), k, 4)
+    for mode in ("Online-t0", "Matched-norm"):
+        for row in arms[mode].get("rows", ()):
+            assert_context_trajectory(row.get("contexts", ()), k, 1)
+            if len(row.get("calls", ())) != k:
+                raise ValueError("debug arm contains duplicated or missing callback records")
+    if order[0].get("context_count") != 2:
+        raise ValueError("candidate-order check did not record one context per ordered score call")
     return {
         "status": "DEBUG_CELL_VALID",
         "identity_count": 4,

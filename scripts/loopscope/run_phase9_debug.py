@@ -175,13 +175,27 @@ def check_position_metadata(adapter: Any, tokenizer: Any) -> List[Dict[str, Any]
     return observed
 
 
-def validate_context_calls(runtime: Any, k: int, expected_contexts: int) -> None:
-    contexts = runtime.context_summaries[-expected_contexts:]
+def validate_context_calls(
+    runtime: Any,
+    k: int,
+    expected_contexts: int,
+    start_index: int | None = None,
+) -> List[Dict[str, Any]]:
+    # With lm-eval 0.4.11's default logits cache, the four one-token choice
+    # requests share one actual causal model input.  The contract therefore
+    # checks one shared candidate context with K real loop callbacks, not four
+    # duplicated forwards.  A start index makes this an exact per-score check.
+    contexts = (
+        runtime.context_summaries[start_index:]
+        if start_index is not None
+        else runtime.context_summaries[-expected_contexts:]
+    )
     if len(contexts) != expected_contexts:
         raise RuntimeError("Phase 9 evaluator did not produce the expected candidate contexts")
     for context in contexts:
         if context["call_count"] != k or context["timesteps"] != list(range(k)):
             raise RuntimeError("Phase 9 residual callback count differs from K")
+    return contexts
 
 
 def build_choice_requests(row: Mapping[str, Any], Instance: Any, tag: str) -> List[Any]:
@@ -272,9 +286,10 @@ def run_diagnostic_cell(
     started = time.monotonic()
     with looped_model(model, config):
         for row in rows:
+            context_start = len(runtime.context_summaries)
             adapted_scores(adapter, row, runtime)
             check_position_metadata(adapter, tokenizer)
-            validate_context_calls(runtime, k, 4)
+            validate_context_calls(runtime, k, 1, context_start)
             collector.finish(row["identity"], runtime.direction, runtime._fit_metadata)
     torch.cuda.synchronize()
     result = {
@@ -322,9 +337,10 @@ def run_debug_cell(
     zero_config = make_loop_config(spec, window, k, zero_runtime)
     with looped_model(model, zero_config):
         for row in verify_rows:
+            context_start = len(zero_runtime.context_summaries)
             zero_scores[row["identity"]] = adapted_scores(adapter, row, zero_runtime)
             check_position_metadata(adapter, tokenizer)
-            validate_context_calls(zero_runtime, k, 4)
+            validate_context_calls(zero_runtime, k, 1, context_start)
     zero_deltas = {
         identity: max_score_delta(loop_scores[identity], zero_scores[identity])
         for identity in loop_scores
@@ -339,11 +355,12 @@ def run_debug_cell(
         rows_report = []
         with looped_model(model, config):
             for row in verify_rows:
+                context_start = len(runtime.context_summaries)
+                call_start = len(runtime.calls)
                 scores = adapted_scores(adapter, row, runtime)
                 positions = check_position_metadata(adapter, tokenizer)
-                validate_context_calls(runtime, k, 4)
-                recent = runtime.context_summaries[-4:]
-                row_calls = runtime.calls[-4 * k:]
+                recent = validate_context_calls(runtime, k, 1, context_start)
+                row_calls = runtime.calls[call_start:]
                 if any(call["t"] < 1 and call["applied"] for call in row_calls):
                     raise RuntimeError("Phase 9 intervention was applied at t0")
                 if any(call["t"] >= 1 and not call["applied"] for call in row_calls):
@@ -372,12 +389,14 @@ def run_debug_cell(
     representative = verify_rows[0]
     ordered_runtime = Phase9Runtime("Online-t0", intervene=False)
     with looped_model(model, make_loop_config(spec, window, k, ordered_runtime)):
+        context_start = len(ordered_runtime.context_summaries)
         standard = adapted_scores(adapter, representative, ordered_runtime, letters="ABCD")
         standard_positions = check_position_metadata(adapter, tokenizer)
-        validate_context_calls(ordered_runtime, k, 4)
+        validate_context_calls(ordered_runtime, k, 1, context_start)
+        context_start = len(ordered_runtime.context_summaries)
         reversed_scores = adapted_scores(adapter, representative, ordered_runtime, letters="DCBA")
         reversed_positions = check_position_metadata(adapter, tokenizer)
-        validate_context_calls(ordered_runtime, k, 4)
+        validate_context_calls(ordered_runtime, k, 1, context_start)
     order_delta = max_score_delta(standard, reversed_scores)
     if order_delta != 0.0 or standard_positions != reversed_positions:
         raise RuntimeError("candidate request order changed Phase 9 score or mask semantics")

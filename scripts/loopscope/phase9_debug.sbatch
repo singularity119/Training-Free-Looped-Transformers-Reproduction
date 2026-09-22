@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Gate B: one real model/window/K debug preflight on the debug partition.
 # Usage: phase9_debug.sbatch MODEL_INDEX POOL RUN_ROOT SOURCE_COMMIT CELL_INDEX
+# Use submit_phase9_debug_jobs.sh for multi-cell submission so indexes come
+# from the frozen model/window/K manifest rather than a hand-written range.
 #SBATCH --partition=debug
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
