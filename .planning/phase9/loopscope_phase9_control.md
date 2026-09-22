@@ -1,26 +1,26 @@
 # LoopScope Phase 9 Control
 
 ```text
-STATUS=GATE_B_AUTHORIZED
+STATUS=GATE_C_AUTHORIZED
 PLANNING_THREAD=01a07ff5-79b1-79f0-809a-4d0971475686
-ACTIVE_GATE=B
-AUTHORIZED_EXECUTOR=01a0c72c-5462-71c3-8a7f-a2c4862680c1
-AUTHORIZED_EXECUTOR_TITLE=Gate B-execute-LoopScope-Debug-and-Diagnostics-第9阶段
+ACTIVE_GATE=C
+AUTHORIZED_EXECUTOR=01a0c811-fbd3-7330-8898-72ce8d13e4ec
+AUTHORIZED_EXECUTOR_TITLE=Gate C-execute-LoopScope-Full-Scoring-第9阶段
 EXECUTOR_MODEL=gpt-5.6-luna
 EXECUTOR_REASONING=max
 MONITOR_ROUTING=EXECUTOR_ONLY
 MONITOR_ROUTING_AMENDMENT=.planning/phase9/loopscope_phase9_monitor_routing_amendment.md
 BASE_BRANCH=loopscope
 SOURCE_BASE_COMMIT=b281ebba85ae8febdcccedd0d201cc5185721552
-ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_b_handoff.md
-ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_gate_b_debug_probe_supplement.md
+ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_c_handoff.md
+ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_monitor_routing_amendment.md
 GATE_A_STATE=PASS
 AUDITED_GATE_A_COMMIT=8f785198c18889f78c2cce7e3f26395bc7dd5cfb
 SCIENTIFIC_CONTRACT=.planning/phase9/loopscope_phase9_contract_v2.md
-CURRENT_DECISION=GATE_B_CONNECTIVITY_RESTORED_RESUME
+CURRENT_DECISION=GATE_B_PASS
 STANDING_PHASE_CONTINUATION=ADVANCE_SERIAL_GATES_UNTIL_PHASE9_TERMINAL
 OPERATIONAL_PERMISSION_DECISIONS=PLANNING_GATE_SCOPED
-NEXT_ADMISSION=GATE_B_PASS_THEN_NEW_GATE_C_EXECUTOR
+NEXT_ADMISSION=GATE_C_PASS_THEN_NEW_GATE_D_EXECUTOR
 PHASE_TERMINAL=FROZEN_47_CELL_PANEL_REPORT_AND_PLANNING_PHASE_AUDIT_OR_EXPLICIT_SCIENTIFIC_STOP
 ```
 
@@ -51,3 +51,7 @@ Gate B指定debug排队监控例外：仅12831329、12831341–12831347允许既
 用户指定512逐题在线诊断转debug；当前补充授权仅在旧12831872/73仍PENDING时取消重复正式job，保留12832136/37及唯一10min排队观察。动作前重查，旧job若已运行则先报告，不盲取消。
 
 用户最新监控路由要求已生效：monitor仅向exact executor回报，不直报planning（含fallback）；Gate正式终态仍由executor向planning送达。见monitor_routing_amendment，优先于旧handoff路由文字。
+
+用户最新授权 B 按有效流程验证收口，不再要求补齐9×512诊断；保留部分数据与时限中断证据。C目标为尽快全量、A800实测packing，batch1科学不变。详见fast_close_supplement；B正式终态轻量验收后立即创建C。
+
+Gate B PASS：独立核验九debug及四完整512诊断，见gate_b_acceptance；B权限撤销。C新建绑定后按C handoff全量，240GPUh最多2GPU，A800实测packing。
