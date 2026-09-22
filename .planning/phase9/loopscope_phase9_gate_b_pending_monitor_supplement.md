@@ -13,3 +13,7 @@
 ## 取代旧作业观察范围：单canary 12831480
 
 原八个jobs已失败且保留，当前不再观察它们。executor报告970ef52保留HFLM默认logits_cache，修复验证器按实际共享context及K回调检查，并从配置生成合法cell索引；新唯一canary12831480 PENDING/MaxJobsPerAccount。planning仅将同一10分钟heartbeat的排队例外转移到12831480；不沿用旧job集合、不增加监控。新canary失败或成功先暂停监控并主动唤醒exact B executor，成功后核对关键证据再扩，失败按原B修复范围诊断。此例外不授予任何新的GPU提交/取消权限，其余科学及24GPUh/2GPU预算保持。
+
+## Canary通过后的剩余debug集合
+
+executor报告12831480已通过GATE_B_DEBUG_VALID，原版本970ef52，随后按B handoff提交剩余八个有效cell 12831613–12831620（4B c1–c5、1.7B c0–c2），当前PENDING/MaxJobsPerAccount。planning授权同一既有10分钟heartbeat排队观察范围仅更新为这八个job；本段取代旧12831480观察对象，不新增monitor，不把该授权追溯描述为此前已批准。未来debug仍须原稳定RUNNING准入或新的exact例外。健康无变化安静，失败/完整终态暂停并主动唤醒同一B executor。其余资源、科学、修复与formal先通过preflight规则保持；B最终验收尚未进行。

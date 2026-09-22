@@ -43,3 +43,5 @@ exact B executor主动交付BLOCK：本地6e80e09已push、16定向测试通过�
 Gate B指定debug排队监控例外：仅12831329、12831341–12831347允许既有唯一10分钟heartbeat从PENDING起观察；详见pending_monitor_supplement。其它权限与预算保持，C锁定。
 
 最新B观察对象仅canary12831480（970ef52），旧八作业终态已保留。pending_monitor_supplement末段取代旧监控job集合，原评分缓存保持，验证器修复不改变科学。
+
+当前B剩余debug监控对象更新为12831613–12831620；canary12831480由executor验证成功，B未终态。监控授权见pending_monitor_supplement最新段。
