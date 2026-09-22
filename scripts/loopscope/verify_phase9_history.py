@@ -36,8 +36,10 @@ def validate_old_cell(old: Mapping[str, Any], target: Mapping[str, Any], source_
         require(old.get("arm") == NATIVE_ARM, "historical Native root is not Native")
         return
     require(target["arm"] in HISTORICAL_ARMS, "unexpected historical target arm")
-    require(old.get("arm") == "Loop" if target["arm"] == "Loop" else old.get("arm") == "Spectral",
-            "historical intervention arm differs from Phase 9 target")
+    if target["arm"] == "Loop":
+        require(old.get("arm") == "Loop", "historical intervention arm differs from Phase 9 target")
+        return
+    require(old.get("arm") == "Spectral", "historical intervention arm differs from Phase 9 target")
     if target["arm"] == "Shared-t0":
         require(old.get("fit_t") == 0, "Shared-t0 root does not carry fit_t=0")
     else:
