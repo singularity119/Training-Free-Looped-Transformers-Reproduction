@@ -1,5 +1,7 @@
 # LoopScope Phase 9 (contract v2)
 
+Completed 2026-09-23: Gates A–D and final planning audit PASS. The 47-cell panel is closed. No cell confirmed Online against both Loop and Matched-norm; one K3 secondary Online–Loop contrast passed Holm. See `.planning/phase9/loopscope_phase9_gate_d_and_phase_final_audit.md` and the outer `资产/报告/phase9/` report. No new compute is authorized.
+
 Phase 9 adds two explicit residual-transform arms beside the unchanged Phase 8
 path:
 

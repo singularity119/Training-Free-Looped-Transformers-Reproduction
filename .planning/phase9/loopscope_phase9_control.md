@@ -1,32 +1,32 @@
 # LoopScope Phase 9 Control
 
 ```text
-STATUS=GATE_D_AUTHORIZED
+STATUS=PHASE9_COMPLETE
 PLANNING_THREAD=01a07ff5-79b1-79f0-809a-4d0971475686
-ACTIVE_GATE=D
-AUTHORIZED_EXECUTOR=01a0ca78-3cd8-7c92-9d1a-fbc29e1795d7
-AUTHORIZED_EXECUTOR_TITLE=Gate D-execute-LoopScope-Results-Report-第9阶段
+ACTIVE_GATE=NONE
+AUTHORIZED_EXECUTOR=NONE
+AUTHORIZED_EXECUTOR_TITLE=NONE
 EXECUTOR_MODEL=gpt-5.6-luna
 EXECUTOR_REASONING=max
 MONITOR_ROUTING=EXECUTOR_ONLY
 MONITOR_ROUTING_AMENDMENT=.planning/phase9/loopscope_phase9_monitor_routing_amendment.md
 BASE_BRANCH=loopscope
 SOURCE_BASE_COMMIT=b281ebba85ae8febdcccedd0d201cc5185721552
-ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_d_handoff.md
+ACTIVE_HANDOFF=NONE
 ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_monitor_routing_amendment.md
 GATE_A_STATE=PASS
 AUDITED_GATE_A_COMMIT=8f785198c18889f78c2cce7e3f26395bc7dd5cfb
 SCIENTIFIC_CONTRACT=.planning/phase9/loopscope_phase9_contract_v2.md
-CURRENT_DECISION=GATE_C_PASS
+CURRENT_DECISION=GATE_D_AND_PHASE9_PASS
 STANDING_PHASE_CONTINUATION=ADVANCE_SERIAL_GATES_UNTIL_PHASE9_TERMINAL
 OPERATIONAL_PERMISSION_DECISIONS=PLANNING_GATE_SCOPED
-NEXT_ADMISSION=GATE_D_PASS_THEN_PLANNING_PHASE_AUDIT
+NEXT_ADMISSION=NONE_PHASE9_COMPLETE
 PHASE_TERMINAL=FROZEN_47_CELL_PANEL_REPORT_AND_PLANNING_PHASE_AUDIT_OR_EXPLICIT_SCIENTIFIC_STOP
 ```
 
 2026-09-22用户明确授权本planning逐Gate制定计划、创建独立执行任务并推进至Phase9完成，默认Luna最高档位，对标Phase8模型/test/loop最终配方。科学规范见contract_v2；原仅规划/K2建议被本次授权与合同取代。
 
-只有当前B执行权限有效；B获准真实debug及validation512无标签诊断，资源与信息边界见exact B handoff，禁test/gold/C执行。A已PASS撤权并保留只读。C/D待前门验收逐个创建绑定。常规操作权限由planning在本阶段范围内决定；不能自行更改冻结科学或跨Gate。
+历史B授权（已关闭）：B获准真实debug及validation512无标签诊断，资源与信息边界见exact B handoff，禁test/gold/C执行。A已PASS撤权并保留只读。C/D待前门验收逐个创建绑定。常规操作权限由planning在本阶段范围内决定；不能自行更改冻结科学或跨Gate。
 
 用户最新明确移除4B/12:15与1.7B/6:9：保留三窗口K2/3/4，47逻辑配置、18新配置；统计family同步缩为每K六项主/次比较及18项共享方向探索比较。此前等待范围确认已解除，同一Gate A executor按scope supplement继续，不创建新executor，不修改Phase8历史。
 
@@ -57,3 +57,5 @@ Gate B指定debug排队监控例外：仅12831329、12831341–12831347允许既
 Gate B PASS：独立核验九debug及四完整512诊断，见gate_b_acceptance；B权限撤销。C新建绑定后按C handoff全量，240GPUh最多2GPU，A800实测packing。
 
 2026-09-23 Gate C PASS见gate_c_acceptance，47逻辑配置及冻结统计闭合。运营偏差（三GPU重叠、remote分支/source标签）明确保留，不追溯授权；C撤权仅补历史说明。D独立报告任务无GPU及远端写权限。
+
+2026-09-23 Gate D及第九阶段最终审计PASS，见gate_d_and_phase_final_audit。A/B/C/D全部完成，无活动executor或新计算授权。以下历史授权仅为历史，不得据此继续运行。
