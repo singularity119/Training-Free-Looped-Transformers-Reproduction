@@ -1,3 +1,5 @@
+> 2026-09-22：第九阶段总体规划已完成，见[规划入口](.planning/phase9/loopscope_phase9_plan.md)和[control](.planning/phase9/loopscope_phase9_control.md)。状态PLANNED_NOT_EXECUTING；新增逐题t0 SVD能力的模块边界已写入外层资产/报告/phase9总体报告，尚未实现或运行。保留第八阶段离线方向实现，下文是历史状态。
+
 > 最新结果（2026-09-10）：G的4B15–18窗口9配置已PASS，累计47唯一配置；各谱配对无可靠增益。完整表见docs/loopscope_phase8.md及外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md。当前无新计算授权、所有timer关闭；F仅终态交付收尾。
 
 > 2026-09-09结果更新：E已PASS；F的36配置统一分析已生成、7作业已完成，planning正在完成终态验收。E K3两项Holm未显著；F t0−t1与t0−Loop两组12项Holm均未显著。人类新增总报告：外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md。下方旧状态为历史。

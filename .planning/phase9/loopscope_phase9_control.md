@@ -1,0 +1,24 @@
+# LoopScope Phase 9 Control
+
+```text
+STATUS=GATE_A_AUTHORIZED
+PLANNING_THREAD=01a07ff5-79b1-79f0-809a-4d0971475686
+ACTIVE_GATE=A
+AUTHORIZED_EXECUTOR=01a0c70e-2092-72b3-911c-6544822d585c
+AUTHORIZED_EXECUTOR_TITLE=Gate A-execute-LoopScope-Online-Modules-第9阶段
+EXECUTOR_MODEL=gpt-5.6-luna
+EXECUTOR_REASONING=max
+BASE_BRANCH=loopscope
+SOURCE_BASE_COMMIT=b281ebba85ae8febdcccedd0d201cc5185721552
+ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_a_handoff.md
+SCIENTIFIC_CONTRACT=.planning/phase9/loopscope_phase9_contract_v1.md
+CURRENT_DECISION=USER_AUTHORIZED_SERIAL_PHASE9_EXECUTION
+STANDING_PHASE_CONTINUATION=ADVANCE_SERIAL_GATES_UNTIL_PHASE9_TERMINAL
+OPERATIONAL_PERMISSION_DECISIONS=PLANNING_GATE_SCOPED
+NEXT_ADMISSION=GATE_A_PASS_THEN_NEW_GATE_B_EXECUTOR
+PHASE_TERMINAL=FROZEN_77_CELL_PANEL_REPORT_AND_PLANNING_PHASE_AUDIT_OR_EXPLICIT_SCIENTIFIC_STOP
+```
+
+2026-09-22用户明确授权本planning逐Gate制定计划、创建独立执行任务并推进至Phase9完成，默认Luna最高档位，对标Phase8模型/test/loop最终配方。科学规范见contract_v1；原仅规划/K2建议被本次授权与合同取代。
+
+只有当前A执行权限有效；A允许本地增量实现/测试/普通Git提交推送与HPC只读和有界CPU检查，不允许模型推理、GPU/Slurm提交、test或gold读取。B/C/D待前门验收逐个创建绑定。常规操作权限由planning在本阶段范围内决定；不能自行更改冻结科学或跨Gate。

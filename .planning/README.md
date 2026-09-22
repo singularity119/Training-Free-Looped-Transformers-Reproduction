@@ -1,3 +1,5 @@
+> 2026-09-22：新增[Phase 9总体规划](phase9/loopscope_phase9_plan.md)与[Phase 9 control](phase9/loopscope_phase9_control.md)，状态为PLANNED_NOT_EXECUTING。总体报告位于外层资产/报告/phase9。拟以独立增量模块实现逐题t0方向；第八阶段代码和工件保留。下方Phase 8为历史阶段入口，不授予Phase 9执行权限。
+
 > 最新结果（2026-09-10）：G的4B15–18窗口9配置已PASS，累计47唯一配置；各谱配对无可靠增益。完整表见docs/loopscope_phase8.md及外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md。当前无新计算授权、所有timer关闭；F仅终态交付收尾。
 
 > 2026-09-09结果更新：E已PASS；F的36配置统一分析已生成、7作业已完成，planning正在完成终态验收。E K3两项Holm未显著；F t0−t1与t0−Loop两组12项Holm均未显著。人类新增总报告：外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md。下方旧状态为历史。
@@ -12,7 +14,7 @@
 
 ## 当前控制入口
 
-最新阶段的唯一动态控制入口是 [Phase 8 control](phase8/loopscope_phase8_control.md)。
+最新阶段的动态控制入口是 [Phase 9 control](phase9/loopscope_phase9_control.md)，当前仅规划完成、无执行授权。第八阶段历史状态与交付收尾由 [Phase 8 control](phase8/loopscope_phase8_control.md) 管理。
 Phase 8原A-D已完成：A-D与[阶段终审](phase8/loopscope_phase8_gate_d_and_phase_final_audit.md)均PASS。2026-09-08用户追加[Gate E 4B K3](phase8/loopscope_phase8_gate_e_handoff.md)，当前独立执行2basis/4test配置；原18配置无可靠收益结论保留。
 [总体计划](phase8/loopscope_phase8_plan.md) / [科学合同](phase8/loopscope_phase8_contract_v1.md) / [Gate D handoff](phase8/loopscope_phase8_gate_d_handoff.md) / [易读阶段报告](../docs/loopscope_phase8.md)。
 Phase 7 保持历史终态，旧 control/handoff 不赋予新实验权限。
