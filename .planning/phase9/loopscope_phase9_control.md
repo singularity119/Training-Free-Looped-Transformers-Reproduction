@@ -1,7 +1,7 @@
 # LoopScope Phase 9 Control
 
 ```text
-STATUS=GATE_B_AUTHORIZED
+STATUS=GATE_B_BLOCKED_CONNECTIVITY
 PLANNING_THREAD=01a07ff5-79b1-79f0-809a-4d0971475686
 ACTIVE_GATE=B
 AUTHORIZED_EXECUTOR=01a0c72c-5462-71c3-8a7f-a2c4862680c1
@@ -15,7 +15,7 @@ ACTIVE_SUPPLEMENT=NONE
 GATE_A_STATE=PASS
 AUDITED_GATE_A_COMMIT=8f785198c18889f78c2cce7e3f26395bc7dd5cfb
 SCIENTIFIC_CONTRACT=.planning/phase9/loopscope_phase9_contract_v2.md
-CURRENT_DECISION=GATE_A_PASS_B_AUTHORIZED
+CURRENT_DECISION=GATE_B_BLOCK_CONNECTIVITY
 STANDING_PHASE_CONTINUATION=ADVANCE_SERIAL_GATES_UNTIL_PHASE9_TERMINAL
 OPERATIONAL_PERMISSION_DECISIONS=PLANNING_GATE_SCOPED
 NEXT_ADMISSION=GATE_B_PASS_THEN_NEW_GATE_C_EXECUTOR
@@ -31,3 +31,7 @@ PHASE_TERMINAL=FROZEN_47_CELL_PANEL_REPORT_AND_PLANNING_PHASE_AUDIT_OR_EXPLICIT_
 Gate A普通Git同步补充：planning核对远端独有ae40ce6仅历史E报告文字，授权同一executor普通merge保留双方历史后push；科学和下一Gate边界不变。详见git_merge_supplement。
 
 A直接验收PASS见gate_a_acceptance；最新B handoff取代下方历史A操作说明。B预算24GPUh、最多2GPU，先debug后probe，monitor由B独占。
+
+## Gate B连接阻塞（2026-09-22）
+
+exact B executor主动交付BLOCK：本地6e80e09已push、16定向测试通过，无job/test/gold。planning独立只读确认入口HTTPS200，但未见校园10.x隧道地址，校园DNS10.90.63.2及HPC内网路由走Clash198.18.0.1/utun2，HPC主机名无法解析。属于接入阻塞，不是实验失败；B未PASS，C锁定。保留同一executor及代码，未修改hosts/路由/证书/代理。需要用户本机重新建立EasyConnect校园连接；恢复通知后由同一B executor执行strict alias只读验证，成功即按既有B权限继续，无需新科学授权。
