@@ -11,7 +11,7 @@ EXECUTOR_REASONING=max
 BASE_BRANCH=loopscope
 SOURCE_BASE_COMMIT=b281ebba85ae8febdcccedd0d201cc5185721552
 ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_b_handoff.md
-ACTIVE_SUPPLEMENT=NONE
+ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_gate_b_pending_monitor_supplement.md
 GATE_A_STATE=PASS
 AUDITED_GATE_A_COMMIT=8f785198c18889f78c2cce7e3f26395bc7dd5cfb
 SCIENTIFIC_CONTRACT=.planning/phase9/loopscope_phase9_contract_v2.md
@@ -39,3 +39,5 @@ exact B executor主动交付BLOCK：本地6e80e09已push、16定向测试通过�
 ## Gate B连接恢复
 
 用户回复“可以了”后，planning通过BatchMode/StrictHostKeyChecking/UpdateHostKeys=no/ClearAllForwardings=yes对原hpc2-hkustgz alias执行hostname，exit0返回mgmt-3。连接阻塞解除，同一B executor恢复原handoff权限，先核对远端代码/环境/已有job，再debug与诊断。该探针仅证明SSH恢复，不代表B通过；科学、资源预算与C锁定均保持。
+
+Gate B指定debug排队监控例外：仅12831329、12831341–12831347允许既有唯一10分钟heartbeat从PENDING起观察；详见pending_monitor_supplement。其它权限与预算保持，C锁定。

@@ -1,0 +1,11 @@
+# Gate B：指定debug作业排队监控例外
+
+按照research-gate-orchestrator协作约定执行。Planning=01a07ff5-79b1-79f0-809a-4d0971475686；Executor=01a0c72c-5462-71c3-8a7f-a2c4862680c1。
+
+执行任务报告已暂停提前建立的heartbeat，修复后八个debug作业均PENDING/MaxJobsPerAccount，无runner输出，未取消/重提/扩大。等待时长未知，为避免持续交互式轮询及遗漏启动/终态，planning授予最小观察例外。
+
+仅对现有job 12831329、12831341、12831342、12831343、12831344、12831345、12831346、12831347，允许唯一既有heartbeat loopscope-phase9-gate-b-debug-probe-observer从PENDING起恢复10分钟观察，运行后沿用同一个。此例外只替代该组作业的RUNNING稳定约1分钟后才建monitor的时间条件，不适用于未来新debug作业。
+
+每次仅有界只读检查，健康无变化保持安静。出现最早child成功、任一失败或全部终态等需要执行者处理的事件时，先暂停monitor，再用AUTOMATION_TERMINAL_RESUME主动唤醒exact B executor并确认送达；不能仅输出ready。executor先核对最早有效child与同launcher版本，不扩提交直至canary通过；其余已提交job保留。不把一次失败等同Gate BLOCK。
+
+不增加作业、不变分区/QoS/账户，不取消其他任务，不新增重提权限、不扩大24GPUh/2GPU上限、不读test/gold、不进入C。未来formal probe仍按原handoff同一monitor更新为30分钟、从真实jobID的PENDING起观察。记录例外和monitor恢复一次即可，不反复追加日志。
