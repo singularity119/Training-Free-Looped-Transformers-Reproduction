@@ -11,7 +11,7 @@ EXECUTOR_REASONING=max
 BASE_BRANCH=loopscope
 SOURCE_BASE_COMMIT=b281ebba85ae8febdcccedd0d201cc5185721552
 ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_b_handoff.md
-ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_gate_b_pending_monitor_supplement.md
+ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_gate_b_debug_probe_supplement.md
 GATE_A_STATE=PASS
 AUDITED_GATE_A_COMMIT=8f785198c18889f78c2cce7e3f26395bc7dd5cfb
 SCIENTIFIC_CONTRACT=.planning/phase9/loopscope_phase9_contract_v2.md
@@ -45,3 +45,5 @@ Gate B指定debug排队监控例外：仅12831329、12831341–12831347允许既
 最新B观察对象仅canary12831480（970ef52），旧八作业终态已保留。pending_monitor_supplement末段取代旧监控job集合，原评分缓存保持，验证器修复不改变科学。
 
 当前B剩余debug监控对象更新为12831613–12831620；canary12831480由executor验证成功，B未终态。监控授权见pending_monitor_supplement最新段。
+
+用户指定512逐题在线诊断转debug；当前补充授权仅在旧12831872/73仍PENDING时取消重复正式job，保留12832136/37及唯一10min排队观察。动作前重查，旧job若已运行则先报告，不盲取消。
