@@ -190,7 +190,9 @@ HPC workspace下`artifacts/phase8-gate-d-20260906T060000Z-closure-a1/verificatio
 
 2026-09-08 current override: user explicitly authorized E/F concurrent execution. Gate F full execution is now active; preceding preparation-only restrictions are superseded. See Phase8 control and Gate F handoff.
 
-Gate E已完成四配置完整采集与一次统计，等待planning验收。12:15 Spectral−Loop +0.0214pp，13:16 +0.2777pp；后者nominal95%CI为[+0.0427,+0.5199]pp，但两项Holm p=0.050457未达0.05。新增组保持post-outcome exploratory，不改原A-D结论。外层`资产/报告/phase8/gate_e/LoopScope_Phase8_GateE_K3_追加报告.md`保存完整四cell及统计；HPC分析目录`artifacts/phase8-gate-e-20260908T190200Z-analysis-a1/`。总1.37GPUh、OOM0，唯一monitor PAUSED。
+Gate E已完成四配置完整采集与一次统计，等待planning验收。12:15 Spectral−Loop +0.0214pp，13:16 +0.2777pp；后者nominal95%CI为[+0.0427,+0.5199]pp，但两项Holm p=0.050457未达0.05。新增组保持post-outcome exploratory，不改原A-D结论。外层`资产/报告/phase8/gate_e/LoopScope_Phase8_GateE_K3_追加报告.md`保存完整四cell及统计；总1.37GPUh、OOM0，唯一monitor PAUSED。
+
+Gate E 的首次 full-panel verifier 使用 `q4-*` glob 时把日志文件纳入路径并在 closure/gold 前以 `NotADirectoryError` 失败；empty closure-a1 保留。修正为 `q4-*/` 后，fresh closure-a2 已以 `FULL_PANEL_CLOSED`、8 shards、4 cells、56168 scores、57 subjects、`target_gold_loaded=false` 闭合。随后只执行一次分析；correct/N 与两项 K3_EXPLORATORY contrasts、Holm 边界和报告入口见 Gate E evidence。该修正是命令修复，不是数据、代码或 GPU 重跑。
 
 
 ## 2026-09-09增量结果与阅读入口
