@@ -9,3 +9,7 @@
 每次仅有界只读检查，健康无变化保持安静。出现最早child成功、任一失败或全部终态等需要执行者处理的事件时，先暂停monitor，再用AUTOMATION_TERMINAL_RESUME主动唤醒exact B executor并确认送达；不能仅输出ready。executor先核对最早有效child与同launcher版本，不扩提交直至canary通过；其余已提交job保留。不把一次失败等同Gate BLOCK。
 
 不增加作业、不变分区/QoS/账户，不取消其他任务，不新增重提权限、不扩大24GPUh/2GPU上限、不读test/gold、不进入C。未来formal probe仍按原handoff同一monitor更新为30分钟、从真实jobID的PENDING起观察。记录例外和monitor恢复一次即可，不反复追加日志。
+
+## 取代旧作业观察范围：单canary 12831480
+
+原八个jobs已失败且保留，当前不再观察它们。executor报告970ef52保留HFLM默认logits_cache，修复验证器按实际共享context及K回调检查，并从配置生成合法cell索引；新唯一canary12831480 PENDING/MaxJobsPerAccount。planning仅将同一10分钟heartbeat的排队例外转移到12831480；不沿用旧job集合、不增加监控。新canary失败或成功先暂停监控并主动唤醒exact B executor，成功后核对关键证据再扩，失败按原B修复范围诊断。此例外不授予任何新的GPU提交/取消权限，其余科学及24GPUh/2GPU预算保持。
