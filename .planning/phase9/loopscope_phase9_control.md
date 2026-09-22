@@ -1,26 +1,26 @@
 # LoopScope Phase 9 Control
 
 ```text
-STATUS=GATE_C_AUTHORIZED
+STATUS=GATE_D_AUTHORIZED
 PLANNING_THREAD=01a07ff5-79b1-79f0-809a-4d0971475686
-ACTIVE_GATE=C
-AUTHORIZED_EXECUTOR=01a0c811-fbd3-7330-8898-72ce8d13e4ec
-AUTHORIZED_EXECUTOR_TITLE=Gate C-execute-LoopScope-Full-Scoring-第9阶段
+ACTIVE_GATE=D
+AUTHORIZED_EXECUTOR=01a0ca78-3cd8-7c92-9d1a-fbc29e1795d7
+AUTHORIZED_EXECUTOR_TITLE=Gate D-execute-LoopScope-Results-Report-第9阶段
 EXECUTOR_MODEL=gpt-5.6-luna
 EXECUTOR_REASONING=max
 MONITOR_ROUTING=EXECUTOR_ONLY
 MONITOR_ROUTING_AMENDMENT=.planning/phase9/loopscope_phase9_monitor_routing_amendment.md
 BASE_BRANCH=loopscope
 SOURCE_BASE_COMMIT=b281ebba85ae8febdcccedd0d201cc5185721552
-ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_c_handoff.md
+ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_d_handoff.md
 ACTIVE_SUPPLEMENT=.planning/phase9/loopscope_phase9_monitor_routing_amendment.md
 GATE_A_STATE=PASS
 AUDITED_GATE_A_COMMIT=8f785198c18889f78c2cce7e3f26395bc7dd5cfb
 SCIENTIFIC_CONTRACT=.planning/phase9/loopscope_phase9_contract_v2.md
-CURRENT_DECISION=GATE_B_PASS
+CURRENT_DECISION=GATE_C_PASS
 STANDING_PHASE_CONTINUATION=ADVANCE_SERIAL_GATES_UNTIL_PHASE9_TERMINAL
 OPERATIONAL_PERMISSION_DECISIONS=PLANNING_GATE_SCOPED
-NEXT_ADMISSION=GATE_C_PASS_THEN_NEW_GATE_D_EXECUTOR
+NEXT_ADMISSION=GATE_D_PASS_THEN_PLANNING_PHASE_AUDIT
 PHASE_TERMINAL=FROZEN_47_CELL_PANEL_REPORT_AND_PLANNING_PHASE_AUDIT_OR_EXPLICIT_SCIENTIFIC_STOP
 ```
 
@@ -55,3 +55,5 @@ Gate B指定debug排队监控例外：仅12831329、12831341–12831347允许既
 用户最新授权 B 按有效流程验证收口，不再要求补齐9×512诊断；保留部分数据与时限中断证据。C目标为尽快全量、A800实测packing，batch1科学不变。详见fast_close_supplement；B正式终态轻量验收后立即创建C。
 
 Gate B PASS：独立核验九debug及四完整512诊断，见gate_b_acceptance；B权限撤销。C新建绑定后按C handoff全量，240GPUh最多2GPU，A800实测packing。
+
+2026-09-23 Gate C PASS见gate_c_acceptance，47逻辑配置及冻结统计闭合。运营偏差（三GPU重叠、remote分支/source标签）明确保留，不追溯授权；C撤权仅补历史说明。D独立报告任务无GPU及远端写权限。
