@@ -96,6 +96,29 @@ class Phase9AdapterTests(unittest.TestCase):
         self.assertIsNone(runtime.active)
         self.assertIsNone(model._phase9_lookup)
 
+    def test_effective_attention_mask_is_forwarded_to_runtime(self):
+        class MaskedBase(Base):
+            def _model_call(self, inps, attention_mask=None):
+                return super()._model_call(inps, marker=7)
+
+            def _loglikelihood_tokens(self, requests, *args, **kwargs):
+                self.forwarded = (requests, args, kwargs)
+                return [
+                    self._model_call(
+                        Tensor([(ctx + cont)[-11:][:-1]]),
+                        attention_mask=[[1, 1, 0, 1, 1]],
+                    )
+                    for _, ctx, cont in requests
+                ]
+
+        runtime = Runtime()
+        model = build_hflm_class(MaskedBase)(phase9_runtime=runtime)
+        model.phase9_identity = "sample"
+        requests = [(('prompt', ' candidate'), [0, 99, 11, 12, 13], [200])]
+        model._loglikelihood_tokens(requests)
+        self.assertEqual(model.phase9_positions[0]["effective_valid_positions"], (3, 4))
+        self.assertEqual(runtime.calls[0][2], (3, 4))
+
 
 if __name__ == "__main__":
     unittest.main()

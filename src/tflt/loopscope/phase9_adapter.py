@@ -58,15 +58,18 @@ def build_hflm_class(base_class):
             self._phase9_lookup = None
             super().__init__(*args, **kwargs)
 
-        def score_choices(self, prompt, identity):
+        def score_choices(self, prompt, identity, letters="ABCD"):
             from lm_eval.api.instance import Instance
 
+            letters = tuple(letters)
+            if sorted(letters) != list("ABCD"):
+                raise ValueError("Phase9 choice order must be a permutation of ABCD")
             requests = [
                 Instance(
                     request_type="loglikelihood", doc={},
                     arguments=(prompt, " " + letter), idx=index,
                 )
-                for index, letter in enumerate("ABCD")
+                for index, letter in enumerate(letters)
             ]
             previous = self.phase9_identity
             self.phase9_identity = identity
@@ -98,7 +101,9 @@ def build_hflm_class(base_class):
                 metadata = {
                     "position": position,
                     "valid_positions": valid,
+                    "effective_valid_positions": valid,
                     "prefix_tokens": prefix,
+                    "actual_tokens": actual,
                     "input_length": len(actual),
                     "continuation_length": len(continuation),
                     "left_truncated_tokens": max(
@@ -138,6 +143,7 @@ def build_hflm_class(base_class):
                 )
                 if metadata["position"] not in valid_positions:
                     raise ValueError("attention mask removes the true answer-position context token")
+            metadata["effective_valid_positions"] = valid_positions
             manager = (
                 self.phase9_runtime.context(
                     self.phase9_identity,
@@ -153,7 +159,7 @@ def build_hflm_class(base_class):
     return Phase9HFLM
 
 
-def score_choices(hflm, prompt, identity):
+def score_choices(hflm, prompt, identity, letters="ABCD"):
     """Return unchanged full-continuation A/B/C/D score pairs."""
 
-    return hflm.score_choices(prompt, identity)
+    return hflm.score_choices(prompt, identity, letters=letters)

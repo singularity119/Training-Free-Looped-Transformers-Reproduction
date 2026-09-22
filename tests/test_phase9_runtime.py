@@ -1,6 +1,11 @@
 import unittest
 
-from tflt.loopscope.phase9_runtime import MATCHED_NORM, ONLINE_T0, Phase9Runtime
+from tflt.loopscope.phase9_runtime import (
+    MATCHED_NORM,
+    ONLINE_T0,
+    Phase9DiagnosticCollector,
+    Phase9Runtime,
+)
 
 
 class Phase9RuntimeLifecycleTests(unittest.TestCase):
@@ -34,6 +39,38 @@ class Phase9RuntimeLifecycleTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     with runtime.context(args[0], args[1], args[2], token_ids=args[3]):
                         pass
+
+    def test_label_free_collector_records_cpu_reference_and_no_intervention(self):
+        import torch
+
+        collector = Phase9DiagnosticCollector(["sample-a"], 2)
+        runtime = Phase9Runtime(ONLINE_T0, collector=collector, intervene=False)
+        delta = torch.tensor(
+            [[[1.0, 2.0], [2.0, 4.0], [3.0, 1.0]]], dtype=torch.float32
+        )
+        with runtime.context("sample-a", 2, (0, 1, 2), token_ids=(10, 11, 12)):
+            self.assertIs(runtime(delta, 0), delta)
+            self.assertIs(runtime(delta, 1), delta)
+        self.assertEqual(runtime.context_summaries[0]["call_count"], 2)
+        finished = collector.finish("sample-a", runtime.direction, runtime._fit_metadata)
+        self.assertEqual([row["t"] for row in finished["records"]], [0, 1])
+        self.assertIn("E0", finished["records"][0])
+        self.assertIn("C0t", finished["records"][1])
+        self.assertEqual(finished["records"][1]["mutation"]["nonanswer_max_abs_change"], 0.0)
+        self.assertLessEqual(
+            finished["fit_comparison"]["projection_relative_error"], 1e-3
+        )
+
+    def test_zero_strength_keeps_native_residual_object(self):
+        import torch
+
+        runtime = Phase9Runtime(ONLINE_T0, strength=0.0)
+        delta = torch.tensor([[[1.0, 2.0], [2.0, 4.0]]], dtype=torch.float32)
+        with runtime.context("sample", 1, (0, 1), token_ids=(10, 11)):
+            runtime(delta, 0)
+            updated = runtime(delta, 1)
+        self.assertIs(updated, delta)
+        self.assertFalse(runtime.calls[-1]["applied"])
 
 
 if __name__ == "__main__":

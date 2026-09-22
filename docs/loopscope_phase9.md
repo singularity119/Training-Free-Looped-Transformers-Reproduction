@@ -33,5 +33,39 @@ plus one exploratory family of 18 Online−Shared-t0/Shared-t1 contrasts.
 
 Gate A validates the pure-Python contracts, fake evaluator boundary handling,
 and panel semantics.  The `run_phase9_debug.py --mode tensor-smoke` entry is a
-small future B smoke hook; model loading, validation-512 acquisition, GPU or
+small tensor semantics check; model loading, validation-512 acquisition, GPU or
 test scoring are not authorized by Gate A.
+
+## Gate B execution paths
+
+The Gate B pool is the existing sanitized `cais/mmlu` validation projection
+from Phase 8.  The runner rejects target/outcome fields and requires the exact
+validation revision, so it never needs to load validation targets or the test
+split.  The scorer remains lm-eval 0.4.11 full-continuation A/B/C/D
+log-likelihood with batch size one.
+
+The debug launcher runs one frozen model/window/K cell per `debug` job:
+
+```bash
+scripts/loopscope/phase9_debug.sbatch MODEL_INDEX DEBUG_POOL RUN_ROOT COMMIT CELL_INDEX
+```
+
+It checks native residual semantics, exact retained-prefix masks, one cached
+t0 direction per prompt, cross-prompt cache release, zero-strength/Loop score
+equivalence, actual Online-t0 and Matched-norm mutations, and per-context
+callback count `t=0..K-1`.  GPU SVD timing uses synchronized CUDA events.
+
+After a passing debug preflight, the formal label-free trajectory launcher
+runs all cells for one model on the caller-selected ordinary-user partition:
+
+```bash
+scripts/loopscope/phase9_probe.sbatch MODEL_INDEX CALIBRATION_POOL RUN_ROOT COMMIT
+```
+
+Each cell writes only scalar `E0`, `A_t`, `C0t`, norm, token-length, spectral
+gap, projection-error, and timing records.  The temporary retained-token
+matrix and CPU FP64 reference direction are released after each prompt; no
+full residual tensor or direction vector is persisted.  `verify_phase9_gate_b.py`
+checks identity membership, all K timesteps, no-label flags, non-answer
+stability, and the `1e-3` normal-gap FP32/FP64 projection-error target while
+reporting near-repeated roots separately.
