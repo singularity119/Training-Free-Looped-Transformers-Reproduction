@@ -8,6 +8,8 @@ AUTHORIZED_EXECUTOR=01a0c72c-5462-71c3-8a7f-a2c4862680c1
 AUTHORIZED_EXECUTOR_TITLE=Gate B-execute-LoopScope-Debug-and-Diagnostics-第9阶段
 EXECUTOR_MODEL=gpt-5.6-luna
 EXECUTOR_REASONING=max
+MONITOR_ROUTING=EXECUTOR_ONLY
+MONITOR_ROUTING_AMENDMENT=.planning/phase9/loopscope_phase9_monitor_routing_amendment.md
 BASE_BRANCH=loopscope
 SOURCE_BASE_COMMIT=b281ebba85ae8febdcccedd0d201cc5185721552
 ACTIVE_HANDOFF=.planning/phase9/loopscope_phase9_gate_b_handoff.md
@@ -47,3 +49,5 @@ Gate B指定debug排队监控例外：仅12831329、12831341–12831347允许既
 当前B剩余debug监控对象更新为12831613–12831620；canary12831480由executor验证成功，B未终态。监控授权见pending_monitor_supplement最新段。
 
 用户指定512逐题在线诊断转debug；当前补充授权仅在旧12831872/73仍PENDING时取消重复正式job，保留12832136/37及唯一10min排队观察。动作前重查，旧job若已运行则先报告，不盲取消。
+
+用户最新监控路由要求已生效：monitor仅向exact executor回报，不直报planning（含fallback）；Gate正式终态仍由executor向planning送达。见monitor_routing_amendment，优先于旧handoff路由文字。

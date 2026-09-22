@@ -1,0 +1,12 @@
+# Phase 9监控路由修订
+
+用户最新明确要求：执行任务内的定时监控只向执行器自身汇报，不向规划任务01a07ff5-79b1-79f0-809a-4d0971475686汇报。此用户要求优先于skill及旧handoff中monitor向planning发送AUTOMATION_RELAY_REQUIRED的fallback。
+
+适用于当前B及后续所有Phase9 Gate：
+- 唯一executor-owned heartbeat的唯一消息接收者为其绑定的exact executor；健康无变化仍安静。
+- 需要处理的终态/失败/阻塞时，monitor先暂停，再向exact executor发送AUTOMATION_TERMINAL_RESUME并确认送达。
+- monitor不得直接给planning发送结果、进展、AUTOMATION_RELAY_REQUIRED或任何fallback消息；自唤醒失败时将TERMINAL_DELIVERY_UNCONFIRMED及证据留在监控所属执行任务中，不另行路由到planning。
+- 执行器收到监控结果后验证并继续当前Gate修复/实验；Gate完成或确实受阻时，仍由执行器主动向planning交付GATE_X_FINAL_AUDIT或BLOCK并确认送达。该Gate终态路径不变。
+- 不变更当前作业、监控cadence、资源、科学、取消/重试和下一Gate权限。
+
+当前Gate B executor=01a0c72c-5462-71c3-8a7f-a2c4862680c1；后续Gate使用各自control绑定的executor。新handoff必须引用本修订，不能重新引入monitor直报planning路径。
