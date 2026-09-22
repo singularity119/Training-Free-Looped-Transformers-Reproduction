@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping, Optional
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 
 
 SCHEMA = "loopscope.phase9.panel.v2"
@@ -31,6 +31,9 @@ EXPECTED_NEW_COUNT = 18
 EXPECTED_HISTORICAL_NON_NATIVE_COUNT = 27
 EXPECTED_NATIVE_COUNT = 2
 EXPECTED_CELL_COUNT = 47
+EXPECTED_TEST_COUNT = 14042
+EXPECTED_NEW_SCORE_COUNT = 18
+SCORE_SCHEMA = "loopscope.phase9.score_manifest.v1"
 
 
 def default_config_path() -> Path:
@@ -212,3 +215,169 @@ def write_manifest(path: Path, value: Mapping[str, Any]) -> None:
     with Path(path).open("x", encoding="utf-8") as handle:
         json.dump(value, handle, ensure_ascii=False, indent=2, allow_nan=False)
         handle.write("\n")
+
+
+def new_cells(config: Optional[Mapping[str, Any]] = None) -> List[Dict[str, Any]]:
+    """Return the 18 outcome-free Phase 9 score cells in panel order."""
+
+    config = load_config() if config is None else config
+    return [dict(cell) for cell in logical_panel(config) if cell["new_in_phase9"]]
+
+
+def score_manifest(
+    config: Optional[Mapping[str, Any]] = None,
+    pool_path: Optional[Path] = None,
+    scope: str = "FORMAL_TEST",
+) -> Dict[str, Any]:
+    """Build the gold-free manifest consumed by the new-arm score launcher."""
+
+    if scope not in ("PREFLIGHT_ONLY", "FORMAL_TEST"):
+        raise ValueError("Phase 9 score scope must be PREFLIGHT_ONLY or FORMAL_TEST")
+    config = load_config() if config is None else config
+    cells = new_cells(config)
+    if len(cells) != EXPECTED_NEW_SCORE_COUNT:
+        raise ValueError("Phase 9 score manifest requires exactly 18 new cells")
+    dataset = {
+        "repo": config["dataset_repo"],
+        "revision": config["dataset_revision"],
+        "split": "test",
+    }
+    return {
+        "schema": SCORE_SCHEMA,
+        "phase": 9,
+        "scope": scope,
+        "dataset": dataset,
+        "pool": str(pool_path) if pool_path is not None else None,
+        "target_gold_loaded": False,
+        "cells": cells,
+        "cell_count": len(cells),
+        "sample_count_per_cell": EXPECTED_TEST_COUNT,
+        "new_configuration_sample_records": len(cells) * EXPECTED_TEST_COUNT,
+        "arms": list(NEW_ARMS),
+        "closure": "new score identities and finite raw scores only; no gold or outcomes",
+    }
+
+
+def validate_score_manifest(
+    value: Mapping[str, Any],
+    config: Optional[Mapping[str, Any]] = None,
+    pool_path: Optional[Path] = None,
+    scope: Optional[str] = None,
+) -> Dict[str, Dict[str, Any]]:
+    """Validate new-cell membership without loading labels or score outcomes."""
+
+    config = load_config() if config is None else config
+    _require(value.get("schema") == SCORE_SCHEMA, "unexpected Phase 9 score manifest schema")
+    _require(value.get("dataset") == {
+        "repo": config["dataset_repo"],
+        "revision": config["dataset_revision"],
+        "split": "test",
+    }, "Phase 9 score manifest dataset differs from contract")
+    if pool_path is not None:
+        _require(value.get("pool") == str(pool_path), "Phase 9 score manifest pool differs from requested pool")
+    if scope is not None:
+        _require(value.get("scope") == scope, "Phase 9 score manifest scope differs from requested scope")
+    _require(value.get("target_gold_loaded") is False, "Phase 9 score manifest is not gold-free")
+    expected = new_cells(config)
+    actual = list(value.get("cells", ()))
+    _require(actual == expected, "Phase 9 score manifest differs from frozen new-cell panel")
+    _require(value.get("cell_count") == EXPECTED_NEW_SCORE_COUNT, "Phase 9 score cell count differs from contract")
+    _require(value.get("sample_count_per_cell") == EXPECTED_TEST_COUNT, "Phase 9 sample count differs from contract")
+    _require(value.get("new_configuration_sample_records") == EXPECTED_NEW_SCORE_COUNT * EXPECTED_TEST_COUNT,
+             "Phase 9 score manifest sample total differs from contract")
+    return {cell["cell_id"]: cell for cell in actual}
+
+
+def representative_canary_indices(
+    pool: Mapping[str, Any],
+    model: str,
+    count: int = 512,
+) -> List[int]:
+    """Select a fixed, label-free mixed canonical canary for one model.
+
+    The first half retains ordinary canonical identities.  The second half
+    takes the longest prompts, which gives the A800 measurement a real upper
+    tail without using labels, predictions, or scores.
+    """
+
+    rows = list(pool.get("rows", ()))
+    if len(rows) != EXPECTED_TEST_COUNT or count <= 0 or count > len(rows):
+        raise ValueError("Phase 9 canary selection requires the complete test pool")
+    for row in rows:
+        lengths = row.get("prompt_token_lengths", {})
+        if model not in lengths or type(lengths[model]) is not int or lengths[model] <= 0:
+            raise ValueError("Phase 9 canary selection requires frozen prompt lengths")
+    ordinary_count = count // 2
+    selected = list(range(ordinary_count))
+    tail = sorted(range(len(rows)), key=lambda index: (-rows[index]["prompt_token_lengths"][model], index))
+    for index in tail:
+        if index not in selected:
+            selected.append(index)
+        if len(selected) == count:
+            break
+    if len(selected) != count or len(set(selected)) != count:
+        raise ValueError("Phase 9 canary selection did not produce the requested unique count")
+    return sorted(selected)
+
+
+def canary_bundle(
+    pool: Mapping[str, Any],
+    config: Optional[Mapping[str, Any]] = None,
+    count: int = 512,
+) -> Dict[str, Any]:
+    """Create a readable canary/complement identity bundle from the safe pool."""
+
+    config = load_config() if config is None else config
+    models = [model["model"] for model in config["models"]]
+    by_model = {model: representative_canary_indices(pool, model, count) for model in models}
+    return {
+        "schema": "loopscope.phase9.canary_indices.v1",
+        "dataset": {
+            "repo": config["dataset_repo"],
+            "revision": config["dataset_revision"],
+            "split": "test",
+        },
+        "count": count,
+        "canonical_count": EXPECTED_TEST_COUNT,
+        "policy": "first canonical half plus longest prompt upper-tail half; labels and scores unused",
+        "model_indices": by_model,
+        "target_gold_loaded": False,
+    }
+
+
+def validate_canary_bundle(
+    value: Mapping[str, Any],
+    pool: Mapping[str, Any],
+    config: Optional[Mapping[str, Any]] = None,
+    count: int = 512,
+) -> Dict[str, List[int]]:
+    """Validate the write-once canary bundle and return model-index lists."""
+
+    config = load_config() if config is None else config
+    expected_dataset = {
+        "repo": config["dataset_repo"],
+        "revision": config["dataset_revision"],
+        "split": "test",
+    }
+    _require(value.get("schema") == "loopscope.phase9.canary_indices.v1", "unexpected Phase 9 canary schema")
+    _require(value.get("dataset") == expected_dataset and value.get("canonical_count") == EXPECTED_TEST_COUNT,
+             "Phase 9 canary dataset differs from contract")
+    _require(value.get("count") == count and value.get("target_gold_loaded") is False,
+             "Phase 9 canary count or gold boundary differs from contract")
+    rows = list(pool.get("rows", ()))
+    _require(len(rows) == EXPECTED_TEST_COUNT, "Phase 9 canary requires the complete test pool")
+    observed = value.get("model_indices")
+    expected_models = [model["model"] for model in config["models"]]
+    _require(isinstance(observed, Mapping) and set(observed) == set(expected_models),
+             "Phase 9 canary model set differs from contract")
+    result: Dict[str, List[int]] = {}
+    for model in expected_models:
+        indices = list(observed[model])
+        _require(len(indices) == count and indices == sorted(indices) and len(set(indices)) == count,
+                 "Phase 9 canary indices must be sorted and unique")
+        _require(all(type(index) is int and 0 <= index < EXPECTED_TEST_COUNT for index in indices),
+                 "Phase 9 canary index outside canonical test population")
+        _require(indices == representative_canary_indices(pool, model, count),
+                 "Phase 9 canary indices differ from the frozen label-free selection")
+        result[model] = indices
+    return result

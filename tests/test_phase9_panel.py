@@ -6,10 +6,14 @@ import unittest
 from tflt.loopscope.phase9_accuracy import (
     ARMS,
     K_VALUES,
+    canary_bundle,
     load_config,
     logical_panel,
     manifest,
+    score_manifest,
+    validate_canary_bundle,
     validate_panel,
+    validate_score_manifest,
     write_manifest,
 )
 
@@ -50,6 +54,28 @@ class Phase9PanelTests(unittest.TestCase):
             self.assertEqual(json.loads(path.read_text())["cell_count"], 47)
             with self.assertRaises(FileExistsError):
                 write_manifest(path, value)
+
+    def test_new_score_manifest_and_label_free_canary_are_frozen(self):
+        config = load_config()
+        pool = {
+            "rows": [{
+                "prompt_token_lengths": {
+                    "Qwen/Qwen3-4B-Base": 10 + index % 17,
+                    "Qwen/Qwen3-1.7B-Base": 8 + index % 13,
+                },
+            } for index in range(14042)],
+        }
+        bundle = canary_bundle(pool, config)
+        observed = validate_canary_bundle(bundle, pool, config)
+        self.assertEqual({model: len(indices) for model, indices in observed.items()}, {
+            "Qwen/Qwen3-4B-Base": 512,
+            "Qwen/Qwen3-1.7B-Base": 512,
+        })
+        for scope in ("PREFLIGHT_ONLY", "FORMAL_TEST"):
+            value = score_manifest(config, Path("/frozen/test_pool.json"), scope)
+            cells = validate_score_manifest(value, config, Path("/frozen/test_pool.json"), scope)
+            self.assertEqual(len(cells), 18)
+            self.assertFalse(value["target_gold_loaded"])
 
 
 if __name__ == "__main__":
