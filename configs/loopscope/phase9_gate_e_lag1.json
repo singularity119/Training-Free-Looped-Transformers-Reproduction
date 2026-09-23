@@ -1,0 +1,70 @@
+{
+  "schema": "loopscope.phase9.gate_e_lag1.v2",
+  "status": "FROZEN_PHASE9_GATE_E_EXTENSION_CONTRACT",
+  "phase": 9,
+  "gate": "E",
+  "base_config": "configs/loopscope/phase9_model_windows.json",
+  "task": "mmlu",
+  "num_fewshot": 5,
+  "prompt_style": "plain",
+  "dataset_repo": "cais/mmlu",
+  "dataset_revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+  "strategy": "damped_euler",
+  "iteration_mode": "block",
+  "step_semantics": "h=1/K; total horizon=1; K includes t=0",
+  "alpha": 1.0,
+  "beta": 0.0,
+  "strength": 0.5,
+  "K": [3, 4],
+  "decode_mode": "bypass",
+  "batch_size": 1,
+  "evaluation_split": "test",
+  "evaluation_count": 14042,
+  "new_arms": ["Lag1-Online", "Lag1-Matched-norm"],
+  "direction_policies": ["fixed_t0", "lag1"],
+  "intervention_modes": ["spectral", "matched_norm"],
+  "formal_direction_policy": "lag1",
+  "direction_policy_rules": {
+    "fixed_t0": {
+      "source": "native residual D0 over all valid retained prompt-token rows",
+      "used_at": "every t>=1 answer-position residual only",
+      "fit_at": "t=0 only",
+      "final_round_fit": false
+    },
+    "lag1": {
+      "source": "previous round native residual D_(t-1) over all valid retained prompt-token rows",
+      "used_at": "t>=1 answer-position residual only",
+      "fit_at": "t=0..K-2",
+      "final_round_fit": false
+    }
+  },
+  "direction_svd": "uncentered, unnormalized, FP32 reduced SVD; CUDA gesvd; canonical sign and unit norm",
+  "direction_strength": 0.5,
+  "intervention_rule": {
+    "spectral": "delta - strength * v * (v dot delta)",
+    "matched_norm": "uniformly scale delta to the norm of its selected-direction spectral update"
+  },
+  "models": [
+    {
+      "model": "Qwen/Qwen3-4B-Base",
+      "revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "dtype": "bfloat16",
+      "cache_strategy": "first",
+      "num_hidden_layers": 36,
+      "windows": [
+        {"layers": [13, 16], "boundaries": [13, 17]},
+        {"layers": [15, 18], "boundaries": [15, 19]}
+      ]
+    },
+    {
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "dtype": "float16",
+      "cache_strategy": "last",
+      "num_hidden_layers": 28,
+      "windows": [
+        {"layers": [12, 15], "boundaries": [12, 16]}
+      ]
+    }
+  ]
+}
