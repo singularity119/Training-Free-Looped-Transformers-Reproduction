@@ -59,3 +59,16 @@ Gate B PASS：独立核验九debug及四完整512诊断，见gate_b_acceptance�
 2026-09-23 Gate C PASS见gate_c_acceptance，47逻辑配置及冻结统计闭合。运营偏差（三GPU重叠、remote分支/source标签）明确保留，不追溯授权；C撤权仅补历史说明。D独立报告任务无GPU及远端写权限。
 
 2026-09-23 Gate D及第九阶段最终审计PASS，见gate_d_and_phase_final_audit。A/B/C/D全部完成，无活动executor或新计算授权。以下历史授权仅为历史，不得据此继续运行。
+
+## 2026-09-23 追加 Gate E（不重写已完成主线）
+
+用户在A–D及主线终审完成后新授权单个Gate E探索实验，见gate_e_lag1_contract与gate_e_handoff。确认前一轮全部有效prompt残差重估、K3/4、逐轮Matched对照、原MMLU test。主线PHASE9_COMPLETE仍为历史事实；Gate E拥有单独追加状态和绑定，不追溯修改主线47-cell结论。
+
+```text
+EXTENSION_STATUS=GATE_E_BINDING
+EXTENSION_GATE=E
+EXTENSION_EXECUTOR=PENDING_BINDING
+EXTENSION_CONTRACT=.planning/phase9/loopscope_phase9_gate_e_lag1_contract.md
+EXTENSION_HANDOFF=.planning/phase9/loopscope_phase9_gate_e_handoff.md
+EXTENSION_NEXT_ADMISSION=GATE_E_PASS_THEN_EXTENSION_FINAL_AUDIT
+```
