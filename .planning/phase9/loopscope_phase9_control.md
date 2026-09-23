@@ -72,3 +72,5 @@ EXTENSION_CONTRACT=.planning/phase9/loopscope_phase9_gate_e_lag1_contract.md
 EXTENSION_HANDOFF=.planning/phase9/loopscope_phase9_gate_e_handoff.md
 EXTENSION_NEXT_ADMISSION=GATE_E_PASS_THEN_EXTENSION_FINAL_AUDIT
 ```
+
+2026-09-23 模型协作约定更新：未来新建Gate执行任务默认gpt-6-luna/max；已绑定Gate E仍为gpt-5.6-luna/max，不追溯更改。长期规则见AGENTS.md及research-gate-orchestrator SKILL.md。

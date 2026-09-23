@@ -12,6 +12,8 @@
 
 ## 新阶段适用规则
 
+后续新建独立 Gate 执行任务默认使用 `gpt-6-luna`、最高可用推理档位 `max`；只有用户明确指定其他模型/档位时才改变。该约定从新增任务起生效，不追溯改变已经绑定的执行任务；若创建环境不支持该组合，不得静默改用旧模型，应报告具体可用性问题。
+
 每次创建独立 Gate 执行任务时，规划任务必须在创建首条消息和正式 handoff 中显式强调：“按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行”，要求执行任务实际读取该 skill；涉及终态交付、监控或协议边界时读取其 `references/protocol.md`。不能仅依赖继承上下文或项目中已有的间接引用。该要求适用于每个新 Gate，且不扩大该 Gate 的具体权限。
 
 从 Phase 8 起，按用户明确指定的 research-gate-orchestrator 协议执行。当前阶段入口由 `.planning/README.md` 指向匹配 `phase<N>/` 的 control；下文“当前 Phase 7”及各历史阶段科学规则是历史范围，不授权新阶段。所有新阶段专属规划文件进入 `.planning/phase<N>/`。
