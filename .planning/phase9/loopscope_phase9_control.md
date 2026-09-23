@@ -65,9 +65,9 @@ Gate B PASS：独立核验九debug及四完整512诊断，见gate_b_acceptance�
 用户在A–D及主线终审完成后新授权单个Gate E探索实验，见gate_e_lag1_contract与gate_e_handoff。确认前一轮全部有效prompt残差重估、K3/4、逐轮Matched对照、原MMLU test。主线PHASE9_COMPLETE仍为历史事实；Gate E拥有单独追加状态和绑定，不追溯修改主线47-cell结论。
 
 ```text
-EXTENSION_STATUS=GATE_E_BINDING
+EXTENSION_STATUS=GATE_E_AUTHORIZED
 EXTENSION_GATE=E
-EXTENSION_EXECUTOR=PENDING_BINDING
+EXTENSION_EXECUTOR=01a0cc03-0181-7a53-b305-c32637a00315
 EXTENSION_CONTRACT=.planning/phase9/loopscope_phase9_gate_e_lag1_contract.md
 EXTENSION_HANDOFF=.planning/phase9/loopscope_phase9_gate_e_handoff.md
 EXTENSION_NEXT_ADMISSION=GATE_E_PASS_THEN_EXTENSION_FINAL_AUDIT

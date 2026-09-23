@@ -2,7 +2,7 @@
 
 按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行，实际读取skill及references/protocol.md；HPC操作实际读取hpc2-hkustgz-ssh。监控仅向本executor自身汇报，沿用monitor_routing_amendment，无planning fallback。
 
-Planning=01a07ff5-79b1-79f0-809a-4d0971475686；Executor=待绑定；model=gpt-5.6-luna/max。唯一科学依据为gate_e_lag1_contract；Phase9 contract_v2提供被复用的模型、数据与老臂语义，旧A–D均已完成。用户确认前一轮全部有效prompt token原生残差、仅K3/4、含新Matched对照、沿用MMLU test并标注事后探索。不得自行改成同轮方向或仅答案向量。
+Planning=01a07ff5-79b1-79f0-809a-4d0971475686；Executor=01a0cc03-0181-7a53-b305-c32637a00315；model=gpt-5.6-luna/max。唯一科学依据为gate_e_lag1_contract；Phase9 contract_v2提供被复用的模型、数据与老臂语义，旧A–D均已完成。用户确认前一轮全部有效prompt token原生残差、仅K3/4、含新Matched对照、沿用MMLU test并标注事后探索。不得自行改成同轮方向或仅答案向量。
 
 ## 最短执行路径
 
