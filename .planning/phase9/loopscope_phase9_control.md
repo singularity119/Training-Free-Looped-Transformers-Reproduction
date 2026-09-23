@@ -76,3 +76,5 @@ EXTENSION_NEXT_ADMISSION=GATE_E_PASS_THEN_EXTENSION_FINAL_AUDIT
 2026-09-23 模型协作约定更新：未来新建Gate执行任务默认gpt-6-luna/max；已绑定Gate E仍为gpt-5.6-luna/max，不追溯更改。长期规则见AGENTS.md及research-gate-orchestrator SKILL.md。
 
 2026-09-23 用户追加Gate E模块化要求：同一新模块显式切换fixed_t0/lag1方向策略，两个干预模式均可组合；正式新增仍仅12个lag1配置。见gate_e_direction_policy_amendment，优先于旧E实现措辞；当前executor和资源边界不变。
+
+2026-09-23 用户新增A800调度要求：所有新提交A800作业用普通用户合法最高优先级A800分区，含debug/preflight；既有job不盲取消。见gate_e_a800_priority_supplement，优先于旧E handoff及通用debug分区文字。

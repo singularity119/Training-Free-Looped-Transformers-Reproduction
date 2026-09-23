@@ -12,6 +12,8 @@
 
 ## 新阶段适用规则
 
+HPC A800 作业（debug/preflight、smoke、canary、probe、formal）统一使用当前普通用户可合法访问的最高优先级 A800 分区，并在可用时采用该分区内最高优先级 QoS；提交前用实时调度器证据核对分区资格和优先级。此用户新增规则优先于历史章节的“debug 一律使用 debug 分区”，但预检仍限 `<30min` 且必须覆盖同一关键路径。已提交作业不因新规则盲目取消重投；无合规分区时回报阻塞，不静默降级。
+
 后续新建独立 Gate 执行任务默认使用 `gpt-6-luna`、最高可用推理档位 `max`；只有用户明确指定其他模型/档位时才改变。该约定从新增任务起生效，不追溯改变已经绑定的执行任务；若创建环境不支持该组合，不得静默改用旧模型，应报告具体可用性问题。
 
 每次创建独立 Gate 执行任务时，规划任务必须在创建首条消息和正式 handoff 中显式强调：“按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行”，要求执行任务实际读取该 skill；涉及终态交付、监控或协议边界时读取其 `references/protocol.md`。不能仅依赖继承上下文或项目中已有的间接引用。该要求适用于每个新 Gate，且不扩大该 Gate 的具体权限。
