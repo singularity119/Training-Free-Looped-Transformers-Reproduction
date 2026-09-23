@@ -138,8 +138,9 @@ def verify(
                 "Gate E summary is missing bounded per-round policy logs")
         for t, (observed, expected_schedule) in enumerate(
                 zip(schedule, direction_schedule(direction_policy, k))):
-            used_t, fit_t = expected_schedule
-            require(observed.get("t") == t and observed.get("applied_t") == (t if t > 0 else None) and
+            expected_t, used_t, fit_t = expected_schedule
+            require(expected_t == t and observed.get("t") == t and
+                    observed.get("applied_t") == (t if t > 0 else None) and
                     observed.get("direction_used_fit_t") == used_t and
                     observed.get("direction_fit_t") == fit_t,
                     "Gate E bounded per-round policy log differs from the declared schedule")
