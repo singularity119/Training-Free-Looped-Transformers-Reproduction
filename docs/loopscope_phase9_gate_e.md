@@ -1,3 +1,5 @@
+Gate E completed 2026-09-24: planning PASS. The 12 new Lag1 cells and 47 reused raw-score cells closed; no Holm-adjusted primary contrast passed. See `.planning/phase9/loopscope_phase9_gate_e_acceptance.md` and the outer `资产/报告/phase9/LoopScope_第九阶段GateE逐轮方向实验报告.md`. No new compute is authorized.
+
 # Phase 9 Gate E: switchable direction policy, Lag1 formal panel
 
 Gate E is a post-completion exploratory extension to the closed Phase 9 A–D panel. The exact frozen contract is `.planning/phase9/loopscope_phase9_gate_e_lag1_contract.md`; executor and operational authority are in the Phase 9 control and Gate E handoff.

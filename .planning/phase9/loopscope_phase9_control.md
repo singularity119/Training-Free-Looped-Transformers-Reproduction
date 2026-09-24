@@ -65,12 +65,15 @@ Gate B PASS：独立核验九debug及四完整512诊断，见gate_b_acceptance�
 用户在A–D及主线终审完成后新授权单个Gate E探索实验，见gate_e_lag1_contract与gate_e_handoff。确认前一轮全部有效prompt残差重估、K3/4、逐轮Matched对照、原MMLU test。主线PHASE9_COMPLETE仍为历史事实；Gate E拥有单独追加状态和绑定，不追溯修改主线47-cell结论。
 
 ```text
-EXTENSION_STATUS=GATE_E_AUTHORIZED
+EXTENSION_STATUS=COMPLETE
 EXTENSION_GATE=E
-EXTENSION_EXECUTOR=01a0cc03-0181-7a53-b305-c32637a00315
+EXTENSION_EXECUTOR=NONE
+EXTENSION_AUDITED_EXECUTOR=01a0cc03-0181-7a53-b305-c32637a00315
+EXTENSION_AUDITED_COMMIT=782df42d49e428a47d8574126b0f4eec361b226f
+EXTENSION_DECISION=PASS
 EXTENSION_CONTRACT=.planning/phase9/loopscope_phase9_gate_e_lag1_contract.md
 EXTENSION_HANDOFF=.planning/phase9/loopscope_phase9_gate_e_handoff.md
-EXTENSION_NEXT_ADMISSION=GATE_E_PASS_THEN_EXTENSION_FINAL_AUDIT
+EXTENSION_NEXT_ADMISSION=NONE_EXTENSION_COMPLETE
 ```
 
 2026-09-23 模型协作约定更新：未来新建Gate执行任务默认gpt-6-luna/max；已绑定Gate E仍为gpt-5.6-luna/max，不追溯更改。长期规则见AGENTS.md及research-gate-orchestrator SKILL.md。
@@ -78,3 +81,5 @@ EXTENSION_NEXT_ADMISSION=GATE_E_PASS_THEN_EXTENSION_FINAL_AUDIT
 2026-09-23 用户追加Gate E模块化要求：同一新模块显式切换fixed_t0/lag1方向策略，两个干预模式均可组合；正式新增仍仅12个lag1配置。见gate_e_direction_policy_amendment，优先于旧E实现措辞；当前executor和资源边界不变。
 
 2026-09-23 用户新增A800调度要求：所有新提交A800作业用普通用户合法最高优先级A800分区，含debug/preflight；既有job不盲取消。见gate_e_a800_priority_supplement，优先于旧E handoff及通用debug分区文字。
+
+2026-09-24 Gate E追加实验PASS，见gate_e_acceptance；12新cell与旧47原始分数闭合，一次事后探索分析0/12 Holm通过。追加实验终态，无活动executor或新计算授权。
