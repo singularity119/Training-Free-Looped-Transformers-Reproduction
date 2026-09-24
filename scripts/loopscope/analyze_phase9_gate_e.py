@@ -263,7 +263,8 @@ def write_tables(output_dir: Path, result: Mapping[str, Any]) -> None:
                       "mcnemar_exact_p", "holm_adjusted_p", "holm_reject_alpha_0_05"]
             writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
             writer.writeheader()
-            writer.writerows(row for row in result["contrasts"] if row["family"] == family)
+            writer.writerows({**row, **row["bootstrap"]}
+                             for row in result["contrasts"] if row["family"] == family)
 
 
 def write_report(path: Path, result: Mapping[str, Any], resource_summary: Mapping[str, Any] | None) -> None:
@@ -310,7 +311,10 @@ def write_report(path: Path, result: Mapping[str, Any], resource_summary: Mappin
             "- 累计 GPU 时间：{:.3f} 小时（包含 Gate E debug、canary、正式运行和记录在账的失败尝试）。".format(float(resource_summary.get("cumulative_gpu_hours", 0.0))),
             "- 峰值并发 GPU：{}；OOM：{}。".format(resource_summary.get("max_concurrent_gpus", "未提供"), resource_summary.get("oom_count", "未提供")),
             "- 实际 A800 packing/canary 说明：{}".format(resource_summary.get("packing_decision", "未提供")),
-            "- SVD 用时统计见 `analysis.json` 中各 score shard 的 runtime 汇总；峰值分配显存与吞吐见 `resource_summary.json`。",
+            "- 新评分 SVD 累计 {:.3f} 小时；最大 GPU reserved 显存 {:.3f} GiB。".format(
+                float(resource_summary.get("svd_hours", 0.0)),
+                float(resource_summary.get("max_peak_reserved_gib", 0.0))),
+            "- 各 score shard 的峰值显存与吞吐见 `resource_summary.json` 及原始 summary。",
         ])
     else:
         lines.append("资源账本未提供；提交最终报告前须补入已核实的 GPU 小时、并发、OOM 与 packing 结果。")
