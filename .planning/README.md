@@ -1,4 +1,4 @@
-> 2026-09-22：新增[Phase 9总体规划](phase9/loopscope_phase9_plan.md)与[Phase 9 control](phase9/loopscope_phase9_control.md)，状态为PLANNED_NOT_EXECUTING。总体报告位于外层资产/报告/phase9。拟以独立增量模块实现逐题t0方向；第八阶段代码和工件保留。下方Phase 8为历史阶段入口，不授予Phase 9执行权限。
+> 2026-09-24：Phase 9 A–D 主线已完成 47-cell panel，追加 Gate E 已完成 12 个逐轮方向 cell；当前无活动执行任务或新计算授权。逐题 Online-t0 与可切换的 fixed_t0/lag1 方向策略均以增量模块保留，第八阶段实现未覆盖。以 [Phase 9 control](phase9/loopscope_phase9_control.md) 和 [Gate E 验收](phase9/loopscope_phase9_gate_e_acceptance.md) 为准；中文报告位于 Git 仓库外层 `资产/报告/phase9/`。
 
 > 最新结果（2026-09-10）：G的4B15–18窗口9配置已PASS，累计47唯一配置；各谱配对无可靠增益。完整表见docs/loopscope_phase8.md及外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md。当前无新计算授权、所有timer关闭；F仅终态交付收尾。
 
@@ -14,10 +14,8 @@
 
 ## 当前控制入口
 
-最新阶段的动态控制入口是 [Phase 9 control](phase9/loopscope_phase9_control.md)，当前仅规划完成、无执行授权。第八阶段历史状态与交付收尾由 [Phase 8 control](phase8/loopscope_phase8_control.md) 管理。
-Phase 8原A-D已完成：A-D与[阶段终审](phase8/loopscope_phase8_gate_d_and_phase_final_audit.md)均PASS。2026-09-08用户追加[Gate E 4B K3](phase8/loopscope_phase8_gate_e_handoff.md)，当前独立执行2basis/4test配置；原18配置无可靠收益结论保留。
-[总体计划](phase8/loopscope_phase8_plan.md) / [科学合同](phase8/loopscope_phase8_contract_v1.md) / [Gate D handoff](phase8/loopscope_phase8_gate_d_handoff.md) / [易读阶段报告](../docs/loopscope_phase8.md)。
-Phase 7 保持历史终态，旧 control/handoff 不赋予新实验权限。
+最新阶段的动态控制入口是 [Phase 9 control](phase9/loopscope_phase9_control.md)：主线和追加 Gate E 均已完成，当前无活动执行任务。第八阶段及更早阶段的 control/handoff 仅作历史依据，不授予新实验权限。
+[Phase 9 总体计划](phase9/loopscope_phase9_plan.md) / [主线科学合同](phase9/loopscope_phase9_contract_v2.md) / [Gate E 合同](phase9/loopscope_phase9_gate_e_lag1_contract.md) / [Gate E runbook](../docs/loopscope_phase9_gate_e.md)。
 
 ## 阶段和方法索引
 
@@ -31,10 +29,13 @@ Phase 7 保持历史终态，旧 control/handoff 不赋予新实验权限。
 | `phase6/` | 已终止 MMLU-Pro 分支、MMLU 0/5-shot、V3 与五-cell outcome | [control](phase6/loopscope_phase6_control.md) | [runbook](../docs/loopscope_phase6.md) |
 | `phase7/` | 三种 Base 架构、V3.1 与 Gate E/F outcome | [control](phase7/loopscope_phase7_control.md) | [runbook](../docs/loopscope_phase7.md) |
 | `phase8/` | 双 Base 模型四窗口的谱软衰减与配对 acc | [control](phase8/loopscope_phase8_control.md) | [阶段报告](../docs/loopscope_phase8.md) / [总体计划](phase8/loopscope_phase8_plan.md) |
+| `phase9/` | 逐题在线主方向与逐轮方向更新；主线及 Gate E 已完成 | [control](phase9/loopscope_phase9_control.md) | [Gate E runbook](../docs/loopscope_phase9_gate_e.md) / [总体计划](phase9/loopscope_phase9_plan.md) |
 | `selector_rules/` | 跨阶段版本化方法定义；不授予实验权限 | [规则索引](selector_rules/README.md) | [V3.1.0](selector_rules/aggregate_common_turn_v3_absolute_rate.md) |
 
 最近的终态依据：
 
+- [Phase 9 主线终审](phase9/loopscope_phase9_gate_d_and_phase_final_audit.md)
+- [Phase 9 Gate E 验收](phase9/loopscope_phase9_gate_e_acceptance.md)
 - [Gate D V3.1 审计](phase7/loopscope_phase7_gate_d_audit_decision_pass_20260815.md)
 - [Gate E 审计](phase7/loopscope_phase7_gate_e_and_phase_audit_pass_20260816.md)
 - [Gate F 与阶段重新终审](phase7/loopscope_phase7_gate_f_and_phase_reclose_audit_pass_20260816.md)
@@ -46,7 +47,7 @@ Phase 7 保持历史终态，旧 control/handoff 不赋予新实验权限。
 原 `AGENTS.md` 未修改，所以新设备也需要按接续说明建立该链接。
 
 根目录原有的 50 个 `loopscope_phase*` 短路径软链接已于 2026-09-02 清理。
-现在根目录只保留本索引、`phase1/` 至 `phase7/` 和 `selector_rules/`；实际历史文档没有删除。
+现在根目录保留本索引、`phase1/` 至 `phase9/` 和 `selector_rules/`；实际历史文档没有删除。
 所有新引用和程序入口使用 `phaseN/` 下的规范路径。
 
 历史正文中的路径以当时工作区为基准，不能一律按当前 Markdown 所在目录拼接：
