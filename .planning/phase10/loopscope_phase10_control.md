@@ -3,30 +3,32 @@
 2026-10-02。用户已授权本planning逐Gate创建独立执行线程、验收并推进第十阶段。
 
 ```text
-STATUS=GATE_A_AUTHORIZED
+STATUS=GATE_B_AUTHORIZED
 PLANNING_THREAD=01a0fae2-12df-74e0-a874-190518ef0501
 PLANNING_HOST=local
-ACTIVE_GATE=A
-AUTHORIZED_EXECUTOR=01a0fb34-5c36-7210-b17d-744410853d1f
+ACTIVE_GATE=B
+AUTHORIZED_EXECUTOR=01a0fb63-097d-7c92-9bd6-1f1b8ddafe9f
 AUTHORIZED_EXECUTOR_HOST=local
-AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-Lambda-and-ARC-Adapters-第10阶段-Gate A
+AUTHORIZED_EXECUTOR_TITLE=execute-LoopScope-End-to-End-Preflight-第10阶段-Gate B
 EXECUTOR_MODEL=gpt-6.1-sol
 EXECUTOR_REASONING=high
 MAX_CONCURRENT_SUBAGENTS_PER_EXECUTOR=3
 BASE_BRANCH=loopscope
 INSPECTED_BASE_COMMIT=ee9feb4dbee1caca53a2fc23f02527c2bbe05106
 SCIENTIFIC_CONTRACT=.planning/phase10/loopscope_phase10_contract_v2.md
-ACTIVE_HANDOFF=.planning/phase10/loopscope_phase10_gate_a_handoff.md
+ACTIVE_HANDOFF=.planning/phase10/loopscope_phase10_gate_b_handoff.md
 STANDING_PHASE_CONTINUATION=ADVANCE_SERIAL_GATES_UNTIL_PHASE10_TERMINAL
 PHASE_TERMINAL=COMPLETE_MMLU_AND_ARC_PANELS_REPORT_AND_PHASE_AUDIT_OR_EXPLICIT_SCIENTIFIC_STOP
-GATE_A_STATE=AUTHORIZED
-GATE_B_STATE=LOCKED
+GATE_A_STATE=PASS
+AUDITED_GATE_A_COMMIT=a7ca3626d639e1b271a1bb1b851a72e1299e359e
+ARC_DATA_BINDING=ACCEPTED
+GATE_B_STATE=AUTHORIZED
 GATE_C_STATE=LOCKED
 GATE_D_STATE=LOCKED
 GATE_E_STATE=LOCKED
-CURRENT_DECISION=GATE_A_ADMITTED
-GPU_SCHEDULER_AUTHORITY=NONE_GATE_A
-NEXT_ADMISSION=GATE_A_PASS_AND_ARC_DATA_BINDING_ACCEPTED
+CURRENT_DECISION=GATE_A_PASS_B_ADMITTED
+GPU_SCHEDULER_AUTHORITY=GATE_B_ONLY_24GPUH_MAX2GPU_29MIN_JOBS
+NEXT_ADMISSION=GATE_B_PASS_AND_FORMAL_RESOURCE_ENVELOPE
 ```
 
 科学范围：4B15:18 K2/K3、1.7B12:15 K2；fixed_t0/lag1/current_t，lambda0.1至0.9；不做Matched-norm。每数据集68独立配置（86展示含18个K2别名），MMLU预计9复用59新，ARC68新。ARC25-shot标准文本评分，主acc_norm附acc。合同v2为科学入口。
@@ -35,10 +37,14 @@ NEXT_ADMISSION=GATE_A_PASS_AND_ARC_DATA_BINDING_ACCEPTED
 
 A限handoff所列本地增量实现/Git、HPC项目相关只读及专属新路径CPU/tokenization工程准备；无模型forward/GPU/Slurm/outcome权限。后续Gate各自精确handoff才授予资源和信息权限；planning逐Gate继续，不因PASS重复询问继续。跨线程Gate派发、终态和修复消息属于用户当前协作授权。
 
-分区：本阶段采用AGENTS中已有用户明确A800最高合法优先级分区例外，含<30min preflight；此为planning明确采纳的项目例外，不由executor自行选择。当前A仍无任何作业权限。后续卡型/配额依实测和具体handoff限定。
+分区：2026-10-02用户最新规则优先，所有非正式任务统一debug，正式任务使用普通用户合法最高优先级A800分区。Gate B全部debug，<30min、24GPUh/最多2GPU；详见gate_b_partition_supplement。之前全任务A800例外失效。
 
 科学/信息/破坏性或外部权限变更仍需相应决定；普通Gate内低风险工程修复按handoff继续。监控只由执行者创建，终态唤醒exact executor，由executor向planning可见交付；规划不轮询。旧Phase9授权不继承。
 
 2026-10-02 Gate A操作补充1：同一executor获准固定ARC revision三个小型parquet下载至专属新inputs，test/validation仅列投影读取无标签字段，专属staging CPU overlay；远端旧分支不改。详见 loopscope_phase10_gate_a_operational_supplement_1.md。无GPU/Slurm/outcome权限，B仍锁定。
 
 2026-10-02 用户新增current_t：同轮估计v_t并立即衰减，包含t0；同一Gate A按 loopscope_phase10_gate_a_current_t_amendment.md 扩展实现。旧handoff冲突内容被该修订替代。其余权限保持，B仍锁定。
+
+2026-10-02 Gate A已PASS、ARC binding接纳，见gate_a_acceptance。A撤权保留证据；历史A限制/补充只作历史。B按新handoff部署专属已提交源码快照并运行GPU预检，24GPUh/最多2GPU/单job29min；无正式test/outcome权限。C仍锁定。
+
+ACTIVE_PARTITION_SUPPLEMENT=.planning/phase10/loopscope_phase10_gate_b_partition_supplement.md

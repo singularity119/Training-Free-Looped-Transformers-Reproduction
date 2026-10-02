@@ -1,0 +1,15 @@
+# Gate A 轻量验收
+
+2026-10-02，planning 01a0fae2-12df-74e0-a874-190518ef0501。
+GATE_A_DECISION=PASS
+AUDITED_EXECUTOR=01a0fb34-5c36-7210-b17d-744410853d1f
+AUDITED_COMMIT=a7ca3626d639e1b271a1bb1b851a72e1299e359e
+ARC_DATA_BINDING=ACCEPTED
+
+独立核查：本地loopscope HEAD与交付一致且clean；base至HEAD变动仅Phase10新增及planning，保护实现和Phase9未改。直接读取current_t callback，确认原始D_t拟合在克隆/改p之前，每轮fit_t=used_t=t包含t0；旧策略t0保留、lag1每candidate重启。直接运行build_panel核查两数据集均68独立、86展示、18别名，current_t均27，MMLU59新9复用、ARC68新；读取analysis的14/126/45family构造及adapter完整continuation与字符归一化逻辑。31项定向测试记录为执行工程证据，不重复完整suite。
+
+通过strict SSH直接读取canonical prepared-attempt1/arc_input_facts.json：固定revision210d026faf9955653af8916fad021475a3f00453、seed20261002、25shot、train1119/test1172/validation299；target列投影id/question/choices且gold=false；两模型max_length32768，test最大context1242/input1243、validation1207，候选截断和prefix不一致均0。接纳gate_a_data_binding附件中的输入根、每split原生sampler顺序、示例身份与该长度绑定，不要求重建输入。
+
+这是A工程准入PASS，不是GPU数值验证或科学正收益。历史9cell原分数可复用性、K2实际等价、真实完整continuation与资源形状均明确留B；不声称已通过。remote旧分支只读保留，B以新专属源码快照部署。配置里pending-binding文字是A历史状态，当前接受状态由control与本记录规范。
+
+A执行权限撤销，保留证据与聊天；B准入成立，按standing mandate新建独立executor。
