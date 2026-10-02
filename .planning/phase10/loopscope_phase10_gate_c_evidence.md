@@ -1,7 +1,8 @@
 # Phase10 Gate C execution evidence
 
 Executor `01a0fba5-4ee0-7262-83d4-5bde515f3a94`; planning `01a0fae2-12df-74e0-a874-190518ef0501`.
-Current state: shard preflight running; no formal test scoring or gold access yet.
+Current state: full shard preflight verified; seven retainable formal canaries submitted, PENDING.
+No target gold/outcome access.
 
 ## Source and implementation
 
@@ -64,3 +65,26 @@ and input-plan existence only; terminal first disables itself then visibly sends
 AUTOMATION_TERMINAL_RESUME to exact executor, or AUTOMATION_RELAY_REQUIRED to planning.
 
 No Gate terminal event emitted. C remains active; D and ARC formal/outcome remain locked.
+
+## Preflight closure and formal canary dispatch
+
+Debug12902763 COMPLETED/0:0, elapsed117s, allocated0.0325GPUh. Independently read the complete
+SHARD_PREFLIGHT_VERIFIED.json: all3 model/K combinations exact, max error0; source2644034 unchanged.
+Prepared input plan exists and pre-submit CPU reread closed full14042 identities, full manifest68,
+59new/9reuse, seven unique lambda0.1 groups, and exact64 length-ranked indices/model.
+
+The debug monitor paused and sent its self-resume packet, but the executor stayed idle until
+planning's continuation-relay recovery. Executor then resumed, verified no existing C jobs or
+formal submissions, and dispatched the following seven jobs exactly once:
+`12903430,12903431,12903432,12903433,12903434,12903435,12903436`.
+All `emergency_gpu` partition/QoS, A8001GPU,8CPU,64G,1h, packing1/batch1; two afterok serial
+chains enforce max2 simultaneous GPUs. Initial upper bound0.0325+7=7.0325GPUh, below16GPUh.
+Actual source remains2644034; evidence-only later commits do not change deployed producer/runtime.
+Fresh submission plan/commands/stdout/stderr/job IDs are in remote `formal-canary-submission-plan.json`,
+`job_submissions.jsonl`, `formal-canary-jobs.json`. All7 confirmed PENDING, first2 Priority and
+remaining5 Dependency; highest lawful partition/QoS credentials reread before submission.
+
+Updated the same automation ID (no duplicate) to `Phase10 Gate C formal continuation`, ACTIVE,
+60-minute cadence. Frozen all7jobs and terminal-failure/all-complete criteria; strengthened actual
+executor continuation or planning relay to avoid the observed self-delivery/idle defect.
+Next executor step is gold-free canary closure and A800 cost admission; no full expansion yet.
