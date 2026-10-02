@@ -42,3 +42,13 @@ Gate B从本地已提交loopscope以git archive部署完整源码到新专属sta
 分析入口读取`--closure`，通过同一verifier重新闭合raw score roots并按canonical identity对齐，再打开`--gold`的`{identities,gold}`。MMLU含`--include-reuse`；ARC先读取和验证已冻结的`--transfer-lambdas`。目标标签文件由后续有outcome权限的Gate准备，A不创建或读取。
 
 完整扫描与历史选窗属于探索；无 Matched-norm，不作方向特异性机制结论。Online−Native 与 Online−Loop 分别回答总方案和额外干预收益。current_t同时改变干预起点和方向时序，其对比是组合策略消融，不能单独归因于t0或当前方向。
+
+## Gate B 实际预检对象（2026-10-02）
+
+Gate B工程证据见 `.planning/phase10/loopscope_phase10_gate_b_evidence.md` / `loopscope_phase10_gate_b_resources.json`，待planning决定。最终实际GPU源码为 `1cee7a5fc0731361d3d2b4471234426b4d7f10aa`，以完整git archive部署在专属staging；旧远端分支保持只读。32个debug/A40作业全部完成，0.236389 GPUh，最多同时2GPU，无GPU失败/OOM。
+
+CPU输入入口为 `prepare_phase10_preflight.py`：原安全MMLU renderer生成validation1531，Phase10 loader明确识别新validation schema且formal拒绝；ARC直接引用A已接纳pool。选择MMLU `[0,368]`、ARC `[0,32,35,85,89,210]`。`check_phase10_reuse.py` 已核验9历史cell×14042 raw记录，无outcome计算。
+
+`phase10_engineering.sbatch SOURCE PYTHON CHECK_SCRIPT [args...]` 在debug调用 `check_phase10_gpu.py` 或 `measure_phase10_resources.py`。GPU检查在相同requests上对原生HFLM比较完整分数，并以真实模型CUDA residual和actual current_t trajectory验证数值/时序；只允许validation。producer仍用 `phase10_preflight.sbatch`，通过 `PHASE10_PREFLIGHT_INDICES` 固定输入，工程K2 alias通过 `PHASE10_ENGINEERING_CHECK=k2-policy`，分数由 `verify_phase10_scores.py --scope PREFLIGHT_ONLY` 闭合。全部精确submit参数、job ID、env/command_args和source import入口保留在统一run根 `runs/phase10-gate-b-20261002T070214Z`。
+
+资源脚本在validation模板补普通token达到MMLU context3096/continuation1、ARC context1242/continuation46，只作资源证据。先packing1，再带 `--packing1-summary` 同形状实测独立进程packing2，包含加载峰值；原生logits cache的实际forward与候选评分数分别记录。A40 packing2安全但四组聚合吞吐略降，建议该卡packing1；A800配置由后续正式Gate实测，不外推。本预检不混入正式test；关键source/launcher/runtime改动后重做debug。

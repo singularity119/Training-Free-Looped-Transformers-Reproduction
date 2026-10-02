@@ -52,7 +52,7 @@ packing2四组均安全，但聚合吞吐比packing1低约1.6%–5.6%；A40建�
 
 B极值validation样本的逐题timing线性压力投影：MMLU59新Online约805.07 A40 GPUh；ARC63 Online约44.02 A40 GPUh，另5个无SVD baseline不在该数内（按最慢现测Online保守加约6.57 GPUh）。这些不是总体运行时间估计，也不证明A800耗时：MMLU正式无标签context median524/p901602/p992670/max3096，而B特意包含最长2954。不能直接申请805h并称为预期成本；正式A800预算必须以首个可保留正式canary的时间重新定标。
 
-建议C/D先A800 packing1、batch1、单cell或规划明确授权的可保留正式shard，测实际GPU loading/长尾峰值及吞吐后再决定packing2/并行。现有FORMAL_TEST入口仅支持全cell，尚无正式小shard接口；若选择shard canary，C handoff需明确允许完整cell分片且最终保持全14042/1172闭合，工程改动后重做debug预检。若不分片，首个完整cell作canary：A40压力样本现测MMLU最慢Online cell约24.5h、最大shape合成路径约36h，可据此讨论48h上限，但不能视作A800保证。ARC最慢现测全cell压力投影约1.31h，可讨论2h上限。此前debug卡资源仅功能/同卡证据，A800资源准入留正式Gate。
+建议C/D先A800 packing1、batch1、单cell或规划明确授权的可保留正式shard，测实际GPU loading/长尾峰值及吞吐后再决定packing2/并行。现有FORMAL_TEST入口仅支持全cell，尚无正式小shard接口；若选择shard canary，C handoff需明确允许完整cell分片且最终保持全14042/1172闭合，工程改动后重做debug预检。若不分片，首个完整cell作canary：A40压力样本现测MMLU最慢Online cell约24.5h、最大shape合成路径约36h，可据此讨论48h上限，但不能视作A800保证。ARC最慢现测全cell压力投影约1.31h；保守覆盖最长文本和5候选可讨论首cell4h上限。此前debug卡资源仅功能/同卡证据，A800资源准入留正式Gate。
 
 可复用预检对象为源码1cee7a5、现有phase10_accuracy/preflight launcher、原venv/模型/cache、两adapter/producer/verifier；source/launcher/runtime/hook/serialization等关键对象变更时重新debug；B原分数不混入正式test。
 
