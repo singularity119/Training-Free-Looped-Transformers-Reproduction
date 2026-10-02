@@ -1,0 +1,524 @@
+{
+  "source_commit": "1cee7a5fc0731361d3d2b4471234426b4d7f10aa",
+  "job_count": 32,
+  "allocated_gpu_hours": 0.2363888888888889,
+  "max_simultaneous_allocated_gpus": 2,
+  "max_job_seconds": 65,
+  "failed_gpu_attempts": 0,
+  "oom_count": 0,
+  "target_gold_loaded": false,
+  "gpu_checks": [
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/check-arc_challenge-q17-w12-15-k2-attempt1",
+      "count": 2,
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "dataset": "arc_challenge",
+      "k": 2,
+      "max_abs_error": 0.0,
+      "max_relative_error": 0.0
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/check-arc_challenge-q4-w15-18-k2-attempt1",
+      "count": 2,
+      "model": "Qwen/Qwen3-4B-Base",
+      "dataset": "arc_challenge",
+      "k": 2,
+      "max_abs_error": 0.0,
+      "max_relative_error": 0.0
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/check-arc_challenge-q4-w15-18-k3-attempt1",
+      "count": 2,
+      "model": "Qwen/Qwen3-4B-Base",
+      "dataset": "arc_challenge",
+      "k": 3,
+      "max_abs_error": 0.0,
+      "max_relative_error": 0.0
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/check-mmlu-q17-w12-15-k2-attempt1",
+      "count": 2,
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "dataset": "mmlu",
+      "k": 2,
+      "max_abs_error": 0.0,
+      "max_relative_error": 0.0
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/check-mmlu-q4-w15-18-k2-attempt1",
+      "count": 2,
+      "model": "Qwen/Qwen3-4B-Base",
+      "dataset": "mmlu",
+      "k": 2,
+      "max_abs_error": 0.0,
+      "max_relative_error": 0.0
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/check-mmlu-q4-w15-18-k3-attempt1",
+      "count": 2,
+      "model": "Qwen/Qwen3-4B-Base",
+      "dataset": "mmlu",
+      "k": 3,
+      "max_abs_error": 0.0,
+      "max_relative_error": 0.0
+    }
+  ],
+  "resources": [
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/resource-arc_challenge-q17-w12-15-k2-pack1-attempt1",
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "dataset": "arc_challenge",
+      "packing": 1,
+      "gpu": "NVIDIA A40",
+      "total_mib": 49140,
+      "sampled_peak_mib": 5038,
+      "max_concurrent_processes": 1,
+      "shape": {
+        "native_seed_context_tokens": 1059,
+        "context_tokens": 1242,
+        "continuation_tokens": 46,
+        "model_input_tokens": 1287,
+        "inserted_context_tokens": 183,
+        "preserved_suffix_tokens": 8,
+        "construction": "native validation token context plus repeated ordinary text tokens"
+      },
+      "contexts_per_second": 0.7724498562974422,
+      "scores_per_second": 0.7724498562974422,
+      "loading_seconds": [
+        4.963777283206582
+      ],
+      "peak_allocated_bytes": [
+        4623491072
+      ],
+      "peak_reserved_bytes": [
+        4896849920
+      ],
+      "svd": [
+        {
+          "fit_count": 4,
+          "cuda_event_seconds": 2.2155436401367186,
+          "wall_seconds": 2.234820930287242,
+          "max_rows": 1242,
+          "hidden_size": 2048,
+          "fit_count_by_t": {
+            "0": 2,
+            "1": 2
+          }
+        }
+      ]
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/resource-arc_challenge-q17-w12-15-k2-pack2-attempt1",
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "dataset": "arc_challenge",
+      "packing": 2,
+      "gpu": "NVIDIA A40",
+      "total_mib": 49140,
+      "sampled_peak_mib": 10067,
+      "max_concurrent_processes": 2,
+      "shape": {
+        "native_seed_context_tokens": 1059,
+        "context_tokens": 1242,
+        "continuation_tokens": 46,
+        "model_input_tokens": 1287,
+        "inserted_context_tokens": 183,
+        "preserved_suffix_tokens": 8,
+        "construction": "native validation token context plus repeated ordinary text tokens"
+      },
+      "contexts_per_second": 0.7597436860503679,
+      "scores_per_second": 0.7597436860503679,
+      "loading_seconds": [
+        6.523459926247597,
+        6.58956990018487
+      ],
+      "peak_allocated_bytes": [
+        4623491072,
+        4623491072
+      ],
+      "peak_reserved_bytes": [
+        4896849920,
+        4896849920
+      ],
+      "svd": [
+        {
+          "fit_count": 4,
+          "cuda_event_seconds": 4.518309326171875,
+          "wall_seconds": 4.594120299443603,
+          "max_rows": 1242,
+          "hidden_size": 2048,
+          "fit_count_by_t": {
+            "0": 2,
+            "1": 2
+          }
+        },
+        {
+          "fit_count": 4,
+          "cuda_event_seconds": 4.513490112304687,
+          "wall_seconds": 4.59847934730351,
+          "max_rows": 1242,
+          "hidden_size": 2048,
+          "fit_count_by_t": {
+            "0": 2,
+            "1": 2
+          }
+        }
+      ]
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/resource-arc_challenge-q4-w15-18-k3-pack1-attempt1",
+      "model": "Qwen/Qwen3-4B-Base",
+      "dataset": "arc_challenge",
+      "packing": 1,
+      "gpu": "NVIDIA A40",
+      "total_mib": 49140,
+      "sampled_peak_mib": 9590,
+      "max_concurrent_processes": 1,
+      "shape": {
+        "native_seed_context_tokens": 1059,
+        "context_tokens": 1242,
+        "continuation_tokens": 46,
+        "model_input_tokens": 1287,
+        "inserted_context_tokens": 183,
+        "preserved_suffix_tokens": 8,
+        "construction": "native validation token context plus repeated ordinary text tokens"
+      },
+      "contexts_per_second": 0.46428648014417884,
+      "scores_per_second": 0.46428648014417884,
+      "loading_seconds": [
+        6.859882812947035
+      ],
+      "peak_allocated_bytes": [
+        9283513344
+      ],
+      "peak_reserved_bytes": [
+        9669967872
+      ],
+      "svd": [
+        {
+          "fit_count": 6,
+          "cuda_event_seconds": 3.518690734863281,
+          "wall_seconds": 3.5611085277050734,
+          "max_rows": 1242,
+          "hidden_size": 2560,
+          "fit_count_by_t": {
+            "0": 2,
+            "1": 2,
+            "2": 2
+          }
+        }
+      ]
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/resource-arc_challenge-q4-w15-18-k3-pack2-attempt1",
+      "model": "Qwen/Qwen3-4B-Base",
+      "dataset": "arc_challenge",
+      "packing": 2,
+      "gpu": "NVIDIA A40",
+      "total_mib": 49140,
+      "sampled_peak_mib": 19171,
+      "max_concurrent_processes": 2,
+      "shape": {
+        "native_seed_context_tokens": 1059,
+        "context_tokens": 1242,
+        "continuation_tokens": 46,
+        "model_input_tokens": 1287,
+        "inserted_context_tokens": 183,
+        "preserved_suffix_tokens": 8,
+        "construction": "native validation token context plus repeated ordinary text tokens"
+      },
+      "contexts_per_second": 0.4569539711747661,
+      "scores_per_second": 0.4569539711747661,
+      "loading_seconds": [
+        7.96268343552947,
+        7.981225350871682
+      ],
+      "peak_allocated_bytes": [
+        9283513344,
+        9283513344
+      ],
+      "peak_reserved_bytes": [
+        9669967872,
+        9669967872
+      ],
+      "svd": [
+        {
+          "fit_count": 6,
+          "cuda_event_seconds": 7.399624877929687,
+          "wall_seconds": 7.447562135756016,
+          "max_rows": 1242,
+          "hidden_size": 2560,
+          "fit_count_by_t": {
+            "0": 2,
+            "1": 2,
+            "2": 2
+          }
+        },
+        {
+          "fit_count": 6,
+          "cuda_event_seconds": 7.401010864257812,
+          "wall_seconds": 7.466767033562064,
+          "max_rows": 1242,
+          "hidden_size": 2560,
+          "fit_count_by_t": {
+            "0": 2,
+            "1": 2,
+            "2": 2
+          }
+        }
+      ]
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/resource-mmlu-q17-w12-15-k2-pack1-attempt1",
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "dataset": "mmlu",
+      "packing": 1,
+      "gpu": "NVIDIA A40",
+      "total_mib": 49140,
+      "sampled_peak_mib": 6064,
+      "max_concurrent_processes": 1,
+      "shape": {
+        "native_seed_context_tokens": 334,
+        "context_tokens": 3096,
+        "continuation_tokens": 1,
+        "model_input_tokens": 3096,
+        "inserted_context_tokens": 2762,
+        "preserved_suffix_tokens": 8,
+        "construction": "native validation token context plus repeated ordinary text tokens"
+      },
+      "contexts_per_second": 0.2654504907151552,
+      "scores_per_second": 0.5309009814303104,
+      "loading_seconds": [
+        4.240572940558195
+      ],
+      "peak_allocated_bytes": [
+        5333509632
+      ],
+      "peak_reserved_bytes": [
+        5972688896
+      ],
+      "svd": [
+        {
+          "fit_count": 2,
+          "cuda_event_seconds": 3.3731923828125,
+          "wall_seconds": 3.392395794391632,
+          "max_rows": 3096,
+          "hidden_size": 2048,
+          "fit_count_by_t": {
+            "0": 1,
+            "1": 1
+          }
+        }
+      ]
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/resource-mmlu-q17-w12-15-k2-pack2-attempt1",
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "dataset": "mmlu",
+      "packing": 2,
+      "gpu": "NVIDIA A40",
+      "total_mib": 49140,
+      "sampled_peak_mib": 12119,
+      "max_concurrent_processes": 2,
+      "shape": {
+        "native_seed_context_tokens": 334,
+        "context_tokens": 3096,
+        "continuation_tokens": 1,
+        "model_input_tokens": 3096,
+        "inserted_context_tokens": 2762,
+        "preserved_suffix_tokens": 8,
+        "construction": "native validation token context plus repeated ordinary text tokens"
+      },
+      "contexts_per_second": 0.2555517952483596,
+      "scores_per_second": 0.5111035904967192,
+      "loading_seconds": [
+        5.971149910241365,
+        5.929226381704211
+      ],
+      "peak_allocated_bytes": [
+        5333509632,
+        5333509632
+      ],
+      "peak_reserved_bytes": [
+        5972688896,
+        5972688896
+      ],
+      "svd": [
+        {
+          "fit_count": 2,
+          "cuda_event_seconds": 7.133868896484374,
+          "wall_seconds": 7.192083464935422,
+          "max_rows": 3096,
+          "hidden_size": 2048,
+          "fit_count_by_t": {
+            "0": 1,
+            "1": 1
+          }
+        },
+        {
+          "fit_count": 2,
+          "cuda_event_seconds": 7.11852880859375,
+          "wall_seconds": 7.178476305678487,
+          "max_rows": 3096,
+          "hidden_size": 2048,
+          "fit_count_by_t": {
+            "0": 1,
+            "1": 1
+          }
+        }
+      ]
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/resource-mmlu-q4-w15-18-k3-pack1-attempt1",
+      "model": "Qwen/Qwen3-4B-Base",
+      "dataset": "mmlu",
+      "packing": 1,
+      "gpu": "NVIDIA A40",
+      "total_mib": 49140,
+      "sampled_peak_mib": 10756,
+      "max_concurrent_processes": 1,
+      "shape": {
+        "native_seed_context_tokens": 334,
+        "context_tokens": 3096,
+        "continuation_tokens": 1,
+        "model_input_tokens": 3096,
+        "inserted_context_tokens": 2762,
+        "preserved_suffix_tokens": 8,
+        "construction": "native validation token context plus repeated ordinary text tokens"
+      },
+      "contexts_per_second": 0.10892199386457958,
+      "scores_per_second": 0.21784398772915917,
+      "loading_seconds": [
+        7.087421806529164
+      ],
+      "peak_allocated_bytes": [
+        9993531904
+      ],
+      "peak_reserved_bytes": [
+        10892607488
+      ],
+      "svd": [
+        {
+          "fit_count": 3,
+          "cuda_event_seconds": 8.394671142578124,
+          "wall_seconds": 8.432888071984053,
+          "max_rows": 3096,
+          "hidden_size": 2560,
+          "fit_count_by_t": {
+            "0": 1,
+            "1": 1,
+            "2": 1
+          }
+        }
+      ]
+    },
+    {
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/resource-mmlu-q4-w15-18-k3-pack2-attempt1",
+      "model": "Qwen/Qwen3-4B-Base",
+      "dataset": "mmlu",
+      "packing": 2,
+      "gpu": "NVIDIA A40",
+      "total_mib": 49140,
+      "sampled_peak_mib": 21503,
+      "max_concurrent_processes": 2,
+      "shape": {
+        "native_seed_context_tokens": 334,
+        "context_tokens": 3096,
+        "continuation_tokens": 1,
+        "model_input_tokens": 3096,
+        "inserted_context_tokens": 2762,
+        "preserved_suffix_tokens": 8,
+        "construction": "native validation token context plus repeated ordinary text tokens"
+      },
+      "contexts_per_second": 0.10286310445488889,
+      "scores_per_second": 0.20572620890977777,
+      "loading_seconds": [
+        7.683446865528822,
+        7.73365793377161
+      ],
+      "peak_allocated_bytes": [
+        9993531904,
+        9993531904
+      ],
+      "peak_reserved_bytes": [
+        10892607488,
+        10892607488
+      ],
+      "svd": [
+        {
+          "fit_count": 3,
+          "cuda_event_seconds": 17.97420458984375,
+          "wall_seconds": 18.056727223098278,
+          "max_rows": 3096,
+          "hidden_size": 2560,
+          "fit_count_by_t": {
+            "0": 1,
+            "1": 1,
+            "2": 1
+          }
+        },
+        {
+          "fit_count": 3,
+          "cuda_event_seconds": 18.0042080078125,
+          "wall_seconds": 18.085937198251486,
+          "max_rows": 3096,
+          "hidden_size": 2560,
+          "fit_count_by_t": {
+            "0": 1,
+            "1": 1,
+            "2": 1
+          }
+        }
+      ]
+    }
+  ],
+  "budget_projections": {
+    "mmlu": {
+      "online_length_stress_sample_gpu_hours_A40": 805.0718146292008,
+      "baseline_cells_not_in_this_estimate": 0,
+      "source": "selected validation first/extrema, not a population runtime estimator or A800 guarantee"
+    },
+    "arc_challenge": {
+      "online_length_stress_sample_gpu_hours_A40": 44.01978852981082,
+      "baseline_cells_not_in_this_estimate": 5,
+      "source": "selected validation first/extrema, not a population runtime estimator or A800 guarantee"
+    }
+  },
+  "minimum_observed_relative_singular_gap": 0.37349376245082005,
+  "monitor_created": false,
+  "monitor_reason": "All attempts closed while executor active; no cross-turn long-job wait; short attempts were terminal at checks before a stable RUNNING monitor could be established.",
+  "remote_aggregate": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-b-20261002T070214Z/GATE_B_ENGINEERING_AGGREGATE.json",
+  "job_ids": [
+    "12902519",
+    "12902533",
+    "12902544",
+    "12902545",
+    "12902546",
+    "12902547",
+    "12902548",
+    "12902549",
+    "12902550",
+    "12902551",
+    "12902560",
+    "12902561",
+    "12902562",
+    "12902563",
+    "12902566",
+    "12902567",
+    "12902569",
+    "12902570",
+    "12902573",
+    "12902574",
+    "12902576",
+    "12902577",
+    "12902580",
+    "12902581",
+    "12902582",
+    "12902584",
+    "12902588",
+    "12902589",
+    "12902590",
+    "12902592",
+    "12902601",
+    "12902602"
+  ]
+}
