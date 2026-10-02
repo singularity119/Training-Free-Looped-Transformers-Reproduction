@@ -1,3 +1,5 @@
+> 2026-10-02执行更新：科学规模以contract_v2为准（68独立/86展示、三策略、MMLU59新9复用）；A/B已PASS，当前C具体资源和信息授权见control/C handoff。所有非正式任务debug，正式最高合法优先级A800；下文原始预算与旧分区讨论只保留设计历史，不授予权限。
+
 > 调度更新（2026-10-02）：用户已指定非正式全部debug、正式A800最高合法优先级，覆盖下文历史A800预检例外；当前执行以control及gate_b_partition_supplement为准。
 
 > 2026-10-02 current_t修订：当前科学规范为[contract_v2](loopscope_phase10_contract_v2.md)，Gate A执行补充为[current_t amendment](loopscope_phase10_gate_a_current_t_amendment.md)。新增每轮当轮估计并当轮衰减（含t0），每数据集68独立/86展示，MMLU9复用59新，ARC68新；7个迁移lambda，统计families为14/126/45。下文v2总体规划的旧数量和双策略描述保留为修订前背景，冲突以新科学合同为准；Gate顺序与其余操作边界保持。
@@ -81,8 +83,8 @@ MMLU subject内配对 bootstrap10000次、ARC题级配对 bootstrap10000次，se
 |---|---|---|---|
 | A / Lambda-and-ARC-Adapters | 科学口径确认并获执行授权 | 新phase10配置/入口/清单/分析；复用现有runtime，接通lambda与方向策略；ARC适配；冻结数据和统计方案 | 面板41身份、关键评分边界、lambda0/0.5及K2等价的定向证据 |
 | B / End-to-End-Preflight | A PASS | 两模型、K2/K3、两策略、lambda0.1/0.5/0.9的代表性真实preflight；测长prefix显存、并发加载和吞吐；核验旧9配置可复用 | 同源码/环境端到端成功；候选prefix语义；可行资源预算 |
-| C / MMLU-Lambda-Sweep | B PASS及正式预算明确 | 32新配置、9复用；score闭合后一次分析；固定4个迁移lambda* | 41配置完整性、无漏题/串参数、选参规则执行正确 |
-| D / ARC-Transfer-Sweep | C PASS且lambda*已记录 | 同三配置、双策略九档41配置；全量闭合再分析；分开迁移8比较和探索扫描 | ARC样本/口径闭合、lambda*未依据ARC改动、关键配对结果 |
+| C / MMLU-Lambda-Sweep | B PASS及C资源包络 | 59新配置、9复用；正式分片计时后全量闭合，一次分析；固定7个迁移lambda* | 68配置完整性、无漏题/串参数、选参规则正确 |
+| D / ARC-Transfer-Sweep | C PASS且7个lambda*已记录 | 三cell三策略九档68独立配置；全量闭合再分析；分开迁移14比较和探索扫描 | ARC样本/口径闭合、lambda*未依据ARC改动、关键配对结果 |
 | E / Report-and-Phase-Closure | D PASS | 中文报告、完整表和强度曲线；资源成本与局限；结束monitor | 一次跨Gate综合审计，判断结论是否被完整证据支持 |
 
 标题格式 `execute-LoopScope-<topic>-第10阶段-Gate <letter>`。用户最新指定 gpt-6.1-sol/high；每执行线程最多同时3个subagent，创建首条消息与handoff均必须要求实际读取协作skill。未预建未来线程。
