@@ -1,3 +1,5 @@
+> 2026-10-02 current_t修订：当前科学规范为[contract_v2](loopscope_phase10_contract_v2.md)，Gate A执行补充为[current_t amendment](loopscope_phase10_gate_a_current_t_amendment.md)。新增每轮当轮估计并当轮衰减（含t0），每数据集68独立/86展示，MMLU9复用59新，ARC68新；7个迁移lambda，统计families为14/126/45。下文v2总体规划的旧数量和双策略描述保留为修订前背景，冲突以新科学合同为准；Gate顺序与其余操作边界保持。
+
 # LoopScope 第十阶段总体规划
 
 日期：2026-10-02。状态：总体规划 v2，已获逐Gate执行授权；用户最新明确移除 Matched-norm 对照；用户明确要求全面对标第九阶段，在指定三组配置内同时消融 fixed_t0 与 lag1，选择 ARC-Challenge、25-shot 标准答案文本评分（主 acc_norm，附 acc）。本文不授予实现、作业或执行线程权限。当前授权唯一入口为同目录 control。
