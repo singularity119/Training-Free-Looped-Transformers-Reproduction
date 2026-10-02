@@ -124,7 +124,14 @@ def run(args):
         "source_commit": args.commit, "pool": str(args.pool), "manifest": str(args.manifest),
         "max_length_requested": args.max_length, "target_gold_loaded": False, "argv": sys.argv}
     write_json_once(args.run_root / "command_args.json", metadata)
+    import torch
+    torch.cuda.reset_peak_memory_stats()
+    load_started = time.monotonic()
     torch, model, tokenizer, adapter, runtime, env = load_runtime(acquisition_cell, args.max_length)
+    torch.cuda.synchronize()
+    loading = {"elapsed_seconds": time.monotonic() - load_started,
+        "peak_allocated_bytes": int(torch.cuda.max_memory_allocated()),
+        "peak_reserved_bytes": int(torch.cuda.max_memory_reserved())}
     env.update(source_commit=args.commit, dataset=args.dataset, scope=args.scope, target_gold_loaded=False)
     write_json_once(args.run_root / "env.json", env)
     torch.set_grad_enabled(False)
@@ -135,7 +142,6 @@ def run(args):
         from tflt.loopscope.phase9_adapter import score_choices
     else:
         from tflt.loopscope.phase10_adapter import score_choices
-    manager = nullcontext(model) if cell["arm"] == "Native" else looped_model(model, make_loop_config(acquisition_cell, runtime))
     k = int(cell["k"] or 0)
     stats = {"request_count": 0, "model_context_count": 0, "max_input_length": 0,
         "left_truncated_requests": 0, "multitoken_requests": 0,
@@ -143,7 +149,19 @@ def run(args):
         "direction_fit_by_t": {str(t): 0 for t in range(k)},
         "direction_used_fit_by_t": {str(t): 0 for t in range(k)},
         "direction_schedule": direction_schedule(acquisition_cell["direction_policy"], k) if runtime else [],
-        "t0_mutation_count": 0, "unexpected_t0_mutation_count": 0, "nonanswer_mutation_count": 0}
+        "t0_mutation_count": 0, "unexpected_t0_mutation_count": 0, "nonanswer_mutation_count": 0,
+        "svd_fit_count": 0, "svd_seconds": 0.0}
+    def measured_transform(delta, t):
+        result = runtime(delta, t)
+        call = runtime.calls[-1]
+        if call.get("fitted") or call.get("direction_fit_t") is not None:
+            metadata = runtime._fit_metadata
+            fit = metadata if "svd_seconds" in metadata else metadata[t]
+            stats["svd_fit_count"] += 1
+            stats["svd_seconds"] += fit["svd_seconds"]
+        return result
+    transform = measured_transform if runtime is not None else None
+    manager = nullcontext(model) if cell["arm"] == "Native" else looped_model(model, make_loop_config(acquisition_cell, transform))
     started = time.monotonic()
     with manager, (args.run_root / "scores.jsonl").open("x", encoding="utf-8") as output:
         for completed, index in enumerate(indices, 1):
@@ -184,6 +202,7 @@ def run(args):
     summary = {"schema": "loopscope.phase10.score_summary.v1", "status": "SCORES_COMPLETE",
         "metadata": metadata, "count": len(indices), "target_gold_loaded": False,
         "elapsed_seconds": elapsed, "samples_per_second": len(indices) / elapsed if elapsed else None,
+        "model_loading": loading,
         "peak_allocated_bytes": int(torch.cuda.max_memory_allocated()),
         "peak_reserved_bytes": int(torch.cuda.max_memory_reserved()), "oom_count": 0,
         "positions_and_runtime": stats}

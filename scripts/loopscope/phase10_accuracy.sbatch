@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Resource placeholders: Gate B supplies partition/QoS/GRES/memory/time at
+# Resource placeholders: Gate B uses debug; formal Gates supply highest legal
+# A800 partition/QoS. Each Gate supplies GRES/memory/time at
 # submission after current scheduler and measured resource evidence. No submit.
 # Usage: REPO PYTHON DATASET MANIFEST POOL CELL_ID RUN_ROOT COMMIT SCOPE MAX_LENGTH
 # MAX_LENGTH '-' keeps native HFLM model max length. DRY_RUN=1 is CPU-only.

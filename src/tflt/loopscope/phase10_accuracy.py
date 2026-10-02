@@ -44,11 +44,43 @@ def choices_for_row(row, dataset):
     return list("ABCD") if dataset == "mmlu" else list(row["choices"])
 
 
+def validate_mmlu_preflight_pool(pool):
+    revision = "c30699e8356da336a370243923dbaf21066bb9fe"
+    require(pool.get("schema_version") == "loopscope.phase10.mmlu_preflight_inputs.v1" and
+            pool.get("status") == "PREFLIGHT_ONLY_GOLD_FREE" and
+            pool.get("dataset") == {"repo": "cais/mmlu", "revision": revision, "split": "validation"},
+            "unexpected MMLU preflight validation scope")
+    evidence = pool.get("source_evidence", {})
+    counts = evidence.get("subject_counts", {})
+    rows = pool.get("rows", [])
+    require(evidence.get("target_gold_loaded") is False and
+            evidence.get("loaded_splits") == ["validation", "dev"] and
+            len(counts) == 57 and sum(counts.values()) == len(rows) == 1531,
+            "MMLU validation source/count does not close")
+    require([(r["subject"], r["doc_index"]) for r in rows] ==
+            [(s, i) for s in sorted(counts) for i in range(counts[s])],
+            "MMLU validation canonical order differs")
+    fields = {"identity", "subject", "doc_index", "split", "question", "choices", "prompt", "prompt_token_lengths"}
+    models = {"Qwen/Qwen3-4B-Base", "Qwen/Qwen3-1.7B-Base"}
+    for row in rows:
+        require(set(row) == fields and row["split"] == "validation" and
+                row["identity"] == f"cais/mmlu@{revision}:validation:{row['subject']}:{row['doc_index']}" and
+                len(row["choices"]) == 4 and set(row["prompt_token_lengths"]) == models and
+                all(type(n) is int and n > 0 for n in row["prompt_token_lengths"].values()),
+                "MMLU validation identity/safe fields/tokenization differs")
+    require(pool.get("validation_identities") == [row["identity"] for row in rows],
+            "MMLU validation identity list differs")
+
+
 def load_pool(path, dataset, scope):
     if dataset == "mmlu":
         from .phase8_test_pool import validate_test_pool
         pool = json.loads(Path(path).read_text(encoding="utf-8"))
-        validate_test_pool(pool)
+        if pool.get("schema_version") == "loopscope.phase10.mmlu_preflight_inputs.v1":
+            require(scope == "PREFLIGHT_ONLY", "validation inputs cannot enter formal scoring")
+            validate_mmlu_preflight_pool(pool)
+        else:
+            validate_test_pool(pool)
         rows = list(pool["rows"])
     elif dataset == "arc_challenge":
         contents = Path(path).read_text(encoding="utf-8")

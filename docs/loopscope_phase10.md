@@ -31,9 +31,9 @@ ARC CPU 输入 builder 为 `scripts/loopscope/build_phase10_arc_inputs.py`，仅
 
 评分入口 `run_phase10_accuracy.py` 接受面板、cell、输入、scope 与新 output 根。formal 只允许全 test；preflight 可取固定工程样本。每条评分持久化所有原始候选 loglikelihood 和长度，不持久化 target gold；输出以 exclusive-create 写入。完整面板闭合先运行 `verify_phase10_scores.py`，后续 Gate 才可解封 gold 并运行分析。
 
-`phase10_preflight.sbatch` 与 `phase10_accuracy.sbatch` 提供同一 producer 的 launcher；partition/QoS/GPU/time 等资源必须由 B/后续 exact handoff 提供。本阶段采纳 AGENTS 的 A800 最高合法优先级分区例外，preflight 仍 <30min。A 不执行模型或提交 launcher。`--engineering-check zero-strength` 支持无干预等价；`--engineering-check k2-policy` 将canonical fixed_t0-K2用lag1路径运行以验证别名。两者仅限PREFLIGHT_ONLY、独立新根、明确engineering身份，不进入formal闭合。launcher通过`PHASE10_ENGINEERING_CHECK`传递。current_t的K2独立检验，不能通过k2-policy别名复用。
+`phase10_preflight.sbatch` 与 `phase10_accuracy.sbatch` 提供同一 producer 的 launcher；partition/QoS/GPU/time 等资源必须由 B/后续 exact handoff 提供。按2026-10-02用户最新规则，非正式任务统一debug；正式任务使用普通用户合法最高优先级A800。preflight仍<30min，异卡显存/packing不外推。A 不执行模型或提交 launcher。`--engineering-check zero-strength` 支持无干预等价；`--engineering-check k2-policy` 将canonical fixed_t0-K2用lag1路径运行以验证别名。两者仅限PREFLIGHT_ONLY、独立新根、明确engineering身份，不进入formal闭合。launcher通过`PHASE10_ENGINEERING_CHECK`传递。current_t的K2独立检验，不能通过k2-policy别名复用。
 
-远端 source 只有处于 clean `loopscope` 且能 fast-forward 时才能按 handoff 同步；现有其他分支不自动切换。Gate A操作补充仅允许专属staging CPU overlay；数据附件记录实际import来源。
+Gate B从本地已提交loopscope以git archive部署完整源码到新专属staging/source-commit；旧远端分支只读，不切换或同步。修复用新commit新source。Gate A操作补充仅允许专属staging CPU overlay；数据附件记录实际import来源。
 
 ## 分析与迁移
 
