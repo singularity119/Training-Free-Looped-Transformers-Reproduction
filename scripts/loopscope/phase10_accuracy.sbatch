@@ -44,6 +44,12 @@ fi
 if [[ "${PHASE10_PREFLIGHT_INDICES:-}" != "" ]]; then
   extra+=(--preflight-indices "$PHASE10_PREFLIGHT_INDICES")
 fi
+if [[ "${PHASE10_SHARD_INDICES:-}" != "" ]]; then
+  extra+=(--shard-indices "$PHASE10_SHARD_INDICES")
+fi
+if [[ "${PHASE10_SHARD_ID:-}" != "" ]]; then
+  extra+=(--shard-id "$PHASE10_SHARD_ID")
+fi
 if [[ "${PHASE10_ENGINEERING_CHECK:-}" != "" ]]; then
   extra+=(--engineering-check "$PHASE10_ENGINEERING_CHECK")
 fi

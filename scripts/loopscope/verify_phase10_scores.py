@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from tflt.loopscope.phase10_accuracy import (
-    choices_for_row, engineering_cell, finite_scores, load_pool, require, row_identity, select_indices, write_json_once,
+    choices_for_row, engineering_cell, finite_scores, load_pool, require, row_identity, select_indices, validate_indices, write_json_once,
 )
 from tflt.loopscope.phase10_panel import load_config, validate_score_manifest
 from tflt.loopscope.phase10_runtime import applies_at, direction_schedule
@@ -57,8 +57,22 @@ def read_score_root(root, cell, canonical, dataset, scope, pool_path, manifest_p
                 "score attempt dataset differs")
         require(metadata.get("source_commit") and env.get("source_commit") == metadata["source_commit"],
                 "score attempt source revision does not close")
-        require(metadata.get("indices") == expected, "score attempt canonical selection differs")
-        indices = expected
+        selection = metadata.get("execution_selection")
+        if selection is not None:
+            require(selection.get("canonical_pool_count") == len(canonical) and
+                    selection.get("indices") == metadata.get("indices"), "execution selection does not close against full pool")
+            require(selection.get("kind") in ("canonical_shard", "scope_selection"), "unknown execution selection kind")
+            if selection["kind"] == "canonical_shard":
+                require(isinstance(selection.get("shard_id"), str) and selection["shard_id"].strip(), "missing readable shard identity")
+                indices = validate_indices(metadata.get("indices", []), len(canonical))
+                require(set(indices).issubset(expected), "shard selection is outside canonical reference selection")
+            else:
+                require(selection.get("shard_id") is None, "scope selection cannot carry shard identity")
+                require(metadata.get("indices") == expected, "score attempt canonical selection differs")
+                indices = expected
+        else:
+            require(metadata.get("indices") == expected, "score attempt canonical selection differs")
+            indices = expected
         runtime = summary.get("positions_and_runtime", {})
         require(runtime.get("unexpected_t0_mutation_count", 0) == runtime.get("nonanswer_mutation_count") == 0,
                 "invalid intervention mutation recorded")
@@ -98,7 +112,7 @@ def read_score_root(root, cell, canonical, dataset, scope, pool_path, manifest_p
                 "historical identity selection differs from canonical pool")
     require(summary.get("count") == len(indices), "score count differs from selected identities")
     records = {}
-    allowed = {"identity", "scores", "choice_text_lengths", "continuation_token_lengths"}
+    allowed = {"identity", "scores", "choice_text_lengths", "continuation_token_lengths", "canonical_index"}
     if dataset == "mmlu":
         allowed |= {"subject", "doc_index"}
     with (root / "scores.jsonl").open(encoding="utf-8") as handle:
@@ -108,6 +122,12 @@ def read_score_root(root, cell, canonical, dataset, scope, pool_path, manifest_p
             value = json.loads(line)
             require(set(value).issubset(allowed) and {"identity", "scores"}.issubset(value), "score record includes target/outcome fields")
             index, target = indices[count - 1], canonical[indices[count - 1]]
+            if source_id is None and metadata.get("execution_selection") is not None:
+                require(type(value.get("canonical_index")) is int and value["canonical_index"] == index,
+                        "score canonical index differs from shard selection")
+            elif "canonical_index" in value:
+                require(type(value["canonical_index"]) is int and value["canonical_index"] == index,
+                        "score canonical index differs from source selection")
             require(value["identity"] == row_identity(target, dataset), "score canonical identity/order differs")
             if dataset == "mmlu":
                 require(value.get("subject") == target["subject"] and value.get("doc_index") == target["doc_index"], "MMLU subject/index differs")
@@ -123,18 +143,21 @@ def read_score_root(root, cell, canonical, dataset, scope, pool_path, manifest_p
     require(count == len(indices), "score root is incomplete")
     acquisition_id = acquisition["cell_id"] if source_id is None else cell["cell_id"]
     return records, {"root": str(root), "cell_id": acquisition_id, "canonical_cell_id": cell["cell_id"], "count": len(indices),
-        "source_commit": metadata.get("source_commit"), "job_id": env.get("job_id")}
+        "source_commit": metadata.get("source_commit"), "job_id": env.get("job_id"),
+        "execution_selection": metadata.get("execution_selection"), "indices": indices,
+        "runtime_max_length": env.get("max_length"), "max_length_requested": metadata.get("max_length_requested"),
+        "runtime_versions": env.get("versions"), "engineering_check": metadata.get("engineering_check")}
 
 
 def verify(cell_roots, manifest_path, pool_path, scope, config_path=None,
-           full_panel=False, include_reuse=False, preflight_indices=None):
+           full_panel=False, include_reuse=False, preflight_indices=None, full_cell=False):
     config = load_config(config_path)
     manifest = read_json(manifest_path)
     cells = validate_score_manifest(manifest, config=config, pool_path=pool_path, scope=scope)
     dataset = manifest["dataset"]
     canonical = load_pool(pool_path, dataset, scope)
     explicit = read_json(preflight_indices) if preflight_indices else None
-    covered, roots = {}, []
+    covered, roots, sources = {}, [], {}
     for root in cell_roots:
         metadata = read_json(Path(root) / "command_args.json")
         cell_id = metadata.get("cell", {}).get("cell_id")
@@ -145,6 +168,11 @@ def verify(cell_roots, manifest_path, pool_path, scope, config_path=None,
         scores, record = read_score_root(root, cell, canonical, dataset, scope, pool_path, manifest_path, expected)
         existing = covered.setdefault(record["cell_id"], {})
         require(not set(existing).intersection(scores), "overlapping score attempts for one cell")
+        source = (record["source_commit"], record["runtime_max_length"], record["max_length_requested"],
+                  identity_key(record["runtime_versions"]), record["engineering_check"])
+        require(record["cell_id"] not in sources or sources[record["cell_id"]] == source,
+                "cell shards contain different source revisions/runtime settings")
+        sources[record["cell_id"]] = source
         existing.update(scores)
         roots.append(record)
     if include_reuse:
@@ -175,6 +203,11 @@ def verify(cell_roots, manifest_path, pool_path, scope, config_path=None,
                 roots.append(record)
     require(covered, "no score roots supplied")
     expected_cells = set(cells) if include_reuse else {cell["cell_id"] for cell in manifest["score_cells"]}
+    if full_cell:
+        for acquisition_id, scores in covered.items():
+            canonical_id = next(record["canonical_cell_id"] for record in roots if record["cell_id"] == acquisition_id)
+            expected = select_indices(canonical, cells[canonical_id], scope, explicit)
+            require(set(scores) == set(expected), "full cell closure is missing canonical identities")
     if full_panel:
         require(scope == "FORMAL_TEST" and set(covered) == expected_cells, "full closure is missing required configurations")
         require(all(set(scores) == set(range(len(canonical))) for scores in covered.values()), "full closure is missing canonical identities")
@@ -183,13 +216,18 @@ def verify(cell_roots, manifest_path, pool_path, scope, config_path=None,
                 "new score panel contains different source revisions")
     all_complete = full_panel and set(covered) == set(cells)
     closure = {"schema": "loopscope.phase10.score_verification.v1",
-        "status": "FULL_PHASE10_SCORE_PANEL_CLOSED" if all_complete else ("FULL_PHASE10_NEW_SCORE_PANEL_CLOSED" if full_panel else "SCORE_ROOTS_CLOSED"),
+        "status": "FULL_PHASE10_SCORE_PANEL_CLOSED" if all_complete else ("FULL_PHASE10_NEW_SCORE_PANEL_CLOSED" if full_panel else
+            ("FULL_PHASE10_SCORE_CELLS_CLOSED" if full_cell else "SCORE_ROOTS_CLOSED")),
         "target_gold_loaded": False, "dataset": dataset, "dataset_recipe": manifest["dataset_recipe"],
         "scope": scope, "manifest": str(manifest_path), "pool": str(pool_path),
         "cell_count": len(covered), "sample_count": sum(len(values) for values in covered.values()),
         "counts_by_cell": {key: len(value) for key, value in covered.items()}, "roots": roots}
+    closure["canonical_pool_count"] = len(canonical)
+    closure["indices_by_cell"] = {key: sorted(values) for key, values in covered.items()}
+    closure["complete_cells"] = [key for key, values in covered.items() if set(values) == set(range(len(canonical)))]
     aligned = {"schema": "loopscope.phase10.aligned_scores.v1", "dataset": dataset, "target_gold_loaded": False,
         "cells": {cell_id: [scores[index] for index in sorted(scores)] for cell_id, scores in covered.items()},
+        "indices_by_cell": closure["indices_by_cell"],
         "identities": [row_identity(row, dataset) for row in canonical],
         "choice_lengths": [[len(choice) for choice in choices_for_row(row, dataset)] for row in canonical]}
     if dataset == "mmlu":
@@ -206,12 +244,13 @@ def main():
     parser.add_argument("--cell-roots", type=Path, nargs="+", required=True)
     parser.add_argument("--preflight-indices", type=Path)
     parser.add_argument("--full-panel", action="store_true")
+    parser.add_argument("--full-cell", action="store_true", help="require exact canonical union for every supplied cell")
     parser.add_argument("--include-reuse", action="store_true")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--aligned-output", type=Path)
     args = parser.parse_args()
     value, aligned = verify(args.cell_roots, args.manifest, args.pool, args.scope, args.config,
-        args.full_panel, args.include_reuse, args.preflight_indices)
+        args.full_panel, args.include_reuse, args.preflight_indices, args.full_cell)
     if args.aligned_output:
         require(value["status"] == "FULL_PHASE10_SCORE_PANEL_CLOSED", "aligned analysis input requires complete frozen-panel closure")
         write_json_once(args.aligned_output, aligned)

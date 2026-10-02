@@ -118,12 +118,25 @@ def load_pool(path, dataset, scope):
     return rows
 
 
-def select_indices(rows, cell, scope, explicit=None):
+def validate_indices(indices, count):
+    indices = list(indices)
+    require(indices and all(type(index) is int and 0 <= index < count for index in indices) and
+            indices == sorted(set(indices)), "selection indices must be sorted unique canonical indices")
+    return indices
+
+
+def select_indices(rows, cell, scope, explicit=None, shard=None):
     require(scope in SCOPES, "invalid score scope")
+    if shard is not None:
+        indices = validate_indices(shard, len(rows))
+        if scope == "PREFLIGHT_ONLY":
+            domain = select_indices(rows, cell, scope, explicit)
+            require(set(indices).issubset(domain), "preflight shard is outside its reference selection")
+        else:
+            require(explicit is None, "formal shards cannot use preflight indices")
+        return indices
     if explicit is not None:
-        indices = list(explicit)
-        require(indices and indices == sorted(set(indices)) and
-                all(type(index) is int and 0 <= index < len(rows) for index in indices), "selection indices must be sorted unique canonical indices")
+        indices = validate_indices(explicit, len(rows))
         require(scope == "PREFLIGHT_ONLY", "formal producer must score the full frozen test")
         return indices
     if scope == "FORMAL_TEST":
@@ -152,7 +165,7 @@ def finite_scores(values, candidate_count):
     return scores
 
 
-def score_record(row, dataset, values, positions):
+def score_record(row, dataset, values, positions, canonical_index=None):
     choices = choices_for_row(row, dataset)
     require(len(positions) == len(choices), "candidate token metadata is incomplete")
     lengths = [int(item["continuation_length"]) for item in positions]
@@ -163,6 +176,9 @@ def score_record(row, dataset, values, positions):
               "continuation_token_lengths": lengths}
     if dataset == "mmlu":
         result.update(subject=row["subject"], doc_index=row["doc_index"])
+    if canonical_index is not None:
+        require(type(canonical_index) is int and canonical_index >= 0, "invalid canonical score index")
+        result["canonical_index"] = canonical_index
     return result
 
 

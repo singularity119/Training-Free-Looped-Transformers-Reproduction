@@ -29,6 +29,8 @@ def parser():
     result.add_argument("--scope", choices=SCOPES, required=True)
     result.add_argument("--config", type=Path)
     result.add_argument("--preflight-indices", type=Path)
+    result.add_argument("--shard-indices", type=Path, help="sorted unique canonical indices from the complete frozen pool")
+    result.add_argument("--shard-id", help="readable execution shard identity; requires --shard-indices")
     result.add_argument("--max-length", type=int)
     result.add_argument("--engineering-check", choices=("zero-strength", "k2-policy"))
     result.add_argument("--dry-run", action="store_true")
@@ -51,7 +53,9 @@ def load_inputs(args):
         require(all(row_identity(row, args.dataset).startswith("allenai/ai2_arc@" + revision + ":ARC-Challenge:") for row in rows),
                 "ARC pool dataset revision differs from frozen manifest")
     explicit = json.loads(args.preflight_indices.read_text()) if args.preflight_indices else None
-    indices = select_indices(rows, cell, args.scope, explicit)
+    require(bool(args.shard_indices) == bool(args.shard_id), "shard indices and shard ID must be supplied together")
+    shard = json.loads(args.shard_indices.read_text()) if args.shard_indices else None
+    indices = select_indices(rows, cell, args.scope, explicit, shard)
     return manifest, cell, rows, indices
 
 
@@ -113,7 +117,7 @@ def run(args):
     if args.dry_run:
         print(json.dumps({"status": "PHASE10_SCORE_DRY_RUN", "cell": cell, "acquisition_cell": acquisition_cell,
             "engineering_check": args.engineering_check, "scope": args.scope,
-            "count": len(indices), "target_gold_loaded": False}, sort_keys=True))
+            "count": len(indices), "shard_id": args.shard_id, "target_gold_loaded": False}, sort_keys=True))
         return 0
     require(bool(os.environ.get("SLURM_JOB_ID")), "model score acquisition requires an authorized Slurm job")
     require(manifest.get("dataset_recipe", {}).get("revision"), "dataset revision must be accepted before model execution")
@@ -123,6 +127,9 @@ def run(args):
         "dataset_recipe": manifest["dataset_recipe"], "scope": args.scope, "indices": indices,
         "source_commit": args.commit, "pool": str(args.pool), "manifest": str(args.manifest),
         "max_length_requested": args.max_length, "target_gold_loaded": False, "argv": sys.argv}
+    metadata["execution_selection"] = {"kind": "canonical_shard" if args.shard_indices else "scope_selection",
+        "shard_id": args.shard_id, "canonical_pool_count": len(rows), "indices": indices,
+        "indices_path": str(args.shard_indices) if args.shard_indices else None}
     write_json_once(args.run_root / "command_args.json", metadata)
     import torch
     torch.cuda.reset_peak_memory_stats()
@@ -163,12 +170,17 @@ def run(args):
     transform = measured_transform if runtime is not None else None
     manager = nullcontext(model) if cell["arm"] == "Native" else looped_model(model, make_loop_config(acquisition_cell, transform))
     started = time.monotonic()
-    with manager, (args.run_root / "scores.jsonl").open("x", encoding="utf-8") as output:
+    with manager, (args.run_root / "scores.jsonl").open("x", encoding="utf-8") as output, \
+            (args.run_root / "telemetry.jsonl").open("x", encoding="utf-8") as telemetry:
         for completed, index in enumerate(indices, 1):
             row = rows[index]
             choices = choices_for_row(row, args.dataset)
             identity = row_identity(row, args.dataset)
+            torch.cuda.synchronize()
+            row_started = time.monotonic()
             values = score_choices(adapter, row["prompt"], identity) if args.dataset == "mmlu" else score_choices(adapter, row["prompt"], identity, choices)
+            torch.cuda.synchronize()
+            row_elapsed = time.monotonic() - row_started
             positions = adapter.phase9_positions if args.dataset == "mmlu" else adapter.phase10_positions
             position_stats = check_position_metadata(positions, tokenizer)
             if args.dataset == "arc_challenge":
@@ -192,8 +204,13 @@ def run(args):
                 runtime.context_summaries.clear()
                 if hasattr(runtime, "diagnostics"):
                     runtime.diagnostics.clear()
-            output.write(json.dumps(score_record(row, args.dataset, values, positions), ensure_ascii=False, allow_nan=False) + "\n")
+            output.write(json.dumps(score_record(row, args.dataset, values, positions, index), ensure_ascii=False, allow_nan=False) + "\n")
             output.flush()
+            telemetry.write(json.dumps({"canonical_index": index, "identity": identity,
+                "context_length": positions[0]["position"] + 1,
+                "max_input_length": position_stats["max_input_length"],
+                "elapsed_seconds": row_elapsed}, ensure_ascii=False, allow_nan=False) + "\n")
+            telemetry.flush()
             if completed % 32 == 0:
                 print(json.dumps({"completed": completed, "total": len(indices), "cell_id": cell["cell_id"],
                     "elapsed_seconds": time.monotonic() - started}), flush=True)
