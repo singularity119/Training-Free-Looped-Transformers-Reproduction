@@ -1,7 +1,7 @@
 # Phase10 Gate C execution evidence
 
 Executor `01a0fba5-4ee0-7262-83d4-5bde515f3a94`; planning `01a0fae2-12df-74e0-a874-190518ef0501`.
-Current state: shard preflight submitted; no formal test scoring or gold access yet.
+Current state: shard preflight running; no formal test scoring or gold access yet.
 
 ## Source and implementation
 
@@ -55,5 +55,12 @@ Highest legal A800 partition `emergency_gpu` has PriorityTier/JobFactor300, Root
 AllowGroups/Accounts/QoS=ALL; user association includes emergency_gpu; available QoS priorities0.
 First snapshot command used unsupported multi-partition `scontrol show partition emergency_gpu debug`,
 exit1 before sbatch; corrected to separate single-partition reads. No job created by failed command.
+
+One bounded check confirmed job RUNNING89s, 4B K2/K3 shard/unsharded exact equality (max error0);
+1.7B pending completion. This is partial engineering evidence, not full preflight admission.
+After stable RUNNING>60s, created the sole10-minute heartbeat
+`phase10-gate-c-debug-continuation`, confirmed ACTIVE by automation tool. It checks job/short logs
+and input-plan existence only; terminal first disables itself then visibly sends
+AUTOMATION_TERMINAL_RESUME to exact executor, or AUTOMATION_RELAY_REQUIRED to planning.
 
 No Gate terminal event emitted. C remains active; D and ARC formal/outcome remain locked.
