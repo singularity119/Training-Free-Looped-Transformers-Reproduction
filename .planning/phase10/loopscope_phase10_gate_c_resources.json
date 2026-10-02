@@ -1,0 +1,188 @@
+{
+  "schema": "loopscope.phase10.gate_c_resource_evidence.v1",
+  "source_commit": "2644034a9d9c806099693e810c1fada9d73cd750",
+  "debug_job": "12902763",
+  "debug_gpu_seconds": 117,
+  "canary_jobs": [
+    "12903430",
+    "12903431",
+    "12903432",
+    "12903433",
+    "12903434",
+    "12903435",
+    "12903436"
+  ],
+  "canary_gpu_seconds": 427,
+  "consumed_gpu_hours": 0.1511111111111111,
+  "target_gold_loaded": false,
+  "canary_count": 448,
+  "remaining_record_count": 828030,
+  "packing": 1,
+  "max_simultaneous_gpus": 2,
+  "remaining_estimated_gpu_hours": 130.06414930166056,
+  "admission_gpu_hours": 156.2280902731038,
+  "hard_budget_gpu_hours": 240,
+  "cost_method": "larger adjacent canary row-time by model context length plus per-shard measured loading; 1.2 reserve",
+  "cost_uncertainty": "one observation per quantile at lambda0.1; later strengths, system contention and repeated model loading may differ; update with label-free timing within hard budget",
+  "canaries": [
+    {
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.1",
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/q4-w15-18-k2-online-fixed-t0-lambda0.1-formal-canary64-attempt1",
+      "source_commit": "2644034a9d9c806099693e810c1fada9d73cd750",
+      "job_id": "12903430",
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "count": 64,
+      "loading_seconds": 53.88886684551835,
+      "elapsed_seconds": 25.007554579526186,
+      "peak_reserved_bytes": 11324620800,
+      "peak_reserved_gib": 10.546875,
+      "oom_count": 0,
+      "runtime_versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "total_memory_bytes": 85094825984
+    },
+    {
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.1",
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/q4-w15-18-k2-online-current-t-lambda0.1-formal-canary64-attempt1",
+      "source_commit": "2644034a9d9c806099693e810c1fada9d73cd750",
+      "job_id": "12903431",
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "count": 64,
+      "loading_seconds": 53.68176356703043,
+      "elapsed_seconds": 41.00074787531048,
+      "peak_reserved_bytes": 11324620800,
+      "peak_reserved_gib": 10.546875,
+      "oom_count": 0,
+      "runtime_versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "total_memory_bytes": 85094825984
+    },
+    {
+      "cell_id": "q4-w15-18-k3-online-fixed-t0-lambda0.1",
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/q4-w15-18-k3-online-fixed-t0-lambda0.1-formal-canary64-attempt1",
+      "source_commit": "2644034a9d9c806099693e810c1fada9d73cd750",
+      "job_id": "12903432",
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "count": 64,
+      "loading_seconds": 7.801553262397647,
+      "elapsed_seconds": 23.889286338351667,
+      "peak_reserved_bytes": 11324620800,
+      "peak_reserved_gib": 10.546875,
+      "oom_count": 0,
+      "runtime_versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "total_memory_bytes": 85094825984
+    },
+    {
+      "cell_id": "q4-w15-18-k3-online-lag1-lambda0.1",
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/q4-w15-18-k3-online-lag1-lambda0.1-formal-canary64-attempt1",
+      "source_commit": "2644034a9d9c806099693e810c1fada9d73cd750",
+      "job_id": "12903433",
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "count": 64,
+      "loading_seconds": 8.083924075588584,
+      "elapsed_seconds": 40.14118882082403,
+      "peak_reserved_bytes": 11324620800,
+      "peak_reserved_gib": 10.546875,
+      "oom_count": 0,
+      "runtime_versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "total_memory_bytes": 85094825984
+    },
+    {
+      "cell_id": "q4-w15-18-k3-online-current-t-lambda0.1",
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/q4-w15-18-k3-online-current-t-lambda0.1-formal-canary64-attempt1",
+      "source_commit": "2644034a9d9c806099693e810c1fada9d73cd750",
+      "job_id": "12903434",
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "count": 64,
+      "loading_seconds": 8.531314886175096,
+      "elapsed_seconds": 56.64266630448401,
+      "peak_reserved_bytes": 11324620800,
+      "peak_reserved_gib": 10.546875,
+      "oom_count": 0,
+      "runtime_versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "total_memory_bytes": 85094825984
+    },
+    {
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.1",
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/q17-w12-15-k2-online-fixed-t0-lambda0.1-formal-canary64-attempt1",
+      "source_commit": "2644034a9d9c806099693e810c1fada9d73cd750",
+      "job_id": "12903435",
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "count": 64,
+      "loading_seconds": 13.989798762835562,
+      "elapsed_seconds": 20.22444216441363,
+      "peak_reserved_bytes": 6635388928,
+      "peak_reserved_gib": 6.1796875,
+      "oom_count": 0,
+      "runtime_versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "total_memory_bytes": 85094825984
+    },
+    {
+      "cell_id": "q17-w12-15-k2-online-current-t-lambda0.1",
+      "root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/q17-w12-15-k2-online-current-t-lambda0.1-formal-canary64-attempt1",
+      "source_commit": "2644034a9d9c806099693e810c1fada9d73cd750",
+      "job_id": "12903436",
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "count": 64,
+      "loading_seconds": 5.135495945811272,
+      "elapsed_seconds": 33.72009035106748,
+      "peak_reserved_bytes": 6635388928,
+      "peak_reserved_gib": 6.1796875,
+      "oom_count": 0,
+      "runtime_versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "total_memory_bytes": 85094825984
+    }
+  ],
+  "batch1_jobs": [
+    "12903718",
+    "12903719",
+    "12903720",
+    "12903721",
+    "12903722",
+    "12903723",
+    "12903724",
+    "12903725",
+    "12903726",
+    "12903727",
+    "12903728",
+    "12903729",
+    "12903730",
+    "12903731"
+  ],
+  "batch1_gpu_time_upper_bound_hours": 52,
+  "consumed_plus_batch1_upper_bound_gpu_hours": 52.15111111111111,
+  "batch1_record_count": 196140
+}

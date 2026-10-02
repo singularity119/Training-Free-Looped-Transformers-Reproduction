@@ -1,7 +1,7 @@
 # Phase10 Gate C execution evidence
 
 Executor `01a0fba5-4ee0-7262-83d4-5bde515f3a94`; planning `01a0fae2-12df-74e0-a874-190518ef0501`.
-Current state: full shard preflight verified; seven retainable formal canaries submitted, PENDING.
+Current state: seven retainable formal canaries closed; full expansion admitted and batch1 submitted.
 No target gold/outcome access.
 
 ## Source and implementation
@@ -87,4 +87,37 @@ remaining5 Dependency; highest lawful partition/QoS credentials reread before su
 Updated the same automation ID (no duplicate) to `Phase10 Gate C formal continuation`, ACTIVE,
 60-minute cadence. Frozen all7jobs and terminal-failure/all-complete criteria; strengthened actual
 executor continuation or planning relay to avoid the observed self-delivery/idle defect.
-Next executor step is gold-free canary closure and A800 cost admission; no full expansion yet.
+The next section supersedes this historical canary-wait state.
+
+## A800 admission and remaining batch1
+
+On the next terminal heartbeat, executor received its self-resume in the active continuation,
+switched roles, reread policy/control/handoff and independently continued without planning relay.
+All7 canary jobs COMPLETED/0:0, elapsed88/103/35/52/69/38/42s,427A800 GPU-seconds.
+Same-source normal verifier closed7×64=448 candidate-complete records; target_gold_loaded=false.
+Total C allocation544GPU-seconds=0.151111GPUh including debug. No OOM or GPU failure.
+Observed GPU NVIDIA A800-SXM4-80GB; max CUDA reserved10.546875GiB(4B)/6.1796875GiB(1.7B),
+including model loading. Runtime torch2.3.1+cu121/transformers4.51.3/lm_eval0.4.11 verified.
+See compact resource evidence `loopscope_phase10_gate_c_resources.json`.
+
+Original1024-row cost estimate134.672831GPUh, reserve-inclusive161.758508GPUh passed240GPUh.
+Full remaining cell-shard sizing reduces repeated loading:130.064149GPUh remaining,
+consumed+1.2×remaining=156.228090GPUh. Both estimates use the same measured seven strategies and
+population native context lengths, larger adjacent row-time envelope; later strengths/system
+contention remain operational uncertainty, never a reason to alter scientific membership.
+
+Frozen `formal-remaining-work-plan-attempt1.json` has59 canonical remaining/full-cell execution
+units,828030 records, each complementing retained canary where present. One unit per cell avoids
+826 small jobs and repeated model loading; time=ceil(1.5×estimated cell cost)hours, observed2–6h,
+within24h handoff limit. Source/launcher/env/runtime/scoring path unchanged, so prior debug applies.
+
+First bounded batch14 units covers lambda0.1 remaining13978×7 and lambda0.2 full14042×7=196140.
+Jobs `12903718` through `12903731`, emergency_gpu/A8001GPU/sameQoS/8CPU/64G/packing1; two afterok
+serial chains cap2GPUs. Times4/2/4/3/6/3/4/4/2/4/3/6/3/4h, queued/run upper bound52GPUh;
+consumed+all batch time upper bound52.151111GPUh<240. Highest legal credentials reread.
+Exact commands/response/errors in remote job_submissions.jsonl; plan/IDs in
+formal-remaining-batch1-plan.json and formal-remaining-batch1-jobs.json. Confirmed PENDING
+(first2 Priority, remaining Dependency). Same sole full60-minute heartbeat retargeted ACTIVE.
+
+Next executor step: terminal/GPUh and gold-free full-cell closure for completed batch, then next
+bounded workplan batch with updated budget. No full panel closure, gold/outcome or ARC/D yet.
