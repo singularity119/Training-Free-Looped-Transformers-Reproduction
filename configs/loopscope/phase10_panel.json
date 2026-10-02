@@ -1,0 +1,350 @@
+{
+  "schema": "loopscope.phase10.panel_config.v1",
+  "phase": 10,
+  "status": "FROZEN_PHASE10_CONTRACT_V2_PENDING_ARC_DATA_BINDING_ACCEPTANCE",
+  "direction_policies": [
+    "fixed_t0",
+    "lag1",
+    "current_t"
+  ],
+  "strengths": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "strategy": "damped_euler",
+  "iteration_mode": "block",
+  "alpha": 1.0,
+  "beta": 0.0,
+  "decode_mode": "bypass",
+  "batch_size": 1,
+  "rank": 1,
+  "direction_svd": "uncentered, unnormalized, FP32 exact reduced SVD; CUDA gesvd",
+  "models": [
+    {
+      "model": "Qwen/Qwen3-4B-Base",
+      "revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "dtype": "bfloat16",
+      "cache_strategy": "first",
+      "num_hidden_layers": 36,
+      "windows": [
+        {
+          "layers": [
+            13,
+            16
+          ],
+          "boundaries": [
+            13,
+            17
+          ]
+        },
+        {
+          "layers": [
+            15,
+            18
+          ],
+          "boundaries": [
+            15,
+            19
+          ]
+        }
+      ]
+    },
+    {
+      "model": "Qwen/Qwen3-1.7B-Base",
+      "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "dtype": "float16",
+      "cache_strategy": "last",
+      "num_hidden_layers": 28,
+      "windows": [
+        {
+          "layers": [
+            12,
+            15
+          ],
+          "boundaries": [
+            12,
+            16
+          ]
+        }
+      ]
+    }
+  ],
+  "cells": [
+    {
+      "model_index": 0,
+      "window": [
+        15,
+        18
+      ],
+      "boundaries": [
+        15,
+        19
+      ],
+      "k": 2
+    },
+    {
+      "model_index": 0,
+      "window": [
+        15,
+        18
+      ],
+      "boundaries": [
+        15,
+        19
+      ],
+      "k": 3
+    },
+    {
+      "model_index": 1,
+      "window": [
+        12,
+        15
+      ],
+      "boundaries": [
+        12,
+        16
+      ],
+      "k": 2
+    }
+  ],
+  "datasets": {
+    "mmlu": {
+      "repo": "cais/mmlu",
+      "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+      "split": "test",
+      "num_fewshot": 5,
+      "evaluation_count": 14042,
+      "primary_metric": "acc",
+      "prompt_style": "plain",
+      "fewshot_policy": "dev first_n5",
+      "harness_version": "0.4.11"
+    },
+    "arc_challenge": {
+      "repo": "allenai/ai2_arc",
+      "subset": "ARC-Challenge",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "split": "test",
+      "num_fewshot": 25,
+      "evaluation_count": 1172,
+      "primary_metric": "acc_norm",
+      "secondary_metric": "acc",
+      "fewshot_split": "train",
+      "engineering_split": "validation",
+      "fewshot_seed": 20261002,
+      "harness_version": "0.4.11",
+      "data_binding_status": "FACTS_COMPLETE_PENDING_PLANNING_ACCEPTANCE",
+      "max_length": 32768
+    }
+  },
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 20261002,
+    "ci_level": 0.95
+  },
+  "mmlu_reuse_mapping": [
+    {
+      "cell_id": "q17-native",
+      "source_cell_id": "q17-native",
+      "source_phase": 8,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-c-20260922T161600Z-exec/historical_map_v2.json",
+      "source_manifest_schema": "loopscope.phase9.history_map.v1",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/HISTORICAL_29_CELLS_VERIFIED.json",
+      "source_closure_schema": "loopscope.phase9.history_verification.v1",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260905T142900Z-canary-q17-a1/q17-native",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260906T031200Z-a800-canary-q17-a1/q17-native",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260906T032700Z-a800-remaining-q17-a1/q17-native"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    },
+    {
+      "cell_id": "q17-w12-15-k2-loop",
+      "source_cell_id": "q17-w12-15-k2-loop",
+      "source_phase": 8,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-c-20260922T161600Z-exec/historical_map_v2.json",
+      "source_manifest_schema": "loopscope.phase9.history_map.v1",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/HISTORICAL_29_CELLS_VERIFIED.json",
+      "source_closure_schema": "loopscope.phase9.history_verification.v1",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260905T142900Z-canary-q17-a1/q17-w12-15-k2-loop",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260906T031200Z-a800-canary-q17-a1/q17-w12-15-k2-loop",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260906T032700Z-a800-remaining-q17-a1/q17-w12-15-k2-loop"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    },
+    {
+      "cell_id": "q4-native",
+      "source_cell_id": "q4-native",
+      "source_phase": 8,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-c-20260922T161600Z-exec/historical_map_v2.json",
+      "source_manifest_schema": "loopscope.phase9.history_map.v1",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/HISTORICAL_29_CELLS_VERIFIED.json",
+      "source_closure_schema": "loopscope.phase9.history_verification.v1",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260905T142900Z-canary-q4-a1/q4-native",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260906T031200Z-a800-canary-q4-a1/q4-native",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260906T032700Z-a800-remaining-q4-a1/q4-native"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    },
+    {
+      "cell_id": "q4-w15-18-k2-loop",
+      "source_cell_id": "q4-w15-18-k2-loop",
+      "source_phase": 8,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-c-20260922T161600Z-exec/historical_map_v2.json",
+      "source_manifest_schema": "loopscope.phase9.history_map.v1",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/HISTORICAL_29_CELLS_VERIFIED.json",
+      "source_closure_schema": "loopscope.phase9.history_verification.v1",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-g-20260909T163419Z-canary-p0-a1/q4-w15-18-k2-loop",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-g-20260909T164206Z-remaining-p0-a2/q4-w15-18-k2-loop"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    },
+    {
+      "cell_id": "q4-w15-18-k3-loop",
+      "source_cell_id": "q4-w15-18-k3-loop",
+      "source_phase": 8,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-c-20260922T161600Z-exec/historical_map_v2.json",
+      "source_manifest_schema": "loopscope.phase9.history_map.v1",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/HISTORICAL_29_CELLS_VERIFIED.json",
+      "source_closure_schema": "loopscope.phase9.history_verification.v1",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-g-20260909T163419Z-canary-p1-a1/q4-w15-18-k3-loop",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-g-20260909T164206Z-remaining-p1-a2/q4-w15-18-k3-loop"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    },
+    {
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.5",
+      "source_cell_id": "q4-w15-18-k2-online-t0",
+      "source_phase": 9,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-c-20260922T161600Z-exec/formal_panel.json",
+      "source_manifest_schema": "loopscope.phase9.score_manifest.v1",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/NEW_SCORE_PANEL_CLOSED.json",
+      "source_closure_schema": "loopscope.phase9.score_verification.v1",
+      "source_summary_schema": "loopscope.phase9.score_summary.v1",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/canary-q4-a1/q4-w15-18-k2-online-t0",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/remaining-q4-a2-s2/q4-w15-18-k2-online-t0"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    },
+    {
+      "cell_id": "q4-w15-18-k3-online-fixed-t0-lambda0.5",
+      "source_cell_id": "q4-w15-18-k3-online-t0",
+      "source_phase": 9,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-c-20260922T161600Z-exec/formal_panel.json",
+      "source_manifest_schema": "loopscope.phase9.score_manifest.v1",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/NEW_SCORE_PANEL_CLOSED.json",
+      "source_closure_schema": "loopscope.phase9.score_verification.v1",
+      "source_summary_schema": "loopscope.phase9.score_summary.v1",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/canary-q4-a1/q4-w15-18-k3-online-t0",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/remaining-q4-a2-s2/q4-w15-18-k3-online-t0"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    },
+    {
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.5",
+      "source_cell_id": "q17-w12-15-k2-online-t0",
+      "source_phase": 9,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-c-20260922T161600Z-exec/formal_panel.json",
+      "source_manifest_schema": "loopscope.phase9.score_manifest.v1",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/NEW_SCORE_PANEL_CLOSED.json",
+      "source_closure_schema": "loopscope.phase9.score_verification.v1",
+      "source_summary_schema": "loopscope.phase9.score_summary.v1",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/canary-q17-a1/q17-w12-15-k2-online-t0",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-c-20260922T161600Z-exec/remaining-q17-a1/q17-w12-15-k2-online-t0"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    },
+    {
+      "cell_id": "q4-w15-18-k3-online-lag1-lambda0.5",
+      "source_cell_id": "q4-w15-18-k3-lag1-online",
+      "source_phase": 9,
+      "source_manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase9-gate-e-20260923T031256Z-exec/formal_manifest.json",
+      "source_manifest_schema": "loopscope.phase9.gate_e.score_manifest.v2",
+      "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-e-20260923T031256Z-exec/FULL_NEW_12_SCORE_PANEL_CLOSED.json",
+      "source_closure_schema": "loopscope.phase9.gate_e.score_verification.v2",
+      "source_summary_schema": "loopscope.phase9.gate_e.score_summary.v2",
+      "source_score_file": "scores.jsonl",
+      "source_score_fields": [
+        "identity",
+        "subject",
+        "doc_index",
+        "scores"
+      ],
+      "roots": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-e-20260923T031256Z-exec/canary-emergencygpu-after-12839277/q4-w15-18-k3-lag1-online",
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase9-gate-e-20260923T031256Z-exec/remaining-emergencygpu-after-canary-12839298/q4-w15-18-k3-lag1-online"
+      ],
+      "verification_status": "EXPECTED_REUSE_NOT_RAW_SCORE_VERIFIED_IN_GATE_A"
+    }
+  ],
+  "scientific_contract": ".planning/phase10/loopscope_phase10_contract_v2.md"
+}
