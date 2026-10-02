@@ -1,3 +1,5 @@
+> 2026-10-02：第十阶段总体规划已建立：[Phase 10 plan](phase10/loopscope_phase10_plan.md) / [control](phase10/loopscope_phase10_control.md)。范围为指定三组配置、fixed_t0/lag1九档强度消融、MMLU与ARC-Challenge 25-shot；已获逐Gate推进授权，当前Gate身份及权限以Phase10 control为准。下文为历史导航与归档状态。
+
 > 2026-09-24：Phase 9 A–D 主线已完成 47-cell panel，追加 Gate E 已完成 12 个逐轮方向 cell；当前无活动执行任务或新计算授权。逐题 Online-t0 与可切换的 fixed_t0/lag1 方向策略均以增量模块保留，第八阶段实现未覆盖。以 [Phase 9 control](phase9/loopscope_phase9_control.md) 和 [Gate E 验收](phase9/loopscope_phase9_gate_e_acceptance.md) 为准；中文报告位于 Git 仓库外层 `资产/报告/phase9/`。
 
 > 最新结果（2026-09-10）：G的4B15–18窗口9配置已PASS，累计47唯一配置；各谱配对无可靠增益。完整表见docs/loopscope_phase8.md及外层资产/报告/phase8/LoopScope_Phase8_增量实验总结.md。当前无新计算授权、所有timer关闭；F仅终态交付收尾。
