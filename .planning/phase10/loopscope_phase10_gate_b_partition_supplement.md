@@ -1,0 +1,11 @@
+# Gate B 分区补充：非正式统一debug
+
+2026-10-02用户明确：非正式任务全部HPC debug分区，正式任务A800最高合法优先级分区。此补充取代B handoff先前A800预检例外及相关monitor排队例外。
+
+B全部为非正式，仅debug，单job最多29分钟、总24GPUh/最多2GPU不变；debug可用GPU需满足冻结dtype/模型/数据，不能改科学配方。若debug卡型不同于正式A800，分开记录功能有效性与资源代表性，不从异卡推定A800 packing。正式A800资源形状只能在后续已授权正式canary验证，B不得运行正式任务。
+
+提交前核对现有B jobs。若未提交，直接新规则；对于已验证仍PENDING且不在debug的本Gate job，允许保留记录后取消，再新attempt提交debug；若已经RUNNING不得盲取消，报告job状态由planning处理，不继续提交非debug。非本Gate作业不操作。
+
+debug短任务monitor按协作skill，在真实job稳定RUNNING约60秒且无启动错误后建立单一10min heartbeat；更早完成/失败无需新建。既有monitor若存在保持唯一并按新对象调整，attempt终态停monitor并唤醒exact executor。无变化静默。
+
+执行者将runbook/launcher中的旧分区说明同步到新规则，变更只影响调度不改变科学；当前身份及所有其他权限保持。

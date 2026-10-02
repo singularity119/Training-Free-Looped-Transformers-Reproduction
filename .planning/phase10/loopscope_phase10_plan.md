@@ -1,3 +1,5 @@
+> 调度更新（2026-10-02）：用户已指定非正式全部debug、正式A800最高合法优先级，覆盖下文历史A800预检例外；当前执行以control及gate_b_partition_supplement为准。
+
 > 2026-10-02 current_t修订：当前科学规范为[contract_v2](loopscope_phase10_contract_v2.md)，Gate A执行补充为[current_t amendment](loopscope_phase10_gate_a_current_t_amendment.md)。新增每轮当轮估计并当轮衰减（含t0），每数据集68独立/86展示，MMLU9复用59新，ARC68新；7个迁移lambda，统计families为14/126/45。下文v2总体规划的旧数量和双策略描述保留为修订前背景，冲突以新科学合同为准；Gate顺序与其余操作边界保持。
 
 # LoopScope 第十阶段总体规划
