@@ -1,7 +1,7 @@
 # Phase10 Gate C execution evidence
 
 Executor `01a0fba5-4ee0-7262-83d4-5bde515f3a94`; planning `01a0fae2-12df-74e0-a874-190518ef0501`.
-Current state: seven retainable formal canaries closed; full expansion admitted and batch1 submitted.
+Current state: batch1 full-cell closure complete; budget-admitted batch2 submitted and monitored.
 No target gold/outcome access.
 
 ## Source and implementation
@@ -121,3 +121,39 @@ formal-remaining-batch1-plan.json and formal-remaining-batch1-jobs.json. Confirm
 
 Next executor step: terminal/GPUh and gold-free full-cell closure for completed batch, then next
 bounded workplan batch with updated budget. No full panel closure, gold/outcome or ARC/D yet.
+
+## Batch1 closure and remaining batch2
+
+2026-10-03 terminal heartbeat confirmed all14 batch1 jobs COMPLETED/0:0. Automation tool confirmed
+the sole monitor PAUSED; send_message_to_thread confirmed delivery to the exact executor. The
+self-resume event actually arrived in the active turn, and executor continued independently.
+Policy/control/handoff and Git provenance reread: loopscope clean, HEAD1ba3134, protected ancestor
+present. Source2644034 and preflight unchanged. A local read helper initially assumed job_id on
+old canary journal entries; it exited before verification or mutation, then correctly used their
+retained sbatch stdout IDs. No failed GPU attempt or repeated submission resulted.
+
+Independent sacct closed all22 C jobs (debug1, canary7, batch1 fourteen). Batch1 allocation99450s
+=27.625GPUh; total99994s=27.776111GPUh. Same immutable verifier --full-cell closed14 cells,
+196588 records, exact14042 identities/cell, source/runtime agreement and target_gold_loaded=false.
+Seven canaries448 records are included exactly once. Remote decisive closure:
+formal-remaining-batch1-closure-attempt1.json, status FULL_PHASE10_SCORE_CELLS_CLOSED.
+
+Label-free allocation costs by model/K/policy were compared with the frozen canary-length envelope;
+the larger estimate gives remaining45 units99.665563GPUh, consumed+1.2remaining147.374786GPUh.
+Later strengths/contention remain estimate uncertainty. Allocation/next-admission evidence is
+batch1-allocation-and-next-admission-attempt1.json. No score outcomes or target labels accessed.
+
+Batch2 is the next14 unsubmitted frozen units: lambda0.3/0.4, seven groups each,196588 records.
+Jobs12907693–12907706, emergency_gpu/QoS, A8001GPU/8CPU/64G, packing1, same immutable launcher
+and runtime. Current partition/association/QoS snapshots confirm emergency_gpu is the highest
+eligible normal-user A800 tier300. Two afterok chains enforce max2 GPUs. Time limits remain
+4/2/4/3/6/3/4/4/2/4/3/6/3/4h, total52GPUh; consumed+queued upper bound79.776111GPUh<240.
+Fresh roots, canonical full indices and no existing submissions checked before sbatch. Plan/IDs:
+formal-remaining-batch2-plan.json, formal-remaining-batch2-jobs.json; exact commands/responses
+appended to job_submissions.jsonl and batch2-submission-00 through13.json. Confirmed first2
+PENDING/Priority and remaining12 Dependency. No cancellation, retry or scientific change.
+
+Same unique60-minute monitor retargeted to batch2; automation_update confirmed ACTIVE. Its prompt
+requires actual executor receipt/continuation or planning relay, and retains gold/full-panel
+barriers. Next step is batch2 terminal and full-cell closure, then the next bounded workplan batch.
+C remains active. No Gate terminal event, full-panel seal, MMLU analysis, transfer selection or ARC/D.

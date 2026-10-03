@@ -13,7 +13,7 @@
     "12903436"
   ],
   "canary_gpu_seconds": 427,
-  "consumed_gpu_hours": 0.1511111111111111,
+  "consumed_gpu_hours": 27.77611111111111,
   "target_gold_loaded": false,
   "canary_count": 448,
   "remaining_record_count": 828030,
@@ -184,5 +184,33 @@
   ],
   "batch1_gpu_time_upper_bound_hours": 52,
   "consumed_plus_batch1_upper_bound_gpu_hours": 52.15111111111111,
-  "batch1_record_count": 196140
+  "batch1_record_count": 196140,
+  "batch1_gpu_seconds": 99450,
+  "batch1_closure_status": "FULL_PHASE10_SCORE_CELLS_CLOSED",
+  "batch1_full_cell_count": 14,
+  "batch1_closed_record_count": 196588,
+  "batch2_jobs": [
+    "12907693",
+    "12907694",
+    "12907695",
+    "12907696",
+    "12907697",
+    "12907698",
+    "12907699",
+    "12907700",
+    "12907701",
+    "12907702",
+    "12907703",
+    "12907704",
+    "12907705",
+    "12907706"
+  ],
+  "batch2_record_count": 196588,
+  "batch2_gpu_time_upper_bound_hours": 52,
+  "consumed_plus_batch2_upper_bound_gpu_hours": 79.7761111111111,
+  "current_remaining_estimated_gpu_hours": 99.66556275429387,
+  "current_reserve_inclusive_gpu_hours": 147.37478641626376,
+  "monitor_id": "phase10-gate-c-debug-continuation",
+  "monitor_status": "ACTIVE",
+  "monitor_interval_minutes": 60
 }
