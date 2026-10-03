@@ -195,3 +195,24 @@ Same unique full60-minute monitor confirmed ACTIVE for batch3, with current VPN 
 and single-SSH boundary documented. Next action: batch3 terminal/full-cell closure, then next
 bounded frozen units within budget. C remains active; full-panel seal, gold/analysis, transfer
 selection and ARC/D remain unavailable.
+
+## Batch3 monitor transport recovery
+
+2026-10-04 first batch3 heartbeat failed before remote access: default macOS hostname lookup
+returned Could not resolve hostname (exit255), despite VPN route/source remaining present. It made
+only one SSH attempt, paused the same monitor with tool confirmation, and visibly delivered the
+connection-blocker packet. Executor actually received the event and resumed; no job failure inferred.
+
+Live control still binds C to this executor; working tree clean. Bound-source internal DNS query
+dig -b10.21.0.3 @10.90.63.2 confirmed hpc2login.hpc.hkust-gz.edu.cn=10.120.18.63. Command-only SSH
+HostName=10.120.18.63/BindAddress=10.21.0.3 with HostKeyAlias equal to the original hostname and all
+strict/BatchMode/forwarding-disabled flags succeeded on mgmt-6. Existing host trust remained enforced;
+no /etc/hosts, SSH configuration, VPN or Clash settings changed. This diagnoses an observed local
+lookup/path failure without assuming a cluster failure.
+
+Independent batch3 check:12912814 RUNNING3599s/progress9760 of14042;12912815 PENDING/Priority,
+remaining12 PENDING/Dependency; no abnormal terminal or impossible dependency. No raw scores/gold
+read, no resubmission/cancellation/remote mutation. Unique60-minute monitor confirmed ACTIVE again
+for the same exact14 jobs. Its prompt now uses current VPN source and a bounded internal DNS query
+before the single strict SSH, retaining the original hostname's host-key binding. Experiment source,
+resource budget and next-cell workplan unchanged; next actionable event remains terminal/blocker.
