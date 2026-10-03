@@ -1,7 +1,7 @@
 # Phase10 Gate C execution evidence
 
 Executor `01a0fba5-4ee0-7262-83d4-5bde515f3a94`; planning `01a0fae2-12df-74e0-a874-190518ef0501`.
-Current state: batch1 full-cell closure complete; budget-admitted batch2 submitted and monitored.
+Current state: batch1/2 full-cell closures complete; budget-admitted batch3 submitted and monitored.
 No target gold/outcome access.
 
 ## Source and implementation
@@ -157,3 +157,41 @@ Same unique60-minute monitor retargeted to batch2; automation_update confirmed A
 requires actual executor receipt/continuation or planning relay, and retains gold/full-panel
 barriers. Next step is batch2 terminal and full-cell closure, then the next bounded workplan batch.
 C remains active. No Gate terminal event, full-panel seal, MMLU analysis, transfer selection or ARC/D.
+
+## Batch2 closure and remaining batch3
+
+2026-10-04 batch2 terminal heartbeat found all14 jobs COMPLETED/0:0 and all summaries present.
+Monitor PAUSED and exact-executor delivery were confirmed by tools; the self-resume event arrived
+and executor actually continued. Live C authority, clean loopscope HEADba5321a and protected
+ancestor independently confirmed. Source/launcher/runtime unchanged, original preflight applies.
+
+Default SSH source selection then failed with Can't assign requested address before remote work.
+Read-only local route/ifconfig showed current VPN utun7/source10.21.0.3. A strict, forwarding-disabled
+probe explicitly bound this address and succeeded; executor continued using that command-only
+BindAddress. No SSH configuration, VPN/Clash service or network settings changed. Failed transport
+attempts neither ran verification nor created GPU jobs, and do not indicate a Slurm failure.
+
+Independent sacct closed all36 C jobs: debug1/canary7/batch1 fourteen/batch2 fourteen. Batch2
+allocation101736s=28.26GPUh; total201730s=56.036111GPUh. Same-source --full-cell verifier closed
+batch2 fourteen×14042=196588 records, exact identities and recipe/runtime, target_gold_loaded=false.
+Closure formal-remaining-batch2-closure-attempt1.json is FULL_PHASE10_SCORE_CELLS_CLOSED. Together
+batch1/2 cover28 new cells/393176 records, with canary448 included exactly once.
+
+Using the larger frozen canary envelope or batch1/2 group maximum allocation seconds/record gives
+31 unsubmitted units69.200229GPUh; consumed+1.2remaining139.076386GPUh<240. New immutable account:
+batch2-allocation-and-next-admission-attempt1.json. No gold, accuracy or old analysis read.
+
+Batch3 next14 frozen units: lambda0.5 three current_t cells (historical fixed_t0/lag1 reused),
+lambda0.6 seven groups, lambda0.7 firstfour groups. Each14042,196588 records. Jobs12912814–12912827,
+highest legal emergency_gpu tier300/QoS, A8001GPU/8CPU/64G, same source2644034, packing1/max2GPU.
+Time limits4/4/6/4/2/4/3/6/3/4/4/2/4/3h total53GPUh; consumed+queued upper bound109.036111GPUh.
+Current legal partition/association/QoS snapshots preserved; exact canonical full indices, fresh
+roots and absence of active earlier jobs checked before submission. Exact commands and replies in
+job_submissions.jsonl and batch3-submission-00 through13.json, plan/IDs in
+formal-remaining-batch3-plan.json/formal-remaining-batch3-jobs.json. All confirmed PENDING:
+first2 Priority, remaining12 Dependency, with two afterok chains.
+
+Same unique full60-minute monitor confirmed ACTIVE for batch3, with current VPN source discovery
+and single-SSH boundary documented. Next action: batch3 terminal/full-cell closure, then next
+bounded frozen units within budget. C remains active; full-panel seal, gold/analysis, transfer
+selection and ARC/D remain unavailable.
