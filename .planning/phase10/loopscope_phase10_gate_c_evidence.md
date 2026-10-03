@@ -216,3 +216,23 @@ read, no resubmission/cancellation/remote mutation. Unique60-minute monitor conf
 for the same exact14 jobs. Its prompt now uses current VPN source and a bounded internal DNS query
 before the single strict SSH, retaining the original hostname's host-key binding. Experiment source,
 resource budget and next-cell workplan unchanged; next actionable event remains terminal/blocker.
+
+## Batch3 monitor Slurm command environment recovery
+
+Heartbeat 2026-10-03T22:51:30.551Z used one strict SSH after live VPN route/source and bound internal
+DNS verification. Connection succeeded, but the monitor's non-login Python subprocess invoked bare
+sacct, absent from that PATH, and exited1 before obtaining job states or summary existence. This
+was a monitor command failure, not a job failure. The unique monitor was confirmed PAUSED, the
+AUTOMATION_TERMINAL_RESUME self-message tool confirmed delivery, and the executor actually received
+the event and resumed after reading live C control/handoff.
+
+Independent executor check with /opt/slurm/bin/sacct and /opt/slurm/bin/squeue exited0:12912814
+COMPLETED0:0,7279s,A8001GPU/8CPU/64G;12912815 and12912816 PENDING/Priority, remaining11
+PENDING/Dependency. The completed cell summary exists; the other13 summaries are absent as expected.
+No abnormal terminal or impossible dependency, and no raw scores/gold/accuracy read. No remote
+writes, duplicate submissions, cancellations or experiment changes occurred.
+
+The same full60-minute monitor was confirmed ACTIVE again, bound to the exact14 batch3 jobs. Its
+prompt requires the verified absolute Slurm binary paths, retaining the single-SSH bound, strict
+hostname trust, current VPN source and bounded internal DNS procedure. Full-cell batch3 closure
+awaits all14 jobs; no Gate verdict or outcome access is authorized by this operational recovery.
