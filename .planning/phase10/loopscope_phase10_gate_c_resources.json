@@ -211,7 +211,7 @@
   "current_remaining_estimated_gpu_hours": 37.97889275373089,
   "current_reserve_inclusive_gpu_hours": 130.02661574892153,
   "monitor_id": "phase10-gate-c-debug-continuation",
-  "monitor_status": "ACTIVE",
+  "monitor_status": "PAUSED",
   "monitor_interval_minutes": 60,
   "batch2_gpu_seconds": 101736,
   "batch2_closure_status": "FULL_PHASE10_SCORE_CELLS_CLOSED",
@@ -264,5 +264,21 @@
   ],
   "batch4_record_count": 196588,
   "batch4_gpu_time_upper_bound_hours": 52,
-  "consumed_plus_batch4_upper_bound_gpu_hours": 136.45194444444445
+  "consumed_plus_batch4_upper_bound_gpu_hours": 136.45194444444445,
+  "latest_operational_event": {
+    "observed_at": "2026-10-04T19:01:02.535Z",
+    "type": "VPN_CONNECTION_BLOCKER",
+    "monitor_status": "PAUSED",
+    "ssh_exit": 255,
+    "ssh_error": "Connection closed by 10.120.18.63 port 22",
+    "job_state_current": "UNVERIFIED",
+    "summary_existence_current": "UNVERIFIED",
+    "input_plan_existence_current": "UNVERIFIED",
+    "executor_self_event_received": true,
+    "executor_delivery_confirmed": true,
+    "planning_relay_delivery_confirmed": true,
+    "remote_retry_count": 0,
+    "settings_changed": false,
+    "target_gold_loaded": false
+  }
 }

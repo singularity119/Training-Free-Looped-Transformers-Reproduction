@@ -272,3 +272,56 @@ Same unique full60-minute monitor confirmed ACTIVE and bound exact batch4 IDs, r
 host trust/current VPN source/bounded DNS/absolute Slurm commands/single-SSH boundary. Next action
 is batch4 terminal/closure and frozen remaining three K3 lambda0.9 units. No gold, partial accuracy,
 historical analysis, full-panel seal, transfer selection, ARC/outcome or Gate D execution occurred.
+
+## Batch4 VPN connection blocker and confirmed continuation route
+
+2026-10-04T19:01Z heartbeat attempted exactly one bounded readonly strict SSH to the previously
+verified numeric HPC endpoint with the original HostKeyAlias. Exit255: Connection closed by
+10.120.18.63 port22. Current Batch4 job states/exits/elapsed/allocation, summaries and input-plan
+existence could not be read; no job failure or Gate verdict follows from this transport failure.
+Local utun7 is absent and no10.21 IPv4 VPN source exists; HPC route uses Clash utun4/198.18.0.1.
+
+The unique monitor was tool-confirmed PAUSED, then the exact executor self-message returned
+isError=false and threadId01a0fba5-4ee0-7262-83d4-5bde515f3a94. The self-event actually arrived;
+executor ended monitor role and independently reread live control/C handoff. C remains authorized
+and D/E locked. EasyConnect L3VPN logs at2026-10-05 02:34:11–19 Asia/Shanghai show reconnect failure;
+ECAgent at02:34:32 shows logout. Hostname-preserving HTTPS HEAD to remote.hkust-gz.edu.cn returned
+200 at19:05:31 UTC; the reachable public entry does not establish an authenticated school tunnel.
+
+AUTOMATION_RELAY_REQUIRED with the complete recovery packet was delivered to planning; tool returned
+isError=false and threadId01a0fae2-12df-74e0-a874-190518ef0501. This is an operational continuation
+blocker, not failed self-delivery. Authenticated VPN restoration is required before independent
+Batch4 terminal/allocation/identity closure or next-batch admission. No settings, hosts, SSH config,
+VPN/Clash state, remote files/jobs, scientific parameters or outcome barriers were changed. No
+remote retries, duplicate work, cancellations, gold/accuracy access or Gate terminal audit occurred.
+
+Paste-ready recovery packet:
+
+```text
+AUTOMATION_RELAY_REQUIRED
+
+Phase10 Gate C operational continuation is blocked by missing EasyConnect authenticated tunnel. This is NOT a delivery failure: exact executor actually received its self-event and performed independent live-control/C-handoff and local connectivity diagnosis.
+Planning recipient:01a0fae2-12df-74e0-a874-190518ef0501 local
+Intended executor:01a0fba5-4ee0-7262-83d4-5bde515f3a94 local
+Unique monitor:phase10-gate-c-debug-continuation, tool-confirmed PAUSED.
+Executor branch loopscope HEAD366cd7244067778c5bd2aac7f8ac44f666d9fa77 clean; live control still Gate C AUTHORIZED / exact executor / D and E LOCKED.
+Independent diagnosis: no10.21 IPv4 VPN tunnel, utun7 absent; HPC route via Clash utun4/198.18.0.1. EasyConnect L3VPN logs2026-10-05 02:34:11–19 Asia/Shanghai show server reply failure and RECONNECT fail; ECAgent02:34:32 shows Logout. Public hostname remote.hkust-gz.edu.cn resolves218.107.35.197; strict hostname HTTPS HEAD returned200 at19:05:31 UTC, so VPN entry currently reachable but school tunnel absent. EasyConnect agents and Clash remain running. No settings/hosts/SSH/network mutations, credential reads, remote retry, cancellations or submissions.
+Need smallest operational recovery: authenticated EasyConnect tunnel restoration through planning/user-authorized route, then same executor continues independent read access and existing C handoff. Do not create executor/monitor duplicate or rerun submitted work. No job-failure or Gate verdict supported.
+Current Batch4 states/exits/GPUh/summaries/input plan unverified due SSH exit255. Prior snapshot is historical only. Keep outcomes sealed.
+Full paste-ready continuation packet follows:
+AUTOMATION_TERMINAL_RESUME
+
+Project/phase: LoopScope Phase10
+Gate: C; connection blocker event, not job or Gate failure
+Executor: 01a0fba5-4ee0-7262-83d4-5bde515f3a94 local
+Planning: 01a0fae2-12df-74e0-a874-190518ef0501 local
+Automation: phase10-gate-c-debug-continuation / Phase10 Gate C formal continuation
+Monitor lifecycle: automation_update returned {"automationId":"phase10-gate-c-debug-continuation","mode":"update","status":"PAUSED"}, isError=false.
+Bound jobs:12917751,12917752,12917753,12917754,12917755,12917756,12917757,12917758,12917759,12917760,12917761,12917762,12917763,12917764.
+Run root: /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z
+Immutable source: staging/phase10-gate-c-20261002T081604Z/source-2644034a9d9c806099693e810c1fada9d73cd750
+Observed this check: local route to10.120.18.63 uses Clash utun4 gateway198.18.0.1; utun7 absent; interface inventory has no10.21 IPv4 VPN source. Exactly one bounded readonly strict SSH attempted using prior verified10.120.18.63 with original HostKeyAlias=hpc2login.hpc.hkust-gz.edu.cn; StrictHostKeyChecking=yes BatchMode=yes ConnectTimeout=10 ClearAllForwardings=yes UpdateHostKeys=no. Returned exit255 "Connection closed by10.120.18.63 port22". No remote results; current states/exits/elapsed/allocation, summary and input-plan existence UNVERIFIED. No retries or remote writes or outcome reads.
+Prior snapshot (not current):18:00 heartbeat12917751 COMPLETED0:0/11882s,12917752 COMPLETED0:0/5208s,12917754 COMPLETED0:0/7588s;12917753 RUNNING2607s;12917756 RUNNING1547s;other9normalDependency. Source preflight previouslypassed117s; canary448 retained; batches1–3 label-free closed42cells589764records. Prior consumed304027s=84.451944GPUh; batch4 total limits52, upper136.451944GPUh.
+Next authorized action: actually receive this event, end monitor role, read live control/C handoff, independently diagnose the connection within existing C engineering authority without changing SSH/hosts/VPN/Clash settings or accepting hostkeys. Restore verified read access or report narrow operational blocker to planning. Once connected independently verify immutable source, all job terminal/allocation/GPUh, batch4 identities and same-source --full-cell closure; preserve successes/canary/reuse. Existing workplan then only remaining lambda.9 threeK3; refresh consumed+queued/running time upper<=240 and remaining estimate before authorized batch. Max2GPU/packing1/highestlegalA800. Before68×14042=954856records and all jobs closed, no gold/partialaccuracy/historyanalysis. After fullclosure only once MMLU analysis and7transferlambda fixed;ARC/outcome/D locked.
+Do not treat delivery receipt as actual executor continuation. If actual self-event unavailable/unconfirmed, relay AUTOMATION_RELAY_REQUIRED to planning with this full packet. Existing C handoff only; monitor makes no Gate verdict.
+```
