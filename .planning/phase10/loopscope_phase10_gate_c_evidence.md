@@ -236,3 +236,39 @@ The same full60-minute monitor was confirmed ACTIVE again, bound to the exact14 
 prompt requires the verified absolute Slurm binary paths, retaining the single-SSH bound, strict
 hostname trust, current VPN source and bounded internal DNS procedure. Full-cell batch3 closure
 awaits all14 jobs; no Gate verdict or outcome access is authorized by this operational recovery.
+
+## Batch3 closure and batch4 admission
+
+2026-10-04T13:54Z monitor observed all14 batch3 jobs COMPLETED0:0 and all summaries present. Same
+monitor PAUSED confirmation and self-message delivery confirmation were retained; executor actually
+received the event and continued after live control/handoff verification. Independent accounting
+closed all50 C jobs (debug1/canary7/remaining42), each one GPU, no failed or active prior jobs.
+Batch3 allocation102297s=28.415833GPUh; cumulative304027s=84.451944GPUh.
+
+Twenty-three relevant Phase10 source/config/script file hashes match immutable2644034. Existing
+debug preflight retains its exact three-group PASS. Same-source --full-cell verifier exited0 and
+wrote formal-remaining-batch3-closure-attempt1.json: FULL_PHASE10_SCORE_CELLS_CLOSED,14 cells,
+196588 records, exact full14042 identities each, target_gold_loaded=false. Prior closures preserved;
+42 new cells/589764 records now closed, including original canary448 once. Historical reuse not run.
+
+Frozen workplan has17 unsubmitted units. Conservative estimate uses larger frozen canary-length
+envelope or maximum batch1/2/3 group allocation seconds/record:37.978893GPUh. Consumed plus1.2
+remaining130.026616GPUh<240. New account batch3-allocation-and-next-admission-attempt1.json retains
+all50 jobs and per-unit estimates. Next14 time limits sum52GPUh, total upper136.451944GPUh<240.
+
+Live partition/association/QoS/groups snapshots in batch4-*-snapshot.txt confirm emergency_gpu is
+highest legal A800 tier300/jobfactor300, RootOnlyNO, ALLgroups/accounts/QoS; ordinary user association
+allows emergency_gpu QoS. Before submission all prior C jobs terminal, next roots absent, no prior
+submission of next cells, and exact full canonical indices checked. No resource/scientific expansion.
+
+Batch4 next14 frozen units: lambda0.7 three K3 policies, lambda0.8 seven groups, lambda0.9 firstfour
+groups. Each14042,196588 records. Jobs12917751–12917764, same immutable2644034/source/runtime,
+emergency_gpu/A8001GPU/8CPU/64G,packing1/max2GPU in alternating afterok chains. Time limits
+6/3/4/4/2/4/3/6/3/4/4/2/4/3h. Plans/IDs formal-remaining-batch4-plan.json and
+formal-remaining-batch4-jobs.json; exact submission intents/replies batch4-submission-00 through13
+and job_submissions.jsonl preserve delivery. All confirmed PENDING: firsttwo Priority, rest Dependency.
+
+Same unique full60-minute monitor confirmed ACTIVE and bound exact batch4 IDs, retaining strict
+host trust/current VPN source/bounded DNS/absolute Slurm commands/single-SSH boundary. Next action
+is batch4 terminal/closure and frozen remaining three K3 lambda0.9 units. No gold, partial accuracy,
+historical analysis, full-panel seal, transfer selection, ARC/outcome or Gate D execution occurred.
