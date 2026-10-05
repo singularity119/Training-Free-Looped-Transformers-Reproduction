@@ -325,3 +325,40 @@ Prior snapshot (not current):18:00 heartbeat12917751 COMPLETED0:0/11882s,1291775
 Next authorized action: actually receive this event, end monitor role, read live control/C handoff, independently diagnose the connection within existing C engineering authority without changing SSH/hosts/VPN/Clash settings or accepting hostkeys. Restore verified read access or report narrow operational blocker to planning. Once connected independently verify immutable source, all job terminal/allocation/GPUh, batch4 identities and same-source --full-cell closure; preserve successes/canary/reuse. Existing workplan then only remaining lambda.9 threeK3; refresh consumed+queued/running time upper<=240 and remaining estimate before authorized batch. Max2GPU/packing1/highestlegalA800. Before68×14042=954856records and all jobs closed, no gold/partialaccuracy/historyanalysis. After fullclosure only once MMLU analysis and7transferlambda fixed;ARC/outcome/D locked.
 Do not treat delivery receipt as actual executor continuation. If actual self-event unavailable/unconfirmed, relay AUTOMATION_RELAY_REQUIRED to planning with this full packet. Existing C handoff only; monitor makes no Gate verdict.
 ```
+
+## Batch4 closure, final Batch5 submission, and monitor tool limitation
+
+2026-10-06 planning CONNECTIVITY_RESTORED relay actually resumed this executor. Live C binding and
+handoff remain valid. Strict alias SSH independently confirmed all64 prior C jobs COMPLETED0:0 and
+empty queue. Direct comparison of23 immutable2644034 Phase10 source/config/script files passed;
+existing117s debug preflight retains PHASE10_SHARD_PREFLIGHT_VERIFIED. Initial command-length failure
+occurred before remote execution; transferring the comparison script through stdin resolved it.
+No source/runtime/science change or repeated verification artifact occurred.
+
+Same-source --full-cell Batch4 verifier exit0:14 exact14042 cells/196588records, gold=false;
+formal-remaining-batch4-closure-attempt1.json. Batch4 GPU time100831s; cumulative404858s=112.460556GPUh.
+56 new cells786352records closed including canary448 once. Frozen remaining3 estimates7.513559GPUh;
+consumed+1.2remaining121.476826<240. Final batch time limits13GPUh yield total upper125.460556<240.
+Fresh budget batch4-allocation-and-next-admission-attempt1.json retains all64 jobs and estimates.
+
+Fresh batch5 partition/association/QoS/groups snapshots confirm emergency_gpu highestlegalA800 tier300,
+normal user eligible, QoS GPU8 ceiling above authorized max2. No previous final3 results/submissions;
+full canonical indices and absent roots checked. Submitted12926885 current_t6h,12926886 fixed_t0 3h,
+12926887 lag1 4h afterok12926886. Each lambda0.9/Qwen3-4B15:18 K3/14042 records, immutable2644034,
+A8001/8CPU64G/packing1, max2 concurrent GPUs. Firsttwo PENDING/Priority, third PENDING/Dependency.
+formal-remaining-batch5-plan.json/formal-remaining-batch5-jobs.json and durable intent/reply/journal
+capture commands and job confirmations. No gold/accuracy/historyanalysis/ARC/D execution occurred.
+
+Updating same unique monitor ACTIVE was attempted but automation_update returned isError=true:
+'MCP tool call requires approval, but approval policy is never'. Planning relay was then attempted
+through send_message_to_thread and returned the same error; delivery is UNCONFIRMED. No manual
+configuration write or substitute monitor bypass was attempted. Monitor retains prior PAUSED status.
+A complete paste-ready operational recovery packet is saved in loopscope_phase10_gate_c_batch5_relay.md.
+This is an app-tool operational blocker, not Gate C terminal or job failure. The same monitor must
+be restored with exact3 IDs and executor before unattended continuation can be relied upon.
+
+2026-10-06 latest direct user instruction: temporarily no scheduled monitoring required.
+The existing monitor stays PAUSED; no restoration or replacement is requested. This supersedes
+the preceding operational monitor-restoration requirement. Final3 jobs remain submitted;
+continuation is on a later explicit event/request, with full closure before any gold analysis.
+Planning app-message delivery remains unconfirmed; the local recovery copy is retained as history.
