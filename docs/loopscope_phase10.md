@@ -10,6 +10,35 @@
 
 MMLU 沿用 Phase9 的 plain 5-shot、dev first_n5、14042 test/57 subjects 及固定 revision。ARC 使用 lm_eval 0.4.11 原生 Question/Answer 模板、train 25-shot、完整 choice 文本及原生字符长度归一化 acc_norm，acc 作为描述项。候选保留 prefix 不一致时停止并交 planning 裁决，不自动删题、降 shot 或缩短答案。
 
+## Gate D 单 allocation 入口
+
+2026-10-07 用户要求 ARC 尽量在一个正式 Slurm job 内完成，精确权限见
+`.planning/phase10/loopscope_phase10_gate_d_single_job_amendment.md`。
+`run_phase10_arc_bundle.py` 在同一 allocation 内为每张 GPU 建立一个 worker，每个 cell
+调用新的独立 `phase10_accuracy.sbatch` 子进程，并用原 verifier 闭合；不跨 cell
+保留模型或 tensor 状态。正式先跑七个迁移 Online 与两个 Native，首批完成后用实测
+cell 耗时预测余下59个配置，满足预算和剩余 walltime 条件就在同 job 内继续。
+
+`phase10_arc_bundle.sbatch` 位置参数为：
+
+```text
+REPO PYTHON MANIFEST POOL PLAN RUN_ROOT COMMIT SCOPE GPU_COUNT PRIOR_GPUH WALLTIME_HOURS PREFLIGHT_INDICES_OR_DASH
+```
+
+新 runner 的 debug 预检使用两 GPU worker（正式使用两 GPU 时）、已接受 validation
+indices `[0,32,35,85,89,210]`、九配置54条完整文本评分及每 cell 验证。只有新 runner
+的 debug 全部通过后才提交正式；旧单配置 launcher 的预检不替代新调度路径。
+
+成本按整个 allocation 的 GPU 数乘以从 Slurm StartTime 起的墙钟时间计量，含空闲；
+首批累计40GPUh、总100GPUh，先前 debug/失败分配也计入。余下配置按同模型、window、
+K、policy 的首批完整 cell 耗时估算，Loop 用相同模型/window/K 已测 Online 最大耗时。
+最多两 GPU、每 GPU packing1、batch1、同 source/runtime/数值配方。预算准入失败保存
+已成功 cells 后停止，不丢配置或读取部分 outcome。正式合法时限与预算容许时优先
+申请能覆盖全部68配置的长 allocation；原分批9/59及每job8h限制已被补充取代。
+
+所有 target gold/accuracy 仍在68配置共同闭合和作业终态核实后才可读取。
+用户暂不定时监控继续有效，真实等待点保存接续状态。
+
 ## Gate A 定向检查
 
 在 Git 根运行：
