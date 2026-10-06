@@ -54,3 +54,5 @@ ACTIVE_PARTITION_RULE=NONFORMAL_DEBUG_FORMAL_HIGHEST_LEGAL_A800
 2026-10-02 Gate B已PASS（gate_b_acceptance）；B撤权。当前C handoff取代上文历史B权限：debug分片预检→真实可保留A800首批→预算内59新+9复用全量MMLU→闭合后一次分析/冻结7参数。240GPUh硬上限、初始16GPUh、最多2GPU，具体条件见C handoff；D/E仍锁定。
 
 2026-10-07 planning直接读回C审计包并PASS；C撤权。七组MMLU迁移lambda固定，D按新handoff运行ARC68配置，100GPUh/max2GPU/初始40GPUh。用户2026-10-06在C要求暂不定时监控，保持暂停，不恢复/替代；后续显式请求或消息接续。上文历史C权限不再生效，E锁定。
+
+2026-10-07 用户要求ARC尽量单job完成：当前D正式调度以 loopscope_phase10_gate_d_single_job_amendment.md 为准，同一allocation内跑68cell，首批计时后自动预算准入继续，100GPUh/max2GPU不变，正式walltime按现场合法限制及预算选取，替代原每job8h/分批提交。新runner先debug。
