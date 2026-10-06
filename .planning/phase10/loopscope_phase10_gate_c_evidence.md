@@ -362,3 +362,36 @@ The existing monitor stays PAUSED; no restoration or replacement is requested. T
 the preceding operational monitor-restoration requirement. Final3 jobs remain submitted;
 continuation is on a later explicit event/request, with full closure before any gold analysis.
 Planning app-message delivery remains unconfirmed; the local recovery copy is retained as history.
+
+## Full MMLU closure and the single authorized analysis
+
+2026-10-06 status request resumed final closure. Jobs12926885/12926886/12926887 allCOMPLETED0:0,
+elapsed11916/5132/8632s=25680GPU seconds. All67 C jobs closed,430538GPU seconds=119.593889GPUh<240.
+Same immutable-source Batch5 --full-cell verifier exit0:3cells42126records. Full-panel verifier
+--full-panel --include-reuse exit0:68cells954856records, target_gold_loaded=false. Exact59new828478
+plus9reuse126378, canary448 once. mmlu-full-panel-closure-attempt1.json and MMLU_FULL_PANEL_CLOSED
+written after alljobs accounting gate-c-allocation-final-attempt1.json.
+
+Only after the seal, frozen-revision offline MMLU gold loaded with exact question/choice/doc_index
+join across57subjects; provenance mmlu-gold-source-evidence-once.json. mmlu-analysis-intent-attempt1.json
+preserves the single-analysis boundary. analyze_phase10.py exit0/ANALYZED_COMPLETE_PANEL, fresh raw
+verification passed before statistics:68independent/86display/18aliases/171contrasts, Holm126scan
+and45policy, exactMcNemar, subject pairedbootstrap10000 seed20261002. Seven transfer selections
+independently checked for maximumcorrect and smallerlambda tie rule; ARC gold remains unread.
+
+Holm-positive Online>Loop0, Online>Native2 (4B K2 current_t lambda0.2/0.9), positivepolicy0.
+No science retuning or reruns follow these results. Fixed transfer strengths by strategy:
+q17-w12-15-k2-current-t=0.2
+q17-w12-15-k2-fixed-t0=0.9
+q4-w15-18-k2-current-t=0.9
+q4-w15-18-k2-fixed-t0=0.6
+q4-w15-18-k3-current-t=0.9
+q4-w15-18-k3-fixed-t0=0.1
+q4-w15-18-k3-lag1=0.9
+
+Human report/completeCSV/transfer manifest saved outside code clone under资产/报告/phase10/
+gate-c-mmlu-20261006; copy rows independently checked68/86/171. Remote canonical analysis remains
+inmmlu-analysis-attempt1. No ARC/formal outcome or D execution; planning alone accepts Gate.
+Monitor remainsPAUSED according to user no-monitor instruction. Protected runtime/science/source
+unchanged; this commit changes C evidence/resources only. Terminal audit delivery follows after
+commit/push; exact delivery confirmation or fallback must be preserved.
