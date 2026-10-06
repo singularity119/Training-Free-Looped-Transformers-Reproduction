@@ -1,4 +1,6 @@
-# Phase10 Gate D 执行接续：等待 debug
+# Phase10 Gate D 执行接续：等待双 GPU bundle debug
+
+2026-10-07 最新接续：新 debug job **12932434**，首次确认 **RUNNING**，A40×2/time29min；正式尚未提交。当前 source `0f7f608a8687ac195f21fb10a68946b72124646e`。恢复步骤以文末“单 allocation 当前接续”为准；原分批 array 方案仅作被修订取代的历史。
 
 2026-10-07，executor `01a111f8-7ba3-7862-b0d6-78c0a5a2f767`。这不是 Gate 终态或验收；D 保持授权，E 锁定。用户暂不定时监控，不创建/恢复 automation，也不人工轮询。下一次显式接续先核实已有作业，不能重复提交。
 
@@ -45,3 +47,23 @@ debug 完整通过后再现场核对最高合法 A800，使用已准备 `formal-
 首批完整原分数闭合后测两模型/策略耗时与显存，只有已消耗+1.2×剩余保守预测<=100GPUh才继续其余59。每次批次已消耗+所有运行/待运行GPU×time上界<=100GPUh；全程max2GPU。全68×1172/79696共同闭合、jobs终态和预算核实后才写ARC_FULL_PANEL_CLOSED并读取固定ARC test gold做一次分析。仍只执行D。
 
 这一等待点未发送 GATE_D_FINAL_AUDIT/BLOCK，也没有创建监控或宣称无人值守推进。control/contract/handoff保持只读。
+
+## 单 allocation 当前接续
+
+收到用户单job要求及 planning 的 `loopscope_phase10_gate_d_single_job_amendment.md` 后继续。治理原文代提交e750a191f3a7f320fd1d7878781d4199286f4de5。新增 runner/launcher、定向测试/runbook 提交并推送0f7f608a8687ac195f21fb10a68946b72124646e；没有修改科学或 protected runtime/Phase8/9。
+
+`run_phase10_arc_bundle.py` 与 `phase10_arc_bundle.sbatch` 在一个 allocation 内每GPU一个worker、每cell独立进程，使用既有 producer/verifier，先9后自动预算准入余59。预算按从真实 Slurm StartTime 起的全部GPU分配墙钟时间（含空闲）计量。余下采用同模型/window/K/policy的首批实测，Loop用同model/window/K Online最大值，最长先调度；首批40GPUh、总100GPUh、剩余walltime及清理余量均受限。预算不足显式BUDGET_STOP，保留成功/失败/未启动配置，不读outcome。
+
+5项针对预算/空闲计费/剩余时限的 tests、无第三方依赖CLI help、launcher bash-n及diff--check均exit0。一个有界worker仅拥有两个新增scripts，父executor审阅整合、tests/docs、Git、远端与Slurm，无嵌套/独立外部动作。
+
+提交新job前核实旧12932349 COMPLETED/0:0、ElapsedRaw234s、1A40=0.065GPUh，closure9cells/54records/goldfalse。`old-debug-verified-before-bundle.json` 保留证据；旧结果不替代新双worker预检，没有取消/重跑。
+
+完整archive源码：`staging/phase10-gate-d-20261006T161109Z/source-0f7f608`。计划：`inputs/phase10-gate-d-20261006T161109Z/bundle-attempt1/gate_d_bundle_plan.json`；七迁移清单原文固定并核对。manifest和accepted pools仍只读引用。远端新launcher DRY_RUN exit0，记录`bundle-cpu-preflight.json`。
+
+唯一新增submission exit0/job12932434：debug/qosdebug/nodes1/ntasks1/A40×2/cpus16/mem128G/time29min，用新bundle launcher、PREFLIGHT_ONLY、priorGPUh0.065、walltime_hours29/60、固定六validation indices。完整绝对argv/stdout/stderr在`bundle-debug-submission-attempt1.json`；唯一提交后scontrol确认RUNNING/exit0在`bundle-debug-initial-status.txt`。预留0.966667GPUh；旧job已终态，没有3GPU重叠。新输出根`bundle-debug-attempt1`，之后未继续人工查询。
+
+下次明确接续：先读job12932434终态accounting、`bundle-debug-attempt1/bundle-summary.json`（必须PREFLIGHT_COMPLETE）、`preflight-closure.json`（9/54/goldfalse）及两个不同GPU worker receipts；核实source/runtime/每cell闭合。失败在原Gate科学/预算内保留attempt后诊断恢复。
+
+新预检通过后再现场重查最高合法A800和全部实际已消耗，优先提交一个2A800、49小时allocation，用同bundle launcher/source/runtime/producer，FORMAL_TEST、test manifest/pool、indices参数`-`。首批9完成后在同job自动预算准入余59，不退出allocation等人工。正式预留98GPUh，旧0.065+新debug上界0.966667+正式98=99.031667GPUh，低于100；实际提交时重新核实。原每cell job、array0-8%2及8h限制已被修订取代。
+
+远端最新接续包`executor-resume-after-bundle-debug-submission.json`，本地资源附件已更新。正式68/79696原分数及job终态/资源共同闭合前，ARC gold/accuracy/analysis仍禁止。无automation、无Gate终态包，E仍锁定。

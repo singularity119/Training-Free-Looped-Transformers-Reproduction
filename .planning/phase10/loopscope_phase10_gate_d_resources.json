@@ -1,20 +1,52 @@
 {
-  "schema": "loopscope.phase10.gate_d_resources.v1",
-  "status": "WAITING_FOR_DEBUG_ATTEMPT",
+  "schema": "loopscope.phase10.gate_d_resources.v2",
+  "status": "WAITING_FOR_BUNDLE_DEBUG",
   "executor": "01a111f8-7ba3-7862-b0d6-78c0a5a2f767",
   "planning_thread": "01a0fae2-12df-74e0-a874-190518ef0501",
   "host": "hpc2-hkustgz",
-  "source_commit": "2a0351ca115daf6296f6d9bceafe888a27c86b2a",
-  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase10-gate-d-20261006T161109Z/source-2a0351c",
-  "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase10-gate-d-20261006T161109Z/prepared-attempt2",
+  "source_commit": "0f7f608a8687ac195f21fb10a68946b72124646e",
+  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase10-gate-d-20261006T161109Z/source-0f7f608",
+  "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase10-gate-d-20261006T161109Z/bundle-attempt1",
   "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z",
   "scheduled_monitor": "DISABLED_BY_USER",
-  "job_ids": ["12932349"],
-  "initial_confirmation": {"job_id": "12932349", "state": "PENDING", "exit_code": 0},
-  "debug": {"partition": "debug", "qos": "debug", "gpu_type": "a40", "gpu_count": 1, "time_limit_minutes": 29, "estimated_minutes": 15, "packing": 1, "reserved_upper_bound_gpu_hours": 0.48333333333333334, "expected_cells": 9, "expected_records": 54},
-  "actual_allocated_gpu_hours": null,
+  "job_ids": [
+    "12932349",
+    "12932434"
+  ],
+  "initial_confirmation": {
+    "job_id": "12932434",
+    "state": "RUNNING",
+    "exit_code": 0
+  },
+  "debug": {
+    "partition": "debug",
+    "qos": "debug",
+    "gpu_type": "a40",
+    "gpu_count": 2,
+    "time_limit_minutes": 29,
+    "packing": 1,
+    "reserved_upper_bound_gpu_hours": 0.9666666666666667,
+    "actual_allocated_gpu_hours": null,
+    "expected_cells": 9,
+    "expected_records": 54
+  },
   "formal_jobs_submitted": 0,
-  "budget": {"initial_gpu_hours": 40, "hard_gpu_hours": 100, "max_gpu": 2, "packing": 1, "batch_size": 1, "planned_initial_cells": 9, "planned_remaining_cells": 59, "initial_per_job_hours": 4, "initial_formal_reservation_gpu_hours": 36, "expansion_rule": "consumed + 1.2 * conservative_remaining_forecast <= 100; consumed + all running/pending GPU*time upper bounds <= 100"},
+  "budget": {
+    "initial_gpu_hours": 40,
+    "hard_gpu_hours": 100,
+    "max_gpu": 2,
+    "packing": 1,
+    "batch_size": 1,
+    "planned_initial_cells": 9,
+    "planned_remaining_cells": 59,
+    "expansion_rule": "first9 within initial40; consumed +1.2*conservative remaining allocation forecast plus cleanup<=100; sufficient actual remaining walltime",
+    "scheduler_mode": "ONE_ALLOCATION",
+    "formal_gpu_count": 2,
+    "formal_walltime_hours": 49,
+    "formal_reserved_gpu_hours": 98,
+    "all_known_consumed_and_reserved_upper_bound_gpu_hours": 99.03166666666667,
+    "charge": "allocated GPU count times full walltime from Slurm StartTime including worker idle"
+  },
   "canonical_count": 1172,
   "independent_cell_count": 68,
   "display_row_count": 86,
@@ -22,8 +54,25 @@
   "formal_record_count": 79696,
   "target_gold_loaded": false,
   "arc_accuracy_read": false,
-  "resume_receipt": "executor-resume-after-debug-submission.json",
-  "next_action": "Explicit resume: independently check existing debug job accounting and 9-cell/54-record closure. Only after debug passes submit formal initial9 via formal-initial.sbatch array0-8%2 on freshly checked highest legal A800, time4h each. No duplicate submission; no ARC gold until all68/79696 close.",
+  "resume_receipt": "executor-resume-after-bundle-debug-submission.json",
+  "next_action": "Explicit resume: inspect new debug terminal accounting, PREFLIGHT_COMPLETE summary,9/54 gold-free closure and two distinct worker receipts. After pass, recheck highest legal A800 and actual prior cost; submit one formal2A800/time49h same bundle job, initial9 then automatic budget-admit remaining59. No arrays/percell Slurm jobs. No ARC gold before68/79696 and terminal resources close.",
   "gate_terminal": false,
-  "gate_e_authorized": false
+  "gate_e_authorized": false,
+  "active_job_ids": [
+    "12932434"
+  ],
+  "terminal_jobs": [
+    {
+      "job_id": "12932349",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 234,
+      "gpu_count": 1,
+      "allocated_gpu_hours": 0.065,
+      "cell_count": 9,
+      "record_count": 54,
+      "new_runner_covered": false
+    }
+  ],
+  "confirmed_terminal_gpu_hours": 0.065
 }
