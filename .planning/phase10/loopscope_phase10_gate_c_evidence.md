@@ -395,3 +395,10 @@ inmmlu-analysis-attempt1. No ARC/formal outcome or D execution; planning alone a
 Monitor remainsPAUSED according to user no-monitor instruction. Protected runtime/science/source
 unchanged; this commit changes C evidence/resources only. Terminal audit delivery follows after
 commit/push; exact delivery confirmation or fallback must be preserved.
+
+Unique GATE_C_FINAL_AUDIT send_message_to_thread to exactplanning was attempted after ea7202e
+commit/push. Tool returned isError=true: MCP tool call requires approval, but approval policy is never.
+Delivery is UNCONFIRMED; no receipt is claimed. Complete paste-ready audit and exacttool response
+retained in loopscope_phase10_gate_c_final_audit.md and human TERMINAL_DELIVERY_UNCONFIRMED.md.
+GateC execution complete; planning acceptance pending. No alternative message-channel bypass,
+monitor restart, GateD action or ARC outcome was attempted.
