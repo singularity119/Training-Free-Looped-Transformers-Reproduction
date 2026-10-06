@@ -27,26 +27,10 @@ if [[ "${DRY_RUN:-0}" == 1 ]]; then
   allocation_start=1
 else
   [[ "${SLURM_JOB_ID:-}" =~ ^[0-9]+$ ]]
-  # Account queue-independent real allocation start, including setup and idle.
-  allocation_start=$("$python_runtime" - <<'PY'
-import datetime
-import os
-import subprocess
-result = subprocess.run(['/opt/slurm/bin/scontrol', 'show', 'job', '-o', os.environ['SLURM_JOB_ID']],
-                        check=True, text=True, capture_output=True, timeout=15)
-fields = dict(item.split('=', 1) for item in result.stdout.split() if '=' in item)
-start = fields.get('StartTime', '')
-if start.isdigit():
-    epoch = float(start)
-elif start and start not in ('Unknown', 'N/A'):
-    epoch = datetime.datetime.fromisoformat(start).timestamp()
-else:
-    raise SystemExit('real Slurm StartTime unavailable; cannot account allocation')
-if epoch <= 0:
-    raise SystemExit('invalid real Slurm StartTime')
-print(epoch)
-PY
-)
+  # Slurm supplies the real allocation epoch without a compute-node CLI.
+  allocation_start=${SLURM_JOB_START_TIME:?Slurm allocation start epoch missing}
+  [[ "$allocation_start" =~ ^[0-9]+$ && "$allocation_start" -gt 0 ]]
+  echo "allocation_start_epoch=$allocation_start source=SLURM_JOB_START_TIME" >&2
 fi
 exec "$python_runtime" scripts/loopscope/run_phase10_arc_bundle.py \
   --repo "$repo" --python "$python_runtime" --manifest "$3" --pool "$4" --plan "$5" \

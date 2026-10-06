@@ -1,5 +1,10 @@
 import importlib.util
+import json
+import os
 from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 
 
@@ -15,6 +20,30 @@ def cell(name, policy=None, strength=None, arm="Online", model="model", k=2):
 
 
 class ArcBundleBudgetTests(unittest.TestCase):
+    def test_real_launcher_needs_no_compute_node_slurm_executable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            script = repo / "scripts/loopscope/run_phase10_arc_bundle.py"
+            script.parent.mkdir(parents=True)
+            script.write_text("import json,sys; print(json.dumps(sys.argv[1:]))\n")
+            launcher = SCRIPT.with_name("phase10_arc_bundle.sbatch")
+            command = ["/bin/bash", str(launcher), str(repo), sys.executable,
+                       "manifest", "pool", "plan", "run", "synthetic", "PREFLIGHT_ONLY",
+                       "2", ".065", ".48333333333333334", "indices"]
+            env = {**os.environ, "PATH": str(repo / "no-executables"),
+                   "SLURM_JOB_ID": "123", "SLURM_JOB_START_TIME": "1700000000"}
+            env.pop("DRY_RUN", None)
+            result = subprocess.run(command, env=env, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            args = json.loads(result.stdout)
+            self.assertEqual(args[args.index("--allocation-start-epoch") + 1], "1700000000")
+            self.assertIn("source=SLURM_JOB_START_TIME", result.stderr)
+            env.pop("SLURM_JOB_START_TIME")
+            result = subprocess.run(command, env=env, capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(result.stdout, "")
+            self.assertIn("Slurm allocation start epoch missing", result.stderr)
+
     def test_forecast_uses_measured_policy_and_conservative_loop_then_two_workers(self):
         cells = [cell("fixed-first", "fixed_t0", .1), cell("current-first", "current_t", .1),
                  cell("fixed-remaining", "fixed_t0", .2),
