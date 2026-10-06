@@ -1,21 +1,22 @@
 {
   "schema": "loopscope.phase10.gate_d_resources.v2",
-  "status": "WAITING_FOR_REPAIRED_BUNDLE_DEBUG",
+  "status": "WAITING_FOR_FORMAL_BUNDLE",
   "executor": "01a111f8-7ba3-7862-b0d6-78c0a5a2f767",
   "planning_thread": "01a0fae2-12df-74e0-a874-190518ef0501",
   "host": "hpc2-hkustgz",
   "source_commit": "ee84dd1226ed036479496862bf624df30639fc40",
   "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase10-gate-d-20261006T161109Z/source-ee84dd1",
-  "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase10-gate-d-20261006T161109Z/bundle-attempt2",
+  "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase10-gate-d-20261006T161109Z/formal-bundle-attempt1",
   "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z",
   "scheduled_monitor": "DISABLED_BY_USER",
   "job_ids": [
     "12932349",
     "12932434",
-    "12932763"
+    "12932763",
+    "12932810"
   ],
   "initial_confirmation": {
-    "job_id": "12932763",
+    "job_id": "12932810",
     "state": "PENDING",
     "exit_code": 0
   },
@@ -27,13 +28,16 @@
     "time_limit_minutes": 29,
     "packing": 1,
     "reserved_upper_bound_gpu_hours": 0.9666666666666667,
-    "actual_allocated_gpu_hours": null,
+    "actual_allocated_gpu_hours": 0.059444444444444446,
     "expected_cells": 9,
     "expected_records": 54,
     "output_root": "bundle-debug-attempt2",
-    "submission_receipt": "bundle-debug-submission-attempt2.json"
+    "submission_receipt": "bundle-debug-submission-attempt2.json",
+    "status": "VERIFIED",
+    "verification_receipt": "bundle-debug-attempt2-verified-for-formal.json",
+    "job_id": "12932763"
   },
-  "formal_jobs_submitted": 0,
+  "formal_jobs_submitted": 1,
   "budget": {
     "initial_gpu_hours": 40,
     "hard_gpu_hours": 100,
@@ -47,7 +51,7 @@
     "formal_gpu_count": 2,
     "formal_walltime_hours": 49,
     "formal_reserved_gpu_hours": 98,
-    "all_known_consumed_and_reserved_upper_bound_gpu_hours": 99.03166666666667,
+    "all_known_consumed_and_reserved_upper_bound_gpu_hours": 98.12444444444445,
     "charge": "allocated GPU count times full walltime from Slurm StartTime including worker idle"
   },
   "canonical_count": 1172,
@@ -57,12 +61,12 @@
   "formal_record_count": 79696,
   "target_gold_loaded": false,
   "arc_accuracy_read": false,
-  "resume_receipt": "executor-resume-after-bundle-debug-attempt2.json",
-  "next_action": "Explicit resume: verify12932763 terminal accounting, launcher allocation epoch source, PREFLIGHT_COMPLETE summary,9/54 gold-free closure and two distinct GPU worker receipts. After pass, recheck highest legal A800,49h eligibility and actual prior cost; submit one formal2A800/time49h same repaired source/launcher/producer, initial9 then automatic budget-admit remaining59. No ARC gold before68/79696 and terminal resources close.",
+  "resume_receipt": "executor-resume-after-formal-bundle-submission.json",
+  "next_action": "Explicit resume: inspect12932810 terminal accounting and existing bundle status/admission; preserve valid cells on budget stop/failure. Require68/79696 gold-free identity/full-panel closure and terminal resources before ARC_FULL_PANEL_CLOSED and exactly one authorized frozen analysis. No duplicate submissions or partial accuracy. No monitors. Gate E locked.",
   "gate_terminal": false,
   "gate_e_authorized": false,
   "active_job_ids": [
-    "12932763"
+    "12932810"
   ],
   "terminal_jobs": [
     {
@@ -86,8 +90,38 @@
       "failure_stage": "launcher before runner/model scoring",
       "score_records": 0,
       "failure_receipt": "bundle-debug-attempt1-failure.json"
+    },
+    {
+      "job_id": "12932763",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 107,
+      "gpu_count": 2,
+      "allocated_gpu_hours": 0.059444444444444446,
+      "cell_count": 9,
+      "record_count": 54,
+      "new_runner_covered": true,
+      "target_gold_loaded": false
     }
   ],
-  "confirmed_terminal_gpu_hours": 0.065,
-  "allocation_epoch_source": "SLURM_JOB_START_TIME"
+  "confirmed_terminal_gpu_hours": 0.12444444444444444,
+  "allocation_epoch_source": "SLURM_JOB_START_TIME",
+  "formal": {
+    "job_id": "12932810",
+    "partition": "emergency_gpu",
+    "qos": "emergency_gpu",
+    "gpu_type": "a800",
+    "gpu_count": 2,
+    "time_limit_hours": 49,
+    "reserved_gpu_hours": 98,
+    "actual_allocated_gpu_hours": null,
+    "packing": 1,
+    "batch_size": 1,
+    "expected_cells": 68,
+    "expected_records": 79696,
+    "output_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-bundle-attempt1",
+    "submission_receipt": "formal-bundle-submission-attempt1.json",
+    "site_snapshot": "formal-admission-site-snapshot-attempt2.json",
+    "first9_then_auto_admit_remaining59": true
+  }
 }

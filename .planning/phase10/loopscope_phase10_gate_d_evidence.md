@@ -1,6 +1,6 @@
-# Phase10 Gate D 执行接续：等待修复后的双 GPU bundle debug
+# Phase10 Gate D 执行接续：等待 ARC 正式单作业
 
-2026-10-07 最新接续：12932434 已确认启动前 FAILED/1:0；修复后的 debug job **12932763**，首次确认 **PENDING**，A40×2/time29min；正式尚未提交。当前 source `ee84dd1226ed036479496862bf624df30639fc40`。恢复步骤以文末“启动器修复与当前接续”为准；此前方案与等待点仅作历史。
+2026-10-07 最新接续：12932763 已完成并通过双 GPU 预检核实；正式单作业 **12932810** 已提交，首次确认 **PENDING**，emergency_gpu/QoS emergency_gpu、A800×2/time49h，全部68配置。当前 source `ee84dd1226ed036479496862bf624df30639fc40`。恢复步骤以文末“正式单作业当前接续”为准；此前等待点仅作历史。
 
 2026-10-07，executor `01a111f8-7ba3-7862-b0d6-78c0a5a2f767`。这不是 Gate 终态或验收；D 保持授权，E 锁定。用户暂不定时监控，不创建/恢复 automation，也不人工轮询。下一次显式接续先核实已有作业，不能重复提交。
 
@@ -79,3 +79,15 @@ debug 完整通过后再现场核对最高合法 A800，使用已准备 `formal-
 唯一新增submission exit0/job **12932763**：debug/qosdebug/nodes1/ntasks1/A40×2/cpus16/mem128G/time29min；使用修复source/同runtime/bundle launcher、PREFLIGHT_ONLY、priorGPUh0.065。完整绝对argv/stdout/stderr保存在 `<run>/bundle-debug-submission-attempt2.json`；提交后唯一状态确认 **PENDING**，保存在 `<run>/bundle-debug-attempt2-initial-status.txt`。未重复查询新job，无定时监控或automation。旧两个job均终态，无GPU重叠。当前debug预留上界0.966667GPUh；正式49h×2GPU预留98GPUh，总已消耗与预留上界99.031667GPUh<100。
 
 最新远端接续包 `<run>/executor-resume-after-bundle-debug-attempt2.json`，本地资源附件同步。下一次显式接续先检查12932763终态accounting、日志中的 allocation epoch来源、`bundle-debug-attempt2/bundle-summary.json` 的 PREFLIGHT_COMPLETE、`preflight-closure.json` 的9cells/54records/goldfalse，以及两个不同GPU worker receipts/同source/runtime。失败则保留attempt并在原科学/预算内诊断恢复；通过后才重新核实最高合法A800、实际总成本与49h资格并提交单个正式2A800 allocation，首9后自动预算准入余59。正式提交数0，ARC gold/accuracy/analysis未读取；68/79696及终态资源共同闭合前保持outcome barrier。此为真实等待点，无Gate终态包，E仍锁定。
+
+## 正式单作业当前接续
+
+用户报告“12932763完成”后显式接续，并要求权限范围内尽量多用A800；当前D max2GPU/100GPUh边界保持，正式使用上限2A800。12932763 accounting已核实COMPLETED/0:0、ElapsedRaw107s、2A40/debuggpu3-9，实际0.059444444444444446GPUh；累计三个终态debug jobs为0.12444444444444444GPUh。bundle-summary为PREFLIGHT_COMPLETE、9个配置CELL_VERIFIED，producer/verifier全部exit0；preflight-closure为FULL_PHASE10_SCORE_CELLS_CLOSED/PREFLIGHT_ONLY、9cells/54records、每cell固定六validation indices、goldfalse，同source/runtime/max_length32768。两个worker visibleGPU分别0/1均成功，stderr真实epoch1791308271来源SLURM_JOB_START_TIME。工程核实回执 `<run>/bundle-debug-attempt2-verified-for-formal.json`；不把debug评分解读为科学结论。
+
+现场全partition/association/QoS/queue/A800 nodes快照 `<run>/formal-admission-site-snapshot-attempt2.json`：emergency_gpu PriorityTier/JobFactor300最高合法、RootOnlyNO、AllowAccounts/AllowQos ALL、StateUP、MaxTime14天；用户association允许emergency_gpu QoS，全部现场QoS Priority0，对应QoS单用户gpu:a800/gpu上限8、cpu64，无更短MaxWall。申请2GPU/cpu16/128G/time49h合法，用户队列提交前为空。CPU现场查询曾使用本Slurm不支持的MaxTRESPJ字段；改用支持的MaxTRES重新取得完整快照，保存formal-admission-cpu-query-failure.json。CPU核对producer argv时一次误用输出路径index8来核对commit，改为正确index9并与closure交叉核对，保存formal-admission-cpu-argv-check-failure.json。两次均发生在正式提交前，0GPUh，未改producer/源码/科学。
+
+正式新inputs `inputs/phase10-gate-d-20261006T161109Z/formal-bundle-attempt1`，plan将priorGPUh更新为实际累计0.12444444444444444，保留9/59配置划分和七迁移参数原文复制；accepted ARC test pool与原formal manifest只读引用。新输出根 `<run>/formal-bundle-attempt1`，同immutable source-ee84dd1/runtime/launcher/producer。CPU formal launcher DRY_RUN exit0记录 `<run>/formal-bundle-cpu-preflight-attempt1.json`。无代码变更，不重复已通过定向tests。
+
+唯一新增正式submission exit0/job **12932810**：partition/QoS emergency_gpu、nodes1/ntasks1/A800×2/cpus16/mem128G/time2-01:00:00、job-name p10-d-arc-full-bundle；FORMAL_TEST、indices参数`-`。完整argv/stdout/stderr为 `<run>/formal-bundle-submission-attempt1.json`；提交后唯一scontrol确认PENDING/exit0为 `<run>/formal-bundle-initial-status-attempt1.json`。正式预留98GPUh，累计已消耗+全部预留上界98.12444444444445GPUh<100。一个allocation内每GPU一个顺序worker，先七迁移Online+两Native，首批40GPUh内闭合后按实际完整cell耗时、1.2余量/清理时间/剩余walltime自动准入余59；不另起array或每配置排队job，不等待人工批准余59。
+
+最新远端接续包 `<run>/executor-resume-after-formal-bundle-submission.json`，本地资源附件同步。按用户无监控要求，不继续查询新job、不创建automation/人工轮询。下一次明确接续先核实12932810已有终态/资源与bundle状态、预算准入和每cell结果；预算停止/失败保留有效结果与原attempt，必要时只补缺失，不重复成功配置。全68/79696、identity/有限值/科学来源/full-panel closure及所有jobs终态预算共同闭合后，才写ARC_FULL_PANEL_CLOSED并按handoff做一次固定分析；当前target gold/ARC accuracy未读，Gate D未终态，E锁定。
