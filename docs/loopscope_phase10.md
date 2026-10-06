@@ -25,14 +25,16 @@ cell 耗时预测余下59个配置，满足预算和剩余 walltime 条件就在
 REPO PYTHON MANIFEST POOL PLAN RUN_ROOT COMMIT SCOPE GPU_COUNT PRIOR_GPUH WALLTIME_HOURS PREFLIGHT_INDICES_OR_DASH
 ```
 
-新 runner 的 debug 预检使用两 GPU worker（正式使用两 GPU 时）、已接受 validation
+新 runner 的 debug 预检使用 debug 合法数量的 GPU worker、已接受 validation
 indices `[0,32,35,85,89,210]`、九配置54条完整文本评分及每 cell 验证。只有新 runner
 的 debug 全部通过后才提交正式；旧单配置 launcher 的预检不替代新调度路径。
 
 成本按整个 allocation 的 GPU 数乘以从 Slurm StartTime 起的墙钟时间计量，含空闲；
 首批累计40GPUh、总100GPUh，先前 debug/失败分配也计入。余下配置按同模型、window、
 K、policy 的首批完整 cell 耗时估算，Loop 用相同模型/window/K 已测 Online 最大耗时。
-最多两 GPU、每 GPU packing1、batch1、同 source/runtime/数值配方。预算准入失败保存
+GPU 数量以当前 D 补充的现场合法上限为准，每 GPU packing1、batch1、同 source/runtime/数值配方。
+本入口枚举本节点 CUDA_VISIBLE_DEVICES，不支持跨节点 GPU；多节点需要另行验证的分布式 launcher。
+正式 worker 数由 CPU 定向测试覆盖，debug 与正式卡数差异必须记录。预算准入失败保存
 已成功 cells 后停止，不丢配置或读取部分 outcome。正式合法时限与预算容许时优先
 申请能覆盖全部68配置的长 allocation；原分批9/59及每job8h限制已被补充取代。
 

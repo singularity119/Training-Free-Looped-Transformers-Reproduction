@@ -22,13 +22,18 @@ def require(condition, message):
         raise ValueError(message)
 
 
+def validate_gpu_count(value):
+    require(isinstance(value, int) and not isinstance(value, bool) and value > 0,
+            "GPU count must be a positive integer")
+
+
 def forecast_remaining(cells, measurements, gpu_count):
     """Estimate unmeasured cells from measured matching Online full-cell wall time.
 
     ``cells`` contains all panel cell dictionaries; ``measurements`` maps measured
     cell IDs to elapsed seconds including producer and per-cell verification.
     """
-    require(gpu_count in (1, 2), "GPU count must be one or two")
+    validate_gpu_count(gpu_count)
     by_id = {cell["cell_id"]: cell for cell in cells}
     require(set(measurements).issubset(by_id), "measurement outside panel")
     require(all(math.isfinite(value) and value > 0 for value in measurements.values()),
@@ -59,7 +64,7 @@ def forecast_remaining(cells, measurements, gpu_count):
 def budget_admission(prior_gpu_hours, allocated_elapsed_seconds, gpu_count,
                      forecast_seconds, walltime_seconds):
     """Charge every allocated GPU, including idle time and cleanup allowance."""
-    require(gpu_count in (1, 2), "GPU count must be one or two")
+    validate_gpu_count(gpu_count)
     require(all(math.isfinite(value) and value >= 0 for value in
                 (prior_gpu_hours, allocated_elapsed_seconds, forecast_seconds, walltime_seconds)),
             "budget inputs must be nonnegative finite values")
@@ -235,13 +240,14 @@ def main():
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--commit", required=True)
     parser.add_argument("--scope", choices=("PREFLIGHT_ONLY", "FORMAL_TEST"), required=True)
-    parser.add_argument("--gpu-count", type=int, choices=(1, 2), required=True)
+    parser.add_argument("--gpu-count", type=int, required=True)
     parser.add_argument("--prior-gpu-hours", type=float, required=True)
     parser.add_argument("--walltime-hours", type=float, required=True)
     parser.add_argument("--allocation-start-epoch", type=float, required=True)
     parser.add_argument("--preflight-indices", type=Path)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
+    validate_gpu_count(args.gpu_count)
     # These modules use only the standard library; model loading lives in children.
     from tflt.loopscope.phase10_accuracy import load_pool, select_indices
     from tflt.loopscope.phase10_panel import strategy_id, validate_score_manifest

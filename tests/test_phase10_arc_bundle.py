@@ -5,6 +5,8 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import threading
+from types import SimpleNamespace
 import unittest
 
 
@@ -20,6 +22,50 @@ def cell(name, policy=None, strength=None, arm="Online", model="model", k=2):
 
 
 class ArcBundleBudgetTests(unittest.TestCase):
+    def test_eight_workers_run_first9_and_remaining59_without_slot_overlap(self):
+        barrier = threading.Barrier(8)
+
+        class RecordingBundle(bundle.Bundle):
+            def __init__(self):
+                super().__init__(SimpleNamespace(gpu_count=8), {}, list(map(str, range(8))))
+                self.running_slots = set()
+                self.calls = []
+
+            def cell(self, cell_id, slot, deadline):
+                with self.lock:
+                    if slot in self.running_slots:
+                        raise AssertionError("two cells overlap on one GPU")
+                    self.running_slots.add(slot)
+                    self.calls.append((cell_id, self.gpu_ids[slot]))
+                if int(cell_id) < 8:
+                    barrier.wait(timeout=5)
+                with self.lock:
+                    self.running_slots.remove(slot)
+                return {"cell_id": cell_id, "status": "CELL_VERIFIED"}
+
+        runner = RecordingBundle()
+        self.assertTrue(runner.stage(list(map(str, range(9))), float("inf")))
+        self.assertTrue(runner.stage(list(map(str, range(9, 68))), float("inf")))
+        self.assertEqual(len(runner.calls), 68)
+        self.assertEqual({value[0] for value in runner.calls}, set(map(str, range(68))))
+        self.assertEqual({value[1] for value in runner.calls[:8]}, set(map(str, range(8))))
+        self.assertFalse(runner.running_slots)
+
+    def test_eight_gpu_forecast_charges_idle_tail_and_full_allocation(self):
+        cells = [cell("first", "fixed_t0", .1)] + [
+            cell(str(i), "fixed_t0", .2) for i in range(9)]
+        value = bundle.forecast_remaining(cells, {"first": 10.}, 8)
+        self.assertEqual(value["makespan_seconds"], 20.)
+        self.assertAlmostEqual(value["forecast_gpu_hours"], 160. / 3600.)
+        admission = bundle.budget_admission(.2, 3600., 8, 10 * 3600., 12 * 3600.)
+        self.assertFalse(admission["admitted"])
+        self.assertGreater(admission["projected_gpu_hours"], 100.)
+
+    def test_nonpositive_or_noninteger_worker_count_is_rejected(self):
+        for value in (0, -1, 1.5, True):
+            with self.assertRaises(ValueError):
+                bundle.validate_gpu_count(value)
+
     def test_real_launcher_needs_no_compute_node_slurm_executable(self):
         with tempfile.TemporaryDirectory() as directory:
             repo = Path(directory)
