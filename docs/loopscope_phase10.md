@@ -10,9 +10,22 @@
 
 MMLU 沿用 Phase9 的 plain 5-shot、dev first_n5、14042 test/57 subjects 及固定 revision。ARC 使用 lm_eval 0.4.11 原生 Question/Answer 模板、train 25-shot、完整 choice 文本及原生字符长度归一化 acc_norm，acc 作为描述项。候选保留 prefix 不一致时停止并交 planning 裁决，不自动删题、降 shot 或缩短答案。
 
-## Gate D 单 allocation 入口
+## Gate D 当前多任务入口
 
-2026-10-07 用户要求 ARC 尽量在一个正式 Slurm job 内完成，精确权限见
+2026-10-07 用户最新决定恢复独立小资源作业，每 job 1 A800、packing1/batch1，
+总并发最多7GPU，精确权限见single_job_amendment最新节。直接使用已通过debug的
+`phase10_accuracy.sbatch`，每完整cell独立输出；纯资源拆分不重复科学验证。
+先提交七迁移Online与两Native共9项，首7项无依赖，最后两项分别afterany依赖
+两Native，保证峰值不超过7。Native时限1h、Online4h作为首批边界，按debug耗时
+与loading余量设置；后续用首批完整cell实测准入余59，不无界堆积所有作业。
+实际已消耗+所有运行/待运行GPU×time预留<=100GPUh，首批<=40GPUh。
+取代旧单job前须核实状态；只有确认取消终态/实际分配成本后才释放其预留，
+已完成配置不重跑。暂停monitor保持，后续显式接续再验证闭合与预算。
+
+## Gate D 历史单 allocation 入口
+
+下述入口保留为已验证工程路径，当前调度已被上述多任务决定取代。
+2026-10-07 早先用户要求 ARC 尽量在一个正式 Slurm job 内完成，精确权限见
 `.planning/phase10/loopscope_phase10_gate_d_single_job_amendment.md`。
 `run_phase10_arc_bundle.py` 在同一 allocation 内为每张 GPU 建立一个 worker，每个 cell
 调用新的独立 `phase10_accuracy.sbatch` 子进程，并用原 verifier 闭合；不跨 cell

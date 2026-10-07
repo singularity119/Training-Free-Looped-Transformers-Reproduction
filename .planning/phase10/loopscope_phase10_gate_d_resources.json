@@ -1,12 +1,12 @@
 {
   "schema": "loopscope.phase10.gate_d_resources.v2",
-  "status": "WAITING_FOR_SEVEN_GPU_FORMAL",
+  "status": "WAITING_FOR_MULTIJOB_INITIAL_NINE",
   "executor": "01a111f8-7ba3-7862-b0d6-78c0a5a2f767",
   "planning_thread": "01a0fae2-12df-74e0-a874-190518ef0501",
   "host": "hpc2-hkustgz",
   "source_commit": "0fa5ea760eae859fe069db7a84d9777a608e55f6",
   "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase10-gate-d-20261006T161109Z/source-0fa5ea7",
-  "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase10-gate-d-20261006T161109Z/formal-seven-gpu-attempt1",
+  "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase10-gate-d-20261006T161109Z/multijob-initial-attempt1",
   "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z",
   "scheduled_monitor": "DISABLED_BY_USER",
   "job_ids": [
@@ -15,12 +15,42 @@
     "12932763",
     "12932810",
     "12932910",
-    "12932927"
+    "12932927",
+    "12935369",
+    "12935370",
+    "12935371",
+    "12935372",
+    "12935373",
+    "12935374",
+    "12935375",
+    "12935376",
+    "12935377"
   ],
   "initial_confirmation": {
-    "job_id": "12932927",
-    "state": "PENDING",
-    "exit_code": 0
+    "job_ids": [
+      "12935369",
+      "12935370",
+      "12935371",
+      "12935372",
+      "12935373",
+      "12935374",
+      "12935375",
+      "12935376",
+      "12935377"
+    ],
+    "states": {
+      "12935369": "PENDING",
+      "12935370": "PENDING",
+      "12935371": "PENDING",
+      "12935372": "PENDING",
+      "12935373": "PENDING",
+      "12935374": "PENDING",
+      "12935375": "PENDING",
+      "12935376": "PENDING",
+      "12935377": "PENDING"
+    },
+    "exit_code": 0,
+    "receipt": "multijob-initial-first-status.json"
   },
   "debug": {
     "partition": "debug",
@@ -43,7 +73,7 @@
       8
     ]
   },
-  "formal_jobs_submitted": 2,
+  "formal_jobs_submitted": 11,
   "budget": {
     "initial_gpu_hours": 40,
     "hard_gpu_hours": 100,
@@ -52,14 +82,14 @@
     "batch_size": 1,
     "planned_initial_cells": 9,
     "planned_remaining_cells": 59,
-    "expansion_rule": "first9 within initial40; consumed +1.2*conservative remaining allocation forecast plus cleanup<=100; sufficient actual remaining walltime",
-    "scheduler_mode": "ONE_ALLOCATION",
-    "formal_gpu_count": 7,
-    "formal_walltime_hours": 14,
-    "formal_reserved_gpu_hours": 98,
-    "all_known_consumed_and_reserved_upper_bound_gpu_hours": 98.18611111111112,
+    "expansion_rule": "first9 full cells within40; consumed+1.2 conservative remaining measured forecast<=100; consumed+all active/pending full time reservations<=100; peak<=7",
+    "scheduler_mode": "BOUNDED_ONE_GPU_PER_CELL",
+    "formal_gpu_count": 1,
+    "formal_walltime_hours": null,
+    "formal_reserved_gpu_hours": 30,
+    "all_known_consumed_and_reserved_upper_bound_gpu_hours": 30.18611111111111,
     "charge": "allocated GPU count times full walltime from Slurm StartTime including worker idle",
-    "gpu_count_rule": "User approved single-node7 A800 on highest legal priority emergency_gpu"
+    "gpu_count_rule": "each job1GPU,max7 total concurrency; two distinctNative afterany dependencies bound first9"
   },
   "canonical_count": 1172,
   "independent_cell_count": 68,
@@ -68,12 +98,20 @@
   "formal_record_count": 79696,
   "target_gold_loaded": false,
   "arc_accuracy_read": false,
-  "resume_receipt": "executor-resume-after-seven-gpu-formal-submission.json",
-  "next_action": "Explicit resume: verify12932927 terminal accounting, existing bundle summary/admission and68/79696 gold-free full-panel identity closure; require all terminal budget/source evidence before ARC_FULL_PANEL_CLOSED and one frozen analysis. Preserve valid cells and failed attempts; no duplicate successful scoring. No monitors. Gate E locked.",
+  "resume_receipt": "executor-resume-after-multijob-initial-submission.json",
+  "next_action": "Explicit resume: verify9 existing terminal jobs/accounting and each1172 gold-free full-cell closure,total10548 initial records. Admit59 remaining only from measured same-recipe cost within100GPUh and max7 concurrency, bounded full time reservations. Preserve successful cells; no partial ARC outcomes. Full68/79696 and terminal budget before one frozen analysis. No monitors; E locked.",
   "gate_terminal": false,
   "gate_e_authorized": false,
   "active_job_ids": [
-    "12932927"
+    "12935369",
+    "12935370",
+    "12935371",
+    "12935372",
+    "12935373",
+    "12935374",
+    "12935375",
+    "12935376",
+    "12935377"
   ],
   "terminal_jobs": [
     {
@@ -132,35 +170,138 @@
       "record_count": 54,
       "parameterized_runner_covered": true,
       "target_gold_loaded": false
+    },
+    {
+      "job_id": "12932927",
+      "state": "CANCELLED",
+      "elapsed_seconds": 0,
+      "allocated_gpu_hours": 0,
+      "allocated_gpu_count": 0,
+      "requested_gpu_count": 7,
+      "score_root_created": false,
+      "reason": "user restored1GPU independent jobs; conditional pending cancellation",
+      "receipt": "formal-seven-gpu-pending-replacement-receipt.json"
     }
   ],
   "confirmed_terminal_gpu_hours": 0.18611111111111112,
   "allocation_epoch_source": "SLURM_JOB_START_TIME",
   "formal": {
-    "job_id": "12932927",
-    "status": "SUBMITTED",
+    "status": "INITIAL_NINE_SUBMITTED",
     "partition": "emergency_gpu",
     "qos": "emergency_gpu",
     "gpu_type": "a800",
-    "gpu_count": 7,
-    "node_count": 1,
-    "cpus_per_task": 56,
-    "memory_gb": 448,
-    "time_limit_hours": 14,
-    "reserved_gpu_hours": 98,
+    "gpu_per_job": 1,
+    "max_concurrent_gpu": 7,
+    "cpus_per_job": 8,
+    "memory_gb_per_job": 64,
+    "initial_reserved_gpu_hours": 30,
     "actual_allocated_gpu_hours": null,
     "packing": 1,
     "batch_size": 1,
-    "expected_cells": 68,
-    "expected_records": 79696,
-    "output_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-seven-gpu-attempt1",
-    "submission_receipt": "formal-seven-gpu-submission-attempt1.json",
-    "site_snapshot": "seven-gpu-formal-site-admission.json",
-    "first9_then_auto_admit_remaining59": true
+    "initial_expected_cells": 9,
+    "initial_expected_records": 10548,
+    "panel_expected_cells": 68,
+    "panel_expected_records": 79696,
+    "output_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1",
+    "jobs": [
+      {
+        "job_id": "12935369",
+        "cell_id": "q4-native",
+        "gpu_count": 1,
+        "time_limit_hours": 1,
+        "dependency": null,
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q4-native/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-0.json"
+      },
+      {
+        "job_id": "12935370",
+        "cell_id": "q17-native",
+        "gpu_count": 1,
+        "time_limit_hours": 1,
+        "dependency": null,
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q17-native/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-1.json"
+      },
+      {
+        "job_id": "12935371",
+        "cell_id": "q17-w12-15-k2-online-current-t-lambda0.2",
+        "gpu_count": 1,
+        "time_limit_hours": 4,
+        "dependency": null,
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q17-w12-15-k2-online-current-t-lambda0.2/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-2.json"
+      },
+      {
+        "job_id": "12935372",
+        "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.9",
+        "gpu_count": 1,
+        "time_limit_hours": 4,
+        "dependency": null,
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q17-w12-15-k2-online-fixed-t0-lambda0.9/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-3.json"
+      },
+      {
+        "job_id": "12935373",
+        "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+        "gpu_count": 1,
+        "time_limit_hours": 4,
+        "dependency": null,
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q4-w15-18-k2-online-current-t-lambda0.9/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-4.json"
+      },
+      {
+        "job_id": "12935374",
+        "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.6",
+        "gpu_count": 1,
+        "time_limit_hours": 4,
+        "dependency": null,
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q4-w15-18-k2-online-fixed-t0-lambda0.6/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-5.json"
+      },
+      {
+        "job_id": "12935375",
+        "cell_id": "q4-w15-18-k3-online-current-t-lambda0.9",
+        "gpu_count": 1,
+        "time_limit_hours": 4,
+        "dependency": null,
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q4-w15-18-k3-online-current-t-lambda0.9/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-6.json"
+      },
+      {
+        "job_id": "12935376",
+        "cell_id": "q4-w15-18-k3-online-fixed-t0-lambda0.1",
+        "gpu_count": 1,
+        "time_limit_hours": 4,
+        "dependency": "afterany:12935369",
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q4-w15-18-k3-online-fixed-t0-lambda0.1/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-7.json"
+      },
+      {
+        "job_id": "12935377",
+        "cell_id": "q4-w15-18-k3-online-lag1-lambda0.9",
+        "gpu_count": 1,
+        "time_limit_hours": 4,
+        "dependency": "afterany:12935370",
+        "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-initial-attempt1/cells/q4-w15-18-k3-online-lag1-lambda0.9/scores",
+        "initial_state": "PENDING",
+        "submission_receipt": "multijob-initial-submission-8.json"
+      }
+    ],
+    "submission_receipt": "multijob-initial-submissions.json",
+    "site_snapshot": "multijob-initial-site-admission.json",
+    "remaining59_submitted": false
   },
-  "formal_jobs_active": 1,
+  "formal_jobs_active": 9,
   "formal_resource_decision": {
-    "status": "USER_APPROVED_SINGLE_NODE_SEVEN_GPU",
+    "status": "USER_APPROVED_BOUNDED_ONE_GPU_JOBS",
     "verified_single_node_highest_priority_gpu_count": 7,
     "verified_dedicated_single_node_gpu_count": 8,
     "verified_multi_node_requests_gpu_counts": [
@@ -174,9 +315,10 @@
       "max-a800-admission-test-only-attempt2.json",
       "max-a800-admission-test-only-attempt3.json"
     ],
-    "approved_gpu_count": 7,
     "approved_partition": "emergency_gpu",
     "multi_node_authorized": false,
-    "low_priority_eight_gpu_authorized": false
+    "low_priority_eight_gpu_authorized": false,
+    "approved_gpu_per_job": 1,
+    "approved_total_concurrency": 7
   }
 }
