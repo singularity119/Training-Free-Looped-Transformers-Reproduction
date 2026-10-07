@@ -1,6 +1,6 @@
-# Phase10 Gate D 执行接续：等待首批 9 个单卡正式任务
+# Phase10 Gate D 执行接续：首批 9 闭合，等待余下 50 作业与 9 提交名额
 
-2026-10-07 最新接续：用户撤回七卡单job，旧12932927确认PENDING/无输出后条件取消、0GPUh；首批9个每job1A800正式任务 **12935369–12935377** 已提交，首次全部PENDING，总峰值<=7GPU。实际已消耗+预留30.186111GPUh，source `0fa5ea760eae859fe069db7a84d9777a608e55f6`。以文末“多任务首批当前接续”为准。
+2026-10-07 最新接续：首批12935369–12935377全部COMPLETED/0:0，9cells/10548记录无标签验证闭合，累计实际4.863333GPUh。剩余59准入后已提交50项 **12938926–12938975**，首次全PENDING；另9项因QoS MaxSubmitJobsPU=50保留未提交。7依赖链峰值<=7，当前已消耗+活动预留60.613333GPUh。GPU小时数现仅作资源记录，最新用户授权见文末“取消GPU小时数上限”。
 
 2026-10-07，executor `01a111f8-7ba3-7862-b0d6-78c0a5a2f767`。这不是 Gate 终态或验收；D 保持授权，E 锁定。用户暂不定时监控，不创建/恢复 automation，也不人工轮询。下一次显式接续先核实已有作业，不能重复提交。
 
@@ -135,3 +135,23 @@ planning转达用户最新明确要求“还是采取以往的方案，多个任
 独立提交9项exit0，每job emergency_gpu/QoSemergency_gpu/nodes1/ntasks1/A800×1/cpus8/mem64G、packing1/batch1、FORMAL_TEST/max_length32768。job映射：12935369 q4-native/1h；12935370 q17-native/1h；12935371 q17K2current_t.2/4h；12935372 q17K2fixed_t0.9/4h；12935373 q4K2current_t.9/4h；12935374 q4K2fixed_t0.6/4h；12935375 q4K3current_t.9/4h；12935376 q4K3fixed_t0.1/4h、afterany12935369；12935377 q4K3lag1.9/4h、afterany12935370。前7自由调度，后两各替代对应已终态Native的并发槽，总峰值<=7。afterany仅控制资源，不以成功/失败或outcome筛选配置；每cell独立保存。完整逐次argv/stdout/stderr在multijob-initial-submission-0至8.json，集合multijob-initial-submissions.json。全部提交后的唯一首态squeue exit0/九项全PENDING在multijob-initial-first-status.json，之后不继续轮询新job。
 
 最新接续 `<run>/executor-resume-after-multijob-initial-submission.json`，本地资源同步。下一次明确接续核实9个既有job终态/ExitCode/实际分配与每cell1172完整score closure，共10548首批记录；按同model/window/K/policy完整cell实测耗时/显存评估余59，只有实际已消耗+1.2×保守预测<=100且未来批次全部活动/待运行时限预留<=100、峰值<=7才继续。仅补缺失、不重跑成功。完整68/79696、alias/身份/配方/有限值/来源与全部job终态资源闭合后才ARC_FULL_PANEL_CLOSED/一次冻结分析。当前ARC gold/accuracy未读，无automation/人工轮询，D未终态，E锁定。planning control/supplement改动仍保持原样未代提交。
+
+## 首批闭合与剩余面板当前接续
+
+用户“现在呢，任务什么情况”显式接续后一次状态/accounting读取：12935369–12935377九项均COMPLETED/0:0，原队列为空，每cell SCORES_COMPLETE/1172条score记录/goldfalse。实际allocation秒分别366、198、2961、619、3203、822、4625、855、3189，首批合计16838s/4.677222222222222GPUh，含debug/失败的D累计4.863333333333333GPUh。两Native约6.1/3.3min；Online约10.3至77.1min。使用原verifier在同immutable source/runtime、完整test pool/manifest执行--full-cell九root检查，exit0，FULL_PHASE10_SCORE_CELLS_CLOSED/9cells/10548records/complete_cells9/goldfalse，严格identity/配方/候选有限值/方向时序检查通过；回执multijob-initial-verification-attempt1/verification-receipt.json与initial-nine-closure.json。未读取target gold/accuracy。
+
+实际首批peak reserved显存约9.0至13.77GB，packing1/batch1原样。余59用既有stdlib forecast：同model/window/K/policy已测完整allocation秒数，Loop用同model/window/K Online最大值；估计39.16138888888889GPUh，已消耗+1.2×预测51.857GPUh<100，满足扩展条件。每job time=1.2×匹配实测+600s加载/尾部余量，向上取整15min，形成30/75/105min三档；全部59预留60.25GPUh，已消耗+全部计划预留65.11333333333333<100。首批4.863333<40。现场最高合法emergency_gpu Tier/JobFactor300、用户关联与GPU8/CPU64限额、原队列空均复核；无科学/源码/环境改动。
+
+新inputs `inputs/phase10-gate-d-20261006T161109Z/multijob-remaining-attempt1/gate_d_multijob_remaining_plan.json`，新输出 `<run>/formal-multijob-remaining-attempt1/cells/<cell>/scores`，source仍0fa5ea7。固定七迁移原文、68/59清单不变。59个producer CPU DRY_RUN exit0、每1172/goldfalse，multijob-remaining-cpu-dry-runs.json；实际首批accounting/显存/预算预测见multijob-remaining-budget-admission.json，现场快照multijob-remaining-site-admission.json。
+
+按最长预测耗时优先、7条依赖链当前估计负载最小者分配lane；每job1A800/cpu8/mem64G/emergency_gpu/QoS同名，每条lane仅首项无依赖、后项afterany前一项，保证峰值<=7、各cell独立结果。前50项submission exit0/job12938926–12938975；逐次完整argv/stdout/stderr在multijob-remaining-submission-0至49.json。第51项（index50，q4K2fixed_t0.9）提交被QOSMaxSubmitJobPerUserLimit拒绝，exit1/无jobID/0新增GPUh；原回执multijob-remaining-submission-50.json保留，停止继续提交，不取消/重复成功50项。此次准入漏查QoS提交数量字段，随后实际sacctmgr核实emergency_gpu MaxSubmitJobsPU/MaxSubmitJobsPerUser=50、MaxJobsPU空；回执multijob-remaining-submit-limit-query-*.json。该限制补入后续接续，不通过更换QoS绕开。
+
+提交成功50项后的唯一首态squeue exit0/50项PENDING在multijob-remaining-first-status-partial.json；之后不人工轮询。集合回执multijob-remaining-submissions-partial-attempt1.json含job-cell/lane/dependency/time映射和9个未提交cell。活动50时限预留55.75GPUh，累计实际+当前预留60.61333333333333<100；未提交9均30min、未来预留4.5GPUh，尚未计作活动预留，不丢任何配置。9项清单：q4K2fixed_t0.9，以及q17K2fixed_t0.1至.8。首批9成功不重跑。
+
+最新远端接续executor-resume-after-multijob-remaining-partial-submission.json；本地资源同步完整50映射、9 deferred、7 lane heads、提交数量上限。下一次明确接续先核实已有50 jobs及实际成本/成功cell、现场QoS上限与运行/待运行数量，在释放的名额内仅提交9个缺失配置，采用fresh attempt receipt、保留原失败回执与lane边界，已终态lane按实际释放状态处理，不盲依赖被清理的旧job。所有阶段累计实际+活动/待运行预留<=100，峰值<=7并受账户更低可用额度约束。全68/79696、18alias/身份/配方/来源/有限值与全部终态资源共同闭合前，gold/accuracy/analysis保持封闭；之后一次固定分析。无monitor/automation，D未终态/E锁定。此为实质进展后的真实等待点，不将临时提交名额限制判为Gate/科学失败。
+
+## 取消GPU小时数上限
+
+2026-10-07 exact executor内用户明确指示“不要设置GPU小时数上限”（原文：不需要设置gpu小时数上限）。此最新人类授权立即取代D历史首批40GPUh、总100GPUh及基于它们的提交/扩展/停止门槛；上文数值比较保留为当时准入证据，不继续施加。实际allocation GPU×walltime、预测与时限预留仍记录，作为accounting而非预算封顶。现有50作业及单作业30/75/105min时限保留；time是Slurm作业运行时限，按实测与余量设置。现场association/QoS/partition/提交数量50/当前并发7等限制仍遵守，冻结68配置、packing1/batch1、全量闭合前gold/outcome隔离、无monitor与E锁定均不变。
+
+新远端write-once资源授权回执executor-resource-policy-no-gpuh-cap-20261007.json；新接续executor-resume-no-gpuh-cap-20261007.json引用此前50映射/9 deferred/7 lane heads，不改写旧receipt，不查询/取消/重提交作业。planning-owned control/supplement未由executor修改；向planning交付最新直接授权，请其同步当前控制面。后续明确接续只按实时Slurm名额补9项，并保持用量记录，不以GPU小时数拒绝已授权工作。

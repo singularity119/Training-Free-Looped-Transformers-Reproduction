@@ -17,14 +17,19 @@ MMLU 沿用 Phase9 的 plain 5-shot、dev first_n5、14042 test/57 subjects 及�
 `phase10_accuracy.sbatch`，每完整cell独立输出；纯资源拆分不重复科学验证。
 先提交七迁移Online与两Native共9项，首7项无依赖，最后两项分别afterany依赖
 两Native，保证峰值不超过7。Native时限1h、Online4h作为首批边界，按debug耗时
-与loading余量设置；后续用首批完整cell实测准入余59，不无界堆积所有作业。
-实际已消耗+所有运行/待运行GPU×time预留<=100GPUh，首批<=40GPUh。
+与loading余量设置；后续用首批完整cell实测准入余59，以7条前后依赖链约束峰值，保留实测与时限预留记录。
+提交前同时查QoS MaxSubmitJobsPU和现场运行/待运行数量；只在合法名额内提交，
+超限拒绝保留原receipt与已提交任务，后续只补缺失，不切换QoS绕开上限。
+每job时限用匹配model/window/K/policy的完整allocation实测×1.2，加600s余量并上取整15min。
+用户2026-10-07最新指令取消D总100GPUh及首批40GPUh上限；GPU小时数只记录，
+不作为提交、扩展或停止门槛。仍遵守Slurm现场配额和单作业合法运行时限。
 取代旧单job前须核实状态；只有确认取消终态/实际分配成本后才释放其预留，
-已完成配置不重跑。暂停monitor保持，后续显式接续再验证闭合与预算。
+已完成配置不重跑。暂停monitor保持，后续显式接续再验证闭合、现场名额与实际用量。
 
 ## Gate D 历史单 allocation 入口
 
-下述入口保留为已验证工程路径，当前调度已被上述多任务决定取代。
+下述入口保留为已验证历史工程路径，当前调度已被上述多任务决定取代；
+其中40/100GPUh准入逻辑仅作历史记录，当前无GPU小时数上限，不使用此旧bundle入口。
 2026-10-07 早先用户要求 ARC 尽量在一个正式 Slurm job 内完成，精确权限见
 `.planning/phase10/loopscope_phase10_gate_d_single_job_amendment.md`。
 `run_phase10_arc_bundle.py` 在同一 allocation 内为每张 GPU 建立一个 worker，每个 cell
