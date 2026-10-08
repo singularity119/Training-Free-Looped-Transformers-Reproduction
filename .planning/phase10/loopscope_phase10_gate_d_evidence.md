@@ -1,4 +1,18 @@
-# Phase10 Gate D 执行接续：首批 9 闭合，等待余下 50 作业与 9 提交名额
+# Phase10 Gate D：ARC全量核验分析完成，提交规划验收
+
+2026-10-08 最新交付：用户直接授权核验分析。68正式配置／79696条无标签raw scores由原source-0fa5ea7的official verifier全量闭合；all74 attempts accounting核实终态，先写ARC_FULL_PANEL_CLOSED。随后按id/index/question/choice文本与标签顺序精确join1172 frozen test gold，official analysis fresh verification后仅运行一次固定分析。另用独立NumPy预测、SciPy二项McNemar、独立Holm与10000次bootstrap重算全部68配置／185比较，全部相符，CI最大误差2.22e-16pp。机器分析根arc-analysis-attempt1-20261008；human报告外层资产/报告/phase10/gate-d-arc-20261008。14迁移／126扫描／45策略均无显著正或负差异；总成本40.991944GPUh、正式40.805833、peak7/OOM0。原始逐题分数和gold只留HPC，未下载本地。详见本目录analysis_summary与final_audit。Gate D为AUDIT_REQUESTED，未自判PASS、未进入E。
+
+
+2026-10-08 当前接续：用户在当前聊天明确要求提交剩余9配置。只读现场核实原59个正式job全部COMPLETED/0:0，59个score root均SCORES_COMPLETE、各1172条，共69148记录，target_gold_loaded=false；当前用户队列为空。原先因MaxSubmitJobsPU=50暂缓的9配置均无已有score root，未重复成功配置。本次仅统计原分数完整条数和summary状态，未重跑full-panel verifier或读取outcome。
+
+复核emergency_gpu的PriorityTier/JobFactor300、普通用户关联、同名QoS提交上限50及GPU8/CPU64现场限制。复用已通过debug且未修改的source-0fa5ea7/原runtime/phase10_accuracy.sbatch及冻结manifest/pool；9项CPU DRY_RUN均PASS，每项1172/gold=false。不改源码、环境、科学参数或七迁移lambda；用户已取消GPU小时硬上限，保留用量记录。
+
+新增write-once根：`formal-multijob-deferred9-20261008T025036Z`，完整argv/stdout/stderr和首次状态分别在`submission-0.json`至`submission-8.json`及`initial-confirmation.json`。9次sbatch均exit0，job12942735–12942743；emergency_gpu/QoS同名，每job1A800、8CPU/64G、30min、packing1/batch1。前7项无依赖；12942742 afterany12942735、12942743 afterany12942736，峰值<=7。首次一次性squeue确认9项均PENDING。
+
+配置映射：12942735=q4K2 fixed_t0 lambda0.9；12942736–12942743=q17K2 fixed_t0 lambda0.1–0.8。剩余未提交0，68配置均已有正式job。旧输出与失败receipt原样保留。本地完整接续附件为`loopscope_phase10_gate_d_deferred9_submission_20261008.json`；远端`resume-after-submission.json`在上述新根。下一次明确接续先核实末9job及每cell完整1172条，再结合原59根闭合68/79696；闭合前不读ARC gold/accuracy。未创建或恢复monitor，未发送Gate终态或进入E。
+
+---
+以下为此前接续历史，最新状态以上文及新增接续附件为准。
 
 2026-10-07 最新接续：首批12935369–12935377全部COMPLETED/0:0，9cells/10548记录无标签验证闭合，累计实际4.863333GPUh。剩余59准入后已提交50项 **12938926–12938975**，首次全PENDING；另9项因QoS MaxSubmitJobsPU=50保留未提交。7依赖链峰值<=7，当前已消耗+活动预留60.613333GPUh。GPU小时数现仅作资源记录，最新用户授权见文末“取消GPU小时数上限”。
 

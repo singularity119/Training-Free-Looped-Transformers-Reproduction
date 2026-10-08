@@ -3,7 +3,7 @@
 2026-10-02。用户已授权本planning逐Gate创建独立执行线程、验收并推进第十阶段。
 
 ```text
-STATUS=GATE_D_AUTHORIZED
+STATUS=GATE_D_ANALYSIS_COMPLETE_AUDIT_REQUESTED
 PLANNING_THREAD=01a0fae2-12df-74e0-a874-190518ef0501
 PLANNING_HOST=local
 ACTIVE_GATE=D
@@ -26,11 +26,11 @@ GATE_B_STATE=PASS
 AUDITED_GATE_B_COMMIT=cc623e5e2cec22a56c6fa211574c9cd8de9e3b94
 GATE_C_STATE=PASS
 AUDITED_GATE_C_COMMIT=ecaa1367eace0a1abb3268095057f4b22b616f36
-GATE_D_STATE=AUTHORIZED
+GATE_D_STATE=AUDIT_REQUESTED
 GATE_E_STATE=LOCKED
-CURRENT_DECISION=GATE_C_PASS_D_ADMITTED
-GPU_SCHEDULER_AUTHORITY=D_ONLY_100GPUH_MAX2GPU_INITIAL40GPUH_CONDITIONAL_EXPANSION
-NEXT_ADMISSION=GATE_D_PASS_ARC_COMPLETE_ANALYSIS
+CURRENT_DECISION=GATE_D_ANALYSIS_COMPLETE_PENDING_PLANNING_ACCEPTANCE
+GPU_SCHEDULER_AUTHORITY=D_NO_GPUH_CAP_MULTI_JOBS_1A800_EACH_MAX7GPU
+NEXT_ADMISSION=GATE_D_ACCEPTANCE_BEFORE_GATE_E
 ```
 
 科学范围：4B15:18 K2/K3、1.7B12:15 K2；fixed_t0/lag1/current_t，lambda0.1至0.9；不做Matched-norm。每数据集68独立配置（86展示含18个K2别名），MMLU预计9复用59新，ARC68新。ARC25-shot标准文本评分，主acc_norm附acc。合同v2为科学入口。
@@ -56,3 +56,13 @@ ACTIVE_PARTITION_RULE=NONFORMAL_DEBUG_FORMAL_HIGHEST_LEGAL_A800
 2026-10-07 planning直接读回C审计包并PASS；C撤权。七组MMLU迁移lambda固定，D按新handoff运行ARC68配置，100GPUh/max2GPU/初始40GPUh。用户2026-10-06在C要求暂不定时监控，保持暂停，不恢复/替代；后续显式请求或消息接续。上文历史C权限不再生效，E锁定。
 
 2026-10-07 用户要求ARC尽量单job完成：当前D正式调度以 loopscope_phase10_gate_d_single_job_amendment.md 为准，同一allocation内跑68cell，首批计时后自动预算准入继续，100GPUh/max2GPU不变，正式walltime按现场合法限制及预算选取，替代原每job8h/分批提交。新runner先debug。
+
+2026-10-07 用户追加允许单任务最大合法A800数量（记忆8，须现场核验），取代所有D max2GPU旧上限；总100GPUh/首批40GPUh不变，按整个allocation计费。详见single_job_amendment最新节。subagent上限仍3。
+
+2026-10-07 用户批准planning推荐：D采用单节点7A800、最高优先级emergency_gpu、一个正式job，替代此前最大数量歧义；总100GPUh/首批40GPUh不变。详见single_job_amendment最终决定。
+
+2026-10-07 用户最新撤回单job七卡方案，改多任务各申请1A800、最高合法优先级，总并发最多7GPU（受现场更低限制），总100GPUh不变。先核实12932927，PENDING条件取消后确认释放预留，再提交不重复的替代；其他状态按single_job_amendment最新节保留成果处理。
+
+2026-10-07 用户在exact D线程直接要求“不需要设置gpu小时数上限”，planning已读回原用户消息确认。取消D总100/首批40GPUh及其提交、扩展、停止门槛；仍记录实际成本，保留最高合法A800/单job1卡/总并发7、现场MaxSubmitJobsPU=50、冻结科学和标签隔离。已提交50个余项不重复，余9按实际名额接续；定时监控仍暂停。
+
+2026-10-08 用户在当前接续聊天明确授权全量核验、解封分析、保存对应阶段结果及Git推送，覆盖此前当前聊天仅提交/状态读取范围；原D executor身份保留为历史绑定，不据此要求再次询问。68正式配置已全部COMPLETED/0:0；gold-free全量核验68/79696闭合并写ARC_FULL_PANEL_CLOSED后，精确join1172 test标签，按冻结七参数与14/126/45 families完成一次分析及独立统计复算。所有family校正后显著正/负项均0；未建立额外Loop收益或显著迁移收益，不等于等效。D总40.991944GPUh、正式40.805833GPUh、peak7/OOM0。分析摘要见loopscope_phase10_gate_d_analysis_summary.json，权威机器根为runs/phase10-gate-d-20261006T161109Z/arc-analysis-attempt1-20261008；人类报告在外层资产/报告/phase10/gate-d-arc-20261008。当前D结果提交规划验收，E仍锁定，不宣称阶段终审已完成；无新计算或monitor。

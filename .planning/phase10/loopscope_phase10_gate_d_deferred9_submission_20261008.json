@@ -1,0 +1,133 @@
+{
+  "status": "WAITING_FOR_FINAL_NINE",
+  "original_executor": "01a111f8-7ba3-7862-b0d6-78c0a5a2f767",
+  "planning_thread": "01a0fae2-12df-74e0-a874-190518ef0501",
+  "submission_authority": "Direct human request in current chat, remaining nine only",
+  "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z",
+  "attempt_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z",
+  "source_commit": "0fa5ea760eae859fe069db7a84d9777a608e55f6",
+  "jobs": [
+    {
+      "job_id": "12942735",
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": null,
+      "dependency_lane": 0,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q4-w15-18-k2-online-fixed-t0-lambda0.9/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-0.json"
+    },
+    {
+      "job_id": "12942736",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.1",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": null,
+      "dependency_lane": 1,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q17-w12-15-k2-online-fixed-t0-lambda0.1/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-1.json"
+    },
+    {
+      "job_id": "12942737",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.2",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": null,
+      "dependency_lane": 2,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q17-w12-15-k2-online-fixed-t0-lambda0.2/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-2.json"
+    },
+    {
+      "job_id": "12942738",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.3",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": null,
+      "dependency_lane": 3,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q17-w12-15-k2-online-fixed-t0-lambda0.3/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-3.json"
+    },
+    {
+      "job_id": "12942739",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.4",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": null,
+      "dependency_lane": 4,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q17-w12-15-k2-online-fixed-t0-lambda0.4/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-4.json"
+    },
+    {
+      "job_id": "12942740",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.5",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": null,
+      "dependency_lane": 5,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q17-w12-15-k2-online-fixed-t0-lambda0.5/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-5.json"
+    },
+    {
+      "job_id": "12942741",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.6",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": null,
+      "dependency_lane": 6,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q17-w12-15-k2-online-fixed-t0-lambda0.6/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-6.json"
+    },
+    {
+      "job_id": "12942742",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.7",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": "afterany:12942735",
+      "dependency_lane": 0,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q17-w12-15-k2-online-fixed-t0-lambda0.7/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-7.json"
+    },
+    {
+      "job_id": "12942743",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.8",
+      "gpu_count": 1,
+      "time_limit_seconds": 1800,
+      "dependency": "afterany:12942736",
+      "dependency_lane": 1,
+      "score_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/cells/q17-w12-15-k2-online-fixed-t0-lambda0.8/scores",
+      "submission_receipt": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/formal-multijob-deferred9-20261008T025036Z/submission-8.json"
+    }
+  ],
+  "confirmation": {
+    "command": [
+      "/opt/slurm/bin/squeue",
+      "-j",
+      "12942735,12942736,12942737,12942738,12942739,12942740,12942741,12942742,12942743",
+      "-h",
+      "-o",
+      "%i|%T|%R|%b"
+    ],
+    "exit_code": 0,
+    "stdout": "12942735|PENDING|(Priority)|gres:gpu:a800:1\n12942736|PENDING|(Priority)|gres:gpu:a800:1\n12942737|PENDING|(Priority)|gres:gpu:a800:1\n12942738|PENDING|(Priority)|gres:gpu:a800:1\n12942739|PENDING|(Priority)|gres:gpu:a800:1\n12942740|PENDING|(Priority)|gres:gpu:a800:1\n12942741|PENDING|(Priority)|gres:gpu:a800:1\n12942742|PENDING|(Dependency)|gres:gpu:a800:1\n12942743|PENDING|(Dependency)|gres:gpu:a800:1\n",
+    "stderr": "",
+    "states": {
+      "12942735": "PENDING",
+      "12942736": "PENDING",
+      "12942737": "PENDING",
+      "12942738": "PENDING",
+      "12942739": "PENDING",
+      "12942740": "PENDING",
+      "12942741": "PENDING",
+      "12942742": "PENDING",
+      "12942743": "PENDING"
+    },
+    "timestamp_utc": "2026-10-08T02:51:36.760174+00:00"
+  },
+  "completed_prior_cells": 59,
+  "submitted_final_cells": 9,
+  "unsubmitted_cells": [],
+  "max_gpu": 7,
+  "scheduled_monitor": "DISABLED_BY_USER",
+  "target_gold_loaded": false,
+  "next_action": "On explicit continuation, verify these nine jobs and each1172 scores, combine prior59 score roots with these nine to close all68/79696 before target gold or analysis. Preserve successful cells; no duplicate submission."
+}

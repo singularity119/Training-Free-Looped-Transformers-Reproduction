@@ -1,0 +1,165 @@
+{
+  "schema": "loopscope.phase10.gate_d_analysis_summary.v1",
+  "status": "ANALYZED_COMPLETE_PANEL_INDEPENDENTLY_VERIFIED",
+  "date": "2026-10-08",
+  "direct_user_authority": "核验分析；结果保存对应阶段路径；允许Git推送",
+  "source_commit": "0fa5ea760eae859fe069db7a84d9777a608e55f6",
+  "cells": 68,
+  "display_rows": 86,
+  "aliases": 18,
+  "canonical_n": 1172,
+  "records": 79696,
+  "primary_metric": "acc_norm",
+  "families": {
+    "LAMBDA_SCAN_126": {
+      "comparisons": 126,
+      "positive": 0,
+      "negative": 0
+    },
+    "POLICY_COMPARISONS_45": {
+      "comparisons": 45,
+      "positive": 0,
+      "negative": 0
+    },
+    "ARC_DIRECT_TRANSFER_14": {
+      "comparisons": 14,
+      "positive": 0,
+      "negative": 0
+    }
+  },
+  "transfer_results": [
+    {
+      "strategy_id": "q17-w12-15-k2-current-t",
+      "cell_id": "q17-w12-15-k2-online-current-t-lambda0.2",
+      "strength": 0.2,
+      "arc_correct": 640,
+      "n": 1172,
+      "acc_norm": 0.5460750853242321,
+      "acc": 0.5119453924914675,
+      "delta_loop_pp": 0.3412969283276451,
+      "delta_native_pp": -0.17064846416382254,
+      "loop_holm_p": 1.0,
+      "native_holm_p": 1.0
+    },
+    {
+      "strategy_id": "q17-w12-15-k2-fixed-t0",
+      "cell_id": "q17-w12-15-k2-online-fixed-t0-lambda0.9",
+      "strength": 0.9,
+      "arc_correct": 641,
+      "n": 1172,
+      "acc_norm": 0.5469283276450512,
+      "acc": 0.5136518771331058,
+      "delta_loop_pp": 0.42662116040955633,
+      "delta_native_pp": -0.08532423208191127,
+      "loop_holm_p": 1.0,
+      "native_holm_p": 1.0
+    },
+    {
+      "strategy_id": "q4-w15-18-k2-current-t",
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "strength": 0.9,
+      "arc_correct": 749,
+      "n": 1172,
+      "acc_norm": 0.6390784982935154,
+      "acc": 0.5972696245733788,
+      "delta_loop_pp": -0.42662116040955633,
+      "delta_native_pp": 0.3412969283276451,
+      "loop_holm_p": 1.0,
+      "native_holm_p": 1.0
+    },
+    {
+      "strategy_id": "q4-w15-18-k2-fixed-t0",
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.6",
+      "strength": 0.6,
+      "arc_correct": 746,
+      "n": 1172,
+      "acc_norm": 0.636518771331058,
+      "acc": 0.5981228668941979,
+      "delta_loop_pp": -0.6825938566552902,
+      "delta_native_pp": 0.08532423208191127,
+      "loop_holm_p": 0.8032226562500019,
+      "native_holm_p": 1.0
+    },
+    {
+      "strategy_id": "q4-w15-18-k3-current-t",
+      "cell_id": "q4-w15-18-k3-online-current-t-lambda0.9",
+      "strength": 0.9,
+      "arc_correct": 743,
+      "n": 1172,
+      "acc_norm": 0.6339590443686007,
+      "acc": 0.5930034129692833,
+      "delta_loop_pp": 0.17064846416382254,
+      "delta_native_pp": -0.17064846416382254,
+      "loop_holm_p": 1.0,
+      "native_holm_p": 1.0
+    },
+    {
+      "strategy_id": "q4-w15-18-k3-fixed-t0",
+      "cell_id": "q4-w15-18-k3-online-fixed-t0-lambda0.1",
+      "strength": 0.1,
+      "arc_correct": 745,
+      "n": 1172,
+      "acc_norm": 0.6356655290102389,
+      "acc": 0.5921501706484642,
+      "delta_loop_pp": 0.3412969283276451,
+      "delta_native_pp": 0.0,
+      "loop_holm_p": 1.0,
+      "native_holm_p": 1.0
+    },
+    {
+      "strategy_id": "q4-w15-18-k3-lag1",
+      "cell_id": "q4-w15-18-k3-online-lag1-lambda0.9",
+      "strength": 0.9,
+      "arc_correct": 746,
+      "n": 1172,
+      "acc_norm": 0.636518771331058,
+      "acc": 0.5930034129692833,
+      "delta_loop_pp": 0.42662116040955633,
+      "delta_native_pp": 0.08532423208191127,
+      "loop_holm_p": 1.0,
+      "native_holm_p": 1.0
+    }
+  ],
+  "formal_gpu_hours": 40.80583333333333,
+  "gate_gpu_hours": 40.99194444444444,
+  "max_gpu": 7,
+  "oom_count": 0,
+  "analysis_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/arc-analysis-attempt1-20261008",
+  "human_report": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase10/gate-d-arc-20261008/ARC核验与分析报告.md",
+  "independent_verification": {
+    "status": "INDEPENDENT_ARC_ANALYSIS_VERIFIED",
+    "cells": 68,
+    "records": 79696,
+    "contrasts": 185,
+    "display_rows": 86,
+    "aliases": 18,
+    "methods": [
+      "independent raw-score NumPy argmax and character normalization",
+      "SciPy exact binomial two-sided McNemar",
+      "independent family-wise Holm computation",
+      "10000 paired multinomial bootstrap replicates seed20261002",
+      "all seven frozen transfer choices unchanged"
+    ],
+    "bootstrap_max_abs_error_pp": 2.220446049250313e-16,
+    "families": {
+      "LAMBDA_SCAN_126": {
+        "comparisons": 126,
+        "positive": 0,
+        "negative": 0
+      },
+      "POLICY_COMPARISONS_45": {
+        "comparisons": 45,
+        "positive": 0,
+        "negative": 0
+      },
+      "ARC_DIRECT_TRANSFER_14": {
+        "comparisons": 14,
+        "positive": 0,
+        "negative": 0
+      }
+    },
+    "timestamp_utc": "2026-10-08T07:29:16.007064+00:00"
+  },
+  "gate_decision": "AUDIT_REQUESTED",
+  "gate_e_authorized": false
+}
