@@ -13,7 +13,8 @@
       "state": "COMPLETED",
       "exit_code": "0:0",
       "elapsed_allocated_seconds": 30,
-      "actual_qos": "debug"
+      "actual_qos": "debug",
+      "actual_partition": "debug"
     },
     {
       "job_id": "12947166",
@@ -28,7 +29,8 @@
       "state": "COMPLETED",
       "exit_code": "0:0",
       "elapsed_allocated_seconds": 268,
-      "actual_qos": "emergency_gpu"
+      "actual_qos": "emergency_gpu",
+      "actual_partition": "emergency_gpu"
     },
     {
       "job_id": "12947347",
@@ -43,7 +45,8 @@
       "state": "COMPLETED",
       "exit_code": "0:0",
       "elapsed_allocated_seconds": 217,
-      "actual_qos": "emergency_gpu"
+      "actual_qos": "emergency_gpu",
+      "actual_partition": "emergency_gpu"
     },
     {
       "job_id": "12947685",
@@ -55,7 +58,12 @@
       "packing": 2,
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/worklist-batch1.json",
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-formal-batch1",
-      "dependency": null
+      "dependency": null,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 2339,
+      "actual_partition": "emergency_gpu",
+      "actual_qos": "emergency_gpu"
     },
     {
       "job_id": "12947686",
@@ -67,7 +75,12 @@
       "packing": 2,
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/worklist-batch2.json",
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-formal-batch2",
-      "dependency": null
+      "dependency": null,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 2279,
+      "actual_partition": "emergency_gpu",
+      "actual_qos": "emergency_gpu"
     },
     {
       "job_id": "12947687",
@@ -79,8 +92,17 @@
       "packing": 2,
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/worklist-batch3.json",
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-formal-batch3",
-      "dependency": "afterany:12947685"
+      "dependency": "afterany:12947685",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 2262,
+      "actual_partition": "emergency_gpu",
+      "actual_qos": "emergency_gpu"
     }
   ],
-  "budget_gpuh": 12
+  "budget_gpuh": 12,
+  "actual_allocation_gpuh": 2.0541666666666667,
+  "active_reserved_gpuh": 0,
+  "latest_max_concurrent_gpu_authority": 8,
+  "observed_compute_max_concurrent_gpu": 2
 }

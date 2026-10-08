@@ -2,7 +2,7 @@
   "automation_id": "phase11-gate-c-a800-canary-monitor",
   "name": "Phase11 Gate C A800 canary monitor",
   "kind": "heartbeat",
-  "status": "ACTIVE",
+  "status": "PAUSED",
   "cadence_minutes": 60,
   "executor": "01a11b40-07d3-7342-9d01-f809b480f49e",
   "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
@@ -20,7 +20,7 @@
   "latest_update_tool_result": {
     "automationId": "phase11-gate-c-a800-canary-monitor",
     "mode": "update",
-    "status": "ACTIVE"
+    "status": "PAUSED"
   },
   "terminal_events": [
     {
@@ -52,6 +52,53 @@
         "threadId": "01a11b40-07d3-7342-9d01-f809b480f49e"
       },
       "observed_at_utc": "2026-10-08T13:38:58Z"
+    },
+    {
+      "job_ids": [
+        "12947685",
+        "12947686"
+      ],
+      "states": [
+        "COMPLETED",
+        "COMPLETED"
+      ],
+      "exit_codes": [
+        "0:0",
+        "0:0"
+      ],
+      "elapsed_allocated_seconds": [
+        2339,
+        2279
+      ],
+      "pause_tool_result": {
+        "automationId": "phase11-gate-c-a800-canary-monitor",
+        "mode": "update",
+        "status": "PAUSED"
+      },
+      "resume_delivery_tool_result": {
+        "threadId": "01a11b40-07d3-7342-9d01-f809b480f49e"
+      },
+      "observed_at_utc": "2026-10-08T15:45:58Z",
+      "remaining_job_snapshot": {
+        "job_id": "12947687",
+        "state": "RUNNING",
+        "elapsed_allocated_seconds": 2118
+      },
+      "executor_continuation": "Summary subtask was started, then stopped after context compaction; executor went idle without final closure. Planning explicitly relayed resume on 2026-10-09."
     }
-  ]
+  ],
+  "final_executor_confirmation": {
+    "confirmed_at_utc": "2026-10-08T17:13:15.557372+00:00",
+    "all_jobs_terminal": true,
+    "last_job_id": "12947687",
+    "last_state": "COMPLETED",
+    "last_exit_code": "0:0",
+    "last_elapsed_allocated_seconds": 2262,
+    "pause_tool_result": {
+      "automationId": "phase11-gate-c-a800-canary-monitor",
+      "mode": "update",
+      "status": "PAUSED"
+    },
+    "continuation_route": "planning relay in exact executor thread"
+  }
 }

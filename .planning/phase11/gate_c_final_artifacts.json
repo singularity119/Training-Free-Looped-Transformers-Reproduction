@@ -1,0 +1,14 @@
+{
+  "remote_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-canary-closure-20261009.json",
+  "remote_resources": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-resource-summary-20261009.json",
+  "remote_summary_script": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-c-20261008T113100Z/resource-summary-20261009.py",
+  "remote_ledger": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/resource-summary-ledger-20261009.json",
+  "remote_membership": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/membership.json",
+  "remote_all_worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/worklist-all.json",
+  "compute_source_commit": "447f64be3172dae403f7cd0c07ae17399a6197b4",
+  "report": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/\u8d44\u4ea7/\u62a5\u544a/phase11/phase11_gate_c_resource_report_20261009.md",
+  "cost_table": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/\u8d44\u4ea7/\u62a5\u544a/phase11/phase11_gate_c_54_cost_proxies_20261009.csv",
+  "record_count": 216,
+  "target_gold_loaded": false,
+  "full_panel_closed": false
+}

@@ -1,4 +1,4 @@
-# Phase11 Gate C execution evidence (in progress)
+# Phase11 Gate C execution evidence (final audit requested)
 
 Executor `01a11b40-07d3-7342-9d01-f809b480f49e/local`; planning
 `01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local`. Current authority is the
@@ -146,3 +146,50 @@ retargeted these3 IDs ACTIVE/full60min, tool-confirmed. Monitor must pause and
 resume exact executor on new terminal attempt; executor preserves successful
 siblings and monitors remaining live work. All216 canary closure and cost/report
 remain outstanding; no Gate C terminal and no D/full/gold authority exercised.
+
+## Final terminal confirmation and canary-only closure (2026-10-09)
+
+Planning relayed explicit same-C continuation after the delivered terminal self-resume
+had not completed executor closure. Latest control/handoff allows at most8A800;
+all216/12allocationGPUh/1GPUjob/packing<=2 boundaries remain. Compute history
+was at most2 GPUs and is not repeated to fill the new allowance. Planning-owned
+control/handoff edits are preserved outside the executor commit.
+
+One bounded independent executor sacct/squeue read confirms all6 parent jobs
+COMPLETED0:0. Last3 elapsed allocations2339/2279/2262seconds; total7395seconds
+=2.054166667allocationGPUh, reserved0. All five formal batch summaries complete
+3+2+71+70+70=216 singleton records, zero failure files/nonzero child exits.
+Remote compute source remains clean loopscope/447f64b/fixed ancestor.
+
+Pinned Python/source/src command:
+`python scripts/loopscope/phase11_canary.py verify --membership inputs/membership.json
+--worklist inputs/worklist-all.json --out runs/phase11-gate-c-20261008T113100Z-canary-closure-20261009.json`
+(paths expand using gate_c_setup.json). Exit0,216,CANARY_CLOSED_GOLD_UNREAD;
+full_panel_closed=false,target_gold_loaded=false. Structural raw validation is
+internal to the authorized verifier; no answers/extraction/outcomes printed or
+manually read. Safe metadata-only resource summary script was reviewed and
+copied to a fresh CPU postprocessing path outside immutable GPU source;
+`--closure <above> --ledger inputs/resource-summary-ledger-20261009.json
+--out runs/phase11-gate-c-20261008T113100Z-resource-summary-20261009.json`, exit0.
+All54 cells have4 frozen identities; safe metadata/source agrees across216.
+
+Actual A800 sampled device peak23917/81920MiB; no sampling errors or OOM.
+MMLU-Pro generated398/1416.71/2048 min/mean/max,truncated33/72;
+GPQA302/1345.43/2048,truncated36/72. Generation total198874.
+Process allocator peaks are separate. Full54 question-time proxy2648.22GPUh,
+observed per-cell min/max sum761.52–4039.61 (not confidence interval/population
+bounds); output256/512/2048 scenarios620.44/1067.06/3746.80GPUh.
+Length-selected4identities/task, startup/queue/tail/retry exclusions and linear
+decode approximation prohibit an unbiased prediction or promised finish date.
+The Chinese resource report and54cost table are outside clone in assets,
+indexed by gate_c_final_artifacts.json. D recommendation is max8×1GPU/packing2,
+<=2hjobs,initial<=16GPUhreservedcalibration and planning-frozen rolling budget;
+4000–4800GPUh is a planning reference, not authorized D spending.
+
+The same heartbeat was explicitly reaffirmed PAUSED with automation_update
+{automationId:phase11-gate-c-a800-canary-monitor,mode:update,status:PAUSED}.
+Historical pause/resume delivery and planning relay are recorded in
+ gate_c_monitor.json. No newmonitor, GPUsubmission, cancellation, scientific
+change, goldunsealing, fulltaskclosure or GateD action. Low-risk operational
+errors from earlier steps remain above; no failed GPU science retry was needed.
+Only planning may returnPASS/PASS_WITH_FIXES/BLOCK.
