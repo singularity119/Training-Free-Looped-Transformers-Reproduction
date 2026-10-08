@@ -1,0 +1,36 @@
+# Phase 11 Control
+
+2026-10-08，规划线程01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f（来自当前workspace上下文，派发前需工具核对）。用户允许按确认配置继续推进。正式科学合同为loopscope_phase11_contract_v1.md；配置草案仅历史。
+
+STATUS=GATE_A_AUTHORIZED
+ACTIVE_GATE=A
+AUTHORIZED_EXECUTOR=01a11ac8-ca15-7573-8ff6-c1dc0892faab
+AUTHORIZED_EXECUTOR_HOST=local
+EXECUTOR_MODEL=gpt-6-luna
+EXECUTOR_REASONING=max
+DEFAULT_NEW_EXECUTOR_MODEL=gpt-6.1-sol
+DEFAULT_NEW_EXECUTOR_REASONING=high
+
+2026-10-08用户更新执行线程创建默认配置为gpt-6.1-sol/high，取代skill及AGENTS的旧默认，适用于本阶段后续新建执行聊天。当前已绑定Gate A保持原gpt-6-luna/max，不因创建默认变更重启或换模型。
+STANDING_PHASE_CONTINUATION=ADVANCE_SERIAL_GATES_UNTIL_PHASE11_TERMINAL
+CROSS_THREAD_MESSAGING=USER_AUTHORIZED_DISPATCH_TERMINAL_REPAIR
+BASE_BRANCH=loopscope
+INSPECTED_COMMIT=81f873b38942474a012e2648db3e81d3085abdd6
+GATE_A=AUTHORIZED
+GATE_B=LOCKED
+GATE_C=LOCKED
+GATE_D=LOCKED
+CURRENT_GPU_SCHEDULER_AUTHORITY=NONE
+GATE_A_ACCESS_SUPPLEMENT=loopscope_phase11_gate_a_access_supplement.md
+GATE_A_OFFICIAL_SOURCE_INSPECTION=loopscope_phase11_gate_a_official_source_supplement.md
+GPQA_SOURCE_BINDING=ACCEPTED_AUTHOR_GITHUB_ARCHIVE_56686c06
+GPQA_SOURCE_CONTRACT=loopscope_phase11_gpqa_source_binding.md
+NEXT_ADMISSION=GATE_A_PLANNING_ACCEPTANCE_BEFORE_GATE_B
+
+最新授权覆盖下文历史创建限制：用户已明确授权创建独立Gate聊天、派发/终态/修复消息以及逐Gate推进至阶段完成。规划身份01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f、host=local已由list_threads核对。当前仅Gate A授权，其余Gate锁定。每次PASS且准入满足后直接创建下一独立executor，无需重复询问。
+
+阶段目标：54配置三任务完整结果、统计报告及阶段终审。规划负责科学合同/轻量验收；实现与实验交给独立Gate执行聊天，不使用规划subagent代替。工具要求用户明确请求新聊天后方可创建，当前“继续推进”未明确提及新聊天，因此先完成可审阅handoff。
+
+Gate A：生成适配与输入绑定，针对性CPU测试，无GPU。Gate B：debug分区<30min同路径GPU预检，cache/方向/等价与资源实测。Gate C：正式全量采集，任务内完整闭合后分析；普通用户合法最高优先级A800，每job1GPU，初始最多2GPU，真实吞吐后规划冻结预算与packing，不继承Phase10无成本上限/7GPU授权。Gate D：阶段综合报告与一次终审。B/C具体权限在各自handoff冻结，当前不授权。
+
+阶段验收只核对1至3项决定性事实；实现失败可在Gate科学与权限内保留证据后修复，禁止隐式跨Gate。监控需在实际派发时绑定权限与exact身份，当前不创建automation。

@@ -1,0 +1,382 @@
+{
+  "arc_challenge": {
+    "schema_version": "loopscope.phase11.inputs.v1",
+    "model": "Qwen/Qwen3-4B-Instruct-2507",
+    "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "task_facts": {
+      "arc_challenge": {
+        "repo": "allenai/ai2_arc",
+        "revision": "210d026faf9955653af8916fad021475a3f00453",
+        "split": "test",
+        "canonical_order": "parquet source row order",
+        "source_files": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase10-gate-a-20261002T062100Z/raw",
+        "source_urls": {
+          "train": [
+            "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet"
+          ],
+          "test": [
+            "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet"
+          ],
+          "validation": [
+            "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet"
+          ]
+        },
+        "count": 1172,
+        "sample_count": 1172,
+        "max_context_tokens": 1242,
+        "max_continuation_tokens": 46,
+        "max_input_tokens": 1243,
+        "truncated_candidate_count": 0,
+        "candidate_prefix_inconsistent_count": 0,
+        "candidate_prefix_inconsistent_identities": [],
+        "minimal_inconsistent_sample": null,
+        "source_evidence": {
+          "offline": true,
+          "lm_eval_version": "0.4.11",
+          "yaml_path": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/lib/python3.11/site-packages/lm_eval/tasks/arc/arc_challenge.yaml",
+          "sampler": "ContextSampler",
+          "sampler_seed_reset_per_split": true,
+          "sampler_scope": "one native RNG sequence across canonical target order within split",
+          "target_gold_loaded": false,
+          "target_gold_projected_before_iteration": true,
+          "target_label_initialization_sentinel": "index 0 only; not source gold",
+          "train_demo_gold_allowed": true,
+          "sources": {
+            "train": {
+              "count": 1119,
+              "columns": [
+                "id",
+                "question",
+                "choices",
+                "answerKey"
+              ],
+              "source_urls": [
+                "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet"
+              ],
+              "cache_files": [],
+              "parquet_columns_projected_at_read": true
+            },
+            "test": {
+              "count": 1172,
+              "columns": [
+                "id",
+                "question",
+                "choices"
+              ],
+              "source_urls": [
+                "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet"
+              ],
+              "cache_files": [],
+              "parquet_columns_projected_at_read": true
+            },
+            "validation": {
+              "count": 299,
+              "columns": [
+                "id",
+                "question",
+                "choices"
+              ],
+              "source_urls": [
+                "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet"
+              ],
+              "cache_files": [],
+              "parquet_columns_projected_at_read": true
+            }
+          },
+          "tokenizers": [
+            {
+              "model": "Qwen/Qwen3-4B-Instruct-2507",
+              "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+              "max_length": 262144,
+              "add_special_tokens": false,
+              "path": "Qwen/Qwen3-4B-Instruct-2507"
+            }
+          ],
+          "tokenization": "TemplateLM._encode_pair; causal, add_special_tokens=False",
+          "acc_norm": "loglikelihood / len(raw choice text), Python characters; first-index tie"
+        },
+        "context_length": 262144,
+        "context_enough_without_truncation": true
+      }
+    }
+  },
+  "mmlu_pro": {
+    "schema_version": "loopscope.phase11.inputs.v1",
+    "model": "Qwen/Qwen3-4B-Instruct-2507",
+    "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "task_facts": {
+      "mmlu_pro": {
+        "repo": "TIGER-Lab/MMLU-Pro",
+        "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+        "split": "test",
+        "canonical_order": "parquet source row order",
+        "source_files": [
+          "/hpc2hdd/home/xhuang225/shared/hf_home/hub/datasets--TIGER-Lab--MMLU-Pro/snapshots/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet"
+        ],
+        "source_urls": [
+          "https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro/resolve/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet"
+        ],
+        "count": 12032,
+        "sample_count": 12032,
+        "max_prompt_tokens": 2860,
+        "min_prompt_tokens": 866,
+        "max_input_tokens": 2860,
+        "context_length": 262144,
+        "max_new_tokens": 2048,
+        "context_enough_without_truncation": true,
+        "truncated_count": 0,
+        "demonstration_indices": {
+          "math": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "health": [
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "physics": [
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "business": [
+            15,
+            16,
+            17,
+            18,
+            19
+          ],
+          "biology": [
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
+          "chemistry": [
+            25,
+            26,
+            27,
+            28,
+            29
+          ],
+          "computer science": [
+            30,
+            31,
+            32,
+            33,
+            34
+          ],
+          "economics": [
+            35,
+            36,
+            37,
+            38,
+            39
+          ],
+          "engineering": [
+            40,
+            41,
+            42,
+            43,
+            44
+          ],
+          "philosophy": [
+            45,
+            46,
+            47,
+            48,
+            49
+          ],
+          "other": [
+            50,
+            51,
+            52,
+            53,
+            54
+          ],
+          "history": [
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "psychology": [
+            60,
+            61,
+            62,
+            63,
+            64
+          ],
+          "law": [
+            65,
+            66,
+            67,
+            68,
+            69
+          ]
+        },
+        "demonstration_identities": {
+          "math": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:0:0",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:1:1",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:2:2",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:3:3",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:4:4"
+          ],
+          "health": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:5:5",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:6:6",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:7:7",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:8:8",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:9:9"
+          ],
+          "physics": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:10:10",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:11:11",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:12:12",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:13:13",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:14:14"
+          ],
+          "business": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:15:15",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:16:16",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:17:17",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:18:18",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:19:19"
+          ],
+          "biology": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:20:20",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:21:21",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:22:22",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:23:23",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:24:24"
+          ],
+          "chemistry": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:25:25",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:26:26",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:27:27",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:28:28",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:29:29"
+          ],
+          "computer science": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:30:30",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:31:31",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:32:32",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:33:33",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:34:34"
+          ],
+          "economics": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:35:35",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:36:36",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:37:37",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:38:38",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:39:39"
+          ],
+          "engineering": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:40:40",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:41:41",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:42:42",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:43:43",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:44:44"
+          ],
+          "philosophy": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:45:45",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:46:46",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:47:47",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:48:48",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:49:49"
+          ],
+          "other": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:50:50",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:51:51",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:52:52",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:53:53",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:54:54"
+          ],
+          "history": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:55:55",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:56:56",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:57:57",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:58:58",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:59:59"
+          ],
+          "psychology": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:60:60",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:61:61",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:62:62",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:63:63",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:64:64"
+          ],
+          "law": [
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:65:65",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:66:66",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:67:67",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:68:68",
+            "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:validation:69:69"
+          ]
+        },
+        "native_demo_selection_evidence": "Installed lm_eval 0.4.11 _default_template_yaml: validation/category process_docs order + first_n five; remote category-only projection confirmed indices 0..69",
+        "target_columns_projected_at_read": [
+          "question_id",
+          "question",
+          "options",
+          "category",
+          "src"
+        ]
+      }
+    }
+  },
+  "gpqa_main": {
+    "schema_version": "loopscope.phase11.inputs.v1",
+    "model": "Qwen/Qwen3-4B-Instruct-2507",
+    "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "task_facts": {
+      "gpqa_main": {
+        "repo": "idavidrein/gpqa",
+        "revision": "56686c06f5e19865c153de0fdb11be3890014df7",
+        "split": "main_csv",
+        "source_format": "csv",
+        "canonical_order": "fixed GitHub commit archive member CSV row order",
+        "source_files": [
+          "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-a-20261008T094044Z/official-gpqa-inspection/extracted/gpqa_main.csv"
+        ],
+        "source_urls": [
+          "https://raw.githubusercontent.com/idavidrein/gpqa/56686c06f5e19865c153de0fdb11be3890014df7/dataset.zip"
+        ],
+        "count": 448,
+        "sample_count": 448,
+        "max_prompt_tokens": 2819,
+        "min_prompt_tokens": 89,
+        "max_input_tokens": 2819,
+        "context_length": 262144,
+        "max_new_tokens": 2048,
+        "context_enough_without_truncation": true,
+        "truncated_count": 0,
+        "source_kind": "author_github_archive",
+        "source_repo": "idavidrein/gpqa",
+        "source_member": "dataset/gpqa_main.csv",
+        "archive_member": "dataset/gpqa_main.csv",
+        "github_repo": "idavidrein/gpqa",
+        "github_commit": "56686c06f5e19865c153de0fdb11be3890014df7",
+        "archive": "dataset.zip",
+        "option_shuffle_seed": 20261008,
+        "option_shuffle_scope": "one RNG sequence in canonical source order",
+        "physical_split_is_not_development_data": true,
+        "gold_and_option_source_indices": "sealed/gpqa_main-gold.jsonl"
+      }
+    }
+  }
+}

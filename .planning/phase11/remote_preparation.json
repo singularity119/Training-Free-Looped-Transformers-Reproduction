@@ -1,0 +1,33 @@
+{
+  "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-a-20261008T094044Z",
+  "input_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z",
+  "files": [
+    "src/tflt/loopscope/phase11_data.py",
+    "src/tflt/loopscope/phase10_data.py",
+    "src/tflt/loopscope/phase10_adapter.py",
+    "scripts/loopscope/build_phase11_inputs.py",
+    "scripts/loopscope/build_phase11_engineering_inputs.py",
+    "src/tflt/loopscope/phase11_panel.py",
+    "configs/loopscope/phase11_panel.json",
+    ".planning/phase11/data_binding.json"
+  ],
+  "builder_code_snapshot": "Gate A uncommitted CPU overlay from local HEAD81f873b plus current Gate A files",
+  "remote_source": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope",
+  "remote_source_commit": "a2c9e58a32163e1ed1527d3ab57798bc7378f486",
+  "final_cpu_stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-a-20261008T095224Z",
+  "final_cpu_files": [
+    "src/tflt/loopscope/phase11_accuracy.py",
+    "src/tflt/loopscope/phase11_panel.py",
+    "src/tflt/loopscope/phase11_data.py",
+    "src/tflt/loopscope/phase11_runtime.py",
+    "src/tflt/loopscope/phase11_adapter.py",
+    "src/tflt/loopscope/phase11_analysis.py",
+    "src/tflt/loopscope/phase10_data.py",
+    "src/tflt/loopscope/phase10_adapter.py",
+    "scripts/loopscope/build_phase11_inputs.py",
+    "scripts/loopscope/build_phase11_engineering_inputs.py",
+    "configs/loopscope/phase11_panel.json",
+    ".planning/phase11/data_binding.json"
+  ],
+  "final_cpu_snapshot": "Gate A final uncommitted author-source CPU overlay; later implementation commit bound by terminal"
+}

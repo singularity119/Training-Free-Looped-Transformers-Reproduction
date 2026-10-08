@@ -1,0 +1,31 @@
+{
+  "formal": {
+    "arc_challenge": {
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/arc_challenge-prepared/arc_challenge-pool.json",
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/arc_challenge-formal.json"
+    },
+    "mmlu_pro": {
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/mmlu_pro-prepared/mmlu_pro-pool.json",
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/mmlu_pro-formal.json"
+    },
+    "gpqa_main": {
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/gpqa_main-pool.json",
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/gpqa_main-formal.json"
+    }
+  },
+  "synthetic": {
+    "arc_challenge": {
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/synthetic/arc_challenge-pool.json",
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/arc_challenge-synthetic.json"
+    },
+    "mmlu_pro": {
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/synthetic/mmlu_pro-pool.json",
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/mmlu_pro-synthetic.json"
+    },
+    "gpqa_main": {
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/synthetic/gpqa_main-pool.json",
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/gpqa_main-synthetic.json"
+    }
+  },
+  "note": "manifests freeze membership only; no model acquisition or Gate admission"
+}

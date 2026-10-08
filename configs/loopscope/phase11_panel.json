@@ -1,0 +1,95 @@
+{
+  "schema": "loopscope.phase11.panel_config.v1",
+  "phase": 11,
+  "scientific_contract": ".planning/phase11/loopscope_phase11_contract_v1.md",
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "dtype": "bfloat16",
+  "window": [
+    15,
+    18
+  ],
+  "boundaries": [
+    15,
+    19
+  ],
+  "k_values": [
+    2,
+    3
+  ],
+  "strengths": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "direction_policies": [
+    "fixed_t0",
+    "lag1",
+    "current_t"
+  ],
+  "rank": 1,
+  "batch_size": 1,
+  "strategy": "damped_euler",
+  "iteration_mode": "block",
+  "alpha": 1.0,
+  "beta": 0.0,
+  "cache_strategy": "first",
+  "decode_mode": "full",
+  "direction_fit_scope": "own_prefill_prompt",
+  "decode_direction_source": "frozen_prefill_bank",
+  "max_new_tokens": 2048,
+  "do_sample": false,
+  "max_length": 262144,
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 20261008,
+    "ci_level": 0.95
+  },
+  "family_sizes": {
+    "online": 30,
+    "policy": 12,
+    "loop": 2
+  },
+  "datasets": {
+    "arc_challenge": {
+      "repo": "allenai/ai2_arc",
+      "name": "ARC-Challenge",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "split": "test",
+      "num_fewshot": 25,
+      "fewshot_seed": 20261002,
+      "evaluation_count": 1172,
+      "primary_metric": "acc_norm",
+      "secondary_metric": "acc",
+      "evaluation_mode": "candidate_loglikelihood"
+    },
+    "mmlu_pro": {
+      "repo": "TIGER-Lab/MMLU-Pro",
+      "name": null,
+      "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+      "split": "test",
+      "num_fewshot": 5,
+      "fewshot_rule": "category_validation_first_n_5",
+      "evaluation_count": 12032,
+      "primary_metric": "acc",
+      "evaluation_mode": "generation"
+    },
+    "gpqa_main": {
+      "repo": "Idavidrein/gpqa",
+      "name": "gpqa_main",
+      "revision": "56686c06f5e19865c153de0fdb11be3890014df7",
+      "split": "main_csv",
+      "num_fewshot": 0,
+      "option_shuffle_seed": 20261008,
+      "evaluation_count": 448,
+      "primary_metric": "acc",
+      "evaluation_mode": "generation",
+      "binding": ".planning/phase11/loopscope_phase11_gpqa_source_binding.md",
+      "source_kind": "author_github_archive",
+      "github_repo": "idavidrein/gpqa",
+      "github_commit": "56686c06f5e19865c153de0fdb11be3890014df7",
+      "archive_member": "dataset/gpqa_main.csv"
+    }
+  }
+}

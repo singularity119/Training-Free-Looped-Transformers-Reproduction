@@ -1,0 +1,67 @@
+{
+  "status": "ALL_INPUT_POOLS_VALIDATED_CPU_ONLY",
+  "checks": {
+    "arc_challenge": {
+      "status": "FORMAL_POOL_VALIDATED",
+      "count": 1172,
+      "first_identity": "allenai/ai2_arc@210d026faf9955653af8916fad021475a3f00453:ARC-Challenge:test:0:Mercury_7175875",
+      "last_identity": "allenai/ai2_arc@210d026faf9955653af8916fad021475a3f00453:ARC-Challenge:test:1171:MEA_2013_8_15",
+      "target_gold_loaded": false,
+      "shots_min": 25,
+      "shots_max": 25,
+      "actual_rows_gold_fields_present": false,
+      "scope": "FORMAL_TEST"
+    },
+    "mmlu_pro": {
+      "status": "FORMAL_POOL_VALIDATED",
+      "count": 12032,
+      "first_identity": "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:test:0:70",
+      "last_identity": "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:test:12031:12256",
+      "target_gold_loaded": false,
+      "shots_min": 5,
+      "shots_max": 5,
+      "actual_rows_gold_fields_present": false,
+      "scope": "FORMAL_TEST"
+    },
+    "gpqa_main": {
+      "status": "FORMAL_POOL_VALIDATED",
+      "count": 448,
+      "first_identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:0",
+      "last_identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:447",
+      "target_gold_loaded": false,
+      "shots_min": 0,
+      "shots_max": 0,
+      "actual_rows_gold_fields_present": false,
+      "scope": "FORMAL_TEST"
+    },
+    "synthetic_arc_challenge": {
+      "status": "SYNTHETIC_POOL_VALIDATED",
+      "count": 2
+    },
+    "synthetic_mmlu_pro": {
+      "status": "SYNTHETIC_POOL_VALIDATED",
+      "count": 2
+    },
+    "synthetic_gpqa_main": {
+      "status": "SYNTHETIC_POOL_VALIDATED",
+      "count": 2
+    }
+  },
+  "target_gold_scored": false,
+  "gpqa_builder_limited_answer_role_access": true,
+  "model_weights_loaded": false,
+  "runtime": {
+    "python": "3.11.9",
+    "executable": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+    "versions": {
+      "torch": "2.3.1+cu121",
+      "transformers": "4.51.3",
+      "datasets": "5.0.0",
+      "lm_eval": "0.4.11"
+    }
+  },
+  "resolved_modules": {
+    "phase11_data": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-a-20261008T095224Z/src/tflt/loopscope/phase11_data.py",
+    "phase11_accuracy": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-a-20261008T095224Z/src/tflt/loopscope/phase11_accuracy.py"
+  }
+}

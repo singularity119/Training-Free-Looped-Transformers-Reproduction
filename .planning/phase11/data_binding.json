@@ -1,0 +1,177 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "max_length": 262144,
+  "cache_dir": "/hpc2hdd/home/xhuang225/shared/datasets",
+  "tasks": {
+    "arc_challenge": {
+      "repo": "allenai/ai2_arc",
+      "name": "ARC-Challenge",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "split": "test",
+      "count": 1172,
+      "data_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase10-gate-a-20261002T062100Z/raw",
+      "source_manifest": {
+        "train": [
+          "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet"
+        ],
+        "test": [
+          "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet"
+        ],
+        "validation": [
+          "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet"
+        ]
+      }
+    },
+    "mmlu_pro": {
+      "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+      "split": "test",
+      "count": 12032,
+      "files": [
+        "/hpc2hdd/home/xhuang225/shared/hf_home/hub/datasets--TIGER-Lab--MMLU-Pro/snapshots/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet"
+      ],
+      "source_urls": [
+        "https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro/resolve/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet"
+      ],
+      "repo": "TIGER-Lab/MMLU-Pro",
+      "validation": {
+        "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+        "split": "validation",
+        "count": 70,
+        "files": [
+          "/hpc2hdd/home/xhuang225/shared/hf_home/hub/datasets--TIGER-Lab--MMLU-Pro/snapshots/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/validation-00000-of-00001.parquet"
+        ],
+        "source_urls": [
+          "https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro/resolve/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/validation-00000-of-00001.parquet"
+        ]
+      },
+      "demonstration_indices": {
+        "math": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "health": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "physics": [
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "business": [
+          15,
+          16,
+          17,
+          18,
+          19
+        ],
+        "biology": [
+          20,
+          21,
+          22,
+          23,
+          24
+        ],
+        "chemistry": [
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "computer science": [
+          30,
+          31,
+          32,
+          33,
+          34
+        ],
+        "economics": [
+          35,
+          36,
+          37,
+          38,
+          39
+        ],
+        "engineering": [
+          40,
+          41,
+          42,
+          43,
+          44
+        ],
+        "philosophy": [
+          45,
+          46,
+          47,
+          48,
+          49
+        ],
+        "other": [
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "history": [
+          55,
+          56,
+          57,
+          58,
+          59
+        ],
+        "psychology": [
+          60,
+          61,
+          62,
+          63,
+          64
+        ],
+        "law": [
+          65,
+          66,
+          67,
+          68,
+          69
+        ]
+      },
+      "native_demo_selection_evidence": "Installed lm_eval 0.4.11 _default_template_yaml: validation/category process_docs order + first_n five; remote category-only projection confirmed indices 0..69"
+    },
+    "gpqa_main": {
+      "repo": "Idavidrein/gpqa",
+      "name": "gpqa_main",
+      "revision": "56686c06f5e19865c153de0fdb11be3890014df7",
+      "split": "main_csv",
+      "count": 448,
+      "binding_status": "ACCEPTED_AUTHOR_SOURCE",
+      "public_metadata_revision": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+      "official_filename": "gpqa_main.csv",
+      "gated": "auto",
+      "unauthenticated_head_status": 401,
+      "remote_token_present": false,
+      "files": [
+        "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-a-20261008T094044Z/official-gpqa-inspection/extracted/gpqa_main.csv"
+      ],
+      "source_urls": [
+        "https://raw.githubusercontent.com/idavidrein/gpqa/56686c06f5e19865c153de0fdb11be3890014df7/dataset.zip"
+      ],
+      "format": "csv",
+      "source_kind": "author_github_archive",
+      "github_repo": "idavidrein/gpqa",
+      "github_commit": "56686c06f5e19865c153de0fdb11be3890014df7",
+      "archive_member": "dataset/gpqa_main.csv",
+      "hf_content_equivalence_verified": false,
+      "source_contract": ".planning/phase11/loopscope_phase11_gpqa_source_binding.md"
+    }
+  }
+}

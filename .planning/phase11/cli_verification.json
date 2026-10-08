@@ -1,0 +1,122 @@
+{
+  "scope": "CPU_ONLY_SYNTHETIC",
+  "source_head": "81f873b38942474a012e2648db3e81d3085abdd6",
+  "results": [
+    {
+      "command": "scripts/loopscope/analyze_phase11.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/build_phase11_engineering_inputs.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/build_phase11_inputs.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/build_phase11_manifest.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/check_phase11_gpu.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/run_phase11_accuracy.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/verify_phase11_scores.py --help",
+      "exit": 0
+    },
+    {
+      "command": "build_phase11_manifest.py --dry-run",
+      "exit": 0,
+      "stdout": "{\"alias_count\": 9, \"display_row_count\": 63, \"independent_cell_count\": 54, \"schema\": \"loopscope.phase11.all_panels.v1\", \"target_gold_loaded\": false}"
+    },
+    {
+      "command": "build_phase11_inputs.py --binding-file .planning/phase11/data_binding.json --output-dir /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedinputs --dry-run",
+      "exit": 0,
+      "stdout": "{\"tasks\": [\"arc_challenge\", \"mmlu_pro\", \"gpqa_main\"], \"counts\": {\"arc_challenge\": 1172, \"mmlu_pro\": 12032, \"gpqa_main\": 448}, \"max_length\": 262144, \"output_dir\": \"/var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedinputs\", \"dataset_access\": false, \"tokenizer_access\": false}"
+    },
+    {
+      "command": "build_phase11_engineering_inputs.py --output-dir /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedsynthetic --dry-run",
+      "exit": 0,
+      "stdout": "{\"scope\": \"PREFLIGHT_ONLY\", \"tasks\": [\"arc_challenge\", \"mmlu_pro\", \"gpqa_main\"], \"samples_per_task\": 2, \"tokenizer_access\": false, \"model_access\": false, \"gold_access\": false}"
+    },
+    {
+      "command": "check_phase11_gpu.py --run-root /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedgpu --commit 81f873b38942474a012e2648db3e81d3085abdd6 --config configs/loopscope/phase11_panel.json --dry-run",
+      "exit": 0,
+      "stdout": "{\"arc_cases\": [\"Native-original-HFLM\", \"Native-Phase11-shim\", \"Loop-K2\", \"K2-current-lambda0\", \"K2-fixed_t0-lambda0.5\", \"K2-lag1-lambda0.5\"], \"atol\": 0.0001, \"cache_strategy\": \"first\", \"cases\": [\"Native-original\", \"Native-monitored\", \"Loop-K2\", \"K2-current-lambda0\", \"K2-fixed_t0-lambda0.5\", \"K2-lag1-lambda0.5\", \"K3-fixed_t0-lambda0.5\", \"K3-lag1-lambda0.5\", \"K3-current_t-lambda0.5\"], \"decode_mode\": \"full\", \"dtype\": \"bfloat16\", \"generation\": {\"do_sample\": false, \"eos_token_ids_source\": \"cached native model generation_config\", \"max_new_tokens\": 3, \"min_new_tokens\": 3, \"num_beams\": 1, \"use_cache\": true}, \"model\": \"Qwen/Qwen3-4B-Instruct-2507\", \"model_revision\": \"cdbee75f17c01a7cc42f958dc650907174af0554\", \"resource_scope\": \"small synthetic functional path; not formal memory or packing sizing\", \"rtol\": 0.0001, \"run_root\": \"/var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedgpu\", \"schema\": \"loopscope.phase11.gpu_check_plan.v1\", \"scope\": \"PREFLIGHT_ONLY\", \"source_commit\": \"81f873b38942474a012e2648db3e81d3085abdd6\", \"status\": \"PHASE11_GPU_CHECK_DRY_RUN\", \"target_gold_loaded\": false, \"tokenizer_revision\": \"cdbee75f17c01a7cc42f958dc650907174af0554\", \"validated_config\": \"configs/loopscope/phase11_panel.json\", \"window\": [15, 18]}"
+    },
+    {
+      "command": "run_phase11_accuracy.py --dataset mmlu_pro --scope PREFLIGHT_ONLY --manifest /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/manifest.json --pool /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/pool.json --cell-id mmlu_pro-q4-native --run-root /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedraw --commit 81f873b38942474a012e2648db3e81d3085abdd6 --engineering-generate-steps 3 --dry-run",
+      "exit": 0,
+      "stdout": "{\"count\": 1, \"metadata\": {\"acquisition_cell\": {\"alpha\": 1.0, \"arm\": \"Native\", \"batch_size\": 1, \"beta\": 0.0, \"boundaries\": null, \"cache_strategy\": \"first\", \"cell_id\": \"mmlu_pro-q4-native\", \"dataset\": \"mmlu_pro\", \"decode_direction_source\": \"frozen_prefill_bank\", \"decode_mode\": \"full\", \"direction_fit_scope\": \"own_prefill_prompt\", \"direction_policy\": null, \"dtype\": \"bfloat16\", \"intervention_mode\": null, \"iteration_mode\": \"block\", \"k\": null, \"model\": \"Qwen/Qwen3-4B-Instruct-2507\", \"phase\": 11, \"rank\": 1, \"revision\": \"cdbee75f17c01a7cc42f958dc650907174af0554\", \"strategy\": \"damped_euler\", \"strength\": 0.0, \"tokenizer_revision\": \"cdbee75f17c01a7cc42f958dc650907174af0554\", \"window\": null}, \"argv\": [\"scripts/loopscope/run_phase11_accuracy.py\", \"--dataset\", \"mmlu_pro\", \"--scope\", \"PREFLIGHT_ONLY\", \"--manifest\", \"/var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/manifest.json\", \"--pool\", \"/var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/pool.json\", \"--cell-id\", \"mmlu_pro-q4-native\", \"--run-root\", \"/var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedraw\", \"--commit\", \"81f873b38942474a012e2648db3e81d3085abdd6\", \"--engineering-generate-steps\", \"3\", \"--dry-run\"], \"cell\": {\"alpha\": 1.0, \"arm\": \"Native\", \"batch_size\": 1, \"beta\": 0.0, \"boundaries\": null, \"cache_strategy\": \"first\", \"cell_id\": \"mmlu_pro-q4-native\", \"dataset\": \"mmlu_pro\", \"decode_direction_source\": \"frozen_prefill_bank\", \"decode_mode\": \"full\", \"direction_fit_scope\": \"own_prefill_prompt\", \"direction_policy\": null, \"dtype\": \"bfloat16\", \"intervention_mode\": null, \"iteration_mode\": \"block\", \"k\": null, \"model\": \"Qwen/Qwen3-4B-Instruct-2507\", \"phase\": 11, \"rank\": 1, \"revision\": \"cdbee75f17c01a7cc42f958dc650907174af0554\", \"strategy\": \"damped_euler\", \"strength\": 0.0, \"tokenizer_revision\": \"cdbee75f17c01a7cc42f958dc650907174af0554\", \"window\": null}, \"dataset\": \"mmlu_pro\", \"engineering_check\": null, \"engineering_generate_steps\": 3, \"indices\": [0], \"manifest\": \"/var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/manifest.json\", \"max_new_tokens\": 3, \"pool\": \"/var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/pool.json\", \"schema\": \"loopscope.phase11.raw_attempt.v1\", \"scope\": \"PREFLIGHT_ONLY\", \"shard\": null, \"source_branch\": \"loopscope\", \"source_commit\": \"81f873b38942474a012e2648db3e81d3085abdd6\", \"source_head\": \"81f873b38942474a012e2648db3e81d3085abdd6\", \"source_root\": \"/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/loopscope-tflt\", \"target_gold_loaded\": false}, \"model_loading\": false, \"status\": \"PHASE11_RAW_DRY_RUN\", \"target_gold_loaded\": false}"
+    },
+    {
+      "command": "verify_phase11_scores.py --manifest /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/manifest.json --scope PREFLIGHT_ONLY --attempt /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/neverread --output-dir /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedverify --dry-run",
+      "exit": 0,
+      "stdout": "{\"dataset\": \"mmlu_pro\", \"independent_cells\": 18, \"full_sample_count\": 12032, \"scope\": \"PREFLIGHT_ONLY\", \"target_gold_loaded\": false}"
+    },
+    {
+      "command": "analyze_phase11.py --manifest /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/formal-manifest.json --cell-roots /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/neverread --gold /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/neverreadgold --output-dir /var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedanalysis --dry-run",
+      "exit": 0,
+      "stdout": "{\"dataset\": \"mmlu_pro\", \"families\": [30, 12, 2], \"target_gold_loaded\": false, \"output_dir\": \"/var/folders/mx/4gs9dsvd2n166bg5_mkspvl40000gp/T/phase11-cpu-cli-95uwgp7b/unusedanalysis\"}"
+    },
+    {
+      "command": "bash -n scripts/loopscope/phase11_preflight.sbatch",
+      "exit": 0
+    },
+    {
+      "command": "python3 -m py_compile Phase11 modules and entries",
+      "exit": 0
+    }
+  ],
+  "after_accepted_author_binding": [
+    {
+      "command": "scripts/loopscope/analyze_phase11.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/build_phase11_engineering_inputs.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/build_phase11_inputs.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/build_phase11_manifest.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/check_phase11_gpu.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/run_phase11_accuracy.py --help",
+      "exit": 0
+    },
+    {
+      "command": "scripts/loopscope/verify_phase11_scores.py --help",
+      "exit": 0
+    },
+    {
+      "command": "/Library/Frameworks/Python.framework/Versions/3.9/bin/python3 scripts/loopscope/build_phase11_manifest.py --dry-run",
+      "exit": 0,
+      "stdout": "{\"alias_count\": 9, \"display_row_count\": 63, \"independent_cell_count\": 54, \"schema\": \"loopscope.phase11.all_panels.v1\", \"target_gold_loaded\": false}"
+    },
+    {
+      "command": "/Library/Frameworks/Python.framework/Versions/3.9/bin/python3 scripts/loopscope/check_phase11_gpu.py --run-root /tmp/phase11-gpu-dryrun-unused --commit 81f873b38942474a012e2648db3e81d3085abdd6 --config configs/loopscope/phase11_panel.json --dry-run",
+      "exit": 0,
+      "stdout": "{\"arc_cases\": [\"Native-original-HFLM\", \"Native-Phase11-shim\", \"Loop-K2\", \"K2-current-lambda0\", \"K2-fixed_t0-lambda0.5\", \"K2-lag1-lambda0.5\"], \"atol\": 0.0001, \"cache_strategy\": \"first\", \"cases\": [\"Native-original\", \"Native-monitored\", \"Loop-K2\", \"K2-current-lambda0\", \"K2-fixed_t0-lambda0.5\", \"K2-lag1-lambda0.5\", \"K3-fixed_t0-lambda0.5\", \"K3-lag1-lambda0.5\", \"K3-current_t-lambda0.5\"], \"decode_mode\": \"full\", \"dtype\": \"bfloat16\", \"generation\": {\"do_sample\": false, \"eos_token_ids_source\": \"cached native model generation_config\", \"max_new_tokens\": 3, \"min_new_tokens\": 3, \"num_beams\": 1, \"use_cache\": true}, \"model\": \"Qwen/Qwen3-4B-Instruct-2507\", \"model_revision\": \"cdbee75f17c01a7cc42f958dc650907174af0554\", \"resource_scope\": \"small synthetic functional path; not formal memory or packing sizing\", \"rtol\": 0.0001, \"run_root\": \"/tmp/phase11-gpu-dryrun-unused\", \"schema\": \"loopscope.phase11.gpu_check_plan.v1\", \"scope\": \"PREFLIGHT_ONLY\", \"source_commit\": \"81f873b38942474a012e2648db3e81d3085abdd6\", \"status\": \"PHASE11_GPU_CHECK_DRY_RUN\", \"target_gold_loaded\": false, \"tokenizer_revision\": \"cdbee75f17c01a7cc42f958dc650907174af0554\", \"validated_config\": \"configs/loopscope/phase11_panel.json\", \"window\": [15, 18]}"
+    },
+    {
+      "command": "/Library/Frameworks/Python.framework/Versions/3.9/bin/python3 scripts/loopscope/build_phase11_inputs.py --binding-file .planning/phase11/data_binding.json --output-dir /tmp/phase11-input-dryrun-unused --dry-run",
+      "exit": 0,
+      "stdout": "{\"tasks\": [\"arc_challenge\", \"mmlu_pro\", \"gpqa_main\"], \"counts\": {\"arc_challenge\": 1172, \"mmlu_pro\": 12032, \"gpqa_main\": 448}, \"max_length\": 262144, \"output_dir\": \"/tmp/phase11-input-dryrun-unused\", \"dataset_access\": false, \"tokenizer_access\": false}"
+    }
+  ]
+}
