@@ -1,0 +1,58 @@
+{
+  "gate": "B",
+  "executor_thread": "01a11af4-0dbc-7fd0-92ec-bb66169ea433",
+  "planning_thread": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "host": "local",
+  "automation_id": "phase11-gate-b-resource-probe",
+  "name": "Phase11 Gate B resource probe",
+  "kind": "heartbeat",
+  "wait_class": "probe",
+  "cadence_minutes": 30,
+  "job_ids": [
+    "12946972"
+  ],
+  "source_commit": "ffb1e3824e85484e346b1090b7b5f6f572f6b4f3",
+  "run_prefix": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-b-20261008T103800Z-prod-res1",
+  "creation_admission": "Confirmed RUNNING elapsed 1:44, no launcher/startup error; three synthetic closures already complete",
+  "creation_delivery_confirmation": "automation_update success: automationId=phase11-gate-b-resource-probe, mode=create, status=ACTIVE",
+  "terminal_action": "pause monitor then tool-send AUTOMATION_TERMINAL_RESUME to exact executor; relay-required fallback to exact planning",
+  "status_at_creation": "ACTIVE",
+  "current_job_ids": [
+    "12947039"
+  ],
+  "current_run_prefix": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-b-20261008T105400Z-pack2",
+  "lifecycle": [
+    {
+      "event": "executor_observed_terminal",
+      "job": "12946972",
+      "state": "COMPLETED",
+      "elapsed_seconds": 374,
+      "exit_code": "0:0",
+      "observer": "active executor"
+    },
+    {
+      "event": "monitor_paused_before_follow_on",
+      "tool_confirmation": "automation_update success status=PAUSED"
+    },
+    {
+      "event": "same_monitor_retargeted",
+      "job": "12947039",
+      "admission": "Confirmed RUNNING 2:07 and no startup failure; both generation children progressed beyond1024 forwards",
+      "tool_confirmation": "automation_update success status=ACTIVE"
+    },
+    {
+      "event": "executor_observed_terminal",
+      "job": "12947039",
+      "state": "COMPLETED",
+      "elapsed_seconds": 245,
+      "exit_code": "0:0",
+      "observer": "active executor"
+    },
+    {
+      "event": "monitor_paused_at_gate_terminal",
+      "tool_confirmation": "automation_update success: automationId=phase11-gate-b-resource-probe, mode=update, status=PAUSED"
+    }
+  ],
+  "current_status": "PAUSED",
+  "terminal_continuation_owner": "active executor; no separate heartbeat wakeup occurred"
+}

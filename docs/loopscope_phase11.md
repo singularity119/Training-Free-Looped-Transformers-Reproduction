@@ -4,7 +4,7 @@ Authority: `.planning/phase11/loopscope_phase11_contract_v1.md` and the live Gat
 
 ## Frozen recipe
 
-Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554, BF16, inclusive15:18, K2/K3, block damped Euler, cache first, full decode, batch1. Each task has 18 independent configurations and 21 display rows; K2 lag1 is a display alias pending real equivalence checks. Strengths are 0.1/0.5/0.9. Directions use each configuration's own prefill, FP32 exact uncentered rank1 SVD, then remain frozen during single-token cached decode. The bank is released after every question. ARC scores full candidates and intervenes only at the common prompt end; it does not generate CoT.
+Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554, BF16, inclusive15:18, K2/K3, block damped Euler, cache first, full decode, batch1. Each task has 18 independent configurations and 21 display rows; K2 lag1 is a display alias, with actual synthetic CUDA equivalence recorded in Gate B evidence. Strengths are 0.1/0.5/0.9. Directions use each configuration's own prefill, FP32 exact uncentered rank1 SVD, then remain frozen during single-token cached decode. The bank is released after every question. ARC scores full candidates and intervenes only at the common prompt end; it does not generate CoT.
 
 MMLU-Pro uses five native first_n validation demonstrations of the same category. GPQA uses zero demonstrations, one seeded option-shuffle RNG in canonical source order, and a separate sealed mapping. Generation is greedy with native EOS/EOT and a 2048-token cap. Only exactly one valid standalone `Final answer: (X)` line is accepted. Extraction failures remain in the denominator; a valid truncated answer still counts. Runtime failures invalidate the attempt.
 
@@ -46,7 +46,7 @@ PYTHONPATH=src python scripts/loopscope/verify_phase11_scores.py \
 
 The launcher fixes three generated tokens only for synthetic engineering checks, forcing prefill plus at least two decode forwards. It is distinct from the formal 2048-token recipe. Run ARC through the same acquisition/verification path, and use the checker for Native interface, Loop versus lambda0, K2 alias, K3 direction freezing, all-layer cache growth, K body calls and one stash pass. Outputs store scalar comparisons and synthetic IDs, never hidden/logit/direction tensors. These checks do not establish formal packing or memory needs.
 
-Pending real CUDA checks: numerical equivalence, exact SVD on the installed CUDA runtime, incremental cache behavior and measured throughput/memory at representative prompt/decode lengths. Gate A fake-tensor tests establish control flow only.
+Actual CUDA equivalence, exact SVD, incremental cache and representative full-limit resource evidence are recorded in `.planning/phase11/gate_b_evidence.md`. Gate A fake-tensor tests establish control flow only; Gate B acceptance remains planning's decision.
 
 Gate B resource measurements use `phase11_resources.sbatch` with one selected
 `--dataset {mmlu_pro,gpqa_main,arc_challenge}` and
