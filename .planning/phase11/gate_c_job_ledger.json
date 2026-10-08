@@ -24,7 +24,22 @@
       "gpus": 1,
       "packing": 1,
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/worklist-first.json",
-      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-formal-first-batch"
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-formal-first-batch",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 268,
+      "actual_qos": "emergency_gpu"
+    },
+    {
+      "job_id": "12947347",
+      "class": "formal-pack2",
+      "requested_partition": "emergency_gpu",
+      "requested_qos": "emergency_gpu",
+      "requested_seconds": 1800,
+      "gpus": 1,
+      "packing": 2,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/worklist-pack2.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-formal-pack2-batch"
     }
   ],
   "budget_gpuh": 12

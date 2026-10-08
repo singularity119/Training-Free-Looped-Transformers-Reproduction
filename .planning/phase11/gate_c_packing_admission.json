@@ -1,0 +1,25 @@
+{
+  "source_commit": "447f64be3172dae403f7cd0c07ae17399a6197b4",
+  "first_job_id": "12947166",
+  "device_model": "NVIDIA A800-SXM4-80GB",
+  "total_memory_mib": 81920,
+  "device_sample_count": 255,
+  "device_peak_used_mib": 9749,
+  "generation_longest_prompt_tokens": [
+    2860,
+    2819
+  ],
+  "generated_tokens": [
+    2048,
+    2048
+  ],
+  "last_cache_lengths": [
+    4907,
+    4866
+  ],
+  "packing2_estimated_used_mib": 19498,
+  "admission_upper_fraction": 0.8,
+  "headroom_fraction_estimate": 0.7619873046875,
+  "note": "capacity estimate from direct packing1 A800 full2048 shape; packing2 device peak and throughput require actual trial; no speedup claimed",
+  "target_gold_loaded": false
+}

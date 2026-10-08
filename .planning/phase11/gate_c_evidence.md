@@ -74,3 +74,36 @@ The monitor must pause itself and actively trigger this exact executor on
 attempt terminal. Next executor action remains same-Gate resource admission
 and the other213 retainable canary records, never D/full-panel or gold access.
 No Gate terminal event has been emitted; Gate C remains in progress.
+
+## First A800 completion and packing2 admission
+
+Heartbeat observed12947166 COMPLETED/exit0:0/268 allocated GPU-seconds,
+then paused itself with visible tool confirmation and delivered
+AUTOMATION_TERMINAL_RESUME to exact executor with tool threadId confirmation.
+Executor independently re-read scheduler, source clean447f64b, all3 successful
+singleton summaries and safe telemetry; no raw answers/gold were inspected.
+Allocation total(debug30+formal268)/3600=0.082777778GPUh.
+
+All3 use A800-SXM4-80GB (81920MiB). Device telemetry255 samples has peak9749MiB,
+not an allocator-peak sum. MMLU-Pro longest2860 and GPQA2819 both actually reached
+2048 generated tokens and2047 incremental decodes, final all-layer cache lengths
+4907/4866, no decodeSVD, released per-question direction banks. Their question
+seconds98.746706/95.312555, prefill5.608679/5.344842, decode90.997708/88.929870.
+ARC longest1243 scores4 full candidates in7.973008 question seconds,
+7.887060 CUDA scoring seconds, no truncation, no incremental generation.
+
+Packing2 capacity estimate2*9749=19498MiB is below80% of81920MiB; the longest
+formal generation realizes the full2048KV shape, rather than an early-EOS proxy.
+Process allocator peaks are recorded separately in the raw summaries.
+The capacity calculation is not a device-wide packing2 measurement or speedup.
+
+Formal packing2 trial12947347 retains2 previously unrun longest MMLU/GPQA
+K3/current_t/lambda0.5 singleton records. Submitted same447f64b launcher/Python,
+emergency_gpu/emergency_gpu,1A800/8CPU/64G/30min,--no-requeue.
+Fresh scheduler confirms partition priority300, legal QoSpriority0 and real
+PENDING/Priority job. Its worklist is worklist-pack2.json; after success there
+will be5 completed canary records and211 remaining, not a task/full-panel closure.
+Requested reserve0.5GPUh+already0.082777778 remains below12GPUh.
+Same heartbeat retargeted12947347 ACTIVE/full60min with tool confirmation;
+next executor action is actual packing2 peak/throughput assessment, then
+budget-bounded remaining canary. No new scientific configuration or full Gate D.

@@ -7,12 +7,34 @@
   "executor": "01a11b40-07d3-7342-9d01-f809b480f49e",
   "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
   "job_ids": [
-    "12947166"
+    "12947347"
   ],
   "creation_tool_result": {
     "automationId": "phase11-gate-c-a800-canary-monitor",
     "mode": "create",
     "status": "ACTIVE"
   },
-  "terminal_route": "pause self, then send AUTOMATION_TERMINAL_RESUME to exact executor; relay_required to planning on delivery failure"
+  "terminal_route": "pause self, then send AUTOMATION_TERMINAL_RESUME to exact executor; relay_required to planning on delivery failure",
+  "latest_update_tool_result": {
+    "automationId": "phase11-gate-c-a800-canary-monitor",
+    "mode": "update",
+    "status": "ACTIVE"
+  },
+  "terminal_events": [
+    {
+      "job_id": "12947166",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 268,
+      "pause_tool_result": {
+        "automationId": "phase11-gate-c-a800-canary-monitor",
+        "mode": "update",
+        "status": "PAUSED"
+      },
+      "resume_delivery_tool_result": {
+        "threadId": "01a11b40-07d3-7342-9d01-f809b480f49e"
+      },
+      "observed_at_utc": "2026-10-08T12:39:28Z"
+    }
+  ]
 }
