@@ -1,0 +1,31 @@
+{
+  "source_commit": "447f64be3172dae403f7cd0c07ae17399a6197b4",
+  "jobs": [
+    {
+      "job_id": "12947157",
+      "class": "debug",
+      "requested_partition": "debug",
+      "requested_qos": "debuglimit",
+      "requested_seconds": 1740,
+      "gpus": 1,
+      "packing": 2,
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-debug-batch",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 30,
+      "actual_qos": "debug"
+    },
+    {
+      "job_id": "12947166",
+      "class": "formal-first",
+      "requested_partition": "emergency_gpu",
+      "requested_qos": "emergency_gpu",
+      "requested_seconds": 1800,
+      "gpus": 1,
+      "packing": 1,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z/worklist-first.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z-formal-first-batch"
+    }
+  ],
+  "budget_gpuh": 12
+}

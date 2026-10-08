@@ -1,0 +1,108 @@
+{
+  "schema_version": "loopscope.phase11.canary_membership.v1",
+  "scope": "FORMAL_TEST",
+  "target_gold_loaded": false,
+  "selection_rule": "floor((N-1)*q); sort(input_length,canonical_index)",
+  "quantiles": [
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "record_count": 216,
+  "tasks": {
+    "arc_challenge": {
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/arc_challenge-formal.json",
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/arc_challenge-prepared/arc_challenge-pool.json",
+      "population_count": 1172,
+      "samples": [
+        {
+          "quantile": 0.25,
+          "canonical_index": 982,
+          "identity": "allenai/ai2_arc@210d026faf9955653af8916fad021475a3f00453:ARC-Challenge:test:982:Mercury_7140333",
+          "input_token_length": 876
+        },
+        {
+          "quantile": 0.5,
+          "canonical_index": 841,
+          "identity": "allenai/ai2_arc@210d026faf9955653af8916fad021475a3f00453:ARC-Challenge:test:841:Mercury_7058135",
+          "input_token_length": 934
+        },
+        {
+          "quantile": 0.75,
+          "canonical_index": 956,
+          "identity": "allenai/ai2_arc@210d026faf9955653af8916fad021475a3f00453:ARC-Challenge:test:956:Mercury_7005005",
+          "input_token_length": 993
+        },
+        {
+          "quantile": 1.0,
+          "canonical_index": 326,
+          "identity": "allenai/ai2_arc@210d026faf9955653af8916fad021475a3f00453:ARC-Challenge:test:326:Mercury_7068583",
+          "input_token_length": 1243
+        }
+      ]
+    },
+    "mmlu_pro": {
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/mmlu_pro-formal.json",
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/mmlu_pro-prepared/mmlu_pro-pool.json",
+      "population_count": 12032,
+      "samples": [
+        {
+          "quantile": 0.25,
+          "canonical_index": 6011,
+          "identity": "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:test:6011:6172",
+          "input_token_length": 1118
+        },
+        {
+          "quantile": 0.5,
+          "canonical_index": 11972,
+          "identity": "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:test:11972:12197",
+          "input_token_length": 1305
+        },
+        {
+          "quantile": 0.75,
+          "canonical_index": 3485,
+          "identity": "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:test:3485:3606",
+          "input_token_length": 1588
+        },
+        {
+          "quantile": 1.0,
+          "canonical_index": 10500,
+          "identity": "TIGER-Lab/MMLU-Pro@b189ec765aa7ed75c8acfea42df31fdae71f97be:test:10500:10710",
+          "input_token_length": 2860
+        }
+      ]
+    },
+    "gpqa_main": {
+      "manifest": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/manifests/gpqa_main-formal.json",
+      "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/gpqa_main-pool.json",
+      "population_count": 448,
+      "samples": [
+        {
+          "quantile": 0.25,
+          "canonical_index": 105,
+          "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:105",
+          "input_token_length": 178
+        },
+        {
+          "quantile": 0.5,
+          "canonical_index": 261,
+          "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:261",
+          "input_token_length": 227
+        },
+        {
+          "quantile": 0.75,
+          "canonical_index": 356,
+          "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:356",
+          "input_token_length": 285
+        },
+        {
+          "quantile": 1.0,
+          "canonical_index": 344,
+          "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:344",
+          "input_token_length": 2819
+        }
+      ]
+    }
+  }
+}
