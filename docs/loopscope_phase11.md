@@ -67,6 +67,27 @@ sbatch <authorized-debug-resource-flags> scripts/loopscope/phase11_resources.sba
   --run-root <fresh-resource-root> --commit <audited-commit>
 ```
 
+## Gate C retainable formal canary
+
+Gate C is limited to 216 records: four identities per task across all 18 arms.
+Membership uses frozen input lengths, with canonical-index tie breaks and sorted
+positions `floor((N-1)*q)` for q=0.25/0.5/0.75/1. ARC length is the maximum actual
+candidate input length; generation length is the full prompt. Freeze this mapping
+before any formal forward. Keep the original full pool/manifest and use singleton
+`--shard index/N`; the 4-identity set does not close a complete task.
+
+`phase11_canary.sbatch` runs `run_phase11_canary_batch.py` with an explicit
+worklist, scope, commit, packing and fresh batch root. It starts independent
+producer processes with four CPU threads each and records device-wide nvidia-smi
+memory observations separately from each process's allocator peaks. Synthetic
+debug uses the same launcher and producer, with the existing three-token
+engineering override and attempt verifier. The formal scope retains 2048/native
+EOS and never sets that override. First run the longest question of every task
+at K3/current_t/lambda0.9 with packing1; direct A800 measurements and 20% headroom
+must admit packing2. Successful singleton roots are reusable by Gate D without
+changing the frozen producer semantics. Canary verification reports identity
+closure and resource scalars only; generated answers and gold remain sealed.
+
 ## Formal closure and analysis
 
 Prepare a `FORMAL_TEST` manifest from the accepted bound config and complete pool. Each acquisition runs one independent cell, optionally disjoint modulo shards via `--shard INDEX/COUNT`. Every saved attempt includes command metadata, canonical raw records, telemetry and a completion summary. Fresh paths are mandatory. There is no retry/recovery answer generation; preserve failed attempts and create a fresh authorized attempt.

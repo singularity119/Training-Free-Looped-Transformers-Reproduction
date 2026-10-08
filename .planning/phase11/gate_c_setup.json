@@ -1,0 +1,18 @@
+{
+  "executor": "01a11b40-07d3-7342-9d01-f809b480f49e",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-c-20261008T113100Z",
+  "logs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/logs/phase11-gate-c-20261008T113100Z",
+  "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-c-20261008T113100Z",
+  "runs_prefix": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-c-20261008T113100Z",
+  "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+  "allocation_budget_gpuh": 12,
+  "formal_partition": "emergency_gpu",
+  "formal_qos": "emergency_gpu",
+  "partition_priority_tier": 300,
+  "legal_qos_priority": 0,
+  "debug_partition": "debug",
+  "debug_qos_request": "debuglimit",
+  "target_gold_loaded": false,
+  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-c-20261008T113100Z/cuda-source"
+}

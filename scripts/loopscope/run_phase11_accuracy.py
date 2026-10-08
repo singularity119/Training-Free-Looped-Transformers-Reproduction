@@ -183,6 +183,43 @@ def runtime_telemetry(runtime):
             "last_prefill_fit_metadata": {str(t): dict(value) for t, value in runtime._last_fit_metadata.items()}}
 
 
+class ForwardTiming:
+    """Scalar CUDA-event timings, without synchronizing every decode forward."""
+    def __init__(self, torch, model, dataset):
+        self.torch, self.dataset, self.events = torch, dataset, []
+        self.active = None
+        self.handles = [model.register_forward_pre_hook(self.start, with_kwargs=True),
+                        model.register_forward_hook(self.end)]
+
+    def start(self, module, args, kwargs):
+        tokens = kwargs.get("input_ids")
+        if tokens is None:
+            tokens = args[0]
+        stage = "scoring" if self.dataset == "arc_challenge" else ("prefill" if tokens.shape[-1] > 1 else "decode")
+        event = self.torch.cuda.Event(enable_timing=True)
+        event.record()
+        self.active = (stage, event)
+
+    def end(self, module, args, output):
+        event = self.torch.cuda.Event(enable_timing=True)
+        event.record()
+        stage, start = self.active
+        self.events.append((stage, start, event))
+        self.active = None
+
+    def summary(self):
+        result = {}
+        for stage, start, end in self.events:
+            key = stage + "_elapsed_seconds"
+            result[key] = result.get(key, 0.0) + start.elapsed_time(end) / 1000
+        self.events.clear()
+        return result
+
+    def close(self):
+        for handle in self.handles:
+            handle.remove()
+
+
 def acquire_row(torch, model, tokenizer, adapter, eos_ids, row, index, cell, config, scope, max_new_tokens,
                 engineering_steps):
     from tflt.wrapper import looped_model
@@ -265,6 +302,7 @@ def run(args):
             torch.set_grad_enabled(False)
             torch.manual_seed(20261008)
             torch.cuda.reset_peak_memory_stats()
+            timing = ForwardTiming(torch, model, args.dataset)
             total_generated = 0
             for index in indices:
                 failed_index, stage = index, "question_acquisition"
@@ -274,6 +312,7 @@ def run(args):
                 record, telemetry = acquire_row(torch, model, tokenizer, adapter, eos_ids, row, index,
                     acquisition, config, args.scope, max_new_tokens, args.engineering_generate_steps)
                 torch.cuda.synchronize()
+                telemetry.update(timing.summary())
                 telemetry.update(identity=row["identity"], canonical_index=index,
                                  elapsed_seconds=time.monotonic() - question_started)
                 stage = "raw_record_write"
@@ -287,6 +326,7 @@ def run(args):
                     print(json.dumps({"cell_id": cell["cell_id"], "completed": completed,
                                       "total": len(indices), "elapsed_seconds": time.monotonic() - started}), flush=True)
             require(completed == len(indices), "raw producer did not finish all declared canonical indices")
+            timing.close()
             summary.update(status="RAW_COMPLETE", count=completed, generated_token_count=total_generated,
                            elapsed_seconds=time.monotonic() - started,
                            peak_allocated_bytes=int(torch.cuda.max_memory_allocated()),

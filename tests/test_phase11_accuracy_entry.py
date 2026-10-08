@@ -136,6 +136,7 @@ class EntryTests(unittest.TestCase):
             parsed = RUNNER.parser().parse_args(args)
             with patch.dict(os.environ, {"SLURM_JOB_ID": "synthetic-unit-test", "SLURM_JOB_PARTITION": "debug"}), \
                  patch.object(RUNNER, "load_runtime", return_value=(torch, None, None, None, [151645, 151643], {})), \
+                 patch.object(RUNNER, "ForwardTiming", return_value=SimpleNamespace(summary=lambda: {}, close=lambda: None)), \
                  patch.object(RUNNER, "acquire_row", side_effect=acquire), redirect_stdout(io.StringIO()):
                 self.assertEqual(RUNNER.run(parsed), 0)
             verified = verify_attempt(manifest, pool, parsed.run_root)
