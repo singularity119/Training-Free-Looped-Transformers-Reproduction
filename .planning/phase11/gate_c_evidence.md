@@ -107,3 +107,42 @@ Requested reserve0.5GPUh+already0.082777778 remains below12GPUh.
 Same heartbeat retargeted12947347 ACTIVE/full60min with tool confirmation;
 next executor action is actual packing2 peak/throughput assessment, then
 budget-bounded remaining canary. No new scientific configuration or full Gate D.
+
+## Packing2 observed resources and remaining211 dispatch
+
+12947347 COMPLETED/exit0:0/217 allocated GPU-seconds. Monitor paused itself and
+visibly delivered AUTOMATION_TERMINAL_RESUME; executor independently re-read
+clean source, scheduler and both successful singleton metadata. Both generated
+2048tokens with full frozen bounds and released directions. Total allocation
+(debug30+first268+trial217)/3600=0.143055556GPUh; successful canary count5.
+
+Packing2 actual device telemetry203 samples has peak18521/81920MiB, no OOM.
+Both question wall times are156.743350/156.742656s. Aggregate question-window
+throughput4096/156.743350=26.131890token/s versus packing1's
+4096/(98.746706+95.312555)=21.106955, a +23.807% resource point estimate.
+The processes overlap and may have a small start offset; actual batch wall
+211.633647s versus two packing1 child walls215.038964s is only1.584% shorter.
+These are different-strength, single-node/time points, not a controlled repeated
+speedup estimate; input identities/lengths and2048 output lengths match. Startup
+and loading contention materially dilute the question-window gain. Selected
+remaining packing2 based on direct capacity, improved question throughput and
+preserved startup-inclusive point, without claiming confirmed/general speedup.
+
+Remaining211 jobs are round-robin partitioned into3 nonoverlapping worklists
+under original full manifests/pools, count71/70/70. Each contains24/24/23 ARC,
+23/23/24 MMLU-Pro and24/23/23 GPQA respectively. No successful roots are included.
+Same immutable447f64b launcher/Python/source/science and fresh batch roots.
+Formal jobs12947685/12947686/12947687 use emergency_gpu/emergency_gpu,
+1A800/8CPU/64G/2h,packing2,--no-requeue. Job12947687 is
+--dependency=afterany:12947685, so these jobs cannot allocate more than2GPU
+concurrently. Total requested reserve6GPUh+actual0.143055556<12GPUh.
+
+The first combined scontrol show job comma-list query was rejected by this
+cluster CLI (not job failure). Original three submissions returned real IDs;
+one bounded correction used individual scontrol calls and comma-list sacct,
+confirming first two PENDING/Priority, third PENDING/Dependency exactly as set.
+No cancellation/requeue/repeat submission occurred. Same single heartbeat
+retargeted these3 IDs ACTIVE/full60min, tool-confirmed. Monitor must pause and
+resume exact executor on new terminal attempt; executor preserves successful
+siblings and monitors remaining live work. All216 canary closure and cost/report
+remain outstanding; no Gate C terminal and no D/full/gold authority exercised.
