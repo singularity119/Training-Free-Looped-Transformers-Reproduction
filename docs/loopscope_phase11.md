@@ -48,6 +48,25 @@ The launcher fixes three generated tokens only for synthetic engineering checks,
 
 Pending real CUDA checks: numerical equivalence, exact SVD on the installed CUDA runtime, incremental cache behavior and measured throughput/memory at representative prompt/decode lengths. Gate A fake-tensor tests establish control flow only.
 
+Gate B resource measurements use `phase11_resources.sbatch` with one selected
+`--dataset {mmlu_pro,gpqa_main,arc_challenge}` and
+`--family {Native,LoopK3,OnlineK3}` per independent process. `OnlineK3` is
+current_t with strength 0.9. Synthetic generation inputs have 2860/2819 ordinary
+tokens and force 2048 new tokens; the 2048 actual forwards comprise one prefill
+and 2047 incremental decodes, so the final KV length is prompt+2047. This
+forced-length engineering control does not alter the formal greedy EOS recipe.
+ARC measures four complete synthetic candidates with 1242 prompt and 46
+continuation tokens, an upper envelope rather than a real test question.
+Scalar artifacts contain load/prefill/decode memory, synchronized timings,
+throughput, GPU/allocation identity and every layer's cache length. They cannot
+size packing on a different GPU type without direct evidence there.
+
+```bash
+sbatch <authorized-debug-resource-flags> scripts/loopscope/phase11_resources.sbatch \
+  <audited-source> <pinned-python> --dataset mmlu_pro --family OnlineK3 \
+  --run-root <fresh-resource-root> --commit <audited-commit>
+```
+
 ## Formal closure and analysis
 
 Prepare a `FORMAL_TEST` manifest from the accepted bound config and complete pool. Each acquisition runs one independent cell, optionally disjoint modulo shards via `--shard INDEX/COUNT`. Every saved attempt includes command metadata, canonical raw records, telemetry and a completion summary. Fresh paths are mandatory. There is no retry/recovery answer generation; preserve failed attempts and create a fresh authorized attempt.

@@ -39,7 +39,9 @@ class GPUEntryTests(unittest.TestCase):
             self.assertEqual(plan["generation"]["num_beams"], 1)
             self.assertEqual(plan["window"], [15, 18])
             self.assertEqual((plan["cache_strategy"], plan["decode_mode"]), ("first", "full"))
-            self.assertEqual(len(plan["cases"]), 9)
+            self.assertEqual(len(plan["cases"]), 11)
+            self.assertIn("K3-current_t-lambda0.1", plan["cases"])
+            self.assertIn("K3-current_t-lambda0.9", plan["cases"])
             self.assertFalse(root.exists())
 
     def test_real_path_rejects_missing_debug_job_before_import_or_write(self):

@@ -54,7 +54,8 @@ def check_plan():
             "atol": ATOL, "rtol": RTOL, "target_gold_loaded": False,
             "cases": ["Native-original", "Native-monitored", "Loop-K2", "K2-current-lambda0",
                       "K2-fixed_t0-lambda0.5", "K2-lag1-lambda0.5", "K3-fixed_t0-lambda0.5",
-                      "K3-lag1-lambda0.5", "K3-current_t-lambda0.5"],
+                      "K3-lag1-lambda0.5", "K3-current_t-lambda0.5",
+                      "K3-current_t-lambda0.1", "K3-current_t-lambda0.9"],
             "arc_cases": ["Native-original-HFLM", "Native-Phase11-shim", "Loop-K2",
                           "K2-current-lambda0", "K2-fixed_t0-lambda0.5", "K2-lag1-lambda0.5"],
             "resource_scope": "small synthetic functional path; not formal memory or packing sizing"}
@@ -297,6 +298,16 @@ def run(args):
         lag["logits"].clear()
         for policy in ("fixed_t0", "lag1", "current_t"):
             result = generate_case("K3-" + policy + "-lambda0.5", 3, policy, 0.5)
+            result["logits"].clear()
+        for strength in (0.1, 0.9):
+            name = "K3-current_t-lambda" + str(strength)
+            result = generate_case(name, 3, "current_t", strength)
+            evidence = generation_records[name]["online_evidence"]["runtime"]
+            require(evidence["strength"] == strength and
+                    all(call["applied"] for call in evidence["calls"]) and
+                    any(call["answer_max_abs_change"] > 0 for call in evidence["calls"]),
+                    "strength parameter did not reach and change actual CUDA residuals")
+            generation_records[name]["strength_application_checked"] = True
             result["logits"].clear()
         for result in retained.values():
             result["logits"].clear()
