@@ -1,0 +1,7 @@
+# GPQA capacity evidence before D trials
+
+Read-only extraction from C metadata: retained GPQA index344 input2819, all18arms naturally generated2048 with2047decode and last_cache_length4866. Max GPQA per-process allocator reserved9181331456bytes=8756MiB. C packing1 device peak9749MiB; all C formal packing2 batches maximum23917MiB (1second device sampling, mixed tasks). A800 total81920MiB, 20percent headroom threshold65536MiB.
+
+Allocator8756MiB omits CUDA non-allocator/loading transient usage, because producer resets allocator peaks after load_runtime. Device23917/2=11958.5MiB is a conservative planning scaling quantity, not an observed per-worker upper bound; no PID/stage-alignment evidence proves it. Do not use allocator-only scaling to admit6 workers. Eight workers would require70048MiB even at this allocator-only envelope and therefore should not be tried on current evidence.
+
+After task-specific packing2 trial, packing4 is the next bounded retainable experiment if capacity permits. For packing6, use GPQA's own packing4 loading/long-cache/device envelope and preserved full2048 C shape; approximate necessary planning threshold is p4<=43690.7MiB before scaling1.5, plus any unobserved full-KV allowance. Actual p6 must still be measured, and throughput must improve to select it. Natural EOS may not make all workers hold near2048 cache simultaneously; report that evidence boundary, never claim simultaneous full2048 was measured without aligned evidence, never force extra tokens or repeat successful records. Current source/recipe remain unchanged.

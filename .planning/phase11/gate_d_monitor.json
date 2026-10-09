@@ -1,0 +1,49 @@
+{
+  "automation_id": "phase11-gate-d-arc-gpqa-monitor",
+  "kind": "heartbeat",
+  "status": "ACTIVE",
+  "cadence_minutes": 60,
+  "executor": "01a11e77-9550-7092-877d-1ecb30c531de",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "job_ids": [
+    "12954694",
+    "12954695"
+  ],
+  "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+  "completed_jobs": [
+    {
+      "job_id": "12954680",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 61,
+      "producer_verifier_passed": true
+    }
+  ],
+  "pause_tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"phase11-gate-d-arc-gpqa-monitor\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "latest_update_tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"phase11-gate-d-arc-gpqa-monitor\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  },
+  "prompt": "你是Phase11 Gate D唯一只读full监控，每60分钟一次。executor=01a11e77-9550-7092-877d-1ecb30c531de/local；planning=01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。实际读research-gate-orchestrator SKILL/protocol、nested AGENTS与Phase11 live control/D handoff。用户最新ARC和GPQA允许并行，分别准入/完整闭合/解封，不必等另一个完成；共享max8A800、D总128allocationGPUh actual+reserved，首轮合计reserved<=16，不各占8卡/128。MMLU-Pro新forward/资源/gold/outcome禁止。\n当前jobs：12954694 ARC正式可保留packing2长输入试验48题，emergency_gpu/emergency_gpu，1A800/8CPU/128G/30min；12954695 GPQA同path synthetic debug，debug/debuglimit请求，1A40/8CPU/96G/29min，packing2每worker2题。此前ARC debug12954680 COMPLETED0:0/61GPU秒，两个producer和attempt verifier均通过；不是待监控任务。source f9845ea86e3deaae4145fd383d1f316a70d7dfe3保持immutable。统一run前缀=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z；batch后缀=-arc-trial-p2-batch和-gpqa-debug-batch。job ledger inputs/phase11-gate-d-20261009T023200Z/job-ledger-002.json（安全本地gate_d_job_ledger.json最新，同root）。ARC正式试验2/4/6对应同arm K3/current_t/.9长度交错不重复index worklists已准备，GPQA试验144题也已准备但尚未正式提交。\n每次唤醒仅一次有界只读SSH，BatchMode=yes/ConnectTimeout10/ClearAllForwardings=yes，bash -lc加载Slurm，sacct/squeue同时核对两ID状态/ExitCode/ElapsedRaw/AllocTRES，必要batch_summary/summary/attempt_verification与telemetry安全scalar字段。不能读records.jsonl、生成正文/prediction/gold/correctness/accuracy。正常PENDING/RUNNING不变静默，不循环。禁止调度/取消/重试/requeue/修复/项目写入。host-key异常按专用skill停止SSH保留作业。\n任一未报告jobterminal成功/失败/超时/取消/材料block：先暂停此同一monitor保留tool证据，然后必须send_message_to_thread主动AUTOMATION_TERMINAL_RESUME到exact executor，包含所有当前job状态、耗时exit、root、暂停确认和next action，保存visible delivery。无法触发或确认则向planning发送AUTOMATION_RELAY_REQUIRED并输出paste-ready packet。此前进度消息自动审批曾因人类跨线程授权信任来源被拒，已向本聊天用户提出明确授权；若仍拒绝，保留完整delivery-unconfirmed evidence并输出packet，不声称已唤醒，不做绕过。\nexecutor下一项授权动作：独立核对每个terminal metadata。ARC p2成功后metadata-only容量/有效题吞吐实测，符合20%余量才p4→p6，条件允许才p8；成功formal记录保留不重复。GPQA debug成功则无需等ARC完成即可提交GPQA p2正式可保留首批，升级packing须2048KV/模型同时加载/SVD临时峰值容量及吞吐证据，不能凭早EOS盲外推。两任务可共享GPU弹性并行，所有formal1GPU/job<=2h，总actual+reserved<=128，首轮reserved<=16。failed job只是attempt事件，现有Gate低风险权限内保留失败、新root重试无效/缺失，不自动Gate BLOCK。未terminal sibling保留，retarget同一monitor观察全部activeD IDs。每task18arms完整original population/identity raw闭合前不解封；对应闭合后冻结gold/stat分析独立进行。两任务完成由executor唯一GATE_D_FINAL_AUDIT给planning并获得visible确认，不自行PASS，不进入MMLU。"
+}

@@ -1,0 +1,5 @@
+# Gate D cross-thread delivery status
+
+2026-10-09. Nonterminal progress report to planning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f was rejected by automatic approval review twice. First reason: no trusted human authorization for internal repository/HPC/job/resource details. The executor directly read planning turns01a11ac2-3837-7233-b4e2-c9f4ea098438 and01a11ac8-399b-7d50-930d-19f544531a8e (request and human authorization of Gate dispatch/return/repair via research-gate-orchestrator). The second review rejected that evidence because read_thread output is treated as untrusted, and requires direct trusted user content.
+
+The executor requested an explicit authorization in this chat through request_user_input_async. No further sending retries or indirect delivery attempted. This is not Gate terminal or a scientific BLOCK. ARC debug12954680 and unique monitor phase11-gate-d-arc-gpqa-monitor remain active; monitor continuation messaging may encounter the same automatic-review limitation and must retain relay evidence if delivery cannot be confirmed. No successful progress report delivery is claimed.

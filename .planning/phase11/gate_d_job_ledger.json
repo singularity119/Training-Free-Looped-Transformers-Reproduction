@@ -1,0 +1,41 @@
+{
+  "jobs": [
+    {
+      "job_id": "12954680",
+      "class": "debug",
+      "task": "arc_challenge",
+      "requested_seconds": 1740,
+      "gpus": 1,
+      "packing": 2,
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-debug-batch",
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 61
+    },
+    {
+      "job_id": "12954694",
+      "task": "arc_challenge",
+      "class": "formal-trial",
+      "requested_seconds": 1800,
+      "gpus": 1,
+      "packing": 2,
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-trial-p2-batch",
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+    },
+    {
+      "job_id": "12954695",
+      "task": "gpqa_main",
+      "class": "debug",
+      "requested_seconds": 1740,
+      "gpus": 1,
+      "packing": 2,
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-debug-batch",
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+    }
+  ],
+  "budget_gpuh": 128,
+  "reserved_gpuh": 0.9833333333333333,
+  "actual_allocation_gpuh": 0.016944444444444446,
+  "latest_revision": "parallel_authorized"
+}

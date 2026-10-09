@@ -2,7 +2,9 @@
 
 2026-10-08，规划线程01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f（来自当前workspace上下文，派发前需工具核对）。用户允许按确认配置继续推进。正式科学合同为loopscope_phase11_contract_v1.md；配置草案仅历史。
 
-STATUS=GATE_D_ARC_THEN_GPQA_AUTHORIZED
+STATUS=GATE_D_ARC_GPQA_PARALLEL_AUTHORIZED
+
+2026-10-09用户最新修订：ARC与GPQA可以并行推进，覆盖下文及D handoff的任务串行顺序要求。两任务共享总max8 A800和D累计128 allocation GPUh，不各占8卡或各有128小时；首轮合计预留<=16GPUh。各自debug准入、packing显存/吞吐核定与完整18配置闭合/解封独立执行，不必等待另一个任务结束。MMLU-Pro继续暂停。当前同一D executor负责调度，无新增Gate或重复计算。
 ACTIVE_GATE=D
 AUTHORIZED_EXECUTOR=01a11e77-9550-7092-877d-1ecb30c531de
 AUTHORIZED_EXECUTOR_HOST=local

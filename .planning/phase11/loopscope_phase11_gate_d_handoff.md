@@ -1,4 +1,6 @@
-# Gate D — ARC then GPQA / AUTHORIZED
+# Gate D — ARC and GPQA parallel / AUTHORIZED
+
+2026-10-09用户最新明确授权ARC与GPQA并行，取代下文所有先ARC完成再GPQA的顺序限制。两任务仍分别通过同路径debug与packing准入；统一调度总max8A800、首轮合计预留<=16GPUh、D总128GPUh（actual+reserved），不是每任务单独额度。可按现场队列、显存与有效吞吐弹性分配GPU，不要求固定4+4；既有运行/成功工件保留，不为改顺序盲取消重跑。每任务全18配置闭合后可独立解封并分析，不受另一任务完成状态约束；结果不得改变另一任务配方。MMLU-Pro新计算/解封仍禁止。当前D身份不变，仅顺序调整。
 
 2026-10-09。Executor01a11e77-9550-7092-877d-1ecb30c531de/local，gpt-6.1-sol/high；planning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。用户明确先ARC→GPQA、尽量提高显存利用率、MMLU-Pro两者完成再商议、最多8A800。按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行，实际读skill/protocol、AGENTS、contract_v1、GPQA source binding、control。
 
