@@ -1,0 +1,87 @@
+{
+  "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+  "target_gold_loaded": false,
+  "batches": [
+    {
+      "job_id": "12955297",
+      "dataset": "arc_challenge",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b000-batch",
+      "packing": 4,
+      "records": 512,
+      "wall_seconds": 506.79194562509656,
+      "device_peak_mib": 46064.0,
+      "device_total_mib": 81920.0,
+      "per_worker_peak_reserved_mib": 12046.0,
+      "worker_max_input_lengths": [
+        1215,
+        1215,
+        1215,
+        1215
+      ],
+      "max_input_length": 1215,
+      "summed_question_seconds": 1262.1729010641575,
+      "records_per_wall_second": 1.0102765137052043,
+      "generated_token_count": 0,
+      "tokens_per_wall_second": 0.0,
+      "max_generated_token_count": 0,
+      "max_cache_length": 0,
+      "device_samples": 507,
+      "metadata_verified": true,
+      "target_gold_loaded": false
+    },
+    {
+      "job_id": "12955298",
+      "dataset": "arc_challenge",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b001-batch",
+      "packing": 4,
+      "records": 512,
+      "wall_seconds": 1336.8179058600217,
+      "device_peak_mib": 47186.0,
+      "device_total_mib": 81920.0,
+      "per_worker_peak_reserved_mib": 12046.0,
+      "worker_max_input_lengths": [
+        1215,
+        1215,
+        1215,
+        1215
+      ],
+      "max_input_length": 1215,
+      "summed_question_seconds": 4787.692037142813,
+      "records_per_wall_second": 0.38299905900094333,
+      "generated_token_count": 0,
+      "tokens_per_wall_second": 0.0,
+      "max_generated_token_count": 0,
+      "max_cache_length": 0,
+      "device_samples": 1337,
+      "metadata_verified": true,
+      "target_gold_loaded": false
+    },
+    {
+      "job_id": "12955299",
+      "dataset": "arc_challenge",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b002-batch",
+      "packing": 4,
+      "records": 512,
+      "wall_seconds": 692.3038946315646,
+      "device_peak_mib": 43947.0,
+      "device_total_mib": 81920.0,
+      "per_worker_peak_reserved_mib": 12026.0,
+      "worker_max_input_lengths": [
+        1215,
+        1215,
+        1215,
+        1215
+      ],
+      "max_input_length": 1215,
+      "summed_question_seconds": 2194.7461505159736,
+      "records_per_wall_second": 0.7395596124336119,
+      "generated_token_count": 0,
+      "tokens_per_wall_second": 0.0,
+      "max_generated_token_count": 0,
+      "max_cache_length": 0,
+      "device_samples": 693,
+      "metadata_verified": true,
+      "target_gold_loaded": false
+    }
+  ]
+}
