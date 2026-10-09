@@ -1,0 +1,62 @@
+{
+  "tasks": [
+    {
+      "dataset": "arc_challenge",
+      "packing": 4,
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-trial-p4-batch",
+      "status": "P4_METADATA_VERIFIED",
+      "records": 96,
+      "input_length_sum": 100828,
+      "max_input_length": 1190,
+      "worker_max_input_lengths": [
+        1164,
+        1178,
+        1157,
+        1190
+      ],
+      "wall_seconds": 509.58339004963636,
+      "summed_question_seconds": 1917.652152882889,
+      "records_per_wall_second": 0.18838918590075915,
+      "input_tokens_per_wall_second": 197.86359204168483,
+      "generated_token_count": 0,
+      "tokens_per_wall_second": 0.0,
+      "max_generated_token_count": 0,
+      "max_cache_length": 0,
+      "device_peak_mib": 49589.0,
+      "device_total_mib": 81920.0,
+      "per_worker_peak_reserved_mib": 13774.0,
+      "device_samples": 510,
+      "target_gold_loaded": false
+    },
+    {
+      "dataset": "gpqa_main",
+      "packing": 4,
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-trial-p4-batch",
+      "status": "P4_METADATA_VERIFIED",
+      "records": 48,
+      "input_length_sum": 17893,
+      "max_input_length": 1025,
+      "worker_max_input_lengths": [
+        709,
+        546,
+        1025,
+        576
+      ],
+      "wall_seconds": 2404.9641089644283,
+      "summed_question_seconds": 8984.354822039604,
+      "records_per_wall_second": 0.019958717812495207,
+      "input_tokens_per_wall_second": 7.440027871228682,
+      "generated_token_count": 85450,
+      "tokens_per_wall_second": 35.530675772452405,
+      "max_generated_token_count": 2048,
+      "max_cache_length": 3072,
+      "device_peak_mib": 35812.0,
+      "device_total_mib": 81920.0,
+      "per_worker_peak_reserved_mib": 8438.0,
+      "device_samples": 2405,
+      "target_gold_loaded": false
+    }
+  ],
+  "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+  "target_gold_loaded": false
+}

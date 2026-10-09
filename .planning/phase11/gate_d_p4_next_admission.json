@@ -1,0 +1,23 @@
+{
+  "arc_challenge": {
+    "packing": 4,
+    "p6_admission": "STOP_CAPACITY",
+    "p6_scaled_device_mib": 74383.5,
+    "p6_allocator_mib": 82644,
+    "chunk_questions_per_worker": 128,
+    "records_remaining": 20880
+  },
+  "gpqa_main": {
+    "p6_admission": "BOUNDED_RETAINABLE_TRIAL",
+    "p4_device_peak_mib": 35812.0,
+    "kv_bytes_per_token": 147456,
+    "remaining_prompt_max": 1053,
+    "full_generation_allowance_tokens": 2048,
+    "six_full_KV_allowance_mib": 2616.46875,
+    "p6_scaled_device_plus_all_KV_mib": 56334.46875,
+    "limit_mib": 65536,
+    "interpretation": "planning estimate with full KV deliberately added again; not measured simultaneous worst-case bound",
+    "p8_admission": "STOP_ALLOCATOR_CAPACITY"
+  },
+  "target_gold_loaded": false
+}

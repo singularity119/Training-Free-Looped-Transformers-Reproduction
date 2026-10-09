@@ -60,7 +60,10 @@
       "gpus": 1,
       "packing": 4,
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-trial-p4-batch",
-      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 515
     },
     {
       "job_id": "12954974",
@@ -70,18 +73,142 @@
       "gpus": 1,
       "packing": 4,
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-trial-p4-batch",
-      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 2411
+    },
+    {
+      "task": "arc_challenge",
+      "class": "formal-full",
+      "packing": 4,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-full-p4/batch-000.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b000-batch",
+      "records": 512,
+      "batch_number": 0,
+      "job_id": "12955297",
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "task": "arc_challenge",
+      "class": "formal-full",
+      "packing": 4,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-full-p4/batch-001.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b001-batch",
+      "records": 512,
+      "batch_number": 1,
+      "job_id": "12955298",
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "task": "arc_challenge",
+      "class": "formal-full",
+      "packing": 4,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-full-p4/batch-002.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b002-batch",
+      "records": 512,
+      "batch_number": 2,
+      "job_id": "12955299",
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "task": "arc_challenge",
+      "class": "formal-full",
+      "packing": 4,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-full-p4/batch-003.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b003-batch",
+      "records": 512,
+      "batch_number": 3,
+      "job_id": "12955300",
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "task": "arc_challenge",
+      "class": "formal-full",
+      "packing": 4,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-full-p4/batch-004.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b004-batch",
+      "records": 512,
+      "batch_number": 4,
+      "job_id": "12955301",
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "task": "arc_challenge",
+      "class": "formal-full",
+      "packing": 4,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-full-p4/batch-005.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b005-batch",
+      "records": 512,
+      "batch_number": 5,
+      "job_id": "12955302",
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "task": "arc_challenge",
+      "class": "formal-full",
+      "packing": 4,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-full-p4/batch-006.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b006-batch",
+      "records": 512,
+      "batch_number": 6,
+      "job_id": "12955303",
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "task": "gpqa_main",
+      "class": "formal-trial",
+      "packing": 6,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/gpqa_main/trial-p6.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-trial-p6-batch",
+      "records": 72,
+      "job_id": "12955304",
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
     }
   ],
   "budget_gpuh": null,
-  "reserved_gpuh": 2.5,
-  "actual_allocation_gpuh": 0.44166666666666665,
-  "latest_revision": "p2_complete_p4_submitted",
+  "reserved_gpuh": 16,
+  "actual_allocation_gpuh": 1.2544444444444445,
+  "latest_revision": "p4_complete_arc_full_gpqa_p6_submitted",
   "formal_budget_gpuh": null,
   "initial_reserved_gpuh_cap": null,
   "budget_policy": "USER_NO_FORMAL_GPUH_CAP_COST_ACCOUNTING_ONLY",
   "retained_d_formal_records": {
-    "arc_challenge": 48,
-    "gpqa_main": 24
-  }
+    "arc_challenge": 144,
+    "gpqa_main": 72
+  },
+  "active_job_ids": [
+    "12955297",
+    "12955298",
+    "12955299",
+    "12955300",
+    "12955301",
+    "12955302",
+    "12955303",
+    "12955304"
+  ]
 }
