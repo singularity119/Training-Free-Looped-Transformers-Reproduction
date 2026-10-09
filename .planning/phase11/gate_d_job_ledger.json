@@ -1455,10 +1455,13 @@
       "requested_seconds": 7200,
       "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
       "submission_confirmed": true,
-      "state": "RUNNING",
+      "state": "COMPLETED",
       "exit_code": "0:0",
-      "observed_allocated_seconds": 2993,
-      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1"
+      "observed_allocated_seconds": 3749,
+      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1",
+      "elapsed_allocated_seconds": 3749,
+      "metadata_verified": true,
+      "retained_records": 96
     },
     {
       "job_id": "12960337",
@@ -1473,10 +1476,13 @@
       "requested_seconds": 7200,
       "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
       "submission_confirmed": true,
-      "state": "RUNNING",
+      "state": "COMPLETED",
       "exit_code": "0:0",
-      "observed_allocated_seconds": 2965,
-      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1"
+      "observed_allocated_seconds": 4117,
+      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1",
+      "elapsed_allocated_seconds": 4117,
+      "metadata_verified": true,
+      "retained_records": 96
     },
     {
       "job_id": "12960338",
@@ -1491,10 +1497,13 @@
       "requested_seconds": 7200,
       "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
       "submission_confirmed": true,
-      "state": "RUNNING",
+      "state": "COMPLETED",
       "exit_code": "0:0",
-      "observed_allocated_seconds": 2946,
-      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1"
+      "observed_allocated_seconds": 3261,
+      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1",
+      "elapsed_allocated_seconds": 3261,
+      "metadata_verified": true,
+      "retained_records": 96
     },
     {
       "job_id": "12960339",
@@ -1509,10 +1518,13 @@
       "requested_seconds": 7200,
       "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
       "submission_confirmed": true,
-      "state": "RUNNING",
+      "state": "COMPLETED",
       "exit_code": "0:0",
-      "observed_allocated_seconds": 2400,
-      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1"
+      "observed_allocated_seconds": 3681,
+      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1",
+      "elapsed_allocated_seconds": 3681,
+      "metadata_verified": true,
+      "retained_records": 96
     },
     {
       "job_id": "12960340",
@@ -1527,10 +1539,13 @@
       "requested_seconds": 7200,
       "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
       "submission_confirmed": true,
-      "state": "RUNNING",
+      "state": "COMPLETED",
       "exit_code": "0:0",
-      "observed_allocated_seconds": 1908,
-      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1"
+      "observed_allocated_seconds": 3856,
+      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1",
+      "elapsed_allocated_seconds": 3856,
+      "metadata_verified": true,
+      "retained_records": 96
     },
     {
       "job_id": "12960556",
@@ -1544,7 +1559,14 @@
       "gpus": 1,
       "requested_seconds": 7200,
       "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
-      "submission_confirmed": true
+      "submission_confirmed": true,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 963,
+      "observed_allocated_seconds": 963,
+      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1",
+      "metadata_verified": true,
+      "retained_records": 512
     },
     {
       "job_id": "12960557",
@@ -1558,7 +1580,11 @@
       "gpus": 1,
       "requested_seconds": 7200,
       "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
-      "submission_confirmed": true
+      "submission_confirmed": true,
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "observed_allocated_seconds": 3397,
+      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1"
     },
     {
       "job_id": "12960558",
@@ -1572,31 +1598,119 @@
       "gpus": 1,
       "requested_seconds": 7200,
       "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true,
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "observed_allocated_seconds": 3278,
+      "observed_alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1"
+    },
+    {
+      "job_id": "12960710",
+      "task": "arc_challenge",
+      "class": "formal-full",
+      "packing": 4,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-full-p4/batch-034.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-p4-b034-batch",
+      "records": 512,
+      "batch_number": 34,
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "job_id": "12960711",
+      "task": "gpqa_main",
+      "class": "formal-full",
+      "packing": 6,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/gpqa-full-p6/batch-038.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-full-p6-b038-batch",
+      "records": 96,
+      "batch_number": 38,
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "job_id": "12960712",
+      "task": "gpqa_main",
+      "class": "formal-full",
+      "packing": 6,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/gpqa-full-p6/batch-039.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-full-p6-b039-batch",
+      "records": 96,
+      "batch_number": 39,
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "job_id": "12960713",
+      "task": "gpqa_main",
+      "class": "formal-full",
+      "packing": 6,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/gpqa-full-p6/batch-040.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-full-p6-b040-batch",
+      "records": 96,
+      "batch_number": 40,
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "job_id": "12960714",
+      "task": "gpqa_main",
+      "class": "formal-full",
+      "packing": 6,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/gpqa-full-p6/batch-041.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-full-p6-b041-batch",
+      "records": 96,
+      "batch_number": 41,
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+      "submission_confirmed": true
+    },
+    {
+      "job_id": "12960715",
+      "task": "gpqa_main",
+      "class": "formal-full",
+      "packing": 6,
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/gpqa-full-p6/batch-042.json",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-full-p6-b042-batch",
+      "records": 96,
+      "batch_number": 42,
+      "gpus": 1,
+      "requested_seconds": 7200,
+      "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
       "submission_confirmed": true
     }
   ],
   "budget_gpuh": null,
   "reserved_gpuh": 16.0,
-  "actual_allocation_gpuh": 47.56944444444444,
-  "latest_revision": "job-ledger-031.json",
+  "actual_allocation_gpuh": 51.205555555555556,
+  "latest_revision": "job-ledger-033.json",
   "formal_budget_gpuh": null,
   "initial_reserved_gpuh_cap": null,
   "budget_policy": "USER_NO_FORMAL_GPUH_CAP_COST_ACCOUNTING_ONLY",
   "retained_d_formal_records": {
-    "arc_challenge": 17040,
-    "gpqa_main": 3120
+    "arc_challenge": 17552,
+    "gpqa_main": 3600
   },
   "active_job_ids": [
-    "12960336",
-    "12960337",
-    "12960338",
-    "12960339",
-    "12960340",
-    "12960556",
     "12960557",
-    "12960558"
+    "12960558",
+    "12960710",
+    "12960711",
+    "12960712",
+    "12960713",
+    "12960714",
+    "12960715"
   ],
-  "completed_allocation_gpuh": 43.89944444444444,
-  "observed_running_allocation_gpuh": 3.67,
+  "completed_allocation_gpuh": 49.35138888888889,
+  "observed_running_allocation_gpuh": 1.8541666666666667,
   "actual_accounting_policy": "completed plus latest observed running allocation; no double counting, no stopping cap"
 }
