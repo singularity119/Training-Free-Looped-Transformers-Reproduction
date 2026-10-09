@@ -1,0 +1,22 @@
+{
+  "dataset": "gpqa_main",
+  "selected_packing": 6,
+  "p6_device_peak_mib": 53651.0,
+  "p6_allocator_per_worker_peak_mib": 8436.0,
+  "full_KV_additional_allowance_mib": 2616.46875,
+  "device_plus_six_complete_KV_mib": 56267.46875,
+  "headroom_limit_mib": 65536,
+  "each_worker_naturally_reached_2048": true,
+  "simultaneous_worst_KV_proven": false,
+  "p6_tokens_per_wall_second": 36.488355065771216,
+  "p4_tokens_per_wall_second": 35.530675772452405,
+  "token_rate_ratio": 1.0269535907352856,
+  "record_rate_ratio": 1.0920551586481426,
+  "interpretation": "measured operational point on near length-matched disjoint same-arm inputs; modest throughput improvement, no universal or statistical speed claim",
+  "worker_chunk_questions": 16,
+  "max_batch_records": 96,
+  "projected_max2048_batch_seconds": 5388.239608105351,
+  "requested_seconds": 7200,
+  "p8_admission": "STOP_ALLOCATOR_CAPACITY",
+  "target_gold_loaded": false
+}
