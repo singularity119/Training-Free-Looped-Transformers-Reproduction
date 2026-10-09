@@ -4,7 +4,9 @@
 
 STATUS=GATE_D_ARC_GPQA_PARALLEL_AUTHORIZED
 
-2026-10-09用户最新修订：ARC与GPQA可以并行推进，覆盖下文及D handoff的任务串行顺序要求。两任务共享总max8 A800和D累计128 allocation GPUh，不各占8卡或各有128小时；首轮合计预留<=16GPUh。各自debug准入、packing显存/吞吐核定与完整18配置闭合/解封独立执行，不必等待另一个任务结束。MMLU-Pro继续暂停。当前同一D executor负责调度，无新增Gate或重复计算。
+2026-10-09用户最新明确“正式任务不设置gpuh上限”：取消D正式任务累计128GPUh和首轮16GPUh预留准入上限；GPUh仍记录实际消耗与当前作业预留，但不再作为正式续批/重试的停止条件。正式任务仅限当前已授权ARC/GPQA面板及其同科学、保留证据的低风险恢复，不扩大到MMLU-Pro或下一Gate。debug<30min、最多8张A800、每正式job1GPU且<=2h、packing实测约20%显存余量继续有效。
+
+2026-10-09用户并行修订：ARC与GPQA可以并行推进，覆盖下文及D handoff的任务串行顺序要求。两任务共享总max8 A800。各自debug准入、packing显存/吞吐核定与完整18配置闭合/解封独立执行，不必等待另一个任务结束。MMLU-Pro继续暂停。当前同一D executor负责调度，无新增Gate或重复计算。下文128/16GPUh措辞为被本次修订取代的历史记录。
 ACTIVE_GATE=D
 AUTHORIZED_EXECUTOR=01a11e77-9550-7092-877d-1ecb30c531de
 AUTHORIZED_EXECUTOR_HOST=local
@@ -28,8 +30,9 @@ AUDITED_GATE_C_COMMIT=949a7aabff9d2a835170ae8bc0a5fe971a948002
 AUDITED_GATE_C_RUNTIME=447f64be3172dae403f7cd0c07ae17399a6197b4
 GATE_D=AUTHORIZED_ARC_GPQA_ONLY
 GATE_E=LOCKED
-CURRENT_GPU_SCHEDULER_AUTHORITY=D_ARC_GPQA_MAX8_A800_PACKING_MEASURED_TOTAL128GPUH
-D_INITIAL_RESERVED_GPUH_CAP=16
+CURRENT_GPU_SCHEDULER_AUTHORITY=D_ARC_GPQA_MAX8_A800_PACKING_MEASURED_NO_FORMAL_GPUH_CAP
+D_FORMAL_ALLOCATION_GPUH_CAP=NONE
+D_INITIAL_FORMAL_RESERVED_GPUH_CAP=NONE
 MMLU_PRO=PAUSED_BY_USER_UNTIL_ARC_GPQA_COMPLETE_AND_DISCUSSION
 PHASE_MAX_CONCURRENT_A800=8
 

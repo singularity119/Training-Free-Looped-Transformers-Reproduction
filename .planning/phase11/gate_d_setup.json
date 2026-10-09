@@ -11,9 +11,11 @@
   "formal_qos": "emergency_gpu",
   "debug_partition": "debug",
   "debug_qos_request": "debuglimit",
-  "budget_gpuh": 128,
-  "initial_reserved_gpuh_cap": 16,
+  "budget_gpuh": null,
+  "initial_reserved_gpuh_cap": null,
   "max_gpus": 8,
   "canary_source_commit": "447f64be3172dae403f7cd0c07ae17399a6197b4",
-  "target_gold_loaded": false
+  "target_gold_loaded": false,
+  "formal_budget_gpuh": null,
+  "budget_policy": "USER_NO_FORMAL_GPUH_CAP_COST_ACCOUNTING_ONLY"
 }

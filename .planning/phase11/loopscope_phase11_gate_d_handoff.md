@@ -1,6 +1,8 @@
 # Gate D — ARC and GPQA parallel / AUTHORIZED
 
-2026-10-09用户最新明确授权ARC与GPQA并行，取代下文所有先ARC完成再GPQA的顺序限制。两任务仍分别通过同路径debug与packing准入；统一调度总max8A800、首轮合计预留<=16GPUh、D总128GPUh（actual+reserved），不是每任务单独额度。可按现场队列、显存与有效吞吐弹性分配GPU，不要求固定4+4；既有运行/成功工件保留，不为改顺序盲取消重跑。每任务全18配置闭合后可独立解封并分析，不受另一任务完成状态约束；结果不得改变另一任务配方。MMLU-Pro新计算/解封仍禁止。当前D身份不变，仅顺序调整。
+2026-10-09用户最新明确“正式任务不设置gpuh上限”：取消正式累计128GPUh及首轮16GPUh预留准入限制，GPUh继续记账但不构成正式续批/同范围低风险重试停止条件。此修订只覆盖当前已授权ARC/GPQA完整面板；max8A800、每正式job1GPU/<=2h、debug<30min、packing约20%显存余量与科学信息屏障不变。不授权MMLU-Pro或下一Gate。
+
+2026-10-09用户明确授权ARC与GPQA并行，取代下文所有先ARC完成再GPQA的顺序限制。两任务仍分别通过同路径debug与packing准入，统一调度总max8A800。可按现场队列、显存与有效吞吐弹性分配GPU，不要求固定4+4；既有运行/成功工件保留，不为改顺序盲取消重跑。每任务全18配置闭合后可独立解封并分析，不受另一任务完成状态约束；结果不得改变另一任务配方。MMLU-Pro新计算/解封仍禁止。当前D身份不变。
 
 2026-10-09。Executor01a11e77-9550-7092-877d-1ecb30c531de/local，gpt-6.1-sol/high；planning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。用户明确先ARC→GPQA、尽量提高显存利用率、MMLU-Pro两者完成再商议、最多8A800。按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行，实际读skill/protocol、AGENTS、contract_v1、GPQA source binding、control。
 
@@ -20,7 +22,7 @@ A800首批只用未完成、可计入最终面板的正式记录；选择依据�
 
 ## 预算与调度
 
-D规划硬上限128 allocation GPUh，含debug/正式/失败，actual+所有运行及排队walltime×GPU预留不得越限。首轮最多16GPUh预留，然后按实测滚动发有限批；正式每job<=2h、1GPU、最多8A800，现场更低配额优先。ARC20/GPQA100/工程8为弹性参考，省余可用于GPQA，不能进入MMLU。预计不能完成时耗尽前带实测回planning，不偷偷超限/改科学。
+正式任务没有累计GPUh或首轮GPUh预留硬上限；持续记录actual allocation GPUh和运行/排队walltime×GPU预留，用于成本/吞吐报告而非正式停止条件。按实测滚动发有限批；正式每job<=2h、1GPU、最多8A800，现场更低配额优先。仍只完成ARC/GPQA，不进入MMLU。出现科学、信息屏障、资源安全或无材料进展的真实阻断时报告planning；不因累计正式GPUh达到旧128而停止。
 
 非正式任务debug/<30min；真实可保留正式首批与全量用普通用户最高合法A800 partition/QoS，现场核对资格/优先级/提交和运行限制。只可取消自己明确失败/无进展D作业。OOM/launcher等低风险故障保留尝试、降低packing、新路径重试缺失/无效部分，不重复成功、不操作其他作业。
 

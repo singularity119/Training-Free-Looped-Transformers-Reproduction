@@ -1,0 +1,7 @@
+# User revision: formal GPUh accounting only
+
+2026-10-09 direct human instruction in exact D executor chat: 正式任务不设置gpuh上限. This supersedes the prior formal total128GPUh and first-round16GPUh reservation admission stop. No new cumulative engineering limit is introduced; nonformal debug still uses debug/<30min. Scope remains ARC/GPQA only, parallel, max8A800,1GPU/formal job<=2h, independent batch1 workers and20percent device-memory headroom with measured throughput. MMLU-Pro is paused. Scientific recipe, gold barrier, C144 reuse and immutable compute f9845ea86e3deaae4145fd383d1f316a70d7dfe3 are unchanged.
+
+GPQA debug12954695 independently verified COMPLETED0:0,20GPU seconds, both Native/K3-current_t-.9 workers RAW_COMPLETE/count2/original indices0,1; both producer and attempt verifier exit0, ATTEMPT_RAW_VERIFIED, target_gold_loaded=false. Same monitor paused before follow-on submission. New retainable GPQA p2 job12954713,24 disjoint long-input formal records, emergency_gpu/emergency_gpu,1A800/8CPU/128G/2h, same frozen2048/nativeEOS. Existing ARC p2 job12954694 remained PENDING Resources and untouched.
+
+Actual cost81GPU seconds=0.0225GPUh; active requested reservation2.5GPUh. These are accounting values, not caps. Fresh remote ledger003 and formal-no-gpuh-cap-authority.json retain latest user instruction. Unique monitor ACTIVE60min now observes12954694/12954713; current prompt removes128/16 stopping criteria. No duplicated successful records, no gold/outcome or new MMLU-Pro computation.
