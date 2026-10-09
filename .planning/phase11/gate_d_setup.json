@@ -1,0 +1,19 @@
+{
+  "executor": "01a11e77-9550-7092-877d-1ecb30c531de",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d-20261009T023200Z",
+  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d-20261009T023200Z/source",
+  "inputs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z",
+  "logs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/logs/phase11-gate-d-20261009T023200Z",
+  "runs_prefix": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z",
+  "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+  "formal_partition": "emergency_gpu",
+  "formal_qos": "emergency_gpu",
+  "debug_partition": "debug",
+  "debug_qos_request": "debuglimit",
+  "budget_gpuh": 128,
+  "initial_reserved_gpuh_cap": 16,
+  "max_gpus": 8,
+  "canary_source_commit": "447f64be3172dae403f7cd0c07ae17399a6197b4",
+  "target_gold_loaded": false
+}

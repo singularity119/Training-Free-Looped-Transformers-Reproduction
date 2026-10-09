@@ -15,6 +15,8 @@ def main():
     parser.add_argument("--attempt", help="One synthetic preflight run root; never closes a task panel")
     parser.add_argument("--pool", help="Explicit pool path; must equal manifest.pool")
     parser.add_argument("--scope", choices=("FORMAL_TEST", "PREFLIGHT_ONLY"), default="FORMAL_TEST")
+    parser.add_argument("--approved-source-commit", action="append",
+                        help="Externally audited compatible source commit; repeat for every allowed revision. Default: one shared revision")
     parser.add_argument("--output-dir", required=True, help="Fresh verification directory")
     parser.add_argument("--dry-run", action="store_true", help="Inspect manifest only; do not read raw records or gold")
     args = parser.parse_args()
@@ -37,10 +39,11 @@ def main():
         return
     pool = json.loads(Path(panel["pool"]).read_text(encoding="utf-8"))
     if args.scope == "PREFLIGHT_ONLY":
-        closure = verify_attempt(panel, pool, args.attempt, args.scope)
+        closure = verify_attempt(panel, pool, args.attempt, args.scope,
+                                 approved_source_commits=args.approved_source_commit)
     else:
         roots = json.loads(Path(args.cell_roots).read_text(encoding="utf-8"))
-        closure, _ = close_panel(panel, pool, roots)
+        closure, _ = close_panel(panel, pool, roots, approved_source_commits=args.approved_source_commit)
     output.mkdir(parents=True, exist_ok=False)
     write_json_once(output / ("attempt_verification.json" if args.attempt else "closure.json"), closure)
     print(json.dumps({"status": closure["status"], "dataset": closure["dataset"],

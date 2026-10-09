@@ -1,0 +1,7 @@
+# Gate D C-record compatibility review
+
+Gate C source447f64be3172dae403f7cd0c07ae17399a6197b4 versus D implementation: protected wrapper/strategies/cache/config, Phase11 runtime/adapter and scientific config have no diff. acquire_row, model/tokenizer loading, seed, scoring/generation/extraction, dtype, SVD, directions and per-question lifecycle are unchanged. Producer change selects an explicit sorted original index subset while loading the exact complete pool/manifest and retaining original population metadata; one model load was already outside the row loop. New independent-process scheduling changes throughput, thread counts and observation only. Existing runtime lifecycle test confirms new question clears/refits directions; real multi-question synthetic producer/verifier must pass before formal submission.
+
+Explicit source approval permits only the C runtime and the D compute revision recorded by job command metadata; it does not relax cell/config/manifest/pool/identity/no-overlap/full-population closure or the gold barrier. C ARC72/GPQA72 remain in their original immutable roots. MMLU-Pro is not part of D source approval or execution.
+
+CPU checks: batch launcher6, producer entry6, runtime lifecycle6, source compatibility6, analysis9; all passed before dispatch. Scheduler live2026-10-09: emergency_gpu priorityTier300 (ordinary legal highest), i64m1tga800ue200, i64m1tga800u/long_gpu100; emergency_gpu QoS gres/gpu:a8008/cpu64. debug only A40, <30min same-path validation.

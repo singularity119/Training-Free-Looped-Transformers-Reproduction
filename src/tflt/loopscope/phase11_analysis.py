@@ -132,7 +132,25 @@ def _attempt_records(panel, pool, directory, scope, checked_manifests):
     return facts, records
 
 
-def verify_attempt(panel, pool, root, scope="PREFLIGHT_ONLY"):
+def _source_commit_metadata(commits, approved_source_commits):
+    """Accept mixed revisions only under an explicit, externally audited set."""
+    observed = sorted(commits)
+    if approved_source_commits is None:
+        if len(observed) != 1:
+            raise ValueError("panel raw roots do not share one source commit")
+        return {"source_commit": observed[0]}
+    if isinstance(approved_source_commits, str):
+        raise ValueError("approved source commits must be a nonempty collection")
+    approved = set(approved_source_commits)
+    if not approved or any(not isinstance(commit, str) or not commit for commit in approved):
+        raise ValueError("approved source commits must be nonempty strings")
+    if not set(observed).issubset(approved):
+        raise ValueError("raw root source commit is outside the approved source set")
+    return {"source_commit": observed[0] if len(observed) == 1 else None,
+            "source_commits": observed, "approved_source_commits": sorted(approved)}
+
+
+def verify_attempt(panel, pool, root, scope="PREFLIGHT_ONLY", *, approved_source_commits=None):
     """Verify one synthetic producer attempt without declaring task closure."""
     from .phase11_accuracy import load_pool
     from .phase11_panel import validate_score_manifest
@@ -142,12 +160,13 @@ def verify_attempt(panel, pool, root, scope="PREFLIGHT_ONLY"):
     if load_pool(Path(panel["pool"]), panel["dataset"], scope) != pool:
         raise ValueError("attempt pool differs from the manifest's exact input file")
     facts, records = _attempt_records(panel, pool, root, scope, set())
+    sources = _source_commit_metadata({facts["source_commit"]}, approved_source_commits)
     return {"schema_version": "loopscope.phase11.attempt_verification.v1", "status": "ATTEMPT_RAW_VERIFIED",
-            "scope": scope, "dataset": panel["dataset"], "target_gold_loaded": False, **facts,
+            "scope": scope, "dataset": panel["dataset"], "target_gold_loaded": False, **facts, **sources,
             "identities": [r["identity"] for r in sorted(records, key=lambda r: r["canonical_index"])]}
 
 
-def close_panel(panel, pool, cell_roots):
+def close_panel(panel, pool, cell_roots, *, approved_source_commits=None):
     """Re-read all 18 raw cells/shards before any gold file is opened."""
     from .phase11_accuracy import load_pool, validate_cell_records
     from .phase11_panel import validate_score_manifest
@@ -191,10 +210,9 @@ def close_panel(panel, pool, cell_roots):
                for record, row in zip(aligned[cell_id], pool_rows)):
             raise ValueError("raw candidate order/category differs from the frozen input pool")
         paths[cell_id] = root_facts
-    if len(commits) != 1:
-        raise ValueError("panel raw roots do not share one source commit")
+    sources = _source_commit_metadata(commits, approved_source_commits)
     closure = {"schema_version": "loopscope.phase11.panel_closure.v1", "status": "PANEL_CLOSED_GOLD_UNREAD",
-               "dataset": dataset, "target_gold_loaded": False, "source_commit": next(iter(commits)),
+               "dataset": dataset, "target_gold_loaded": False, **sources,
                "independent_cell_count": 18, "sample_count": len(identities), "identities": identities,
                "cells": panel["cells"], "raw_roots": paths,
                "record_counts": {cell: len(rows) for cell, rows in aligned.items()}}
@@ -311,8 +329,8 @@ def analyze_records(panel, aligned_records, gold_rows):
                 "current_t": "changes both intervention onset and direction timing"}}
 
 
-def analyze_closed_panel(panel, pool, cell_roots, gold_path):
-    closure, records = close_panel(panel, pool, cell_roots)
+def analyze_closed_panel(panel, pool, cell_roots, gold_path, *, approved_source_commits=None):
+    closure, records = close_panel(panel, pool, cell_roots, approved_source_commits=approved_source_commits)
     # This is the first gold read, after a fresh reread/closure of all raw files.
     path = Path(gold_path)
     gold = _read_records(path) if path.suffix == ".jsonl" else _read_json(path)

@@ -111,6 +111,25 @@ class EntryTests(unittest.TestCase):
                 loader.assert_not_called()
             self.assertFalse(parsed.run_root.exists())
 
+    def test_batch_retains_original_indices_and_complete_pool(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args, manifest, pool = self.fixture(directory)
+            batch = Path(directory) / "indices.json"
+            declaration = {"schema": "loopscope.phase11.index_batch.v1", "dataset": "gpqa_main",
+                           "cell_id": manifest["cells"][0]["cell_id"], "population_count": 3,
+                           "indices": [0, 2]}
+            batch.write_text(json.dumps(declaration))
+            result = self.invoke(args + ["--indices-file", str(batch), "--dry-run"])
+            self.assertEqual(result.returncode, 0, result.stderr)
+            metadata = json.loads(result.stdout)["metadata"]
+            self.assertEqual(metadata["indices"], [0, 2])
+            self.assertEqual(metadata["shard"]["count"], 3)
+            for changes in ({"indices": [2, 0]}, {"indices": [0, 0]}, {"indices": [3]},
+                            {"population_count": 2}, {"cell_id": "other"}):
+                batch.write_text(json.dumps({**declaration, **changes}))
+                result = self.invoke(args + ["--indices-file", str(batch), "--dry-run"])
+                self.assertNotEqual(result.returncode, 0)
+
     def test_runtime_load_failure_preserves_failed_record_and_summary(self):
         with tempfile.TemporaryDirectory() as directory:
             args, _, _ = self.fixture(directory)

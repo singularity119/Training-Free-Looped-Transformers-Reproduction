@@ -1,5 +1,7 @@
 # Gate C — A800 Formal Canary
 
+2026-10-09用户最新操作修订：本阶段允许最多同时8张A800，覆盖下文max2GPU限制；受现场更低普通用户配额约束。每job1GPU、同卡packing<=2、C累计12GPUh/216记录及信息边界保持。不得为扩并发重复成功记录或盲取消运行任务。当前接续优先闭合已有任务并交付终态。
+
 2026-10-08。Executor01a11b40-07d3-7342-9d01-f809b480f49e/local；planning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。模型gpt-6.1-sol/high。按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行，读skill/protocol、AGENTS、control、contract_v1及GPQA source binding。B PASS，source基线4d4821810532a919140c35a7035e18f39339cf73，runtime已验ffb1e3824e85484e346b1090b7b5f6f572f6b4f3；科学不变。
 
 ## 目标与Agility budget

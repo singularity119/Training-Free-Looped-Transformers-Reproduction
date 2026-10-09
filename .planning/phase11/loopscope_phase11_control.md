@@ -2,9 +2,9 @@
 
 2026-10-08，规划线程01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f（来自当前workspace上下文，派发前需工具核对）。用户允许按确认配置继续推进。正式科学合同为loopscope_phase11_contract_v1.md；配置草案仅历史。
 
-STATUS=GATE_C_FORMAL_CANARY_AUTHORIZED
-ACTIVE_GATE=C
-AUTHORIZED_EXECUTOR=01a11b40-07d3-7342-9d01-f809b480f49e
+STATUS=GATE_D_ARC_THEN_GPQA_AUTHORIZED
+ACTIVE_GATE=D
+AUTHORIZED_EXECUTOR=01a11e77-9550-7092-877d-1ecb30c531de
 AUTHORIZED_EXECUTOR_HOST=local
 EXECUTOR_MODEL=gpt-6.1-sol
 EXECUTOR_REASONING=high
@@ -21,16 +21,27 @@ AUDITED_GATE_A_COMMIT=c60c091aa9a09d15b9cee55e2b19bedf0950d23c
 GATE_B=PASS
 AUDITED_GATE_B_COMMIT=4d4821810532a919140c35a7035e18f39339cf73
 AUDITED_GATE_B_RUNTIME=ffb1e3824e85484e346b1090b7b5f6f572f6b4f3
-GATE_C=AUTHORIZED_FORMAL_CANARY_216
-GATE_D=LOCKED
+GATE_C=PASS
+AUDITED_GATE_C_COMMIT=949a7aabff9d2a835170ae8bc0a5fe971a948002
+AUDITED_GATE_C_RUNTIME=447f64be3172dae403f7cd0c07ae17399a6197b4
+GATE_D=AUTHORIZED_ARC_GPQA_ONLY
 GATE_E=LOCKED
-CURRENT_GPU_SCHEDULER_AUTHORITY=C_CANARY_DEBUG_PREFLIGHT_THEN_LEGAL_A800_1GPU_PER_JOB_MAX2GPU_PACKING_MAX2_TOTAL12GPUH
-ACTIVE_HANDOFF=loopscope_phase11_gate_c_handoff.md
+CURRENT_GPU_SCHEDULER_AUTHORITY=D_ARC_GPQA_MAX8_A800_PACKING_MEASURED_TOTAL128GPUH
+D_INITIAL_RESERVED_GPUH_CAP=16
+MMLU_PRO=PAUSED_BY_USER_UNTIL_ARC_GPQA_COMPLETE_AND_DISCUSSION
+PHASE_MAX_CONCURRENT_A800=8
+
+2026-10-09用户将本阶段A800同时使用上限明确提高到8张，取代旧max2；实际受普通用户现场可用配额约束。当前C仍216条/累计12GPUh、每job1卡、packing<=2，无自动全量或gold授权。已有成功/运行任务保留，不为扩并发盲取消重跑。后续D按max8设计，并在准入后冻结成本。
+ACTIVE_HANDOFF=loopscope_phase11_gate_d_handoff.md
 GATE_A_ACCESS_SUPPLEMENT=loopscope_phase11_gate_a_access_supplement.md
 GATE_A_OFFICIAL_SOURCE_INSPECTION=loopscope_phase11_gate_a_official_source_supplement.md
 GPQA_SOURCE_BINDING=ACCEPTED_AUTHOR_GITHUB_ARCHIVE_56686c06
 GPQA_SOURCE_CONTRACT=loopscope_phase11_gpqa_source_binding.md
-NEXT_ADMISSION=GATE_C_ACCEPTANCE_AND_A800_COST_BEFORE_D_FULL
+NEXT_ADMISSION=D_ARC_GPQA_COMPLETE_THEN_USER_DISCUSSION_BEFORE_MMLU
+
+2026-10-09最新授权覆盖以下历史等待预算/三任务自动推进措辞：用户要求先ARC→GPQA，尽量提高显存利用率，MMLU-Pro等两者完成再商议。D以此前讨论128GPUh作为规划分批硬上限（非4800授权），含debug/正式/失败的actual+reserved，首轮最多16预留。每job1GPU，max8A800，packing实测2→4→6，容量及吞吐支持才到8、留约20%余量。ARC20/GPQA100/工程8仅弹性参考，结余不能用于MMLU。复用C的ARC72+GPQA72，新增21024+7992=29016；任务全18臂闭合后才对应gold分析，不用结果回调后续科学。D完后等待MMLU用户新决定。A/B/C权限关闭，D单一监控按终态协议恢复执行，planning不轮询。
+
+2026-10-09 C已PASS撤权；当前无活动executor/GPU作业，历史C handoff只读。完整canary216可复用，剩余245520。数千GPUh成本已成为材料性新信息，见gate_d_budget_proposal；向用户明确4800全量硬上限或128分段授权后再提交D。max8并发保持，科学不变。
 
 2026-10-08 Gate B PASS撤权。当前C handoff取代以下历史A/B权限。B显示生成全量可能耗费大量GPUh，因此C仅授权216条可保留正式canary及必要debug；D改为独立全量采集/闭合分析、E综合报告，54配置科学不变。C资源实测后由planning决定D准入与预算；当前不授权全量或gold/outcome。
 

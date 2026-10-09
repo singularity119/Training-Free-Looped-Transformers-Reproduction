@@ -36,7 +36,10 @@ def parser():
     result.add_argument("--scope", choices=SCOPES, required=True)
     result.add_argument("--commit", required=True)
     result.add_argument("--config", type=Path)
-    result.add_argument("--shard", help="zero-based INDEX/COUNT; fixed canonical modulo partition")
+    selection = result.add_mutually_exclusive_group()
+    selection.add_argument("--shard", help="zero-based INDEX/COUNT; fixed canonical modulo partition")
+    selection.add_argument("--indices-file", type=Path,
+                           help="Declared original canonical indices for a disjoint batch; keeps the complete pool")
     result.add_argument("--engineering-check", choices=("zero-strength", "k2-policy"))
     result.add_argument("--engineering-generate-steps", type=int, choices=(3,),
                         help="PREFLIGHT_ONLY synthetic min=max3; formal generation always uses 2048")
@@ -63,6 +66,18 @@ def load_inputs(args):
         require(0 <= index < count <= len(rows), "shard index/count is outside canonical population")
         shard = [i for i in range(len(rows)) if i % count == index]
         shard_metadata = {"index": index, "count": count, "rule": "canonical_index_modulo_count"}
+    if args.indices_file is not None:
+        declaration = json.loads(args.indices_file.read_text(encoding="utf-8"))
+        require(declaration.get("schema") == "loopscope.phase11.index_batch.v1" and
+                declaration.get("dataset") == args.dataset and
+                declaration.get("cell_id") == args.cell_id and
+                type(declaration.get("population_count")) is int and
+                declaration["population_count"] == len(rows),
+                "index batch differs from the complete original task/cell/population")
+        shard = declaration.get("indices")
+        require(isinstance(shard, list), "index batch requires an explicit list of canonical indices")
+        shard_metadata = {"rule": "explicit_canonical_indices", "count": len(rows),
+                          "declaration": str(args.indices_file)}
     indices = select_indices(rows, args.scope, shard=shard)
     if args.engineering_generate_steps is not None:
         require(args.scope == "PREFLIGHT_ONLY" and pool["engineering_synthetic"] is True and

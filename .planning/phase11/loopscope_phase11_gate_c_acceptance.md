@@ -1,0 +1,7 @@
+# Gate C — PASS
+
+2026-10-09。终态sender01a11b40-07d3-7342-9d01-f809b480f49e与授权一致。planning已在用户状态请求时直接sacct核对五正式job全部COMPLETED/0:0，本次直接SSH读取216 closure及资源汇总；CANARY_CLOSED_GOLD_UNREAD、full_panel_closed=false、target_gold_loaded=false。核对commit949a7aabff9d2a835170ae8bc0a5fe971a948002与仅planning-owned max8两文件dirty，GPU source仍447f64be3172dae403f7cd0c07ae17399a6197b4。不重复GPU或完整测试。
+
+216可复用记录完整；debug+正式2.054166667 allocation GPUh，实际最大2GPU，A800 packing2峰值23917MiB且无OOM。真实2048生成长度覆盖worst KV。C必须项全部满足，PASS并撤销C执行权限，monitor保持暂停。监控终态唤醒后错误idle已记录，D需明确恢复后由executor完成闭合，不停在观察者角色。
+
+MMLU33/72、GPQA36/72触达2048上限，仅为4个输入identity×18臂canary，无总体截断率结论；不根据此结果自行延长/缩短生成上限或改提示。全量2648GPUh代理及8卡13.79天只为有偏小样本情景，非承诺。D remaining245520、max8A800、packing2可行；数千GPUh为新的重大成本信息，因此先给用户完整预算选择，再扩大正式提交。科学完整54配置不变。

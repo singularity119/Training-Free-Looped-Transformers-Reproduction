@@ -13,6 +13,8 @@ def main():
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--cell-roots", required=True, help="JSON cell_id -> run-root list")
     parser.add_argument("--gold", required=True, help="Sealed JSON rows identity/label_index/category; GPQA gold_letter also accepted")
+    parser.add_argument("--approved-source-commit", action="append",
+                        help="Externally audited compatible source commit; repeat for every allowed revision. Default: one shared revision")
     parser.add_argument("--output-dir", required=True, help="Fresh analysis directory")
     parser.add_argument("--dry-run", action="store_true", help="Read manifest only, keeping raw records and gold unread")
     args = parser.parse_args()
@@ -27,7 +29,8 @@ def main():
         return
     pool = json.loads(Path(panel["pool"]).read_text(encoding="utf-8"))
     roots = json.loads(Path(args.cell_roots).read_text(encoding="utf-8"))
-    report = analyze_closed_panel(panel, pool, roots, args.gold)
+    report = analyze_closed_panel(panel, pool, roots, args.gold,
+                                  approved_source_commits=args.approved_source_commit)
     output.mkdir(parents=True, exist_ok=False)
     write_json_once(output / "analysis.json", report)
     print(json.dumps({"status": report["status"], "dataset": report["dataset"],
