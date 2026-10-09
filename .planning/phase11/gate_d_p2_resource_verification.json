@@ -1,0 +1,68 @@
+{
+  "tasks": [
+    {
+      "dataset": "arc_challenge",
+      "packing": 2,
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-trial-p2-batch",
+      "status": "P2_METADATA_VERIFIED",
+      "records": 48,
+      "telemetry_count": 48,
+      "source_commits": [
+        "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+      ],
+      "input_length_sum": 50523,
+      "max_input_length": 1215,
+      "worker_max_input_lengths": [
+        1173,
+        1215
+      ],
+      "wall_seconds": 303.51369367493317,
+      "summed_question_seconds": 490.27236441220157,
+      "records_per_wall_second": 0.15814772446942238,
+      "generated_token_count": 0,
+      "tokens_per_wall_second": 0.0,
+      "max_generated_token_count": 0,
+      "max_cache_length": 0,
+      "device_peak_mib": 22971.0,
+      "device_total_mib": 81920.0,
+      "per_worker_peak_reserved_mib": 11894.0,
+      "device_samples": 304,
+      "p4_scaled_device_mib": 45942.0,
+      "target_gold_loaded": false
+    },
+    {
+      "dataset": "gpqa_main",
+      "packing": 2,
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-gpqa-trial-p2-batch",
+      "status": "P2_METADATA_VERIFIED",
+      "records": 24,
+      "telemetry_count": 24,
+      "source_commits": [
+        "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+      ],
+      "input_length_sum": 9317,
+      "max_input_length": 1053,
+      "worker_max_input_lengths": [
+        1053,
+        622
+      ],
+      "wall_seconds": 1191.4742811117321,
+      "summed_question_seconds": 2303.152228459716,
+      "records_per_wall_second": 0.020143112092697674,
+      "generated_token_count": 39091,
+      "tokens_per_wall_second": 32.80893311731853,
+      "max_generated_token_count": 2048,
+      "max_cache_length": 3100,
+      "device_peak_mib": 17975.0,
+      "device_total_mib": 81920.0,
+      "per_worker_peak_reserved_mib": 8482.0,
+      "device_samples": 1192,
+      "p4_scaled_device_mib": 35950.0,
+      "target_gold_loaded": false
+    }
+  ],
+  "p4_capacity_admission": "bounded_formal_trial_only",
+  "gpqa_worst2048_reference": "C retained i344 input2819/cache4866; original full2048 shape retained",
+  "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+  "target_gold_loaded": false
+}

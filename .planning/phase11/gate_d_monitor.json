@@ -6,8 +6,8 @@
   "executor": "01a11e77-9550-7092-877d-1ecb30c531de",
   "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
   "job_ids": [
-    "12954694",
-    "12954713"
+    "12954973",
+    "12954974"
   ],
   "source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
   "completed_jobs": [
@@ -24,6 +24,22 @@
       "exit_code": "0:0",
       "elapsed_allocated_seconds": 20,
       "producer_verifier_passed": true
+    },
+    {
+      "job_id": "12954694",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 311,
+      "metadata_verified": true,
+      "retained_formal_records": 48
+    },
+    {
+      "job_id": "12954713",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_allocated_seconds": 1198,
+      "metadata_verified": true,
+      "retained_formal_records": 24
     }
   ],
   "pause_tool_result": {
@@ -52,8 +68,18 @@
     ],
     "isError": false
   },
-  "prompt": "你是Phase11 Gate D唯一只读full监控，每60分钟一次。executor=01a11e77-9550-7092-877d-1ecb30c531de/local，planning=01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。实际读research-gate-orchestrator SKILL/protocol、nested AGENTS及Phase11 live control/D handoff。用户最新明确“正式任务不设置gpuh上限”：正式累计128GPUh及首轮16GPUh预留停止条件已取消；GPUh仅成本记账。不是扩科学：仍只ARC/GPQA并行各18配置，共享max8A800、每formal job1GPU<=2h、各自debug和packing约20%显存余量准入。MMLU-Pro新增forward/资源/gold/outcome暂停，不跨Gate。\n当前只观察jobs12954694 ARC正式p2长输入48题，1A800/8CPU/128G/30min；12954713 GPQA正式p2长输入24题，1A800/8CPU/128G/2h。两者emergency_gpu/emergency_gpu，无依赖可并行。GPQA debug12954695 COMPLETED0:0/20GPU秒、两producer+attempt verifier通过；ARC debug12954680 COMPLETED0:0/61GPU秒并通过。这两个debug已确认无需再观察。source f9845ea86e3deaae4145fd383d1f316a70d7dfe3 immutable，pinnedPython和launcher不改。run前缀=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z；当前batch后缀=-arc-trial-p2-batch/-gpqa-trial-p2-batch；ledger inputs/phase11-gate-d-20261009T023200Z/job-ledger-003.json，formal-no-gpuh-cap-authority.json和本地gate_d_job_ledger/setup为当前成本规则。已用81GPU秒=0.0225GPUh，当前预留2.5GPUh，只有记账无formalcap。\n每次仅一次有界readonlySSH，BatchMode=yes/ConnectTimeout10/ClearAllForwardings=yes，bash -lc加载Slurm；sacct/squeue核对所有activeD IDs状态/ExitCode/ElapsedRaw/AllocTRES及必要batch_summary/summary/telemetry安全scalar。禁止records.jsonl、正文、prediction/gold/correctness/accuracy；健康PENDING/RUNNING无材料变化静默，不循环。monitor不调度/取消/重试/requeue/修复/写项目/裁决；host-key异常按专用skill保留作业。\n任一未报告jobterminal成功/失败/超时/取消或材料block：先暂停同一monitor保留tool证据，必须send_message_to_thread主动AUTOMATION_TERMINAL_RESUME到exactexecutor，含全部当前jobs状态/exit/耗时/root、暂停证据和next action，保留visible delivery。final本身不是唤醒。若自动审批或其他路由拒绝/未确认，保留delivery-unconfirmed证据，向planning尝试AUTOMATION_RELAY_REQUIRED并输出完整paste-readypacket；禁止绕过审批或声称已送达。此前非终态回传被自动审批以人类跨线程授权信任来源为由拒绝，用户确认问题仍待答，不自动推断新授权。\nexecutor下一动作：独立核对terminal元数据，成功正式记录保留复用。每任务p2→p4→p6分别容量/有效吞吐准入，条件允许才p8；C144保留、不重复成功，无共享模型/tensor。GPQA必须计入完整2048KV、同时加载和SVD临时峰，不能凭早EOS峰值外推。参见本地gate_d_gpqa_capacity_note；p8当前allocator-only已超过80%容量不宜试，p6需任务自身p4长形状和保守fullKV allowance。并行续批仅当前两任务和低风险无效/缺失fresh retry，不因累计GPUh达到旧128停止；保留健康/未终态siblings，retarget同一monitor观察全部activeD IDs。每task18arms完整original population/identity raw闭合后才独立gold/冻结30/12/2family分析，不根据一个任务结果改另一个。两任务全完成executor唯一GATE_D_FINAL_AUDIT给planning并visible确认，不自行PASS，不进入MMLU。",
+  "prompt": "你是Phase11 Gate D唯一readonly full监控，每60分钟一次。executor=01a11e77-9550-7092-877d-1ecb30c531de/local，planning=01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。实际读research-gate-orchestrator SKILL/protocol、nested AGENTS及Phase11 live control/D handoff。ARC/GPQA并行各18配置，共享max8A800，每formaljob1GPU<=2h，batch1独立worker。用户正式GPUh不设累计/首轮硬上限，只记账；debug<30min、packing约20%余量，MMLU-Pro新增forward/资源/gold/outcome暂停，不跨Gate。\n当前只观察12954973 ARC formal packing4/96条长输入，1A800/8CPU/128G/30min；12954974 GPQA formal packing4/48条长输入，1A800/8CPU/128G/2h。均emergency_gpu/emergency_gpu，无dependency可并行。source f9845ea86e3deaae4145fd383d1f316a70d7dfe3 immutable，pinnedPython/phase11_batch.sbatch未改。统一run前缀=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z；当前batch后缀=-arc-trial-p4-batch/-gpqa-trial-p4-batch；ledger inputs/phase11-gate-d-20261009T023200Z/job-ledger-004.json及本地gate_d_job_ledger.json最新。成本actual1590GPU秒=0.441666667GPUh、active预留2.5GPUh，只有记账。\n此前p2 ARC12954694已核实COMPLETED0:0/311秒/BATCH_COMPLETE48，peak22971/81920MiB、perworker reserved峰11894MiB；GPQA12954713 COMPLETED0:0/1198秒/BATCH_COMPLETE24，39091generatedtokens、max2048、maxcache3100、peak17975MiB、perworker reserved8482MiB。完整C GPQA最长input2819/cache4866/2048形状保留。p2已独立元数据核验原index、source、完整pool、逐题directions_released及decode_fit_count0，formal72成功保留无重复。当前p4规划input lengths交错近匹配、sameK3current_t/.9，不依据答案选样。p2资源报告inputs同root/p2-resource-verification.json。\n每次仅一次bounded readonlySSH，BatchMode=yes/ConnectTimeout10/ClearAllForwardings=yes，bash -lc加载Slurm，sacct/squeue同时核对所有activeD IDs状态/ExitCode/ElapsedRaw/AllocTRES，必要batch_summary/summary/telemetry安全scalar字段。禁止records.jsonl、生成正文/prediction/gold/correctness/accuracy；健康PENDING/RUNNING未变静默，不循环。monitor不提交/取消/重试/requeue/修复/项目写入/裁决；hostkey异常按专用skill停止SSH保留作业。\n任何未报告jobterminal成功/失败/超时/取消或材料block：先暂停此monitor获tool确认，必须send_message_to_thread主动AUTOMATION_TERMINAL_RESUME到exactexecutor，含全部当前job状态/exit/耗时/root、pause证据、next action，保留visible delivery。当前上一轮self-wake已成功工具确认，不要只输出ready-to-resume。若路由/自动审批拒绝或未确认，保留delivery-unconfirmed evidence，向planning尝试AUTOMATION_RELAY_REQUIRED并输出完整paste-ready packet；不绕过审批/声称送达。\nexecutor下一项：独立核对p4元数据，保留成功记录并比较startup-inclusive有效题/原input或生成token归一化吞吐，不凭不同workload单点宣称加速。以实际任务自身加载/allocator/device峰+保守full2048KV余量判断p6；必要参考p4<=43690.7MiB才支持线性缩放1.5至65536MiB，但不能将此视作已证明硬上界。ARC p2 perworkerreserved11894×6=71364MiB超过20%余量阈，若p4同样支持该峰则无需强试6，选择安全最佳packing进入full；GPQA也不得凭早EOS容量直接p6，C完整形状参考见gate_d_gpqa_capacity_note。p8现有GPQA allocator8756×8=70048MiB已超65536，不宜试8。\n若p6不满足容量或吞吐条件，记录admission_stop并用已测安全最佳packing继续完整18arm，不能停止整个Gate。有界分片多job并行合计max8GPU，不重复C144和全部D成功records；failed attempt只在已授权同科学fresh低风险无效/缺失retry。正式GPUh无上限，不因旧128停止。每task18arm完整original人口identity raw闭合后才对应gold/冻结30/12/2family统计，两任务结果不改对方recipe。executor负责后续完整采集/闭合/报告，唯一GATE_D_FINAL_AUDIT给planning并visible确认，不自行PASS、不进MMLU。新formalID即retarget同一monitorACTIVE60min，不重复monitor，保留未terminal sibling。",
   "formal_budget_gpuh": null,
   "initial_reserved_gpuh_cap": null,
-  "budget_policy": "USER_NO_FORMAL_GPUH_CAP_COST_ACCOUNTING_ONLY"
+  "budget_policy": "USER_NO_FORMAL_GPUH_CAP_COST_ACCOUNTING_ONLY",
+  "latest_terminal_resume_delivery": {
+    "thread_id": "01a11e77-9550-7092-877d-1ecb30c531de",
+    "tool_confirmed": true,
+    "event": "AUTOMATION_TERMINAL_RESUME",
+    "jobs": [
+      "12954694",
+      "12954713"
+    ]
+  },
+  "ledger_revision": "job-ledger-004.json"
 }
