@@ -2,13 +2,18 @@
 
 2026-10-08，规划线程01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f（来自当前workspace上下文，派发前需工具核对）。用户允许按确认配置继续推进。正式科学合同为loopscope_phase11_contract_v1.md；配置草案仅历史。
 
-STATUS=GATE_D_ARC_GPQA_PARALLEL_AUTHORIZED
+STATUS=GATE_D2_GPQA_POSTHOC_CPU_AUTHORIZED
+
+2026-10-10规划终审：Gate D执行与冻结评分交付PASS；GPQA严格格式失败8051/8064，不能用于推理能力或方法无效结论。补充诊断已核验，未发现prompt/template/decode漂移；自然结束失败中3978/4109为无括号字母答案行。详见loopscope_phase11_gate_d_acceptance.md。D撤权，monitor保持PAUSED；下文D授权为历史。无新GPU、重评分或MMLU授权。
+2026-10-10用户“继续”批准既有GPQA输出事后提取敏感性分析。仅D-2新handoff规定的CPU分析及对应gold评分获授权，覆盖此前无重评分授权；原严格分数不可修改，无GPU/MMLU授权。
+GATE_D2=AUTHORIZED_CPU_POSTHOC_ONLY
+AUDITED_GATE_D_COMMIT=c081f979cf3e68312a5181d6be1ef25855e5ca70
 
 2026-10-09用户最新明确“正式任务不设置gpuh上限”：取消D正式任务累计128GPUh和首轮16GPUh预留准入上限；GPUh仍记录实际消耗与当前作业预留，但不再作为正式续批/重试的停止条件。正式任务仅限当前已授权ARC/GPQA面板及其同科学、保留证据的低风险恢复，不扩大到MMLU-Pro或下一Gate。debug<30min、最多8张A800、每正式job1GPU且<=2h、packing实测约20%显存余量继续有效。
 
 2026-10-09用户并行修订：ARC与GPQA可以并行推进，覆盖下文及D handoff的任务串行顺序要求。两任务共享总max8 A800。各自debug准入、packing显存/吞吐核定与完整18配置闭合/解封独立执行，不必等待另一个任务结束。MMLU-Pro继续暂停。当前同一D executor负责调度，无新增Gate或重复计算。下文128/16GPUh措辞为被本次修订取代的历史记录。
-ACTIVE_GATE=D
-AUTHORIZED_EXECUTOR=01a11e77-9550-7092-877d-1ecb30c531de
+ACTIVE_GATE=D-2
+AUTHORIZED_EXECUTOR=01a124db-33fa-7322-9317-12e53d3d3861
 AUTHORIZED_EXECUTOR_HOST=local
 EXECUTOR_MODEL=gpt-6.1-sol
 EXECUTOR_REASONING=high
@@ -28,21 +33,21 @@ AUDITED_GATE_B_RUNTIME=ffb1e3824e85484e346b1090b7b5f6f572f6b4f3
 GATE_C=PASS
 AUDITED_GATE_C_COMMIT=949a7aabff9d2a835170ae8bc0a5fe971a948002
 AUDITED_GATE_C_RUNTIME=447f64be3172dae403f7cd0c07ae17399a6197b4
-GATE_D=AUTHORIZED_ARC_GPQA_ONLY
+GATE_D=PASS_EXECUTION_WITH_GPQA_MEASUREMENT_LIMIT
 GATE_E=LOCKED
-CURRENT_GPU_SCHEDULER_AUTHORITY=D_ARC_GPQA_MAX8_A800_PACKING_MEASURED_NO_FORMAL_GPUH_CAP
+CURRENT_GPU_SCHEDULER_AUTHORITY=NONE
 D_FORMAL_ALLOCATION_GPUH_CAP=NONE
 D_INITIAL_FORMAL_RESERVED_GPUH_CAP=NONE
 MMLU_PRO=PAUSED_BY_USER_UNTIL_ARC_GPQA_COMPLETE_AND_DISCUSSION
 PHASE_MAX_CONCURRENT_A800=8
 
 2026-10-09用户将本阶段A800同时使用上限明确提高到8张，取代旧max2；实际受普通用户现场可用配额约束。当前C仍216条/累计12GPUh、每job1卡、packing<=2，无自动全量或gold授权。已有成功/运行任务保留，不为扩并发盲取消重跑。后续D按max8设计，并在准入后冻结成本。
-ACTIVE_HANDOFF=loopscope_phase11_gate_d_handoff.md
+ACTIVE_HANDOFF=loopscope_phase11_gate_d2_handoff.md
 GATE_A_ACCESS_SUPPLEMENT=loopscope_phase11_gate_a_access_supplement.md
 GATE_A_OFFICIAL_SOURCE_INSPECTION=loopscope_phase11_gate_a_official_source_supplement.md
 GPQA_SOURCE_BINDING=ACCEPTED_AUTHOR_GITHUB_ARCHIVE_56686c06
 GPQA_SOURCE_CONTRACT=loopscope_phase11_gpqa_source_binding.md
-NEXT_ADMISSION=D_ARC_GPQA_COMPLETE_THEN_USER_DISCUSSION_BEFORE_MMLU
+NEXT_ADMISSION=D2_AUDIT_THEN_USER_DISCUSSION_MMLU_STILL_PAUSED
 
 2026-10-09最新授权覆盖以下历史等待预算/三任务自动推进措辞：用户要求先ARC→GPQA，尽量提高显存利用率，MMLU-Pro等两者完成再商议。D以此前讨论128GPUh作为规划分批硬上限（非4800授权），含debug/正式/失败的actual+reserved，首轮最多16预留。每job1GPU，max8A800，packing实测2→4→6，容量及吞吐支持才到8、留约20%余量。ARC20/GPQA100/工程8仅弹性参考，结余不能用于MMLU。复用C的ARC72+GPQA72，新增21024+7992=29016；任务全18臂闭合后才对应gold分析，不用结果回调后续科学。D完后等待MMLU用户新决定。A/B/C权限关闭，D单一监控按终态协议恢复执行，planning不轮询。
 
