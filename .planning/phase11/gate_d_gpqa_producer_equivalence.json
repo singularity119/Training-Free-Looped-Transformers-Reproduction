@@ -1,0 +1,47 @@
+{
+  "src/tflt/loopscope/phase11_data.py:render_generation_prompt": {
+    "c_d_ast_equal": true,
+    "d_line": 74,
+    "d_end_line": 85
+  },
+  "src/tflt/loopscope/phase11_data.py:chat_input": {
+    "c_d_ast_equal": true,
+    "d_line": 88,
+    "d_end_line": 94
+  },
+  "src/tflt/loopscope/phase11_data.py:prepare_gpqa_inputs": {
+    "c_d_ast_equal": true,
+    "d_line": 134,
+    "d_end_line": 161
+  },
+  "scripts/loopscope/run_phase11_accuracy.py:make_loop_config": {
+    "c_d_ast_equal": true,
+    "d_line": 118,
+    "d_end_line": 123
+  },
+  "scripts/loopscope/run_phase11_accuracy.py:load_runtime": {
+    "c_d_ast_equal": true,
+    "d_line": 126,
+    "d_end_line": 154
+  },
+  "scripts/loopscope/run_phase11_accuracy.py:acquire_row": {
+    "c_d_ast_equal": true,
+    "d_line": 238,
+    "d_end_line": 285
+  },
+  "src/tflt/loopscope/phase11_accuracy.py:extract_final_answer": {
+    "c_d_ast_equal": true,
+    "d_line": 19,
+    "d_end_line": 35
+  },
+  "src/tflt/loopscope/phase11_accuracy.py:termination": {
+    "c_d_ast_equal": true,
+    "d_line": 38,
+    "d_end_line": 49
+  },
+  "src/tflt/loopscope/phase11_accuracy.py:generation_record": {
+    "c_d_ast_equal": true,
+    "d_line": 57,
+    "d_end_line": 63
+  }
+}

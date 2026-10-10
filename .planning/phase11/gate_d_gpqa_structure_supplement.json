@@ -1,0 +1,170 @@
+{
+  "alternative_predictions_generated": false,
+  "attempt_root_count": 579,
+  "authority": {
+    "human_message_id": "01a124cf-710c-7cf2-aaa6-8245a22003ba",
+    "human_reply": "allowed",
+    "human_thread": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+    "scope": "single_same_Gate_D_CPU_diagnostic_supplement"
+  },
+  "category_order": [
+    "markdown_wrapped_answer_line",
+    "parenthesized_case_spacing_punctuation",
+    "bare_letter_answer_line",
+    "final_answer_phrase_prose_or_incomplete",
+    "other_answer_cue_without_final_phrase",
+    "missing_all_answer_cues"
+  ],
+  "category_semantics": "Failures only; mutually exclusive first-match precedence in category_order. Structural booleans never retain candidate letters or alternative predictions. Markdown category may overlap case/bare differences.",
+  "code_evidence": [
+    "src/tflt/loopscope/phase11_data.py:74-94,137-160",
+    "scripts/loopscope/run_phase11_accuracy.py:117-154,238-280",
+    "src/tflt/loopscope/phase11_accuracy.py:19-49,57-63"
+  ],
+  "executor": "01a11e77-9550-7092-877d-1ecb30c531de/local",
+  "frozen_extractor_changed": false,
+  "gate": "D",
+  "gold_read": false,
+  "gpu_jobs_submitted": false,
+  "groups": {
+    "length_limit": {
+      "failure_categories": {
+        "bare_letter_answer_line": 3,
+        "final_answer_phrase_prose_or_incomplete": 17,
+        "markdown_wrapped_answer_line": 1,
+        "missing_all_answer_cues": 3647,
+        "other_answer_cue_without_final_phrase": 274,
+        "parenthesized_case_spacing_punctuation": 0
+      },
+      "overlapping_failure_flags": {
+        "bare_letter_flexible_line": 3,
+        "case_difference_on_phrase_line": 5,
+        "final_answer_phrase": 21,
+        "markdown_marker_on_phrase_line": 6,
+        "markdown_wrapped_answer_line": 1,
+        "missing_final_answer_phrase": 3921,
+        "other_answer_cue": 295
+      },
+      "strict_failed": 3942,
+      "strict_valid": 0,
+      "total": 3942
+    },
+    "native_eos": {
+      "failure_categories": {
+        "bare_letter_answer_line": 3978,
+        "final_answer_phrase_prose_or_incomplete": 130,
+        "markdown_wrapped_answer_line": 0,
+        "missing_all_answer_cues": 1,
+        "other_answer_cue_without_final_phrase": 0,
+        "parenthesized_case_spacing_punctuation": 0
+      },
+      "overlapping_failure_flags": {
+        "bare_letter_flexible_line": 3978,
+        "boxed_marker": 4,
+        "case_difference_on_phrase_line": 138,
+        "final_answer_phrase": 4108,
+        "markdown_marker_on_phrase_line": 168,
+        "missing_final_answer_phrase": 1,
+        "other_answer_cue": 4108
+      },
+      "strict_failed": 4109,
+      "strict_valid": 13,
+      "total": 4122
+    }
+  },
+  "limitations": [
+    "Structure classification is descriptive and does not determine reasoning correctness.",
+    "Prefix/Markdown/letter shapes are not repaired or rescored.",
+    "Stored metadata and immutable producer code establish generation options; no new model run."
+  ],
+  "metadata_checks": {
+    "batch1_full_decode": 579,
+    "formal_2048_no_forced_minimum": 579,
+    "frozen_pool": 579,
+    "generated_text_equals_native_decode": 8064,
+    "revision_dtype_native_eos": 579
+  },
+  "overlap_semantics": "Flags count failed records once per flag; flags overlap and must not be summed.",
+  "producer_function_equivalence": {
+    "scripts/loopscope/run_phase11_accuracy.py:acquire_row": {
+      "c_d_ast_equal": true,
+      "d_end_line": 285,
+      "d_line": 238
+    },
+    "scripts/loopscope/run_phase11_accuracy.py:load_runtime": {
+      "c_d_ast_equal": true,
+      "d_end_line": 154,
+      "d_line": 126
+    },
+    "scripts/loopscope/run_phase11_accuracy.py:make_loop_config": {
+      "c_d_ast_equal": true,
+      "d_end_line": 123,
+      "d_line": 118
+    },
+    "src/tflt/loopscope/phase11_accuracy.py:extract_final_answer": {
+      "c_d_ast_equal": true,
+      "d_end_line": 35,
+      "d_line": 19
+    },
+    "src/tflt/loopscope/phase11_accuracy.py:generation_record": {
+      "c_d_ast_equal": true,
+      "d_end_line": 63,
+      "d_line": 57
+    },
+    "src/tflt/loopscope/phase11_accuracy.py:termination": {
+      "c_d_ast_equal": true,
+      "d_end_line": 49,
+      "d_line": 38
+    },
+    "src/tflt/loopscope/phase11_data.py:chat_input": {
+      "c_d_ast_equal": true,
+      "d_end_line": 94,
+      "d_line": 88
+    },
+    "src/tflt/loopscope/phase11_data.py:prepare_gpqa_inputs": {
+      "c_d_ast_equal": true,
+      "d_end_line": 161,
+      "d_line": 134
+    },
+    "src/tflt/loopscope/phase11_data.py:render_generation_prompt": {
+      "c_d_ast_equal": true,
+      "d_end_line": 85,
+      "d_line": 74
+    }
+  },
+  "prompt_checks": {
+    "assistant_generation_prefix": 448,
+    "encode_exact_ids": 448,
+    "exact_instruction": 448,
+    "native_template_exact_ids": 448,
+    "native_template_exact_text": 448,
+    "one_user_no_system": 448,
+    "zero_shot": 448
+  },
+  "raw_content_exported": false,
+  "record_count": 8064,
+  "schema": "loopscope.phase11.gpqa_structure_supplement.v1",
+  "scope": "single_existing_output_cpu_diagnostic_no_gold_no_predictions_no_rescoring",
+  "source_compute": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+  "source_roots": {
+    "447f64be3172dae403f7cd0c07ae17399a6197b4": 72,
+    "f9845ea86e3deaae4145fd383d1f316a70d7dfe3": 507
+  },
+  "strict_status_counts": {
+    "no_valid_final_line": 8051,
+    "unique_valid": 13
+  },
+  "structural_patterns": {
+    "bare_line": "final\\s+answer\\s*[:\\uff1a]\\s*[A-Da-d]\\s*[.!;,\\uff0e\\uff01\\u3002]?\\s*",
+    "markdown_removal": "Remove *_`~; remove one leading list/heading/blockquote marker; boolean full-line shape test only.",
+    "other_answer_cue": "\\b(?:answer|correct\\s+option|correct\\s+choice)\\b|\\\\boxed",
+    "parenthesized_line": "final\\s+answer\\s*[:\\uff1a]\\s*\\(\\s*[A-Da-d]\\s*\\)\\s*[.!;,\\uff0e\\uff01\\u3002]?\\s*",
+    "phrase": "\\bfinal\\s+answer\\b"
+  },
+  "tokenizer": {
+    "cache_only": true,
+    "model": "Qwen/Qwen3-4B-Instruct-2507",
+    "model_loaded": false,
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554"
+  }
+}
