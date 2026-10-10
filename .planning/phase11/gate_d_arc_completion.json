@@ -1,0 +1,32 @@
+{
+  "status": "ARC_TASK_ANALYZED_GPQA_ACQUIRING",
+  "executor": "01a11e77-9550-7092-877d-1ecb30c531de",
+  "dataset": "arc_challenge",
+  "record_count": 21096,
+  "sample_count": 1172,
+  "independent_cell_count": 18,
+  "retained_c_records": 72,
+  "retained_d_records": 21024,
+  "raw_closure_status": "PANEL_CLOSED_GOLD_UNREAD",
+  "raw_closure_before_gold": true,
+  "analysis_status": "TASK_ANALYZED",
+  "families": {
+    "ONLINE_VS_NATIVE_AND_LOOP_EXPLORATORY": 30,
+    "STRATEGY_EXPLORATORY": 12,
+    "LOOP_VS_NATIVE_BASE": 2
+  },
+  "holm_rejections": 0,
+  "gold_access": {
+    "arc_challenge": true,
+    "gpqa_main": false,
+    "mmlu_pro": false
+  },
+  "gate_pass_claimed": false,
+  "source_commits": [
+    "447f64be3172dae403f7cd0c07ae17399a6197b4",
+    "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+  ],
+  "raw_closure_remote": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-raw-closure.json",
+  "analysis_remote": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-analysis.json",
+  "local_report": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/\u8d44\u4ea7/\u62a5\u544a/phase11/phase11_gate_d_arc_full_report_20261010.md"
+}
