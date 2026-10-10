@@ -1,0 +1,30 @@
+{
+  "status": "GPQA_TASK_ANALYZED",
+  "record_count": 8064,
+  "sample_count": 448,
+  "independent_cell_count": 18,
+  "retained_c_records": 72,
+  "retained_d_records": 7992,
+  "raw_closure_before_gold": true,
+  "analysis_status": "TASK_ANALYZED",
+  "families": {
+    "ONLINE_VS_NATIVE_AND_LOOP_EXPLORATORY": 30,
+    "STRATEGY_EXPLORATORY": 12,
+    "LOOP_VS_NATIVE_BASE": 2
+  },
+  "holm_rejections": 0,
+  "format_limit": {
+    "extraction_failure_count": 8051,
+    "truncated_count": 3942,
+    "unique_valid_count": 13,
+    "producer_independent_parser_agree": true,
+    "all448inputs_exact_instruction": true,
+    "strict_format_full_denominator_tests_passed": 2
+  },
+  "source_commits": [
+    "447f64be3172dae403f7cd0c07ae17399a6197b4",
+    "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+  ],
+  "local_report": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/\u8d44\u4ea7/\u62a5\u544a/phase11/phase11_gate_d_gpqa_full_report_20261010.md",
+  "gate_pass_claimed": false
+}

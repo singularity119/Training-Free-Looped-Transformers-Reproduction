@@ -1,0 +1,141 @@
+{
+  "event": "GATE_D_FINAL_AUDIT",
+  "executor_status": "EXECUTION_COMPLETE_AWAITING_PLANNING_AUDIT",
+  "executor": "01a11e77-9550-7092-877d-1ecb30c531de",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "host": "local",
+  "compute_source_commit": "f9845ea86e3deaae4145fd383d1f316a70d7dfe3",
+  "compute_source_branch": "loopscope",
+  "compute_source_dirty": false,
+  "approved_source_commits": [
+    "447f64be3172dae403f7cd0c07ae17399a6197b4",
+    "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+  ],
+  "compatibility_review": "gate_d_compatibility.md",
+  "pinned_python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+  "last_ledger_revision": "job-ledger-052.json",
+  "jobs_total": 135,
+  "formal_jobs": 133,
+  "debug_jobs": 2,
+  "all_jobs_completed_exit_zero": true,
+  "active_jobs": [],
+  "failed_attempt_count": 0,
+  "retry_count": 0,
+  "retained_C_records": 144,
+  "retained_D_formal_records": {
+    "arc_challenge": 21024,
+    "gpqa_main": 7992
+  },
+  "complete_records": {
+    "arc_challenge": 21096,
+    "gpqa_main": 8064
+  },
+  "per_task": {
+    "arc_challenge": {
+      "status": "ARC_TASK_ANALYZED_GPQA_ACQUIRING",
+      "executor": "01a11e77-9550-7092-877d-1ecb30c531de",
+      "dataset": "arc_challenge",
+      "record_count": 21096,
+      "sample_count": 1172,
+      "independent_cell_count": 18,
+      "retained_c_records": 72,
+      "retained_d_records": 21024,
+      "raw_closure_status": "PANEL_CLOSED_GOLD_UNREAD",
+      "raw_closure_before_gold": true,
+      "analysis_status": "TASK_ANALYZED",
+      "families": {
+        "ONLINE_VS_NATIVE_AND_LOOP_EXPLORATORY": 30,
+        "STRATEGY_EXPLORATORY": 12,
+        "LOOP_VS_NATIVE_BASE": 2
+      },
+      "holm_rejections": 0,
+      "gold_access": {
+        "arc_challenge": true,
+        "gpqa_main": false,
+        "mmlu_pro": false
+      },
+      "gate_pass_claimed": false,
+      "source_commits": [
+        "447f64be3172dae403f7cd0c07ae17399a6197b4",
+        "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+      ],
+      "raw_closure_remote": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-raw-closure.json",
+      "analysis_remote": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-analysis.json",
+      "local_report": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/phase11_gate_d_arc_full_report_20261010.md"
+    },
+    "gpqa_main": {
+      "status": "GPQA_TASK_ANALYZED",
+      "record_count": 8064,
+      "sample_count": 448,
+      "independent_cell_count": 18,
+      "retained_c_records": 72,
+      "retained_d_records": 7992,
+      "raw_closure_before_gold": true,
+      "analysis_status": "TASK_ANALYZED",
+      "families": {
+        "ONLINE_VS_NATIVE_AND_LOOP_EXPLORATORY": 30,
+        "STRATEGY_EXPLORATORY": 12,
+        "LOOP_VS_NATIVE_BASE": 2
+      },
+      "holm_rejections": 0,
+      "format_limit": {
+        "extraction_failure_count": 8051,
+        "truncated_count": 3942,
+        "unique_valid_count": 13,
+        "producer_independent_parser_agree": true,
+        "all448inputs_exact_instruction": true,
+        "strict_format_full_denominator_tests_passed": 2
+      },
+      "source_commits": [
+        "447f64be3172dae403f7cd0c07ae17399a6197b4",
+        "f9845ea86e3deaae4145fd383d1f316a70d7dfe3"
+      ],
+      "local_report": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/phase11_gate_d_gpqa_full_report_20261010.md",
+      "gate_pass_claimed": false
+    }
+  },
+  "resources": {
+    "arc_challenge": {
+      "packing": 4,
+      "formal_full_jobs": 45,
+      "formal_full_records": 20880,
+      "max_device_peak_mib": 59911.0,
+      "device_total_mib": 81920,
+      "max_per_worker_reserved_mib": 16082.0,
+      "max_full_allocated_seconds": 2070,
+      "allocated_seconds_all_D": 48025,
+      "formal_allocation_gpuh": 13.323333333333334
+    },
+    "gpqa_main": {
+      "packing": 6,
+      "formal_full_jobs": 83,
+      "formal_full_records": 7848,
+      "max_device_peak_mib": 55695.0,
+      "device_total_mib": 81920,
+      "max_per_worker_reserved_mib": 8484.0,
+      "max_full_allocated_seconds": 4386,
+      "allocated_seconds_all_D": 303340,
+      "formal_allocation_gpuh": 84.25555555555556
+    }
+  },
+  "actual_D_allocation_gpuh": 97.60138888888889,
+  "formal_D_allocation_gpuh": 97.5788888888889,
+  "debug_D_allocation_gpuh": 0.0225,
+  "reserved_gpuh": 0,
+  "budget_policy": "USER_NO_FORMAL_GPUH_CAP_COST_ACCOUNTING_ONLY",
+  "monitor_status": "PAUSED_TOOL_CONFIRMED",
+  "monitor_evidence": "gate_d_monitor.json",
+  "outcome_access": {
+    "arc_challenge": "AFTER_FULL_RAW_CLOSURE",
+    "gpqa_main": "AFTER_FULL_RAW_CLOSURE",
+    "mmlu_pro": "UNREAD_PAUSED"
+  },
+  "mmlu_pro_new_forward_resources_gold_outcome": false,
+  "gate_pass_claimed": false,
+  "terminal_delivery": "PENDING",
+  "decisive_checks": [
+    "18x1172 ARC and18x448 GPQA exact raw closures with C+D source approval before independent gold",
+    "Frozen30/12/2 families per task, bootstrap10000 seed20261008, full denominators; GPQA8051 strict extraction failures fully reported",
+    "All135jobs completed0:0;97.601388889GPUh costonly;noactive/reserved;MMLU paused and monitor tool-confirmedPAUSED"
+  ]
+}

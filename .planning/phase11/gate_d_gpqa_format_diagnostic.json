@@ -1,0 +1,212 @@
+{
+  "status": "POST_CLOSURE_FORMAT_DIAGNOSTIC",
+  "dataset": "gpqa_main",
+  "frozen_strict_parser_unchanged": true,
+  "producer_and_independent_parser_agree": true,
+  "no_relaxed_predictions_or_rescoring": true,
+  "per_cell": {
+    "gpqa_main-q4-native": {
+      "records": 448,
+      "no_valid_final_line": 448,
+      "native_eos": 205,
+      "contains_case_insensitive_final_answer_phrase": 208,
+      "contains_boxed_marker": 1,
+      "failed_and_native_eos": 205,
+      "failed_and_length_limit": 243,
+      "length_limit": 243
+    },
+    "gpqa_main-q4-w15-18-k2-loop": {
+      "records": 448,
+      "no_valid_final_line": 448,
+      "native_eos": 220,
+      "contains_case_insensitive_final_answer_phrase": 222,
+      "contains_boxed_marker": 1,
+      "failed_and_native_eos": 220,
+      "failed_and_length_limit": 228,
+      "length_limit": 228
+    },
+    "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 230,
+      "contains_case_insensitive_final_answer_phrase": 230,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 229,
+      "failed_and_length_limit": 218,
+      "length_limit": 218,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5": {
+      "records": 448,
+      "no_valid_final_line": 448,
+      "native_eos": 235,
+      "contains_case_insensitive_final_answer_phrase": 237,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 235,
+      "failed_and_length_limit": 213,
+      "length_limit": 213
+    },
+    "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 234,
+      "contains_case_insensitive_final_answer_phrase": 236,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 233,
+      "failed_and_length_limit": 214,
+      "length_limit": 214,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 224,
+      "contains_case_insensitive_final_answer_phrase": 226,
+      "contains_boxed_marker": 1,
+      "failed_and_native_eos": 223,
+      "failed_and_length_limit": 224,
+      "length_limit": 224,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5": {
+      "records": 448,
+      "no_valid_final_line": 448,
+      "native_eos": 225,
+      "contains_case_insensitive_final_answer_phrase": 227,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 225,
+      "failed_and_length_limit": 223,
+      "length_limit": 223
+    },
+    "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 222,
+      "contains_case_insensitive_final_answer_phrase": 222,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 221,
+      "failed_and_length_limit": 226,
+      "length_limit": 226,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k3-loop": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 235,
+      "contains_case_insensitive_final_answer_phrase": 236,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 234,
+      "failed_and_length_limit": 213,
+      "length_limit": 213,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.1": {
+      "records": 448,
+      "no_valid_final_line": 448,
+      "native_eos": 240,
+      "contains_case_insensitive_final_answer_phrase": 240,
+      "contains_boxed_marker": 1,
+      "failed_and_native_eos": 240,
+      "failed_and_length_limit": 208,
+      "length_limit": 208
+    },
+    "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 232,
+      "contains_case_insensitive_final_answer_phrase": 233,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 231,
+      "failed_and_length_limit": 216,
+      "length_limit": 216,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9": {
+      "records": 448,
+      "no_valid_final_line": 446,
+      "native_eos": 225,
+      "contains_case_insensitive_final_answer_phrase": 225,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 223,
+      "failed_and_length_limit": 223,
+      "length_limit": 223,
+      "unique_valid": 2
+    },
+    "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.1": {
+      "records": 448,
+      "no_valid_final_line": 448,
+      "native_eos": 236,
+      "contains_case_insensitive_final_answer_phrase": 236,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 236,
+      "failed_and_length_limit": 212,
+      "length_limit": 212
+    },
+    "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 242,
+      "contains_case_insensitive_final_answer_phrase": 244,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 241,
+      "failed_and_length_limit": 206,
+      "length_limit": 206,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.9": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 231,
+      "contains_case_insensitive_final_answer_phrase": 232,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 230,
+      "failed_and_length_limit": 217,
+      "length_limit": 217,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.1": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 237,
+      "contains_case_insensitive_final_answer_phrase": 238,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 236,
+      "failed_and_length_limit": 211,
+      "length_limit": 211,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.5": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 224,
+      "contains_case_insensitive_final_answer_phrase": 224,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 223,
+      "failed_and_length_limit": 224,
+      "length_limit": 224,
+      "unique_valid": 1
+    },
+    "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9": {
+      "records": 448,
+      "no_valid_final_line": 447,
+      "native_eos": 225,
+      "contains_case_insensitive_final_answer_phrase": 224,
+      "contains_boxed_marker": 0,
+      "failed_and_native_eos": 224,
+      "failed_and_length_limit": 223,
+      "length_limit": 223,
+      "unique_valid": 1
+    }
+  },
+  "total": {
+    "records": 8064,
+    "no_valid_final_line": 8051,
+    "native_eos": 4122,
+    "contains_case_insensitive_final_answer_phrase": 4140,
+    "contains_boxed_marker": 4,
+    "failed_and_native_eos": 4109,
+    "failed_and_length_limit": 3942,
+    "length_limit": 3942,
+    "unique_valid": 13
+  }
+}
