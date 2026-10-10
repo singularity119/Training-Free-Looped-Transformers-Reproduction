@@ -132,10 +132,21 @@
   },
   "mmlu_pro_new_forward_resources_gold_outcome": false,
   "gate_pass_claimed": false,
-  "terminal_delivery": "PENDING",
+  "terminal_delivery": "TOOL_CONFIRMED",
   "decisive_checks": [
     "18x1172 ARC and18x448 GPQA exact raw closures with C+D source approval before independent gold",
     "Frozen30/12/2 families per task, bootstrap10000 seed20261008, full denominators; GPQA8051 strict extraction failures fully reported",
     "All135jobs completed0:0;97.601388889GPUh costonly;noactive/reserved;MMLU paused and monitor tool-confirmedPAUSED"
-  ]
+  ],
+  "terminal_delivery_thread": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "terminal_delivery_tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f\"}"
+      }
+    ],
+    "isError": false
+  },
+  "audited_artifact_commit": "9769ff5ace10e9cdf93d8b9d0f877e8c8201bede"
 }
