@@ -12,3 +12,7 @@ Packing5 formal12988002 CLOSED0:0/987s,47100/81920MiB/headroom42.5percent, noOOM
 Observer refreshed to latest48jobs, failure/all-terminal/refill tail trigger, exact executor pause-and-wake confirmed protocol. Local Python lacks tomllib when inspecting automation; read existing TOML directly and used automation_update structured tool successfully, no automation file edited by shell.
 
 Startup directly verified:48fulljobs,8RUNNING+40PENDING(QOSMaxCpuPerUserLimit), no failedparent;4fullchild records complete plus11resource=15verified records, fullpanel notclosed, goldunread. Currentplanfull-p5-remaining nextbatch40 and monitor ACTIVE.
+
+2026-10-12 11:43UTC heartbeat observed all48initialfulljobs COMPLETED0:0; paused observer, confirmed AUTOMATION_TERMINAL_RESUME delivery to exactexecutor. Executor independently verified all928records/shards and all48parent closures;939formal records completed. Initialfull actual18.933333GPUh; resourceformal0.720556; debug0.006667; settledall19.660556GPUh. Runtime5fc00f0 remainsclean. Submitted48packing5 batches40-87, IDs12989391-12989438,960newpairs/96GPUhreservation. Total1899submitted,939complete,6165notyetsubmitted; nextbatch88.
+
+Same60min observer reactivated after binding newwave40-87 IDs; snapshot1RUNNING+47PENDING immediately aftersubmit, nofailure,939complete. Added one read-only observer helper and exactwavejobset to prevent checking historicalreceipts afterfuture续批. Observer responseIDs exactly match localmonitor. Helper reads scheduler/summary only; no raw/gold/accuracy/MMLU.
