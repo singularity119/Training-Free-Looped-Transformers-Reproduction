@@ -1,0 +1,60 @@
+{
+  "status": "A40_PACKING3_ADMITTED",
+  "packing": 3,
+  "records_per_process": 1,
+  "records_per_job": 4,
+  "effective_max_gpus": 2,
+  "max_submit_jobs": 8,
+  "time_limit_seconds": 1740,
+  "source_commit": "939392e5c501c17ef1f2fdc2e0ea19d67d2ef271",
+  "capacity_evidence": {
+    "job_id": "12985953",
+    "batch": "p3-trial",
+    "packing": 3,
+    "parent_seconds": 1009.3963912960608,
+    "tokens": 22516,
+    "aggregate_tokens_per_second": 22.306400334054644,
+    "device_peak_mib": 30387.0,
+    "capacity_mib": 49140.0,
+    "headroom_fraction": 0.3816239316239316,
+    "oom_count": 0,
+    "children": [
+      {
+        "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+        "indices": [
+          404
+        ],
+        "generated_tokens": 8192,
+        "question_seconds": 855.4980067369761,
+        "max_generated_length": 8192,
+        "peak_reserved_bytes": 10911481856
+      },
+      {
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.1",
+        "indices": [
+          404
+        ],
+        "generated_tokens": 6183,
+        "question_seconds": 881.1517867879011,
+        "max_generated_length": 6183,
+        "peak_reserved_bytes": 10034872320
+      },
+      {
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.5",
+        "indices": [
+          404
+        ],
+        "generated_tokens": 8141,
+        "question_seconds": 989.3244889439084,
+        "max_generated_length": 8141,
+        "peak_reserved_bytes": 10915676160
+      }
+    ]
+  },
+  "conservative_four_record_time_estimate_seconds": 1497.7406340790913,
+  "estimate_scope": "descriptive measured samepath tail plus one singleton/backfill and60s margin; not guaranteed worst-case",
+  "required_headroom_fraction": 0.2,
+  "no_broad_packing4": true,
+  "no_A800_extrapolation": true,
+  "target_gold_loaded": false
+}

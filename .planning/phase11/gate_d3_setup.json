@@ -20,5 +20,11 @@
   "effective_max_concurrent_debug_gpus": 2,
   "effective_max_submitted_debug_jobs": 8,
   "debug_qos_actual": "debug",
-  "debug_qos_max_user_cpus": 16
+  "debug_qos_max_user_cpus": 16,
+  "ssh_temporary_bind_address": "10.21.0.2",
+  "ssh_temporary_address_family": "inet",
+  "ssh_temporary_bind_interface": "utun7",
+  "admitted_packing": 3,
+  "admitted_records_per_child": 1,
+  "admitted_records_per_job": 4
 }
