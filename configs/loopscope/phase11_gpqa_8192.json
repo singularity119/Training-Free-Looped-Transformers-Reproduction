@@ -1,0 +1,11 @@
+{
+  "schema": "loopscope.phase11.gpqa_8192.v1",
+  "gate": "D-4",
+  "dataset": "gpqa_main",
+  "population_count": 448,
+  "max_new_tokens": 8192,
+  "stop": "native_eos",
+  "base_config": "configs/loopscope/phase11_panel.json",
+  "primary_parser": "S1",
+  "auxiliary_parser": "S0"
+}
