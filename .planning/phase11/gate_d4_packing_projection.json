@@ -1,0 +1,21 @@
+{
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "layers": 36,
+  "kv_heads": 8,
+  "head_dim": 128,
+  "bf16_kv_bytes_per_token": 147456,
+  "measured_prompt": 219,
+  "measured_generated_tokens": 7635,
+  "measured_device_peak_mib": 10661,
+  "full_max_prompt": 2819,
+  "full_generation_limit": 8192,
+  "additional_kv_mib": 443.953125,
+  "packing4_projected_mib": 44419.8125,
+  "packing5_projected_mib": 55524.765625,
+  "packing6_projected_mib": 66629.71875,
+  "capacity_mib": 81920,
+  "capacity_80percent_mib": 65536,
+  "status": "PROJECTION_SUPPORTS_CANDIDATE5_DIRECT_MEASUREMENT_PENDING",
+  "projection_not_a_packing6_admission": true,
+  "target_gold_loaded": false
+}

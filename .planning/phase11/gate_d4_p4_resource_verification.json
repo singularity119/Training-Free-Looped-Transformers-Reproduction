@@ -1,0 +1,27 @@
+{
+  "status": "PACKING4_FORMAL_CLOSED",
+  "job_id": "12987981",
+  "exit_code": "0:0",
+  "allocation_seconds": 819,
+  "gpu": "NVIDIA A800",
+  "capacity_mib": 81920,
+  "device_peak_mib": 36916,
+  "headroom_fraction": 0.549365234375,
+  "packing": 4,
+  "generated_tokens": [
+    7886,
+    3633,
+    5283,
+    6659
+  ],
+  "child_seconds": [
+    809.6856361678801,
+    455.85421635815874,
+    643.2132067249622,
+    755.1104825348593
+  ],
+  "oom_count": 0,
+  "full_batch_shape": "4 independent children x4 sequential records; each batch remains <=2h",
+  "tail_seconds_proxy_for_four8192_records": 3364.4152835339964,
+  "target_gold_loaded": false
+}

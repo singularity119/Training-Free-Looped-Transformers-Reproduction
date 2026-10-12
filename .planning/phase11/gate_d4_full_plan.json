@@ -1,0 +1,21 @@
+{
+  "gate": "D-4",
+  "runtime_commit": "5fc00f067773b2a20e355bf4def462781214b99f",
+  "full_membership": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/membership.json",
+  "canonical_records": 8064,
+  "first_resource_records": 11,
+  "initial_full_p4_records": 128,
+  "packing5_remaining_records": 7925,
+  "packing5_remaining_batches": 397,
+  "records_per_child": 4,
+  "packing5_batches_submitted": 40,
+  "packing5_next_batch": 40,
+  "packing5_remaining_unsubmitted_records": 7125,
+  "packing5_remaining_unsubmitted_batches": 357,
+  "current_full_inflight_jobs": 48,
+  "formal_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/plan.json",
+  "full_cell_roots": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/cell-roots.json",
+  "target_gold_loaded": false,
+  "full_panel_closed": false,
+  "formal_submitted_records": 939
+}

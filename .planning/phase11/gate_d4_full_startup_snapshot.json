@@ -1,0 +1,16 @@
+{
+  "status": "FULL_WAVE_ACTIVE",
+  "submitted_full_jobs": 48,
+  "state_counts": {
+    "PENDING": 40,
+    "RUNNING": 8
+  },
+  "pending_reason_counts": {
+    "(QOSMaxCpuPerUserLimit)": 40
+  },
+  "verified_complete_child_records_in_full_wave": 4,
+  "verified_resource_records": 11,
+  "total_verified_complete_records": 15,
+  "failed_parent_jobs": [],
+  "target_gold_loaded": false
+}

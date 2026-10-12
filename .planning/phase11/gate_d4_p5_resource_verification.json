@@ -1,0 +1,59 @@
+{
+  "status": "PACKING5_FORMAL_CLOSED",
+  "job_id": "12988002",
+  "packing": 5,
+  "device_peak_mib": 47100.0,
+  "capacity_mib": 81920,
+  "headroom_fraction": 0.425048828125,
+  "oom_count": 0,
+  "children": [
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5",
+      "indices": [
+        404
+      ],
+      "tokens": 4156,
+      "elapsed": 637.9323714151978,
+      "peak_reserved_bytes": 9275703296
+    },
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.9",
+      "indices": [
+        404
+      ],
+      "tokens": 4846,
+      "elapsed": 739.6472599487752,
+      "peak_reserved_bytes": 9439281152
+    },
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9",
+      "indices": [
+        344
+      ],
+      "tokens": 4952,
+      "elapsed": 856.265247810632,
+      "peak_reserved_bytes": 9894363136
+    },
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5",
+      "indices": [
+        404
+      ],
+      "tokens": 6996,
+      "elapsed": 952.3461907114834,
+      "peak_reserved_bytes": 10382999552
+    },
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "indices": [
+        404
+      ],
+      "tokens": 7679,
+      "elapsed": 981.938938813284,
+      "peak_reserved_bytes": 10638852096
+    }
+  ],
+  "parent_seconds": 984.081085793674,
+  "aggregate_tokens_per_second": 29.092114880869136,
+  "target_gold_loaded": false
+}
