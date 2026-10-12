@@ -1,0 +1,15 @@
+{
+  "automation_id": "gate-d-4-gpqa-8192-full-monitor",
+  "executor": "01a12f40-cbc9-7790-ac6e-f3fe1c454ab0",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "wait_class": "full",
+  "cadence_minutes": 60,
+  "active_job_ids": [
+    "12987981",
+    "12988002"
+  ],
+  "job_ledger": ".planning/phase11/gate_d4_job_ledger.json",
+  "state": "ACTIVE",
+  "resume_action": "Verify formal resource canaries, admit bounded packing, continue full 8064 acquisition; full closure before gold",
+  "terminal_protocol": "pause observer then confirmed AUTOMATION_TERMINAL_RESUME to exact executor; fallback relay to planning"
+}

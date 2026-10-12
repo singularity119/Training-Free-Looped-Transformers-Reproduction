@@ -1,0 +1,22 @@
+{
+  "gate": "D-4",
+  "executor": "01a12f40-cbc9-7790-ac6e-f3fe1c454ab0",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "host": "hpc2-hkustgz",
+  "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z",
+  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/source",
+  "logs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/logs/phase11-gate-d4-20261012T083857Z",
+  "runs_prefix": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z",
+  "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+  "runtime_commit": "5fc00f067773b2a20e355bf4def462781214b99f",
+  "formal_partition": "emergency_gpu",
+  "formal_qos": "emergency_gpu",
+  "formal_gpu": "a800",
+  "max_gpus": 8,
+  "max_job_seconds": 7200,
+  "initial_packing": 1,
+  "formal_gpuh_cap": null,
+  "target_gold_loaded": false,
+  "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/gpqa_main-pool.json",
+  "synthetic_pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/synthetic/gpqa_main-pool.json"
+}

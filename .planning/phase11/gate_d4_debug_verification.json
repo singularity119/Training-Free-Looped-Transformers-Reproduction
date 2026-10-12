@@ -1,0 +1,14 @@
+{
+  "status": "D4_SAME_PATH_DEBUG_PASS",
+  "job_id": "12987865",
+  "runtime_commit": "5fc00f067773b2a20e355bf4def462781214b99f",
+  "generated_tokens": 82,
+  "decode_count": 81,
+  "elapsed_seconds": 21.73083566292189,
+  "allocation_seconds": 24,
+  "peak_reserved_bytes": 8153726976,
+  "cache_growth_closed": true,
+  "decode_fit_count": 0,
+  "directions_released": true,
+  "target_gold_loaded": false
+}

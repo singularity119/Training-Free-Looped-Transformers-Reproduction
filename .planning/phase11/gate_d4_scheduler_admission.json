@@ -1,0 +1,18 @@
+{
+  "partition": "emergency_gpu",
+  "partition_priority_tier": 300,
+  "qos": "emergency_gpu",
+  "qos_priority": 0,
+  "normal_user_association_admits": true,
+  "max_user_cpus": 64,
+  "max_user_a800": 8,
+  "max_submitted_jobs": 50,
+  "max_array_size": 10000,
+  "highest_eligible_partition": true,
+  "per_job_cpus": 8,
+  "per_job_gpus": 1,
+  "per_job_max_seconds": 7200,
+  "formal_gpuh_cap": null,
+  "broad_wave_job_limit": 48,
+  "target_gold_loaded": false
+}

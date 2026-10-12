@@ -1,0 +1,29 @@
+{
+  "status": "P1_TAIL_RESOURCE_VERIFIED",
+  "gpu": "NVIDIA A800",
+  "capacity_mib": 81920,
+  "packing": 1,
+  "jobs": [
+    {
+      "job_id": "12987870",
+      "tokens": 7635,
+      "generation_seconds": 387.0315738019999,
+      "device_peak_mib": 10661,
+      "peak_reserved_bytes": 10638852096,
+      "allocation_seconds": 398
+    },
+    {
+      "job_id": "12987871",
+      "tokens": 7069,
+      "generation_seconds": 374.1294432859868,
+      "device_peak_mib": 10484,
+      "peak_reserved_bytes": 10416553984,
+      "allocation_seconds": 390
+    }
+  ],
+  "oom_count": 0,
+  "actual_formal_gpuh": 0.21888888888888888,
+  "admitted_next_packing": 4,
+  "p4_admission_basis": "Measured single-A800 upper-tail7635; four times observedpeak with25percent transient allowance=53305MiB below80percent capacity65536MiB; direct packed measurement required before broad expansion",
+  "target_gold_loaded": false
+}

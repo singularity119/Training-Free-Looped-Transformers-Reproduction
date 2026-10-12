@@ -1,0 +1,15 @@
+{
+  "runtime_commit": "5fc00f067773b2a20e355bf4def462781214b99f",
+  "d3_acquisition_body_reused": true,
+  "changes": [
+    "authorization for formal emergency_gpu allocation",
+    "complete448x18 membership",
+    "D4 summary name"
+  ],
+  "original_runtime_wrapper_cache_parser_changed": false,
+  "targeted_membership_command_check": "PASS",
+  "shell_syntax": "PASS",
+  "analysis_commit": "5016be2a9bffd38de0d46c67289f18b32eff0406",
+  "analysis_tests": "3 targeted CPU tests PASS; full8064 synthetic fixture and gold order",
+  "target_gold_loaded": false
+}
