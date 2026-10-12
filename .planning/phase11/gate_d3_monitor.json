@@ -8,15 +8,22 @@
   "host": "local",
   "remote_host": "hpc2-hkustgz",
   "job_ids": [
-    "12984220"
+    "12984987",
+    "12984988"
   ],
   "run_roots": [
-    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-k3current09208"
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-native-next3",
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-k3current09-next2"
   ],
   "terminal_self_wake": "send_message_to_thread to exact executor with AUTOMATION_TERMINAL_RESUME; pause first; visible confirmation required",
   "fallback": "AUTOMATION_RELAY_REQUIRED to exact planning",
   "next_authorized_action": "Verify canaries; update actual GPUh; size same-Gate packing from long-tail evidence; continue bounded 336 pilot or report genuine admission BLOCK",
   "target_gold_loaded": false,
   "creation_tool_confirmed": true,
-  "creation_retry_note": "Initial create rejected before creation for missing destination; corrected destination=thread and exact targetThreadId."
+  "creation_retry_note": "Initial create rejected before creation for missing destination; corrected destination=thread and exact targetThreadId.",
+  "terminal_job_id": "12984220",
+  "terminal_state": "COMPLETED",
+  "terminal_resume_delivery_confirmed": true,
+  "terminal_criteria": "all watched jobs successful terminal, or any abnormal terminal/trust failure",
+  "update_tool_confirmed": true
 }
