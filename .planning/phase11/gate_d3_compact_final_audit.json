@@ -128,6 +128,8 @@
   "gate_pass_decided": false,
   "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
   "executor": "01a12e14-57d6-7e51-9cfa-588f4d038352",
-  "report": "资产/报告/phase11/phase11_gate_d3_compact_length_report_20261012.md",
-  "delivery": "PENDING"
+  "report": "\u8d44\u4ea7/\u62a5\u544a/phase11/phase11_gate_d3_compact_length_report_20261012.md",
+  "delivery": "CONFIRMED",
+  "planning_acceptance": "PASS_COMPRESSED_SCOPE",
+  "acceptance_evidence": "gate_d3_final_delivery_receipt.json"
 }

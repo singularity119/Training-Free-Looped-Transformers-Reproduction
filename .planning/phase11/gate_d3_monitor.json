@@ -51,5 +51,8 @@
   "closure_state": "COMPRESSED_SCOPE_CLOSED_98",
   "reserved_gpuh": 0,
   "no_live_jobs": true,
-  "terminal_delivery": "PENDING_FINAL_AUDIT"
+  "terminal_delivery": "CONFIRMED_TO_EXACT_PLANNING",
+  "planning_acceptance": "PASS_COMPRESSED_SCOPE",
+  "gpu_authority": "REVOKED_D3_NO_NEW_COMPUTE",
+  "final_delivery_receipt": "gate_d3_final_delivery_receipt.json"
 }

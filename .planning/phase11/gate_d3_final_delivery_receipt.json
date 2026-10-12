@@ -1,0 +1,26 @@
+{
+  "gate": "D-3",
+  "event": "FINAL_AUDIT_DELIVERED_AND_PLANNING_ACCEPTED",
+  "audit_commit": "6b6f9b9f341b23a1ce657179cb406a69891ae329",
+  "target_thread": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "target_host": "local",
+  "delivery_tool_reply": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f\"}"
+      }
+    ],
+    "isError": false
+  },
+  "packet": "GATE_D3_FINAL_AUDIT\nGate Phase11 D-3; exact executor01a12e14-57d6-7e51-9cfa-588f4d038352/local -> planning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local.\n用户最新压缩control/handoff已落实：按98条实际有效记录闭合（既有90+保留RUNNING两job的8条），不再追求336或补配置。全部成功原始记录保留且没有重复。所有D-3作业已COMPLETED或用户取消；当前0在途、0预留，唯一heartbeat PAUSED，终态pause/self-resume已工具确认且executor实际恢复完成核验。\n\n三项决定性事实：\n1. 98 unique frozen pairs independently verified against originalseed20261012 membership/canonical cells and native context; Native n=13,17intervention cells n=2-9，实际不平衡。原prompt/BF16/batch1/greedy/nativeEOS/cachefirst/decodefull/own-prefill frozen directions不变；cache growth、decode count、zero decode direction fit和direction release均核验。full448 prompt+8192最大11011<=262144 nativecontext。Sources0357d2d +939392e，pinnedPython原路径，protected runtime/wrapper/cache/旧评分未改；raw outputs remain remoteprivate。\n2. 2048/4096/8192：EOS 54/98 (55.1%) / 64/98 (65.3%) / 91/98 (92.9%)；S1format 50/98 (51.0%) / 60/98 (61.2%) / 73/98 (74.5%)；S0all0。8192 right-censored7/98。皆同一8192的前缀诊断，非预算独立重跑、非accuracy。8192相对4096多27EOS、多13S1格式；不能以不平衡小样本做方法比较或精确总体保证。Gold/旧正确性向量/新accuracy全程未读。\n3. Allactual 3.686667GPUh (<16),pilot 3.650278,reserved0；所有计算debug<30min,maxfinished allocation1184s。已有A40 packing3 device peak30925/49140MiB,min37.07%headroom,zeroOOM。真实长尾p3trial22516tokens/1009.396s，single8192 Native299.846s/K3current0.9 428.344s。没有新增测量或packing扩展，不外推A800；正式新Gate仍按其硬件同路径preflight准入。4096工作量/8192=72.6%；token线性GPUh代理4096≈2.650 vs8192实际3.650，固定启动/逐token变化未建模，仅粗略参考。\n\nWave5提交工具在压缩派发到达时已确认8IDs；随后停止全部新增提交，用安装scancel支持的state=PENDING+exactIDs/user/partition过滤取消6未启动：12987425/12987438/12987439/12987440/12987441/12987442。全部CANCELLED、Elapsed0/AllocTRESempty/actual0；记录USER_AUTHORIZED_SCOPE_REDUCTION_UNSTARTED，非工程失败。RUNNING12987423/12987424保留到COMPLETED0:0,356/325allocationsecs，8条成功记录及device traces现已独立核验并合入98。\n\nAudit commit 6b6f9b9f341b23a1ce657179cb406a69891ae329 已push origin/loopscope；未纳入你在同workspace对control/handoff的未提交修订。\n报告：[压缩长度与资源验收包](</Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/phase11_gate_d3_compact_length_report_20261012.md>)\n机器audit：[gate_d3_compact_final_audit.json](</Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/loopscope-tflt/.planning/phase11/gate_d3_compact_final_audit.json>)\n关键证据：gate_d3_pilot98_compressed_closure.json、gate_d3_pilot98_length_workload.json、job_ledger、wave3_4_terminal_resource_verification、wave5_retained_resource_verification、user_scope_reduction_cancel/postcheck。原336 membership/238missing仅历史，不构成压缩范围失败。\n\n请按此压缩包验收并决定正式cap及全量GPQA下一独立Gate准入；executor不自行PASS/跨Gate/提交全448x18。MMLU继续暂停。",
+  "planning_reply": {
+    "source_thread_id": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+    "text": "已直接核对D3 compact98 audit和lifecycle，压缩范围PASS，D4已绑定01a12f40-cbc9-7790-ac6e-f3fe1c454ab0为唯一调度者。D3禁止任何新增GPU/提交。请仅完成自己D3文档commit/monitor暂停及终态交付，不stage或覆盖planning刚改的control/D4 handoff，保留共享dirty。用户明确8192全量，不再预检。"
+  },
+  "accepted_scope": 98,
+  "planning_decision": "PASS_COMPRESSED_SCOPE",
+  "d3_gpu_authority_revoked": true,
+  "monitor_paused": true,
+  "no_live_d3_jobs": true
+}
