@@ -1,0 +1,55 @@
+{
+  "status": "PARTIAL_WAVE3_RECORDS_AND_RESOURCES_VERIFIED",
+  "target_gold_loaded": false,
+  "results": [
+    {
+      "job_id": "12986938",
+      "parent_seconds": 579.0322396130068,
+      "tokens": 15543,
+      "aggregate_tokens_per_second": 26.843064922236596,
+      "device_peak_mib": 26097.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.4689255189255189,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-native",
+          "indices": [
+            389
+          ],
+          "generated_tokens": 3849,
+          "peak_reserved_bytes": 9179234304
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+          "indices": [
+            0
+          ],
+          "generated_tokens": 1817,
+          "peak_reserved_bytes": 8575254528
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1",
+          "indices": [
+            0
+          ],
+          "generated_tokens": 2149,
+          "peak_reserved_bytes": 8688500736
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 7728,
+          "peak_reserved_bytes": 10785652736
+        }
+      ]
+    }
+  ]
+}

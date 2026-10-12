@@ -1,0 +1,40 @@
+{
+  "event": "EXECUTOR_CONTINUATION_WITH_TRANSIENT_VPN_LOSS",
+  "gate": "D-3",
+  "executor": "01a12e14-57d6-7e51-9cfa-588f4d038352",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "automation_id": "gate-d-3-gpqa-length-pilot",
+  "automation_before": {
+    "version": 1,
+    "id": "gate-d-3-gpqa-length-pilot",
+    "kind": "heartbeat",
+    "name": "Gate D-3 GPQA length pilot",
+    "prompt": "你是 Phase11 Gate D-3 的唯一只读 monitor。Exact executor 01a12e14-57d6-7e51-9cfa-588f4d038352/local；planning 01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。实际读取 nested loopscope-tflt/.planning/phase11 的control、D3 handoff、gate_d3_setup.json、gate_d3_job_ledger.json、gate_d3_monitor.json、gate_d3_acquire_wave3_plan.json。\n当前仅等待 HPC2 hpc2-hkustgz wave3八个debug/A40 jobs：12986938,12986939,12986940,12986941,12986942,12986943,12986944,12986946。每job packing3、4独立singleton子进程，共32条冻结未完成pairs。batch roots为/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b00..b07-batch，exact mapping看ledger/plan。Source 939392e5c501c17ef1f2fdc2e0ea19d67d2ef271/source-packing/pinnedPython。此前50/336条已独立核验，actual1.8866666667GPUh，不重复。\n每wake仅一次有界只读SSH，先本地只读核对utun7仍活动且含10.21.0.121。使用-4 -o BindAddress=10.21.0.121 -o Hostname=10.120.18.63 -o HostKeyAlias=hpc2login.hpc.hkust-gz.edu.cn -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=10 -o ClearAllForwardings=yes。IP由2026-10-12T06:57:40Z源绑定校内DNS query返回，TTL7200秒；executor已通过严格原hostname信任校验确认mgmt-6。系统解析失败且VPN地址从10.21.0.2变成10.21.0.121，仅采用已验证的per-command transport，不修改DNS/routes/SSH settings/trust，不接受未知key。若该地址失效、DNS证据过期或连接失败，标作业UNKNOWN，暂停并投递executor诊断，不自动选新地址或推断作业失败。\n使用/opt/slurm/bin/sacct/squeue，必要短parent/child日志尾及batch_summary/summary/failure存在性；禁止读取原题、生成正文、候选预测、gold、准确率。部分COMPLETED而其余健康RUNNING/PENDING（含QoSMaxCpuPerUserLimit）静默结束，不逐轮状态。\n全部等待jobs成功终态，或任一FAILED/TIMEOUT/CANCELLED/nonzero、连接/trust等材料异常时，先automation_update暂停自身，保留所有字段和可见lifecycle证据；再send_message_to_thread向exact executor投递AUTOMATION_TERMINAL_RESUME，含Gate/identities/automation/job IDs/exact run roots/终态或UNKNOWN证据/暂停证据/下一授权动作，并保留工具成功确认。Final本身不算恢复；投递不确认则向planning发出完整AUTOMATION_RELAY_REQUIRED且在输出提供完整包，不重投作业。\n下一executor动作：独立核验本波成功singleton原始记录/cache/方向和每batch device_memory，累计sacctGPUh，合并此前50（本波完全闭合才82/336）；继续冻结336范围下一有界波，先排除所有成功/已提交pairs，核对actual+reserved<=16GPUh与普通QoS MaxSubmit8/effectiveGPU2/CPU16。保持A40 packing3、4singleton/job、debug<30min、每GPU8CPU、约20%显存余量、batch1/独立模型/BF16/cachefirst/原prompt/greedy/nativeEOS。同immutable source/launcher/env已预检，无材料变化不扩大验证。真实packing3尾峰30387/49140MiB、22516tokens/1009.396s，wave2峰27305/49140MiB，无OOM；四条job时限仍点估计，不能保证每题。Timeout/部分失败只保留attempt事件和成功children，invalid/missing-only新路径恢复，不重跑成功。\nMonitor无GPU提交/重试/cancel/requeue/packing修改/修复/科学裁决权限；planning独占PASS。真正科学/权限/单条debug准入/16GPUh边界才GateBLOCK，不把attempt或连接失败当Gate失败。禁止gold/accuracy、MMLU、全448×18、下一Gate和缓存优化。唯一probe30分钟heartbeat由executor适时retarget。原control已授权派发/repair/terminal跨线程消息。Host-key异常遵循hpc2-recover-host-key，不自动接受新指纹。",
+    "status": "ACTIVE",
+    "rrule": "FREQ=MINUTELY;INTERVAL=30",
+    "target_thread_id": "01a12e14-57d6-7e51-9cfa-588f4d038352",
+    "created_at": 1791775297104,
+    "updated_at": 1791788839399
+  },
+  "pause_tool_reply": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d-3-gpqa-length-pilot\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "observations": [
+    "Initial source bind failed EADDRNOTAVAIL.",
+    "utun7 subsequently absent and route pointed to utun2.",
+    "Read-only inventory then observed utun7 reappear with10.21.0.121; strict original-hostname SSH succeeded."
+  ],
+  "job_state_evidence": "gate_d3_executor_status_20261012T072115Z.json",
+  "no_gpu_retry_or_cancel": true,
+  "executor_resumption": "Direct user authorization to continue current D-3 pilot; same exact executor remains active."
+}

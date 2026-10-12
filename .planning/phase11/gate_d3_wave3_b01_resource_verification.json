@@ -1,0 +1,55 @@
+{
+  "status": "PARTIAL_WAVE3_RECORDS_AND_RESOURCES_VERIFIED",
+  "target_gold_loaded": false,
+  "results": [
+    {
+      "job_id": "12986939",
+      "parent_seconds": 1180.543386405916,
+      "tokens": 28728,
+      "aggregate_tokens_per_second": 24.334556722612664,
+      "device_peak_mib": 30477.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.3797924297924298,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 7821,
+          "peak_reserved_bytes": 10785652736
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 8192,
+          "peak_reserved_bytes": 10924064768
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 6844,
+          "peak_reserved_bytes": 10273947648
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 5871,
+          "peak_reserved_bytes": 9829351424
+        }
+      ]
+    }
+  ]
+}

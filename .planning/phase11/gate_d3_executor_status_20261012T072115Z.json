@@ -1,0 +1,16 @@
+{
+  "source": "bounded readonly executor SSH after observed VPN interface reappearance",
+  "stdout": "12986938|COMPLETED|0:0|584|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12986939|RUNNING|0:0|1054|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12986940|RUNNING|0:0|471|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12986941|PENDING|0:0|0||debug|debug\n12986942|PENDING|0:0|0||debug|debug\n12986943|PENDING|0:0|0||debug|debug\n12986944|PENDING|0:0|0||debug|debug\n12986946|PENDING|0:0|0||debug|debug\n12986941 PENDING (QOSMaxCpuPerUserLimit)\n12986942 PENDING (QOSMaxCpuPerUserLimit)\n12986943 PENDING (QOSMaxCpuPerUserLimit)\n12986944 PENDING (QOSMaxCpuPerUserLimit)\n12986946 PENDING (QOSMaxCpuPerUserLimit)\n12986939 RUNNING gpu3-9\n12986940 RUNNING gpu3-9\n",
+  "stderr": "",
+  "exit_code": 0,
+  "job_ids": [
+    "12986938",
+    "12986939",
+    "12986940",
+    "12986941",
+    "12986942",
+    "12986943",
+    "12986944",
+    "12986946"
+  ]
+}

@@ -30,5 +30,7 @@
   "ssh_temporary_resolved_address": "10.120.18.63",
   "ssh_temporary_host_key_alias": "hpc2login.hpc.hkust-gz.edu.cn",
   "ssh_temporary_strict_host_key_checking": "yes",
-  "ssh_resolution_evidence": "System resolution failed; bound query at14:57CST returned10.120.18.63 TTL7200. utun7 changed from10.21.0.2 to10.21.0.121; current address verified locally and strict original-hostname SSH succeeded. No system network/SSH/trust changes."
+  "ssh_resolution_evidence": "Bound schoolDNS query from active10.21.0.121 to10.90.63.2 returned10.120.18.63 TTL7200 at15:28CST. Strict original-hostname SSH succeeded after transient utun7 loss/reappearance; no network/settings/trust changes.",
+  "ssh_dns_checked_at_utc": "2026-10-12T07:28:00Z",
+  "ssh_dns_ttl_seconds": 7200
 }

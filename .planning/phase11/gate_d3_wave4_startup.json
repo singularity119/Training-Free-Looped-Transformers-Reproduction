@@ -1,0 +1,54 @@
+{
+  "facts": [
+    {
+      "job_id": "12986939",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 1184
+    },
+    {
+      "job_id": "12986940",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 930
+    },
+    {
+      "job_id": "12986941",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 329
+    },
+    {
+      "job_id": "12986942",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0
+    },
+    {
+      "job_id": "12986943",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0
+    },
+    {
+      "job_id": "12986944",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0
+    },
+    {
+      "job_id": "12986946",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0
+    },
+    {
+      "job_id": "12987123",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0
+    }
+  ],
+  "check_exit": 0,
+  "target_gold_loaded": false
+}
