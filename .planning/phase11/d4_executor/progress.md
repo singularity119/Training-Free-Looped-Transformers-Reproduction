@@ -24,3 +24,7 @@ Refill startup helper exactIDs verified:49inflight(6RUNNING+43PENDING), onecarri
 2026-10-12 17:54UTC /2026-10-13 01:54CST tailwake:46closed+4running; verified920whole-job+36child in carriedwork, prior1759 =>2715complete, nextobserverbaseline2679. Settledcurrent23.807778GPUh; accumulatedall62.708611GPUh. Preserve4running, submit46batches131-176 IDs12992165-12992210,920newpairs/92GPUhmaxreservation. Total3679submitted,4385unsubmitted, next177; newjobset4carry+46new=50. No failures/retries/gold/MMLU.
 
 Refill startup exactjobset check:47inflight(6RUNNING+41PENDING), threecarriedjobs nowterminal;2751completedchild records,no failure/missingIDs. Same60min observer ACTIVE; remaining4carry+46new tracked without baseline duplication.
+
+2026-10-12 21:04UTC /2026-10-13 05:04CST tailwake:43closed+7running; independentlyverified860whole+24child, prior2679 =>3563complete; nextobserverbaseline3539. Settledcurrent24.732222GPUh; accumulatedall87.440833GPUh. Preserve7running and submit43batches177-219 IDs12994100-12994142,860newpairs/86GPUhmaxreservation. Total4539submitted,3525unsubmitted,next220; observer7carry+43new=50. No failures,retries,gold,MMLU.
+
+Newjobset exactstartup check:49inflight(8RUNNING+41PENDING),onecarriedjobnowterminal;3571recordscomplete, nofailures/missingIDs. Same60min observer reactivated; no scientific/launcher/runtime changes.

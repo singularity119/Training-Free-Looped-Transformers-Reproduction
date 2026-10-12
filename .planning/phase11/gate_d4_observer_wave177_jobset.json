@@ -1,0 +1,310 @@
+{
+  "active_job_ids": [
+    "12992204",
+    "12992205",
+    "12992206",
+    "12992207",
+    "12992208",
+    "12992209",
+    "12992210",
+    "12994100",
+    "12994101",
+    "12994102",
+    "12994103",
+    "12994104",
+    "12994105",
+    "12994106",
+    "12994107",
+    "12994108",
+    "12994109",
+    "12994110",
+    "12994111",
+    "12994112",
+    "12994113",
+    "12994114",
+    "12994115",
+    "12994116",
+    "12994117",
+    "12994118",
+    "12994119",
+    "12994120",
+    "12994121",
+    "12994122",
+    "12994123",
+    "12994124",
+    "12994125",
+    "12994126",
+    "12994127",
+    "12994128",
+    "12994129",
+    "12994130",
+    "12994131",
+    "12994132",
+    "12994133",
+    "12994134",
+    "12994135",
+    "12994136",
+    "12994137",
+    "12994138",
+    "12994139",
+    "12994140",
+    "12994141",
+    "12994142"
+  ],
+  "jobs": [
+    {
+      "job_id": "12992204",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b170-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-170.json"
+    },
+    {
+      "job_id": "12992205",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b171-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-171.json"
+    },
+    {
+      "job_id": "12992206",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b172-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-172.json"
+    },
+    {
+      "job_id": "12992207",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b173-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-173.json"
+    },
+    {
+      "job_id": "12992208",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b174-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-174.json"
+    },
+    {
+      "job_id": "12992209",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b175-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-175.json"
+    },
+    {
+      "job_id": "12992210",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b176-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-176.json"
+    },
+    {
+      "job_id": "12994100",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b177-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-177.json"
+    },
+    {
+      "job_id": "12994101",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b178-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-178.json"
+    },
+    {
+      "job_id": "12994102",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b179-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-179.json"
+    },
+    {
+      "job_id": "12994103",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b180-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-180.json"
+    },
+    {
+      "job_id": "12994104",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b181-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-181.json"
+    },
+    {
+      "job_id": "12994105",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b182-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-182.json"
+    },
+    {
+      "job_id": "12994106",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b183-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-183.json"
+    },
+    {
+      "job_id": "12994107",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b184-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-184.json"
+    },
+    {
+      "job_id": "12994108",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b185-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-185.json"
+    },
+    {
+      "job_id": "12994109",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b186-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-186.json"
+    },
+    {
+      "job_id": "12994110",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b187-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-187.json"
+    },
+    {
+      "job_id": "12994111",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b188-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-188.json"
+    },
+    {
+      "job_id": "12994112",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b189-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-189.json"
+    },
+    {
+      "job_id": "12994113",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b190-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-190.json"
+    },
+    {
+      "job_id": "12994114",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b191-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-191.json"
+    },
+    {
+      "job_id": "12994115",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b192-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-192.json"
+    },
+    {
+      "job_id": "12994116",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b193-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-193.json"
+    },
+    {
+      "job_id": "12994117",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b194-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-194.json"
+    },
+    {
+      "job_id": "12994118",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b195-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-195.json"
+    },
+    {
+      "job_id": "12994119",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b196-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-196.json"
+    },
+    {
+      "job_id": "12994120",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b197-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-197.json"
+    },
+    {
+      "job_id": "12994121",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b198-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-198.json"
+    },
+    {
+      "job_id": "12994122",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b199-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-199.json"
+    },
+    {
+      "job_id": "12994123",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b200-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-200.json"
+    },
+    {
+      "job_id": "12994124",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b201-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-201.json"
+    },
+    {
+      "job_id": "12994125",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b202-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-202.json"
+    },
+    {
+      "job_id": "12994126",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b203-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-203.json"
+    },
+    {
+      "job_id": "12994127",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b204-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-204.json"
+    },
+    {
+      "job_id": "12994128",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b205-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-205.json"
+    },
+    {
+      "job_id": "12994129",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b206-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-206.json"
+    },
+    {
+      "job_id": "12994130",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b207-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-207.json"
+    },
+    {
+      "job_id": "12994131",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b208-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-208.json"
+    },
+    {
+      "job_id": "12994132",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b209-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-209.json"
+    },
+    {
+      "job_id": "12994133",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b210-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-210.json"
+    },
+    {
+      "job_id": "12994134",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b211-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-211.json"
+    },
+    {
+      "job_id": "12994135",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b212-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-212.json"
+    },
+    {
+      "job_id": "12994136",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b213-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-213.json"
+    },
+    {
+      "job_id": "12994137",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b214-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-214.json"
+    },
+    {
+      "job_id": "12994138",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b215-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-215.json"
+    },
+    {
+      "job_id": "12994139",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b216-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-216.json"
+    },
+    {
+      "job_id": "12994140",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b217-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-217.json"
+    },
+    {
+      "job_id": "12994141",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b218-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-218.json"
+    },
+    {
+      "job_id": "12994142",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-full-p5-remaining-b219-batch",
+      "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/batch-219.json"
+    }
+  ],
+  "prior_verified_complete_records": 3539,
+  "unsubmitted_records": 3525,
+  "next_remaining_batch": 220,
+  "target_gold_loaded": false
+}
