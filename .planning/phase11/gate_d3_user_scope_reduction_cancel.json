@@ -1,0 +1,21 @@
+{
+  "reason": "USER_AUTHORIZED_SCOPE_REDUCTION_NOT_ATTEMPT_FAILURE",
+  "authorization": "latest compressed control/handoff; planning dispatch arrived while wave5 submission process was in flight; all8 IDs were confirmed when tool resumed",
+  "requested_job_ids": [
+    "12987425",
+    "12987438",
+    "12987439",
+    "12987440",
+    "12987441",
+    "12987442"
+  ],
+  "protected_running_job_ids": [
+    "12987423",
+    "12987424"
+  ],
+  "command": "/opt/slurm/bin/scancel --state=PENDING --user=xhuang225 --partition=debug 12987425 12987438 12987439 12987440 12987441 12987442",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n",
+  "state_filter_checked_from_installed_scancel_help": true
+}

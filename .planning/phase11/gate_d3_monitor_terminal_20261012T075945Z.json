@@ -1,0 +1,152 @@
+{
+  "gate": "D-3",
+  "event": "ALL_WATCHED_JOBS_COMPLETED",
+  "heartbeat_time": "2026-10-12T07:59:45.450Z",
+  "executor": "01a12e14-57d6-7e51-9cfa-588f4d038352",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "host": "local",
+  "automation_id": "gate-d-3-gpqa-length-pilot",
+  "watched": {
+    "job_ids": [
+      "12986940",
+      "12986941",
+      "12986942",
+      "12986943",
+      "12986944",
+      "12986946",
+      "12987123",
+      "12987190"
+    ],
+    "run_roots": [
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b02-batch",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b03-batch",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b04-batch",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b05-batch",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b06-batch",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b07-batch",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave4-b00-batch",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave4-b01-batch"
+    ],
+    "source_commit": "939392e5c501c17ef1f2fdc2e0ea19d67d2ef271"
+  },
+  "ssh_check_count": 1,
+  "ssh_result": {
+    "ssh_exit_code": 0,
+    "stdout": "12986940|COMPLETED|0:0|1067|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12986941|COMPLETED|0:0|1052|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12986942|COMPLETED|0:0|505|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12986943|COMPLETED|0:0|243|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12986944|COMPLETED|0:0|185|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12986946|COMPLETED|0:0|104|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12987123|COMPLETED|0:0|434|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12987190|COMPLETED|0:0|441|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b02-batch/batch_summary.json\n/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b03-batch/batch_summary.json\n/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b04-batch/batch_summary.json\n/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b05-batch/batch_summary.json\n/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b06-batch/batch_summary.json\n/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b07-batch/batch_summary.json\n/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave4-b00-batch/batch_summary.json\n/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave4-b01-batch/batch_summary.json\n",
+    "stderr": ""
+  },
+  "slurm_facts": [
+    {
+      "job_id": "12986940",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 1067,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "partition": "debug",
+      "qos": "debug"
+    },
+    {
+      "job_id": "12986941",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 1052,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "partition": "debug",
+      "qos": "debug"
+    },
+    {
+      "job_id": "12986942",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 505,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "partition": "debug",
+      "qos": "debug"
+    },
+    {
+      "job_id": "12986943",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 243,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "partition": "debug",
+      "qos": "debug"
+    },
+    {
+      "job_id": "12986944",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 185,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "partition": "debug",
+      "qos": "debug"
+    },
+    {
+      "job_id": "12986946",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 104,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "partition": "debug",
+      "qos": "debug"
+    },
+    {
+      "job_id": "12987123",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 434,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "partition": "debug",
+      "qos": "debug"
+    },
+    {
+      "job_id": "12987190",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 441,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "partition": "debug",
+      "qos": "debug"
+    }
+  ],
+  "automation_before": {
+    "version": 1,
+    "id": "gate-d-3-gpqa-length-pilot",
+    "kind": "heartbeat",
+    "name": "Gate D-3 GPQA length pilot",
+    "prompt": "\u4f60\u662fPhase11 Gate D-3\u552f\u4e00\u53ea\u8bfbmonitor\uff0cexact executor01a12e14-57d6-7e51-9cfa-588f4d038352/local\uff1bplanning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local\u3002\u5b9e\u9645\u8bfb\u53d6nested loopscope-tflt/.planning/phase11\u7684control\u3001D3 handoff\u3001gate_d3_setup.json\u3001gate_d3_job_ledger.json\u3001gate_d3_monitor.json\u3001acquire_wave3/4 plans\u3002\u5f53\u524d\u4ec5\u7b49\u5f85\u4e0b\u52178\u4e2adebug/A40/packing3\u4f5c\u4e1a\uff0c\u6bcf\u4e2a4\u72ec\u7acbsingleton\uff0c32\u6761\u5df2\u63d0\u4ea4\u51bb\u7ed3pairs\uff1a\n12986940 -> /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b02-batch\n12986941 -> /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b03-batch\n12986942 -> /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b04-batch\n12986943 -> /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b05-batch\n12986944 -> /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b06-batch\n12986946 -> /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave3-b07-batch\n12987123 -> /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave4-b00-batch\n12987190 -> /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave4-b01-batch\n\u6b64\u524d58/336\u6761\u5df2\u72ec\u7acb\u6838\u9a8c\uff0csource939392e5c501c17ef1f2fdc2e0ea19d67d2ef271/source-packing/pinnedPython\uff1b\u539f0357d2d\u6210\u529f\u8bb0\u5f55\u4fdd\u7559\u3002\u5f53\u524d\u5df2\u7ed3\u7b97actual2.3777777778GPUh\uff0cactual+maxreserved6.2444444444<=16GPUh\u3002\u7528\u6237\u6700\u65b0\u76f4\u63a5\u8981\u6c42\u7ee7\u7eed\u5269\u4f59pilot\u5e76\u5728\u5b8c\u6210\u540e\u4ea4planning\u9a8c\u6536\uff0c\u6210\u529fpairs\u4e0d\u5f97\u91cd\u590d\u3002\n\u6bcf\u6b21\u4ec5\u4e00\u6709\u754c\u53ea\u8bfbSSH\uff0c\u5148\u672c\u5730\u6838\u5bf9\u6d3b\u52a8utun7\u4ecd\u542b10.21.0.121\u3002\u4f7f\u7528-4 -o BindAddress=10.21.0.121 -o Hostname=10.120.18.63 -o HostKeyAlias=hpc2login.hpc.hkust-gz.edu.cn -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=10 -o ClearAllForwardings=yes\uff1b\u6e90\u7ed1\u5b9a\u6821\u5185DNS\u57282026-10-12T07:28:00Z\u91cd\u65b0\u8fd4\u56de\u8be5IP/TTL7200\uff0c\u539fhostname\u4e25\u683c\u4fe1\u4efb\u5df2\u6838\u9a8c\u3002\u7981\u6b62\u4fee\u6539DNS/routes/SSH settings/trust\u3001\u81ea\u52a8\u63a5\u53d7\u672a\u77e5key\u3002\u5730\u5740\u5931\u6548/\u8bc1\u636e\u8fc7\u671f/\u8fde\u63a5\u5931\u8d25\u6807UNKNOWN\uff0c\u4e0d\u63a8\u65ad\u4f5c\u4e1a\u5931\u8d25\uff0c\u6682\u505c\u5e76\u6062\u590dexecutor\u8bca\u65ad\u3002SSH\u4f7f\u7528/opt/slurm/bin/sacct/squeue\uff0c\u5fc5\u8981\u77ed\u65e5\u5fd7\u5c3e\u548cbatch_summary/summary/failure\u5b58\u5728\u6027\uff1b\u7981\u6b62\u539f\u9898/\u8f93\u51fa\u6b63\u6587/\u5019\u9009\u9884\u6d4b/gold/accuracy\u3002\n\u90e8\u5206healthy COMPLETED\u800c\u5176\u4f59RUNNING/PENDING\uff08\u542b\u6b63\u5e38QoSMaxCpuPerUserLimit\uff09\u9759\u9ed8\u7ed3\u675f\uff0c\u4e0d\u6bcf\u8f6e\u901a\u77e5\u3002\u5168\u90e8\u6210\u529f\u7ec8\u6001\u6216\u4efb\u4e00FAILED/TIMEOUT/CANCELLED/nonzero/\u8fde\u63a5trust\u5f02\u5e38\u65f6\uff0c\u5148automation_update\u6682\u505c\u81ea\u8eab\u5e76\u5b8c\u6574\u4fdd\u7559\u5b57\u6bb5\uff0c\u4fdd\u5b58\u53ef\u89c1lifecycle\uff1b\u518dsend_message_to_thread\u5411exact executor\u6295\u9012AUTOMATION_TERMINAL_RESUME\uff08Gate/executor/planning/automation/job IDs/exact roots/terminal\u6216UNKNOWN\u8bc1\u636e/\u6682\u505c\u8bc1\u636e/\u4e0b\u4e00\u5df2\u6388\u6743\u52a8\u4f5c\uff09\uff0c\u4fdd\u7559\u5b9e\u9645\u5de5\u5177\u786e\u8ba4\u3002\u6d88\u606f\u5fc5\u987b\u5b9e\u9645\u6062\u590dexecutor\u7ee7\u7eed\u5f53\u524dGate\uff1bfinal\u4e0d\u66ff\u4ee3\u6295\u9012\u3002\u6295\u9012\u4e0d\u786e\u8ba4\u5219\u5411planning\u53d1\u5b8c\u6574AUTOMATION_RELAY_REQUIRED\u5e76\u8f93\u51fa\u5b8c\u6574\u5305\uff0c\u7981\u6b62\u91cd\u6295\u4f5c\u4e1a\u3002\n\u4e0b\u4e00executor\u52a8\u4f5c\uff1a\u6838\u9a8c\u6210\u529fsingleton\u539f\u59cblength/cache/\u65b9\u5411\u548c\u6bcfparent device_memory\uff0c\u7d2f\u8ba1sacctGPUh\uff0c\u5408\u5e76\u6b64\u524d58\uff08\u516832\u95ed\u5408\u624d90/336\uff09\u3002\u968f\u540e\u6309\u5f53\u524d\u7528\u6237\u6388\u6743\u7ee7\u7eed\u5269\u4f59\u51bb\u7ed3336pairs\uff1a\u6392\u9664\u6240\u6709\u6210\u529f\u548c\u4ecd\u5df2\u63d0\u4ea4pairs\uff0c\u666e\u901aQoS MaxSubmit8/effectiveGPU2/CPU16\uff0cactual+reserved<=16GPUh\uff0cA40 packing3\u30014singleton/job\u3001debug<30min\u3001\u6bcfGPU8CPU\u3001\u7ea620%\u663e\u5b58\u4f59\u91cf\uff1b\u4fdd\u6301batch1/\u72ec\u7acb\u6a21\u578b/BF16/cachefirst/\u539fprompt/greedy/nativeEOS\u3002\u539fpacking3\u5c3e\u5cf030387/49140MiB\uff0c\u65e0OOM\uff1b4\u6761\u65f6\u9650\u662f\u70b9\u4f30\u8ba1\u3002\u5de5\u7a0b\u5931\u8d25\u4fdd\u7559\u5df2\u5b8c\u6210children\uff0c\u53ea\u65b0\u8def\u5f84\u6062\u590dinvalid/missing\uff0c\u4e0d\u80fd\u91cd\u8dd1\u6210\u529f\u6216\u628a\u5355attempt\u5931\u8d25\u81ea\u52a8GateBLOCK\uff1b\u771f\u5b9e\u79d1\u5b66/\u6743\u9650/\u5355\u6761debug\u51c6\u5165/16GPUh\u8fb9\u754c\u624d\u5411planning\u62a5\u544a\u3002\u51bb\u7ed3336\u95ed\u5408\u540e\u6682\u505cmonitor\uff0c\u4ea4label-free\u4e09\u6863EOS/\u683c\u5f0f/\u957f\u5ea6/\u6210\u672c\u62a5\u544a\u53caGATE_D3_FINAL_AUDIT\u7ed9planning\uff0cplanning\u72ec\u5360PASS/\u6b63\u5f0fcap/\u4e0b\u4e00Gate\u3002\u7981\u6b62gold/\u65b0accuracy/MMLU/\u5168448x18/\u7f13\u5b58\u4f18\u5316\u3002\nMonitor\u65e0GPU\u63d0\u4ea4/\u91cd\u8bd5/cancel/requeue/\u6539packing/\u4fee\u590d/\u79d1\u5b66\u88c1\u51b3\u6743\u9650\u3002\u552f\u4e00probe30\u5206\u949fheartbeat\u7531exact executor retarget\uff1b\u539fcontrol\u5df2\u6388\u6743dispatch/repair/terminal\u8de8\u7ebf\u7a0b\u6d88\u606f\u3002Host-key\u5f02\u5e38\u8d70hpc2-recover-host-key\uff0c\u4e0d\u81ea\u52a8\u63a5\u53d7\u65b0\u6307\u7eb9\u3002",
+    "status": "ACTIVE",
+    "rrule": "FREQ=MINUTELY;INTERVAL=30",
+    "target_thread_id": "01a12e14-57d6-7e51-9cfa-588f4d038352",
+    "created_at": 1791775297104,
+    "updated_at": 1791790683418
+  },
+  "pause_tool_reply": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d-3-gpqa-length-pilot\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "pause_readback": "automation.toml PAUSED; kind/name/target/30-minute cadence unchanged",
+  "delivery": "CONFIRMED",
+  "delivery_tool_reply": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a12e14-57d6-7e51-9cfa-588f4d038352\"}"
+      }
+    ],
+    "isError": false
+  },
+  "raw_records_not_read_by_monitor": true,
+  "gate_not_decided": true,
+  "executor_resumption_confirmed": true,
+  "executor_resumption_evidence": "Delivered exact self-resume consumed; all32 raw records/cache/directions and8 device traces independently validated, closure90/336 and actual3.4975GPUh; next frozen wave32 planned within current16GPUh authority."
+}

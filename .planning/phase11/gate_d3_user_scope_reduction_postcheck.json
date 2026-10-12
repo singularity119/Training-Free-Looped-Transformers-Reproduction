@@ -1,0 +1,4 @@
+{
+  "stdout": "12987423|RUNNING|0:0|189|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12987424|RUNNING|0:0|187|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12987425|CANCELLED by 204599|0:0|0||debug|debug\n12987438|CANCELLED by 204599|0:0|0||debug|debug\n12987439|CANCELLED by 204599|0:0|0||debug|debug\n12987440|CANCELLED by 204599|0:0|0||debug|debug\n12987441|CANCELLED by 204599|0:0|0||debug|debug\n12987442|CANCELLED by 204599|0:0|0||debug|debug\n12987423 RUNNING gpu3-9\n12987424 RUNNING gpu3-9\n",
+  "exit_code": 0
+}

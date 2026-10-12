@@ -1,0 +1,32 @@
+{
+  "n": 98,
+  "total_generated_tokens": 328640,
+  "length_quantiles_including_right_censoring": {
+    "0": 503,
+    "0.25": 1222,
+    "0.5": 1879,
+    "0.75": 5867,
+    "0.9": 7728,
+    "0.95": 8192,
+    "1": 8192
+  },
+  "budgets": [
+    {
+      "budget": 2048,
+      "token_workload": 156697,
+      "workload_ratio_to8192": 0.47680440603700097
+    },
+    {
+      "budget": 4096,
+      "token_workload": 238549,
+      "workload_ratio_to8192": 0.7258672103213243
+    },
+    {
+      "budget": 8192,
+      "token_workload": 328640,
+      "workload_ratio_to8192": 1.0
+    }
+  ],
+  "no_gold_or_accuracy": true,
+  "prefix_not_independent_rerun": true
+}

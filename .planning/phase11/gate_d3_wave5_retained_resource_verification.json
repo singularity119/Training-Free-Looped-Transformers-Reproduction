@@ -1,0 +1,104 @@
+{
+  "status": "RETAINED8_RECORDS_AND_RESOURCES_VERIFIED",
+  "target_gold_loaded": false,
+  "results": [
+    {
+      "job_id": "12987423",
+      "parent_seconds": 352.55891490506474,
+      "tokens": 10243,
+      "aggregate_tokens_per_second": 29.053300220072956,
+      "device_peak_mib": 25663.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.4777574277574278,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-native",
+          "indices": [
+            113
+          ],
+          "generated_tokens": 1122,
+          "peak_reserved_bytes": 8468299776
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+          "indices": [
+            389
+          ],
+          "generated_tokens": 4104,
+          "peak_reserved_bytes": 9275703296
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1",
+          "indices": [
+            389
+          ],
+          "generated_tokens": 3946,
+          "peak_reserved_bytes": 9206497280
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5",
+          "indices": [
+            287
+          ],
+          "generated_tokens": 1071,
+          "peak_reserved_bytes": 8441036800
+        }
+      ]
+    },
+    {
+      "job_id": "12987424",
+      "parent_seconds": 323.1113997360226,
+      "tokens": 8534,
+      "aggregate_tokens_per_second": 26.4119433946687,
+      "device_peak_mib": 25877.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.4734025234025234,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+          "indices": [
+            0
+          ],
+          "generated_tokens": 1918,
+          "peak_reserved_bytes": 8667529216
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1",
+          "indices": [
+            0
+          ],
+          "generated_tokens": 1840,
+          "peak_reserved_bytes": 8665432064
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+          "indices": [
+            0
+          ],
+          "generated_tokens": 1879,
+          "peak_reserved_bytes": 8665432064
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9",
+          "indices": [
+            0
+          ],
+          "generated_tokens": 2897,
+          "peak_reserved_bytes": 8883535872
+        }
+      ]
+    }
+  ]
+}

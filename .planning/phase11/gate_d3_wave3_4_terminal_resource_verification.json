@@ -1,0 +1,398 @@
+{
+  "status": "WATCHED32_RECORDS_AND_RESOURCES_VERIFIED",
+  "target_gold_loaded": false,
+  "results": [
+    {
+      "job_id": "12986940",
+      "parent_seconds": 1064.4434777640272,
+      "tokens": 23868,
+      "aggregate_tokens_per_second": 22.42298487293772,
+      "device_peak_mib": 30925.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.37067562067562065,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 597,
+          "peak_reserved_bytes": 8352956416
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.1",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 7687,
+          "peak_reserved_bytes": 10643046400
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 7439,
+          "peak_reserved_bytes": 10513022976
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 8145,
+          "peak_reserved_bytes": 10915676160
+        }
+      ]
+    },
+    {
+      "job_id": "12986941",
+      "parent_seconds": 1050.3690449079731,
+      "tokens": 24517,
+      "aggregate_tokens_per_second": 23.34132000448283,
+      "device_peak_mib": 27607.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.43819698819698816,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.1",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 8192,
+          "peak_reserved_bytes": 10915676160
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 3636,
+          "peak_reserved_bytes": 9133096960
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.9",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 5309,
+          "peak_reserved_bytes": 9619636224
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.1",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 7380,
+          "peak_reserved_bytes": 10529800192
+        }
+      ]
+    },
+    {
+      "job_id": "12986942",
+      "parent_seconds": 502.3176993030356,
+      "tokens": 13276,
+      "aggregate_tokens_per_second": 26.429488784529017,
+      "device_peak_mib": 25315.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.48483923483923486,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.5",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 5455,
+          "peak_reserved_bytes": 9737076736
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9",
+          "indices": [
+            287
+          ],
+          "generated_tokens": 1241,
+          "peak_reserved_bytes": 8478785536
+        },
+        {
+          "cell_id": "gpqa_main-q4-native",
+          "indices": [
+            271
+          ],
+          "generated_tokens": 746,
+          "peak_reserved_bytes": 8373927936
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+          "indices": [
+            22
+          ],
+          "generated_tokens": 5834,
+          "peak_reserved_bytes": 9825157120
+        }
+      ]
+    },
+    {
+      "job_id": "12986943",
+      "parent_seconds": 240.41835506993812,
+      "tokens": 6344,
+      "aggregate_tokens_per_second": 26.387336350232157,
+      "device_peak_mib": 25013.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.49098494098494094,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1",
+          "indices": [
+            22
+          ],
+          "generated_tokens": 4449,
+          "peak_reserved_bytes": 9388949504
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 626,
+          "peak_reserved_bytes": 8357150720
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 649,
+          "peak_reserved_bytes": 8378122240
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 620,
+          "peak_reserved_bytes": 8355053568
+        }
+      ]
+    },
+    {
+      "job_id": "12986944",
+      "parent_seconds": 183.69636546308175,
+      "tokens": 4905,
+      "aggregate_tokens_per_second": 26.701671465491128,
+      "device_peak_mib": 24995.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.4913512413512413,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 584,
+          "peak_reserved_bytes": 8355053568
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 736,
+          "peak_reserved_bytes": 8396996608
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+          "indices": [
+            0
+          ],
+          "generated_tokens": 3046,
+          "peak_reserved_bytes": 8887730176
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.1",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 539,
+          "peak_reserved_bytes": 8355053568
+        }
+      ]
+    },
+    {
+      "job_id": "12986946",
+      "parent_seconds": 100.71201412205119,
+      "tokens": 2446,
+      "aggregate_tokens_per_second": 24.287072613161463,
+      "device_peak_mib": 24985.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.49155474155474155,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 637,
+          "peak_reserved_bytes": 8376025088
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 669,
+          "peak_reserved_bytes": 8376025088
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.1",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 503,
+          "peak_reserved_bytes": 8352956416
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 637,
+          "peak_reserved_bytes": 8373927936
+        }
+      ]
+    },
+    {
+      "job_id": "12987123",
+      "parent_seconds": 431.9290518029593,
+      "tokens": 13299,
+      "aggregate_tokens_per_second": 30.789778887266976,
+      "device_peak_mib": 25303.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.4850834350834351,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-native",
+          "indices": [
+            342
+          ],
+          "generated_tokens": 8192,
+          "peak_reserved_bytes": 10892607488
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+          "indices": [
+            287
+          ],
+          "generated_tokens": 1191,
+          "peak_reserved_bytes": 8476688384
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1",
+          "indices": [
+            287
+          ],
+          "generated_tokens": 1222,
+          "peak_reserved_bytes": 8478785536
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5",
+          "indices": [
+            0
+          ],
+          "generated_tokens": 2694,
+          "peak_reserved_bytes": 8831107072
+        }
+      ]
+    },
+    {
+      "job_id": "12987190",
+      "parent_seconds": 439.98449210997205,
+      "tokens": 12123,
+      "aggregate_tokens_per_second": 27.553243846989755,
+      "device_peak_mib": 25223.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.4867114367114367,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-native",
+          "indices": [
+            35
+          ],
+          "generated_tokens": 505,
+          "peak_reserved_bytes": 8334082048
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+          "indices": [
+            418
+          ],
+          "generated_tokens": 4144,
+          "peak_reserved_bytes": 9288286208
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1",
+          "indices": [
+            418
+          ],
+          "generated_tokens": 1035,
+          "peak_reserved_bytes": 8438939648
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5",
+          "indices": [
+            22
+          ],
+          "generated_tokens": 6439,
+          "peak_reserved_bytes": 10158604288
+        }
+      ]
+    }
+  ]
+}

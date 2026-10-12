@@ -1,0 +1,5 @@
+{
+  "stdout": "12987423|COMPLETED|0:0|356|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n12987424|COMPLETED|0:0|325|billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1|debug|debug\n",
+  "exit_code": 0,
+  "purpose": "compressed final-audit lifecycle reconciliation, no new GPU work"
+}
