@@ -1,0 +1,32 @@
+{
+  "status": "PACKING3_SYNTHETIC_PREFLIGHT_COMPLETE",
+  "job_id": "12985891",
+  "packing": 3,
+  "source_commit": "939392e5c501c17ef1f2fdc2e0ea19d67d2ef271",
+  "device_peak_mib": 24367.0,
+  "device_capacity_mib": 49140.0,
+  "headroom_fraction": 0.5041310541310542,
+  "elapsed_seconds": 28.403584722895175,
+  "children": [
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "generated_tokens": 86,
+      "decode_count": 85,
+      "peak_reserved_bytes": 8155824128
+    },
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.1",
+      "generated_tokens": 86,
+      "decode_count": 85,
+      "peak_reserved_bytes": 8155824128
+    },
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.5",
+      "generated_tokens": 108,
+      "decode_count": 107,
+      "peak_reserved_bytes": 8157921280
+    }
+  ],
+  "tail_sizing": false,
+  "target_gold_loaded": false
+}

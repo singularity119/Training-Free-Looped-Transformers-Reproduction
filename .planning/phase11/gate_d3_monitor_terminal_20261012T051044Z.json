@@ -1,0 +1,32 @@
+{
+  "automation_id": "gate-d-3-gpqa-length-pilot",
+  "state": "PAUSED",
+  "observed_at": "2026-10-12T05:10:44.367Z",
+  "job_id": "12985401",
+  "job_state": "COMPLETED",
+  "exit_code": "0:0",
+  "elapsed_seconds": 391,
+  "pause_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d-3-gpqa-length-pilot\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "resume_packet": "AUTOMATION_TERMINAL_RESUME\nGate: Phase11 D-3 GPQA length pilot\nExecutor01a12e14-57d6-7e51-9cfa-588f4d038352/local;planning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local;automationgate-d-3-gpqa-length-pilot\nRemotehpc2-hkustgz,job12985401 COMPLETED0:0,ElapsedRaw391,1A40,debug/debug,queueempty. Parentbatch_summary and bothchild summaries exist; nofailure observed. Native0/22 generated3289/6453 withEOS,question140.0407/235.1377seconds. K3current0.9 25/0 generated636/2000 withEOS,question51.9708/181.6047seconds. Monitor only readbounded scheduler/log metadata,notraw content/gold.\nBatchroot/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-p2trial-batch;children sameprefix-p2trial-0 and -p2trial-1;source939392e5c501c17ef1f2fdc2e0ea19d67d2ef271/source-packing/pinnedPython.\nLifecycleautomation_updateconfirmedPAUSED(fullfieldspreserved). Nextauthorizedexecutoraction:independentlyverify4raw records/cache/own-prefilldirection lifecycle andconcurrentdevice_memory;mergeprevious7 so11/336ifclosed;updateactualGPUh. Sizepacking2continuation fromsingle8192tail+concurrentdevicepeak with20%headroom,noOOM andpracticalthroughput;if supported,continue authorized336 usingfrozenbatch1/independentprocesses andlegitimatecurrentdebugcapacity (max8GPU isupperlimit). Keepalljobs<30min,actual+reserved16GPUh. No successfulpairs rerun,no cacheoptimization,promptchange,accuracy/gold,MMLU/full448\u00d718,nextGate. LowrisksameGate freshmissing-onlyrecoverystillallowed;planningownsPASS. Retargetsole30minheartbeataftervalidnextjobs;manualpollingforbidden.",
+  "resume_delivery": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a12e14-57d6-7e51-9cfa-588f4d038352\"}"
+      }
+    ],
+    "isError": false
+  }
+}

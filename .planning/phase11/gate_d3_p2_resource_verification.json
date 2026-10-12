@@ -1,0 +1,46 @@
+{
+  "status": "PACKING2_RESOURCE_TRIAL_VERIFIED",
+  "job_id": "12985401",
+  "packing": 2,
+  "source_commit": "939392e5c501c17ef1f2fdc2e0ea19d67d2ef271",
+  "elapsed_seconds": 389.085707396036,
+  "tokens": 12378,
+  "aggregate_tokens_per_second": 31.81304212596247,
+  "device_peak_mib": 17517.0,
+  "device_capacity_mib": 49140.0,
+  "headroom_fraction": 0.6435286935286935,
+  "oom_count": 0,
+  "children": [
+    {
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9",
+      "indices": [
+        25,
+        0
+      ],
+      "generated_tokens": 2636,
+      "question_seconds": 233.5755055649206,
+      "child_seconds": 247.2334593019914,
+      "peak_reserved_bytes": 8665432064
+    },
+    {
+      "cell_id": "gpqa_main-q4-native",
+      "indices": [
+        0,
+        22
+      ],
+      "generated_tokens": 9742,
+      "question_seconds": 375.17838221997954,
+      "child_seconds": 388.80699984391686,
+      "peak_reserved_bytes": 10125049856
+    }
+  ],
+  "estimated_serial_seconds_from_singleton_family_rates": 490.76671048557535,
+  "estimated_speedup_not_matched_replay": 1.2613331745595115,
+  "target_gold_loaded": false,
+  "capacity_scope": "A40; p1 includes true8192 tail; concurrent p2 Native max6453 and K3 max2000; strong margin to two singleton tail peaks",
+  "supersedes": "p2-resource-verification.json: initial cost estimate used completion order instead of cell identity; only that estimate corrected",
+  "admitted_packing": 2,
+  "admitted_max_concurrent_gpus": 8,
+  "admission_basis": "Large memory margin to two true8192 singleton peaks plus observed concurrent capacity and practical aggregate throughput; use A40 only, no p3 or A800 extrapolation",
+  "source_recipe_unchanged": true
+}

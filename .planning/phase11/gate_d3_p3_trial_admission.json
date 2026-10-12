@@ -1,0 +1,17 @@
+{
+  "status": "PACKING3_BOUNDED_TRIAL_PLANNED",
+  "gpu": "NVIDIA A40",
+  "single_8192_peak_reserved_bytes": 10932453376,
+  "three_singleton_peak_sum_bytes": 32797360128,
+  "usable_memory_at_20pct_headroom_bytes": 40719718809.6,
+  "requested_packing": 3,
+  "child_records_per_process": 1,
+  "trial_record_count": 3,
+  "trial_indices": 404,
+  "scientific_membership": "All3 distinct cell/sample pairs were frozen in original336; sample404 is scheduled for tail resource coverage only, not selected by accuracy; successful Native/current0.9 sample404 not repeated",
+  "effective_gpu_cap": 2,
+  "normal_qos": "debug",
+  "max_submit_jobs": 8,
+  "admission": "synthetic3 preflight then real3 independent K3 singleton processes; no broad packing3 until concurrent memory/runtime measured",
+  "target_gold_loaded": false
+}

@@ -16,5 +16,9 @@
   "initial_max_gpus": 2,
   "target_gold_loaded": false,
   "packing_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source-packing",
-  "packing_source_commit": "939392e5c501c17ef1f2fdc2e0ea19d67d2ef271"
+  "packing_source_commit": "939392e5c501c17ef1f2fdc2e0ea19d67d2ef271",
+  "effective_max_concurrent_debug_gpus": 2,
+  "effective_max_submitted_debug_jobs": 8,
+  "debug_qos_actual": "debug",
+  "debug_qos_max_user_cpus": 16
 }

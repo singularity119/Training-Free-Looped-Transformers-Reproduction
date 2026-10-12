@@ -8,19 +8,21 @@
   "host": "local",
   "remote_host": "hpc2-hkustgz",
   "job_ids": [
-    "12985401"
+    "12985892",
+    "12985953"
   ],
   "run_roots": [
-    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-p2trial-batch"
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-p2-wave1-batch",
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-p3-trial-batch"
   ],
   "terminal_self_wake": "send_message_to_thread to exact executor with AUTOMATION_TERMINAL_RESUME; pause first; visible confirmation required",
   "fallback": "AUTOMATION_RELAY_REQUIRED to exact planning",
-  "next_authorized_action": "Verify four packing2 pilot records, concurrent memory and throughput; merge prior7; continue authorized336 within16 GPUh and measured packing",
+  "next_authorized_action": "Verify seven records and packing3 tail capacity/throughput; combine previous11; continue336 with measured packing within16GPUh and actualQoS2GPU cap",
   "target_gold_loaded": false,
   "creation_tool_confirmed": true,
   "creation_retry_note": "Initial create rejected before creation for missing destination; corrected destination=thread and exact targetThreadId.",
   "terminal_criteria": "all watched jobs successful terminal, or any abnormal terminal/trust failure",
   "update_tool_confirmed": true,
   "source_commit": "939392e5c501c17ef1f2fdc2e0ea19d67d2ef271",
-  "previous_terminal_receipt": "gate_d3_monitor_terminal_20261012T042742Z.json"
+  "previous_terminal_receipt": "gate_d3_monitor_terminal_20261012T051044Z.json"
 }
