@@ -1,0 +1,31 @@
+{
+  "status": "ALL_S1_PREDICTIONS_SAVED_GOLD_UNREAD",
+  "timestamp": "2026-10-12T02:25:23.680522+00:00",
+  "record_count": 8064,
+  "independent_cells": 18,
+  "samples_per_cell": 448,
+  "pattern": "final[ \\t]+answer[ \\t]*[:：][ \\t]*(?:\\([ \\t]*([A-D])[ \\t]*\\)|([A-D]))[ \\t]*[.!;,．！。]?",
+  "flags": "re.IGNORECASE",
+  "line_processing": "splitlines then strip then fullmatch",
+  "ambiguity": "exactly one matching line; duplicates always fail",
+  "gold_read": false,
+  "s0_status_counts": {
+    "no_valid_final_line": 8051,
+    "unique_valid": 13
+  },
+  "s1_status_counts": {
+    "unique_valid": 3957,
+    "no_valid_final_line": 4070,
+    "multiple_valid_final_lines": 37
+  },
+  "status_transitions": {
+    "no_valid_final_line -> unique_valid": 3944,
+    "no_valid_final_line -> no_valid_final_line": 4070,
+    "no_valid_final_line -> multiple_valid_final_lines": 37,
+    "unique_valid -> unique_valid": 13
+  },
+  "common_valid_count": 13,
+  "common_valid_prediction_agreement_count": 13,
+  "retained_c_records": 72,
+  "retained_d_records": 7992
+}
