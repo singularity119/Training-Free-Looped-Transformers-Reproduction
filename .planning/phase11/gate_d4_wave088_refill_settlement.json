@@ -1,0 +1,319 @@
+{
+  "status": "WAVE088_REFILL_SETTLEMENT",
+  "jobs": {
+    "12989428": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2755
+    },
+    "12989433": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2605
+    },
+    "12989434": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2212
+    },
+    "12989435": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2711
+    },
+    "12989436": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2001
+    },
+    "12989437": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1450
+    },
+    "12989438": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1895
+    },
+    "12990894": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2255
+    },
+    "12990895": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2836
+    },
+    "12990896": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 734
+    },
+    "12990897": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 862
+    },
+    "12990898": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1073
+    },
+    "12990899": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1732
+    },
+    "12990900": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1395
+    },
+    "12990901": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1846
+    },
+    "12990902": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1503
+    },
+    "12990903": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1735
+    },
+    "12990904": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2428
+    },
+    "12990905": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2298
+    },
+    "12990906": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1768
+    },
+    "12990907": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1797
+    },
+    "12990908": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1837
+    },
+    "12990909": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1742
+    },
+    "12990910": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2460
+    },
+    "12990911": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2412
+    },
+    "12990912": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2731
+    },
+    "12990913": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2155
+    },
+    "12990914": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 577
+    },
+    "12990915": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 838
+    },
+    "12990916": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1132
+    },
+    "12990917": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2548
+    },
+    "12990918": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2260
+    },
+    "12990919": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1878
+    },
+    "12990920": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1016
+    },
+    "12990921": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2137
+    },
+    "12990922": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2751
+    },
+    "12990923": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2920
+    },
+    "12990924": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1611
+    },
+    "12990925": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 923
+    },
+    "12990926": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1068
+    },
+    "12990927": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1650
+    },
+    "12990928": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 2540
+    },
+    "12990929": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1892
+    },
+    "12990930": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1962
+    },
+    "12990931": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 992
+    },
+    "12990932": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 1785
+    },
+    "12990933": {
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "allocation_seconds": 2369
+    },
+    "12990934": {
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "allocation_seconds": 1950
+    },
+    "12990935": {
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "allocation_seconds": 1697
+    },
+    "12990936": {
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "allocation_seconds": 1565
+    }
+  },
+  "complete_job_ids": [
+    "12989428",
+    "12989433",
+    "12989434",
+    "12989435",
+    "12989436",
+    "12989437",
+    "12989438",
+    "12990894",
+    "12990895",
+    "12990896",
+    "12990897",
+    "12990898",
+    "12990899",
+    "12990900",
+    "12990901",
+    "12990902",
+    "12990903",
+    "12990904",
+    "12990905",
+    "12990906",
+    "12990907",
+    "12990908",
+    "12990909",
+    "12990910",
+    "12990911",
+    "12990912",
+    "12990913",
+    "12990914",
+    "12990915",
+    "12990916",
+    "12990917",
+    "12990918",
+    "12990919",
+    "12990920",
+    "12990921",
+    "12990922",
+    "12990923",
+    "12990924",
+    "12990925",
+    "12990926",
+    "12990927",
+    "12990928",
+    "12990929",
+    "12990930",
+    "12990931",
+    "12990932"
+  ],
+  "carried_job_ids": [
+    "12990933",
+    "12990934",
+    "12990935",
+    "12990936"
+  ],
+  "prior_settled_records": 1759,
+  "new_whole_job_complete_records": 920,
+  "new_partial_child_complete_records": 36,
+  "observer_prior_complete_records": 2679,
+  "verified_complete_formal_records": 2715,
+  "current_completed_allocation_gpuh": 23.807777777777776,
+  "all_user_queued_jobs": 4,
+  "next_batch": 131,
+  "safe_new_batch_count": 46,
+  "target_gold_loaded": false
+}

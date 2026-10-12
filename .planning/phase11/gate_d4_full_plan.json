@@ -8,16 +8,16 @@
   "packing5_remaining_records": 7925,
   "packing5_remaining_batches": 397,
   "records_per_child": 4,
-  "packing5_batches_submitted": 131,
-  "packing5_next_batch": 131,
-  "packing5_remaining_unsubmitted_records": 5305,
-  "packing5_remaining_unsubmitted_batches": 266,
+  "packing5_batches_submitted": 177,
+  "packing5_next_batch": 177,
+  "packing5_remaining_unsubmitted_records": 4385,
+  "packing5_remaining_unsubmitted_batches": 220,
   "current_full_inflight_jobs": 50,
   "formal_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/plan.json",
   "full_cell_roots": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/cell-roots.json",
   "target_gold_loaded": false,
   "full_panel_closed": false,
-  "formal_submitted_records": 2759,
-  "formal_verified_complete_records": 1787,
-  "whole_job_complete_records": 1759
+  "formal_submitted_records": 3679,
+  "formal_verified_complete_records": 2715,
+  "whole_job_complete_records": 2679
 }
