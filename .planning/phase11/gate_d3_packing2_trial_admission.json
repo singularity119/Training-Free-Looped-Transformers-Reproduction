@@ -1,0 +1,20 @@
+{
+  "scope": "D3_A40_8192_SINGLETON_TO_PACKING2_TRIAL",
+  "gpu": "NVIDIA A40",
+  "total_memory_bytes": 50899648512,
+  "measured_native_8192_peak_reserved_bytes": 10892607488,
+  "measured_k3_current_8192_peak_reserved_bytes": 10932453376,
+  "summed_two_process_reserved_bytes": 21865060864,
+  "headroom_target_fraction": 0.2,
+  "usable_bytes_at_20pct_headroom": 40719718809.6,
+  "requested_packing": 2,
+  "admission": "bounded trial only; concurrent device peak and throughput must be measured before broad packing2 use",
+  "max_gpus_for_trial": 2,
+  "target_gold_loaded": false,
+  "no_cross_gpu_extrapolation": true,
+  "p1_cost": {
+    "native_8192_question_seconds": 299.84620092401747,
+    "k3_current_8192_question_seconds": 428.3442427830305
+  },
+  "source_compatibility": "0357d2d original producer and new batch commit share unchanged acquire/load_runtime/runtime/cache path; only new orchestration and summary multi-commit reporting"
+}

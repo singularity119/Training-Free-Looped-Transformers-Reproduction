@@ -174,7 +174,6 @@ def summarize(args):
             cells.setdefault(cell_id, []).append((record, fact))
         attempts.append({"run_root": str(root), "count": len(records), "elapsed_seconds": summary["elapsed_seconds"],
             "peak_reserved_bytes": summary["peak_reserved_bytes"], "gpu": read(root / "env.json")["gpu"]})
-    require(len(commits) == 1, "multiple producer commits")
     tables = []
     for cell_id, rows in cells.items():
         budgets = []
@@ -197,7 +196,8 @@ def summarize(args):
     require(not args.require_complete or closed, "336 pilot records not closed")
     result = {"schema": SCHEMA, "status": "D3_PILOT_CLOSED" if closed else "D3_PARTIAL_LABEL_FREE",
         "target_gold_loaded": False, "accuracy_computed": False, "completed_records": len(seen), "expected_records": 336,
-        "source_commit": next(iter(commits)), "prefix_diagnostic_not_independent_rerun": True,
+        "source_commit": next(iter(commits)) if len(commits) == 1 else None,
+        "source_commits": sorted(commits), "prefix_diagnostic_not_independent_rerun": True,
         "length_limit_is_right_censoring": True, "cells": tables, "attempts": attempts,
         "missing": [{"cell_id": c, "canonical_index": i} for c, i in sorted(expected_pairs - seen)]}
     write_json_once(args.out, result)

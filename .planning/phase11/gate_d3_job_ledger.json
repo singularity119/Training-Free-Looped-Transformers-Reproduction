@@ -89,7 +89,11 @@
       "target_gold_loaded": false,
       "last_confirmed_state": "RUNNING",
       "last_confirmed_elapsed_seconds": 57,
-      "actual_qos": "debug"
+      "actual_qos": "debug",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 558,
+      "actual_gpuh": 0.155
     },
     {
       "job_id": "12984988",
@@ -110,7 +114,11 @@
       "target_gold_loaded": false,
       "last_confirmed_state": "RUNNING",
       "last_confirmed_elapsed_seconds": 54,
-      "actual_qos": "debug"
+      "actual_qos": "debug",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 644,
+      "actual_gpuh": 0.17888888888888888
     }
   ]
 }

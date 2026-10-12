@@ -1,6 +1,6 @@
 {
   "automation_id": "gate-d-3-gpqa-length-pilot",
-  "state": "ACTIVE",
+  "state": "PAUSED",
   "kind": "heartbeat",
   "cadence_minutes": 30,
   "executor": "01a12e14-57d6-7e51-9cfa-588f4d038352",
@@ -25,5 +25,9 @@
   "terminal_state": "COMPLETED",
   "terminal_resume_delivery_confirmed": true,
   "terminal_criteria": "all watched jobs successful terminal, or any abnormal terminal/trust failure",
-  "update_tool_confirmed": true
+  "update_tool_confirmed": true,
+  "terminal_job_ids": [
+    "12984987",
+    "12984988"
+  ]
 }
