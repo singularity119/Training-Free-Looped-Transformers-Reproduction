@@ -1,0 +1,69 @@
+{
+  "budget_gpuh": 16,
+  "max_successful_pilot_records": 336,
+  "jobs": [
+    {
+      "job_id": "12983947",
+      "kind": "synthetic_preflight",
+      "partition": "debug",
+      "qos": "debuglimit",
+      "gres": "gpu:a40:1",
+      "cpus_per_task": 8,
+      "mem": "64G",
+      "time_limit_seconds": 1740,
+      "packing": 1,
+      "source_commit": "0357d2df5020f783662aca8ccb9e21cb105cd811",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-synthetic1",
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9",
+      "scope": "PREFLIGHT_ONLY",
+      "target_gold_loaded": false,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 73,
+      "actual_gpuh": 0.020277777777777777,
+      "actual_qos": "debug"
+    },
+    {
+      "job_id": "12984219",
+      "kind": "pilot_resource_canary",
+      "cell_id": "gpqa_main-q4-native",
+      "indices": [
+        208
+      ],
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-native208",
+      "time_limit_seconds": 1740,
+      "packing": 1,
+      "gres": "gpu:a40:1",
+      "partition": "debug",
+      "qos_requested": "debuglimit",
+      "submission_command": "cd /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source && test -z \"$(git status --porcelain)\" && test \"$(git rev-parse HEAD)\" = 0357d2df5020f783662aca8ccb9e21cb105cd811 && /opt/slurm/bin/sbatch --parsable --partition=debug --qos=debuglimit --gres=gpu:a40:1 --cpus-per-task=8 --mem=64G --time=00:29:00 --no-requeue --job-name=ls-p11-d3-native208 --output=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/logs/phase11-gate-d3-20261012T031412Z/native208-%j.out --error=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/logs/phase11-gate-d3-20261012T031412Z/native208-%j.err /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source/scripts/loopscope/phase11_length_pilot.sbatch /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source /hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python acquire --membership /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/membership.json --pool /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/gpqa_main-pool.json --cell-id gpqa_main-q4-native --indices 208 --run-root /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-native208 --commit 0357d2df5020f783662aca8ccb9e21cb105cd811",
+      "submission_exit_code": 0,
+      "target_gold_loaded": false,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 60,
+      "actual_gpuh": 0.016666666666666666,
+      "actual_qos": "debug"
+    },
+    {
+      "job_id": "12984220",
+      "kind": "pilot_resource_canary",
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9",
+      "indices": [
+        208
+      ],
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-k3current09208",
+      "time_limit_seconds": 1740,
+      "packing": 1,
+      "gres": "gpu:a40:1",
+      "partition": "debug",
+      "qos_requested": "debuglimit",
+      "submission_command": "cd /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source && test -z \"$(git status --porcelain)\" && test \"$(git rev-parse HEAD)\" = 0357d2df5020f783662aca8ccb9e21cb105cd811 && /opt/slurm/bin/sbatch --parsable --partition=debug --qos=debuglimit --gres=gpu:a40:1 --cpus-per-task=8 --mem=64G --time=00:29:00 --no-requeue --job-name=ls-p11-d3-k3current09208 --output=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/logs/phase11-gate-d3-20261012T031412Z/k3current09208-%j.out --error=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/logs/phase11-gate-d3-20261012T031412Z/k3current09208-%j.err /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source/scripts/loopscope/phase11_length_pilot.sbatch /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source /hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python acquire --membership /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/membership.json --pool /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/gpqa_main-pool.json --cell-id gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9 --indices 208 --run-root /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-k3current09208 --commit 0357d2df5020f783662aca8ccb9e21cb105cd811",
+      "submission_exit_code": 0,
+      "target_gold_loaded": false,
+      "last_confirmed_state": "RUNNING",
+      "last_confirmed_elapsed_seconds": 43,
+      "actual_qos": "debug"
+    }
+  ]
+}

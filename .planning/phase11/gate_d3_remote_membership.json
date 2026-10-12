@@ -1,0 +1,1383 @@
+{
+  "schema": "loopscope.phase11.length_pilot.v1",
+  "seed": 20261012,
+  "population_count": 448,
+  "indices": [
+    208,
+    4,
+    404,
+    25,
+    0,
+    22,
+    287,
+    418,
+    389,
+    271,
+    342,
+    35,
+    113,
+    201,
+    87,
+    117,
+    284,
+    286,
+    119,
+    38,
+    310,
+    279,
+    335,
+    161,
+    223,
+    58,
+    376,
+    276,
+    65,
+    42,
+    175,
+    435,
+    141,
+    304,
+    294,
+    362,
+    334,
+    230,
+    317,
+    32,
+    149,
+    359,
+    375,
+    48,
+    45,
+    200,
+    425,
+    234,
+    281,
+    444,
+    172,
+    36,
+    313,
+    17,
+    2,
+    378,
+    64,
+    207,
+    164,
+    291,
+    270,
+    78,
+    210,
+    239
+  ],
+  "max_new_tokens": 8192,
+  "target_gold_loaded": false,
+  "record_count": 336,
+  "cells": [
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "cell_id": "gpqa_main-q4-native",
+        "arm": "Native",
+        "window": null,
+        "boundaries": null,
+        "k": null,
+        "direction_policy": null,
+        "strength": 0.0,
+        "intervention_mode": null
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117,
+        284,
+        286,
+        119,
+        38,
+        310,
+        279,
+        335,
+        161,
+        223,
+        58,
+        376,
+        276,
+        65,
+        42,
+        175,
+        435,
+        141,
+        304,
+        294,
+        362,
+        334,
+        230,
+        317,
+        32,
+        149,
+        359,
+        375,
+        48,
+        45,
+        200,
+        425,
+        234,
+        281,
+        444,
+        172,
+        36,
+        313,
+        17,
+        2,
+        378,
+        64,
+        207,
+        164,
+        291,
+        270,
+        78,
+        210,
+        239
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 2,
+        "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+        "arm": "Loop",
+        "direction_policy": null,
+        "strength": 0.0,
+        "intervention_mode": null
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 2,
+        "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1",
+        "arm": "Online",
+        "direction_policy": "fixed_t0",
+        "strength": 0.1,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 2,
+        "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5",
+        "arm": "Online",
+        "direction_policy": "fixed_t0",
+        "strength": 0.5,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 2,
+        "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+        "arm": "Online",
+        "direction_policy": "fixed_t0",
+        "strength": 0.9,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 2,
+        "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1",
+        "arm": "Online",
+        "direction_policy": "current_t",
+        "strength": 0.1,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 2,
+        "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+        "arm": "Online",
+        "direction_policy": "current_t",
+        "strength": 0.5,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 2,
+        "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9",
+        "arm": "Online",
+        "direction_policy": "current_t",
+        "strength": 0.9,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+        "arm": "Loop",
+        "direction_policy": null,
+        "strength": 0.0,
+        "intervention_mode": null
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.1",
+        "arm": "Online",
+        "direction_policy": "fixed_t0",
+        "strength": 0.1,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5",
+        "arm": "Online",
+        "direction_policy": "fixed_t0",
+        "strength": 0.5,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+        "arm": "Online",
+        "direction_policy": "fixed_t0",
+        "strength": 0.9,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.1",
+        "arm": "Online",
+        "direction_policy": "lag1",
+        "strength": 0.1,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5",
+        "arm": "Online",
+        "direction_policy": "lag1",
+        "strength": 0.5,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.9",
+        "arm": "Online",
+        "direction_policy": "lag1",
+        "strength": 0.9,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.1",
+        "arm": "Online",
+        "direction_policy": "current_t",
+        "strength": 0.1,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.5",
+        "arm": "Online",
+        "direction_policy": "current_t",
+        "strength": 0.5,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    },
+    {
+      "cell": {
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9",
+        "arm": "Online",
+        "direction_policy": "current_t",
+        "strength": 0.9,
+        "intervention_mode": "spectral"
+      },
+      "indices": [
+        208,
+        4,
+        404,
+        25,
+        0,
+        22,
+        287,
+        418,
+        389,
+        271,
+        342,
+        35,
+        113,
+        201,
+        87,
+        117
+      ]
+    }
+  ],
+  "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/gpqa_main-pool.json",
+  "samples": [
+    {
+      "canonical_index": 208,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:208",
+      "prompt_token_length": 519
+    },
+    {
+      "canonical_index": 4,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:4",
+      "prompt_token_length": 223
+    },
+    {
+      "canonical_index": 404,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:404",
+      "prompt_token_length": 219
+    },
+    {
+      "canonical_index": 25,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:25",
+      "prompt_token_length": 207
+    },
+    {
+      "canonical_index": 0,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:0",
+      "prompt_token_length": 214
+    },
+    {
+      "canonical_index": 22,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:22",
+      "prompt_token_length": 240
+    },
+    {
+      "canonical_index": 287,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:287",
+      "prompt_token_length": 197
+    },
+    {
+      "canonical_index": 418,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:418",
+      "prompt_token_length": 228
+    },
+    {
+      "canonical_index": 389,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:389",
+      "prompt_token_length": 255
+    },
+    {
+      "canonical_index": 271,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:271",
+      "prompt_token_length": 172
+    },
+    {
+      "canonical_index": 342,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:342",
+      "prompt_token_length": 203
+    },
+    {
+      "canonical_index": 35,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:35",
+      "prompt_token_length": 153
+    },
+    {
+      "canonical_index": 113,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:113",
+      "prompt_token_length": 318
+    },
+    {
+      "canonical_index": 201,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:201",
+      "prompt_token_length": 488
+    },
+    {
+      "canonical_index": 87,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:87",
+      "prompt_token_length": 477
+    },
+    {
+      "canonical_index": 117,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:117",
+      "prompt_token_length": 223
+    },
+    {
+      "canonical_index": 284,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:284",
+      "prompt_token_length": 92
+    },
+    {
+      "canonical_index": 286,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:286",
+      "prompt_token_length": 252
+    },
+    {
+      "canonical_index": 119,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:119",
+      "prompt_token_length": 160
+    },
+    {
+      "canonical_index": 38,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:38",
+      "prompt_token_length": 307
+    },
+    {
+      "canonical_index": 310,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:310",
+      "prompt_token_length": 233
+    },
+    {
+      "canonical_index": 279,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:279",
+      "prompt_token_length": 150
+    },
+    {
+      "canonical_index": 335,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:335",
+      "prompt_token_length": 228
+    },
+    {
+      "canonical_index": 161,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:161",
+      "prompt_token_length": 246
+    },
+    {
+      "canonical_index": 223,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:223",
+      "prompt_token_length": 118
+    },
+    {
+      "canonical_index": 58,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:58",
+      "prompt_token_length": 230
+    },
+    {
+      "canonical_index": 376,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:376",
+      "prompt_token_length": 237
+    },
+    {
+      "canonical_index": 276,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:276",
+      "prompt_token_length": 305
+    },
+    {
+      "canonical_index": 65,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:65",
+      "prompt_token_length": 168
+    },
+    {
+      "canonical_index": 42,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:42",
+      "prompt_token_length": 137
+    },
+    {
+      "canonical_index": 175,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:175",
+      "prompt_token_length": 140
+    },
+    {
+      "canonical_index": 435,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:435",
+      "prompt_token_length": 128
+    },
+    {
+      "canonical_index": 141,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:141",
+      "prompt_token_length": 302
+    },
+    {
+      "canonical_index": 304,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:304",
+      "prompt_token_length": 193
+    },
+    {
+      "canonical_index": 294,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:294",
+      "prompt_token_length": 249
+    },
+    {
+      "canonical_index": 362,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:362",
+      "prompt_token_length": 146
+    },
+    {
+      "canonical_index": 334,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:334",
+      "prompt_token_length": 190
+    },
+    {
+      "canonical_index": 230,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:230",
+      "prompt_token_length": 262
+    },
+    {
+      "canonical_index": 317,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:317",
+      "prompt_token_length": 127
+    },
+    {
+      "canonical_index": 32,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:32",
+      "prompt_token_length": 179
+    },
+    {
+      "canonical_index": 149,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:149",
+      "prompt_token_length": 154
+    },
+    {
+      "canonical_index": 359,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:359",
+      "prompt_token_length": 344
+    },
+    {
+      "canonical_index": 375,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:375",
+      "prompt_token_length": 168
+    },
+    {
+      "canonical_index": 48,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:48",
+      "prompt_token_length": 265
+    },
+    {
+      "canonical_index": 45,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:45",
+      "prompt_token_length": 163
+    },
+    {
+      "canonical_index": 200,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:200",
+      "prompt_token_length": 576
+    },
+    {
+      "canonical_index": 425,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:425",
+      "prompt_token_length": 304
+    },
+    {
+      "canonical_index": 234,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:234",
+      "prompt_token_length": 261
+    },
+    {
+      "canonical_index": 281,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:281",
+      "prompt_token_length": 133
+    },
+    {
+      "canonical_index": 444,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:444",
+      "prompt_token_length": 234
+    },
+    {
+      "canonical_index": 172,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:172",
+      "prompt_token_length": 165
+    },
+    {
+      "canonical_index": 36,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:36",
+      "prompt_token_length": 146
+    },
+    {
+      "canonical_index": 313,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:313",
+      "prompt_token_length": 177
+    },
+    {
+      "canonical_index": 17,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:17",
+      "prompt_token_length": 476
+    },
+    {
+      "canonical_index": 2,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:2",
+      "prompt_token_length": 160
+    },
+    {
+      "canonical_index": 378,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:378",
+      "prompt_token_length": 215
+    },
+    {
+      "canonical_index": 64,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:64",
+      "prompt_token_length": 224
+    },
+    {
+      "canonical_index": 207,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:207",
+      "prompt_token_length": 243
+    },
+    {
+      "canonical_index": 164,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:164",
+      "prompt_token_length": 129
+    },
+    {
+      "canonical_index": 291,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:291",
+      "prompt_token_length": 281
+    },
+    {
+      "canonical_index": 270,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:270",
+      "prompt_token_length": 226
+    },
+    {
+      "canonical_index": 78,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:78",
+      "prompt_token_length": 177
+    },
+    {
+      "canonical_index": 210,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:210",
+      "prompt_token_length": 392
+    },
+    {
+      "canonical_index": 239,
+      "identity": "github:idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7:dataset/gpqa_main.csv:239",
+      "prompt_token_length": 241
+    }
+  ],
+  "context_admission": {
+    "all_population_inputs_checked": 448,
+    "max_prompt_tokens": 2819,
+    "required_capacity": 11011,
+    "configured_native_capacity": 262144
+  }
+}

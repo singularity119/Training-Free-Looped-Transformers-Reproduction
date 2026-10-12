@@ -1,0 +1,22 @@
+{
+  "automation_id": "gate-d-3-gpqa-length-pilot",
+  "state": "ACTIVE",
+  "kind": "heartbeat",
+  "cadence_minutes": 30,
+  "executor": "01a12e14-57d6-7e51-9cfa-588f4d038352",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "host": "local",
+  "remote_host": "hpc2-hkustgz",
+  "job_ids": [
+    "12984220"
+  ],
+  "run_roots": [
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-k3current09208"
+  ],
+  "terminal_self_wake": "send_message_to_thread to exact executor with AUTOMATION_TERMINAL_RESUME; pause first; visible confirmation required",
+  "fallback": "AUTOMATION_RELAY_REQUIRED to exact planning",
+  "next_authorized_action": "Verify canaries; update actual GPUh; size same-Gate packing from long-tail evidence; continue bounded 336 pilot or report genuine admission BLOCK",
+  "target_gold_loaded": false,
+  "creation_tool_confirmed": true,
+  "creation_retry_note": "Initial create rejected before creation for missing destination; corrected destination=thread and exact targetThreadId."
+}

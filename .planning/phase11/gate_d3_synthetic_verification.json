@@ -1,0 +1,24 @@
+{
+  "status": "SYNTHETIC_PREFLIGHT_COMPLETE",
+  "target_gold_loaded": false,
+  "job_id": "12983947",
+  "source_commit": "0357d2df5020f783662aca8ccb9e21cb105cd811",
+  "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9",
+  "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-synthetic1",
+  "max_new_tokens": 8192,
+  "native_context_capacity": 262144,
+  "gpu": "NVIDIA A40",
+  "total_memory": 50899648512,
+  "prefill_count": 1,
+  "decode_count": 81,
+  "cache_growth_closed": true,
+  "decode_fit_count": 0,
+  "directions_released": true,
+  "generated_token_count": 82,
+  "elapsed_seconds": 65.67294761596713,
+  "peak_reserved_bytes": 8153726976,
+  "eos_ids": [
+    151645,
+    151643
+  ]
+}

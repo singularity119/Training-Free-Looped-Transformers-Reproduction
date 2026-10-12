@@ -1,0 +1,18 @@
+{
+  "executor": "01a12e14-57d6-7e51-9cfa-588f4d038352",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "host": "hpc2-hkustgz",
+  "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z",
+  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source",
+  "logs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/logs/phase11-gate-d3-20261012T031412Z",
+  "runs": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z",
+  "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+  "partition": "debug",
+  "qos": "debuglimit",
+  "gpu": "a40",
+  "max_job_seconds": 1740,
+  "budget_gpuh": 16,
+  "initial_packing": 1,
+  "initial_max_gpus": 2,
+  "target_gold_loaded": false
+}
