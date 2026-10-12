@@ -14,5 +14,7 @@
   "budget_gpuh": 16,
   "initial_packing": 1,
   "initial_max_gpus": 2,
-  "target_gold_loaded": false
+  "target_gold_loaded": false,
+  "packing_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d3-20261012T031412Z/source-packing",
+  "packing_source_commit": "939392e5c501c17ef1f2fdc2e0ea19d67d2ef271"
 }
