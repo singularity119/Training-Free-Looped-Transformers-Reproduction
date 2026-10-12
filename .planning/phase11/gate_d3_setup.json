@@ -21,10 +21,14 @@
   "effective_max_submitted_debug_jobs": 8,
   "debug_qos_actual": "debug",
   "debug_qos_max_user_cpus": 16,
-  "ssh_temporary_bind_address": "10.21.0.2",
+  "ssh_temporary_bind_address": "10.21.0.121",
   "ssh_temporary_address_family": "inet",
   "ssh_temporary_bind_interface": "utun7",
   "admitted_packing": 3,
   "admitted_records_per_child": 1,
-  "admitted_records_per_job": 4
+  "admitted_records_per_job": 4,
+  "ssh_temporary_resolved_address": "10.120.18.63",
+  "ssh_temporary_host_key_alias": "hpc2login.hpc.hkust-gz.edu.cn",
+  "ssh_temporary_strict_host_key_checking": "yes",
+  "ssh_resolution_evidence": "System resolution failed; bound query at14:57CST returned10.120.18.63 TTL7200. utun7 changed from10.21.0.2 to10.21.0.121; current address verified locally and strict original-hostname SSH succeeded. No system network/SSH/trust changes."
 }

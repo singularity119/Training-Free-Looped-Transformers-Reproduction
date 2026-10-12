@@ -1,0 +1,62 @@
+{
+  "facts": [
+    {
+      "job_id": "12986938",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 118,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1"
+    },
+    {
+      "job_id": "12986939",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 117,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1"
+    },
+    {
+      "job_id": "12986940",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "alloc_tres": ""
+    },
+    {
+      "job_id": "12986941",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "alloc_tres": ""
+    },
+    {
+      "job_id": "12986942",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "alloc_tres": ""
+    },
+    {
+      "job_id": "12986943",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "alloc_tres": ""
+    },
+    {
+      "job_id": "12986944",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "alloc_tres": ""
+    },
+    {
+      "job_id": "12986946",
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "alloc_tres": ""
+    }
+  ],
+  "read_only_check_exit": 0,
+  "target_gold_loaded": false
+}

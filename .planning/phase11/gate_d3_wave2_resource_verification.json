@@ -1,0 +1,414 @@
+{
+  "status": "WAVE2_RECORDS_AND_RESOURCES_VERIFIED",
+  "target_gold_loaded": false,
+  "results": [
+    {
+      "job_id": "12986430",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave2-b00-batch",
+      "status": "BATCH_COMPLETE",
+      "parent_seconds": 749.6076534509193,
+      "tokens": 19089,
+      "aggregate_tokens_per_second": 25.46532164142299,
+      "device_peak_mib": 26417.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.46241351241351236,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-native",
+          "indices": [
+            287
+          ],
+          "generated_tokens": 1367,
+          "peak_reserved_bytes": 8508145664
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 7530,
+          "peak_reserved_bytes": 10647240704
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1",
+          "indices": [
+            404
+          ],
+          "generated_tokens": 8192,
+          "peak_reserved_bytes": 10924064768
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 2000,
+          "peak_reserved_bytes": 8625586176
+        }
+      ]
+    },
+    {
+      "job_id": "12986431",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave2-b01-batch",
+      "status": "BATCH_COMPLETE",
+      "parent_seconds": 223.48948798899073,
+      "tokens": 5887,
+      "aggregate_tokens_per_second": 26.341283668294942,
+      "device_peak_mib": 25425.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.48260073260073255,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1528,
+          "peak_reserved_bytes": 8508145664
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1460,
+          "peak_reserved_bytes": 8508145664
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1613,
+          "peak_reserved_bytes": 8583643136
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1286,
+          "peak_reserved_bytes": 8495562752
+        }
+      ]
+    },
+    {
+      "job_id": "12986432",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave2-b02-batch",
+      "status": "BATCH_COMPLETE",
+      "parent_seconds": 270.2505874519702,
+      "tokens": 7162,
+      "aggregate_tokens_per_second": 26.501329997193267,
+      "device_peak_mib": 25503.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.48101343101343097,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1978,
+          "peak_reserved_bytes": 8625586176
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.1",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1785,
+          "peak_reserved_bytes": 8583643136
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 2021,
+          "peak_reserved_bytes": 8625586176
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1378,
+          "peak_reserved_bytes": 8508145664
+        }
+      ]
+    },
+    {
+      "job_id": "12986433",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave2-b03-batch",
+      "status": "BATCH_COMPLETE",
+      "parent_seconds": 258.2704505228903,
+      "tokens": 6406,
+      "aggregate_tokens_per_second": 24.803456946121837,
+      "device_peak_mib": 25425.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.48260073260073255,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.1",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1714,
+          "peak_reserved_bytes": 8583643136
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1440,
+          "peak_reserved_bytes": 8508145664
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.9",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1467,
+          "peak_reserved_bytes": 8508145664
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.1",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1785,
+          "peak_reserved_bytes": 8583643136
+        }
+      ]
+    },
+    {
+      "job_id": "12986434",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave2-b04-batch",
+      "status": "BATCH_COMPLETE",
+      "parent_seconds": 236.61662901798263,
+      "tokens": 6464,
+      "aggregate_tokens_per_second": 27.318451906052395,
+      "device_peak_mib": 25159.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.488013838013838,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.5",
+          "indices": [
+            208
+          ],
+          "generated_tokens": 1273,
+          "peak_reserved_bytes": 8491368448
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9",
+          "indices": [
+            22
+          ],
+          "generated_tokens": 3218,
+          "peak_reserved_bytes": 8973713408
+        },
+        {
+          "cell_id": "gpqa_main-q4-native",
+          "indices": [
+            418
+          ],
+          "generated_tokens": 1358,
+          "peak_reserved_bytes": 8508145664
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 615,
+          "peak_reserved_bytes": 8357150720
+        }
+      ]
+    },
+    {
+      "job_id": "12986435",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave2-b05-batch",
+      "status": "BATCH_COMPLETE",
+      "parent_seconds": 329.5608915720368,
+      "tokens": 8998,
+      "aggregate_tokens_per_second": 27.30299689710962,
+      "device_peak_mib": 25435.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.4823972323972324,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1",
+          "indices": [
+            25
+          ],
+          "generated_tokens": 553,
+          "peak_reserved_bytes": 8357150720
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 1571,
+          "peak_reserved_bytes": 8575254528
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 5684,
+          "peak_reserved_bytes": 9820962816
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 1190,
+          "peak_reserved_bytes": 8476688384
+        }
+      ]
+    },
+    {
+      "job_id": "12986436",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave2-b06-batch",
+      "status": "BATCH_COMPLETE",
+      "parent_seconds": 747.1548628690653,
+      "tokens": 19042,
+      "aggregate_tokens_per_second": 25.486014943246115,
+      "device_peak_mib": 27305.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.44434269434269436,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 1553,
+          "peak_reserved_bytes": 8558477312
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 6597,
+          "peak_reserved_bytes": 10148118528
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 5211,
+          "peak_reserved_bytes": 9621733376
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.1",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 5681,
+          "peak_reserved_bytes": 9839837184
+        }
+      ]
+    },
+    {
+      "job_id": "12986438",
+      "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d3-20261012T031412Z-acquire-wave2-b07-batch",
+      "status": "BATCH_COMPLETE",
+      "parent_seconds": 631.5606778260553,
+      "tokens": 15523,
+      "aggregate_tokens_per_second": 24.578794318596493,
+      "device_peak_mib": 25557.0,
+      "capacity_mib": 49140.0,
+      "headroom_fraction": 0.4799145299145299,
+      "child_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 1299,
+          "peak_reserved_bytes": 8512339968
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 6497,
+          "peak_reserved_bytes": 10166992896
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.1",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 1860,
+          "peak_reserved_bytes": 8665432064
+        },
+        {
+          "cell_id": "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5",
+          "indices": [
+            4
+          ],
+          "generated_tokens": 5867,
+          "peak_reserved_bytes": 9837740032
+        }
+      ]
+    }
+  ]
+}
