@@ -1,0 +1,26 @@
+{
+  "event": "GATE_D4_INTERIM_REPORT_READY",
+  "executor": "01a12f40-cbc9-7790-ac6e-f3fe1c454ab0",
+  "destination_thread": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "destination_host": "local",
+  "delivery_tool": "send_message_to_thread",
+  "tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f\"}"
+      }
+    ],
+    "isError": false
+  },
+  "record_count": 7032,
+  "common_intersection_n": 362,
+  "analysis": ".planning/phase11/gate_d4_interim_analysis_20261013T084558Z.json",
+  "evidence": ".planning/phase11/gate_d4_interim_execution_evidence_20261013T084558Z.json",
+  "report": "../\u8d44\u4ea7/\u62a5\u544a/phase11/loopscope_phase11_gpqa_8192_interim_20261013T084558Z.md",
+  "scope": "ONE_INTERIM_REPORT_SNAPSHOT_NOT_FINAL",
+  "final_gate_event_emitted": false,
+  "gate_pass_claimed": false,
+  "acquisition_changed": false,
+  "mmlu_accessed": false
+}
