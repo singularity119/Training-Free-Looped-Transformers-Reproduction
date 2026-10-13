@@ -13,7 +13,7 @@ def run(jobset_path):
     jobs = jobset["jobs"]
     ids = [j["job_id"] for j in jobs]
     assert jobs and len(ids) == len(set(ids)) and ids == jobset["active_job_ids"]
-    queue_result = subprocess.run(["/opt/slurm/bin/squeue", "-h", "-j", ",".join(ids),
+    queue_result = subprocess.run(["/opt/slurm/bin/squeue", "-h", "-r", "-j", ",".join(ids),
         "-o", "%i|%T|%R"], capture_output=True, text=True, timeout=15)
     account_result = subprocess.run(["/opt/slurm/bin/sacct", "-X", "-n", "-P", "-j", ",".join(ids),
         "-o", "JobID,State,ExitCode,ElapsedRaw"], capture_output=True, text=True, timeout=15)
@@ -34,7 +34,17 @@ def run(jobset_path):
         summary = root / "batch_summary.json"
         if summary.exists():
             value = json.loads(summary.read_text())
-            (complete_parents if value["status"] == "BATCH_COMPLETE" else failed_parents).append(job["job_id"])
+            if value["status"] == "BATCH_COMPLETE":
+                complete_parents.append(job["job_id"])
+            elif value["status"] == "FAILED":
+                failed_parents.append(job["job_id"])
+        if job.get("checkpoint_mode") == "question_boundary":
+            checkpoint = root / "checkpoint.json"
+            if checkpoint.exists():
+                value = json.loads(checkpoint.read_text())
+                assert 0 <= value['done_record_count'] <= value['target_count'] == job['records']
+                complete_records += value['done_record_count']
+            continue
         for child in json.loads(Path(job["worklist"]).read_text())["jobs"]:
             path = Path(child["run_root"]) / "summary.json"
             if path.exists():
