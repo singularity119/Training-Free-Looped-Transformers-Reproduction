@@ -1,0 +1,84 @@
+{
+  "s2_spec": {
+    "schema": "loopscope.phase11.s2.v1",
+    "parser": "S2",
+    "frozen_at_utc": "2026-10-13T09:15:32.193903+00:00",
+    "valid_line_pattern": "final[ \\t]+answer[ \\t]*[:\uff1a][ \\t]*(?:\\([ \\t]*([A-D])[ \\t]*\\)|([A-D]))[ \\t]*[.!;,\uff0e\uff01\u3002]?",
+    "flags": "re.IGNORECASE",
+    "line_processing": "splitlines then strip then fullmatch",
+    "normalization": "matched A-D letter converted to uppercase",
+    "success": "at least one valid line and exactly one distinct normalized letter",
+    "consistent_multiple": "use the shared letter as prediction; gold determines correct or incorrect",
+    "conflicting_multiple": "two or more distinct letters are extraction failure and wrong",
+    "no_match": "extraction failure and wrong; do not infer prose answers",
+    "snapshot_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d4-interim-20261013T084558Z",
+    "record_count": 7032,
+    "gold_read": false,
+    "scope": "USER_AUTHORIZED_POSTHOC_EXPLORATORY_S2_REPORT"
+  },
+  "s2_extraction_barrier": {
+    "status": "S2_SPEC_AND_ALL_PREDICTIONS_SAVED_BEFORE_GOLD",
+    "saved_at_utc": "2026-10-13T09:15:36.063930+00:00",
+    "record_count": 7032,
+    "record_counts": {
+      "gpqa_main-q4-native": 362,
+      "gpqa_main-q4-w15-18-k2-loop": 411,
+      "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1": 382,
+      "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5": 399,
+      "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9": 396,
+      "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1": 389,
+      "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5": 394,
+      "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9": 370,
+      "gpqa_main-q4-w15-18-k3-loop": 434,
+      "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.1": 372,
+      "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5": 367,
+      "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9": 387,
+      "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.1": 369,
+      "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5": 375,
+      "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.9": 410,
+      "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.1": 410,
+      "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.5": 402,
+      "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9": 403
+    },
+    "common_intersection_n": 362,
+    "s2_spec": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d4-s2-20261013T091220Z/s2_spec.json",
+    "predictions": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d4-s2-20261013T091220Z/s2_predictions.jsonl",
+    "gold_read": false
+  },
+  "s2_gold_read_receipt": {
+    "gold_read_timestamp": "2026-10-13T09:15:36.149336+00:00",
+    "s2_spec_frozen_at_utc": "2026-10-13T09:15:32.193903+00:00",
+    "extraction_barrier": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d4-s2-20261013T091220Z/s2_extraction_barrier.json",
+    "scope": "USER_AUTHORIZED_S2_POSTHOC_RESCORE_SAME_FROZEN_SNAPSHOT",
+    "canonical_gold_count": 448
+  },
+  "analysis_commit": "1c9f2162088f9062bed49b53a95e3c9551abc0d0",
+  "boundary_tests": {
+    "local": 5,
+    "pinned_remote": 5
+  },
+  "score_exit_code": 0,
+  "same_snapshot_7032": true,
+  "common_intersection_n": 362,
+  "rolling_snapshot_created": false,
+  "acquisition_changed": false,
+  "mmlu_accessed": false,
+  "delivery_confirmation": {
+    "event": "S2_REPORT_READY",
+    "threadId": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+    "tool": "send_message_to_thread",
+    "isError": false
+  },
+  "final_full_analysis_commit": "f40cd50247dae1d4c196e9252acb43c6119e70e9",
+  "final_full_analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-final-s2-20261013T092046Z/source",
+  "full_analysis_tests": {
+    "local": 3,
+    "pinned_remote": 3,
+    "synthetic_complete8064": true,
+    "gold_order_checked": true
+  },
+  "observer_policy_updated_to_S2": {
+    "automationId": "gate-d-4-gpqa-8192-full-monitor",
+    "status": "ACTIVE"
+  }
+}

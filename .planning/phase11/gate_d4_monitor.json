@@ -64,7 +64,7 @@
   ],
   "job_ledger": ".planning/phase11/gate_d4_job_ledger.json",
   "state": "ACTIVE",
-  "resume_action": "Independently verify failed/all-terminal attempts. Preserve every valid completed question; resume only invalid/missing work using question checkpoints or evidence-preserving fresh paths. Full8064 closure and saved gold-unread barrier before S1main/S0aux analysis.",
+  "resume_action": "Independently verify and settle whole/partial attempts; preserve every successful record. Full8064 raw/identity closure; save S2 specification and all S2/S1/S0 predictions before gold. User-authorized S2 primary, S1/S0 auxiliary, posthoc exploratory. No rolling interim rescoring or old small-batch submission.",
   "terminal_protocol": "pause observer then confirmed AUTOMATION_TERMINAL_RESUME to exact executor; fallback relay to planning",
   "submitted_full_pairs": 5488,
   "next_action": "Observe all retained wave220 jobs plus8 consolidated array tasks; no old small-batch submissions; no unsubmitted pairs remain",
@@ -93,5 +93,19 @@
     "automationId": "gate-d-4-gpqa-8192-full-monitor",
     "mode": "update",
     "status": "ACTIVE"
+  },
+  "report_primary_parser": "S2",
+  "report_auxiliary_parsers": [
+    "S1",
+    "S0"
+  ],
+  "s2_interim_report": ".planning/phase11/gate_d4_s2_analysis_20261013T091220Z.json",
+  "final_analysis_commit": "f40cd50247dae1d4c196e9252acb43c6119e70e9",
+  "final_analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-final-s2-20261013T092046Z/source",
+  "final_analysis_script": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-final-s2-20261013T092046Z/source/scripts/loopscope/analyze_phase11_gpqa_8192.py",
+  "final_analysis_tests": {
+    "local": 3,
+    "pinned_remote": 3,
+    "s2_spec_and_full_predictions_before_gold": true
   }
 }
