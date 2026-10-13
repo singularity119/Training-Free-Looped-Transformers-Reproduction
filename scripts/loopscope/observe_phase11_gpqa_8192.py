@@ -5,7 +5,25 @@ from collections import Counter
 import datetime
 import json
 from pathlib import Path
+import re
 import subprocess
+
+
+def accounting_ids(value, requested):
+    """Slurm compacts pending array rows even when exact child IDs are queried."""
+    if value in requested:
+        return [value]
+    match = re.fullmatch(r'(\d+)_\[([^\]]+)\]', value)
+    if not match:
+        return []
+    parent, expression = match.groups()
+    spans = []
+    for part in expression.split('%', 1)[0].split(','):
+        ends = part.split('-')
+        assert 1 <= len(ends) <= 2 and all(end.isdecimal() for end in ends)
+        spans.append((int(ends[0]), int(ends[-1])))
+    return [i for i in requested if i.startswith(parent + '_') and i.split('_', 1)[1].isdecimal()
+            and any(lo <= int(i.split('_', 1)[1]) <= hi for lo, hi in spans)]
 
 
 def run(jobset_path):
@@ -22,8 +40,8 @@ def run(jobset_path):
     facts = {}
     for line in account_result.stdout.splitlines():
         row = line.split("|")
-        if row[0] in ids:
-            facts[row[0]] = {"state": row[1], "exit_code": row[2], "allocation_seconds": int(row[3])}
+        for job_id in accounting_ids(row[0], ids):
+            facts[job_id] = {"state": row[1], "exit_code": row[2], "allocation_seconds": int(row[3])}
     bad_states = {"FAILED", "TIMEOUT", "CANCELLED", "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL"}
     failed = [{"job_id": i, **v} for i, v in facts.items() if v["state"].split()[0] in bad_states
               or (v["state"] == "COMPLETED" and v["exit_code"] != "0:0")]
