@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""D-4 CPU closure and S1-primary/S0-auxiliary analysis; run beside remote raw roots."""
+"""D-4 CPU closure and user-authorized S2-primary analysis; S1/S0 preserved."""
 import argparse
 from collections import Counter
 import datetime
@@ -12,6 +12,7 @@ from tflt.loopscope.phase11_analysis import (
 )
 from tflt.loopscope.phase11_panel import build_panel, load_config, require, write_json_once
 from tflt.loopscope.phase11_posthoc import S1_PATTERN, extract_s1, score_s1
+from tflt.loopscope.phase11_s2 import extract_s2, analyze_s2_snapshot
 from tflt.loopscope.phase8_accuracy_stats import holm_adjust, paired_contrast, stratified_paired_bootstrap
 
 DATASET = "gpqa_main"
@@ -137,7 +138,7 @@ def close_raw_panel(membership_path, cell_roots, approved_source_commits=None):
 
 def extract_population(panel, aligned, output):
     """Persist all parser predictions remotely before opening gold; no response text copied."""
-    by_cell, status, transition = {}, {"S1": Counter(), "S0": Counter()}, Counter()
+    by_cell, status, transition = {}, {"S2": Counter(), "S1": Counter(), "S0": Counter()}, Counter()
     with (output / "predictions.jsonl").open("x", encoding="utf-8") as handle:
         for cell in panel["cells"]:
             cid = cell["cell_id"]
@@ -145,18 +146,21 @@ def extract_population(panel, aligned, output):
             for record in aligned[cid]:
                 s0 = extract_final_answer(record["generated_text"], record["candidate_labels"])
                 s1 = extract_s1(record["generated_text"])
+                s2 = extract_s2(record["generated_text"])
                 row = {"cell_id": cid, "identity": record["identity"], "canonical_index": record["canonical_index"],
-                       "end_reason": record["end_reason"], "S1": s1, "S0": s0}
+                       "end_reason": record["end_reason"], "S2": s2, "S1": s1, "S0": s0}
                 for name in status:
                     status[name][row[name]["extraction_status"]] += 1
                 transition[s0["extraction_status"] + " -> " + s1["extraction_status"]] += 1
                 by_cell[cid].append(row)
                 handle.write(json.dumps(row, ensure_ascii=False) + "\n")
     require(all(sum(counts.values()) == POPULATION * 18 for counts in status.values()), "extraction population incomplete")
-    barrier = {"status": "ALL_S1_S0_PREDICTIONS_SAVED_GOLD_UNREAD", "timestamp": now(), "gold_read": False,
+    barrier = {"status": "ALL_S2_S1_S0_PREDICTIONS_SAVED_GOLD_UNREAD", "timestamp": now(), "gold_read": False,
         "target_gold_loaded": False, "record_count": POPULATION * 18, "independent_cell_count": 18,
         "samples_per_cell": POPULATION, "pattern": S1_PATTERN, "flags": "re.IGNORECASE",
-        "line_processing": "splitlines then strip then fullmatch", "ambiguity": "exactly one matching line; duplicates fail",
+        "line_processing": "splitlines then strip then fullmatch",
+        "ambiguity": {"S1": "exactly one matching line; duplicates fail",
+                      "S2": "at least one match, exactly one distinct normalized letter; conflicts fail"},
         "status_counts": {name: dict(counts) for name, counts in status.items()}, "status_transitions": dict(transition)}
     write_json_once(output / "extraction_barrier.json", barrier)
     return by_cell, barrier
@@ -207,6 +211,12 @@ def run(args):
     output.mkdir(parents=True, exist_ok=False)
     write_json_once(output / "raw_closure.json", closure)
     print(json.dumps({"status": closure["status"], "record_count": closure["record_count"], "target_gold_loaded": False}), flush=True)
+    write_json_once(output / "s2_spec.json", {"schema": "loopscope.phase11.s2.v1", "parser": "S2",
+        "frozen_at_utc": now(), "pattern": S1_PATTERN, "normalization": "uppercase A-D",
+        "valid": "at least one exact matching line and exactly one distinct letter",
+        "consistent_multiple": "shared letter scored against gold", "conflicting_multiple": "wrong",
+        "no_match": "wrong; no prose inference", "gold_read": False,
+        "interpretation": "user-selected posthoc rule; S1/S0 auxiliary artifacts retained"})
     predictions, barrier = extract_population(panel, aligned, output)
     # Both complete-population artifacts are closed on disk before the first gold open.
     gold_rows = read_rows(args.gold)
@@ -217,17 +227,25 @@ def run(args):
                         {r["identity"]: r["category"] for r in first})
     s1 = parser_analysis(panel, predictions, aligned, gold, "S1")
     s0 = parser_analysis(panel, predictions, aligned, gold, "S0")
+    s2_snapshot = analyze_s2_snapshot(panel, aligned, dict(zip(identities, gold)))
+    s2_common = s2_snapshot["s2"]["common_intersection"]
+    require(s2_common["n"] == POPULATION, "S2 full common population differs")
+    s2 = {"parser": "S2", "cells": s2_common["cells"], "contrasts": s2_common["contrasts"]}
+    s2["groups"] = {reason: {key: sum(c["groups"][reason][key] for c in s2["cells"])
+                             for key in ("n", "extraction_success_count", "correct")}
+                    for reason in ("eos", "length_limit")}
     report = {"schema": SCHEMA, "gate": "D-4", "dataset": DATASET,
         "status": "GPQA_8192_ANALYSIS_COMPLETE_AUDIT_REQUESTED", "executor_commit": args.executor_commit,
         "source_commits": closure["source_commits"], "gold_read_timestamp": gold_read_time,
         "raw_closure": str(output / "raw_closure.json"), "extraction_barrier": barrier,
         "sample_count": POPULATION, "independent_cell_count": 18, "record_count": POPULATION * 18,
-        "max_new_tokens": LIMIT, "primary_parser": "S1", "auxiliary_parser": "S0",
-        "cells": s1["cells"], "contrasts": s1["contrasts"], "groups": s1["groups"], "s0": s0,
+        "max_new_tokens": LIMIT, "primary_parser": "S2", "auxiliary_parsers": ["S1", "S0"],
+        "cells": s2["cells"], "contrasts": s2["contrasts"], "groups": s2["groups"],
+        "s2": s2, "s1": s1, "s0": s0,
         "families": FAMILY_COUNTS, "bootstrap_replicates": BOOTSTRAP_REPLICATES, "bootstrap_seed": BOOTSTRAP_SEED,
         "paths": {key: str(getattr(args, key)) for key in ("membership", "cell_roots", "gold", "output_dir")},
         "interpretation": {"scope": "same previously seen GPQA population; 8192 follow-up exploratory experiment",
-            "selection_limit": "S1 and length limit selected after previous output diagnostics; Holm does not undo selection",
+            "selection_limit": "S2 consistent-answer merge and length limit chosen after output diagnostics; posthoc exploratory, Holm does not undo selection",
             "denominator": "448 per cell; extraction failures count as wrong",
             "ci": "nominal 95 percent percentile bootstrap; Holm within original 30/12/2 families per parser",
             "groups": "EOS and length groups are descriptive selected subsets; repeated cell outputs are not independent questions",
@@ -236,7 +254,7 @@ def run(args):
         "mmlu_accessed": False, "gpu_jobs_submitted": False, "gate_pass_claimed": False}
     write_json_once(output / "analysis.json", report)
     print(json.dumps({"status": report["status"], "record_count": report["record_count"], "output_dir": str(output),
-                      "s1_holm_rejections": sum(r["holm_reject_alpha_0_05"] for r in report["contrasts"])}), flush=True)
+                      "s2_holm_rejections": sum(r["holm_reject_alpha_0_05"] for r in report["contrasts"])}), flush=True)
     return report
 
 

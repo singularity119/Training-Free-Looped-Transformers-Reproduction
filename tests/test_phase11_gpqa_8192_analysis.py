@@ -98,6 +98,8 @@ class GPQA8192AnalysisTests(unittest.TestCase):
                     self.assertEqual(closure["record_count"], 8064)
                     self.assertFalse(closure["gold_read"])
                     self.assertFalse(barrier["gold_read"])
+                    self.assertFalse(analysis.read_json(output / "s2_spec.json")["gold_read"])
+                    self.assertEqual(sum(barrier["status_counts"]["S2"].values()), 8064)
                     self.assertEqual(len((output / "predictions.jsonl").read_text().splitlines()), 8064)
                     gold_opens.append(path)
                 return original(path)
@@ -106,15 +108,15 @@ class GPQA8192AnalysisTests(unittest.TestCase):
             with patch.object(analysis, "read_rows", side_effect=checked_read), contextlib.redirect_stdout(stdout):
                 report = analysis.run(args)
             self.assertEqual(len(gold_opens), 1)
-            self.assertEqual(report["primary_parser"], "S1")
+            self.assertEqual(report["primary_parser"], "S2")
             self.assertEqual(report["bootstrap_replicates"], 10000)
             self.assertEqual(report["bootstrap_seed"], 20261008)
-            for result in (report, report["s0"]):
+            for result in (report, report["s0"], report["s1"]):
                 self.assertEqual(len(result["cells"]), 18)
                 self.assertEqual(len(result["contrasts"]), 44)
                 for cell in result["cells"]:
                     self.assertEqual(cell["n"], 448)
-                    self.assertEqual(cell["correct"], 446 if result is report["s0"] else 445)
+                    self.assertEqual(cell["correct"], 445 if result is report["s1"] else 446)
                     self.assertEqual(cell["truncated_count"], 1)
                     self.assertEqual(cell["generation_length"]["max"], 8192)
                     self.assertLessEqual(cell["accuracy_ci"]["ci_low"], cell["accuracy"])
@@ -123,7 +125,9 @@ class GPQA8192AnalysisTests(unittest.TestCase):
                     self.assertEqual(contrast["holm_family_size"], analysis.FAMILY_COUNTS[contrast["family"]])
                     self.assertEqual(contrast["bootstrap"]["seed"], 20261008)
                     self.assertEqual(contrast["bootstrap"]["replicates"], 10000)
-            self.assertEqual(report["cells"][0]["extraction_success_count"], 446)
+            self.assertEqual(report["cells"][0]["extraction_success_count"], 447)
+            self.assertEqual(report["cells"][0]["consistent_multiple_correct"], 1)
+            self.assertEqual(report["s1"]["cells"][0]["extraction_success_count"], 446)
             self.assertEqual(report["s0"]["cells"][0]["extraction_success_count"], 446)
             self.assertNotIn("synthetic-d4", stdout.getvalue())
             self.assertNotIn("synthetic-only prompt", json.dumps(report))

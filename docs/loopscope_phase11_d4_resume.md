@@ -53,3 +53,12 @@ every monitored wave220 job, including partial children, preventing double
 counting. Pending Slurm arrays are queried by parent and compact accounting
 rows are expanded only onto requested child IDs. Failure or all-terminal state
 pauses the observer and triggers the exact executor; no work remains unsubmitted.
+
+The 2026-10-13 report amendment makes S2 the primary 8192 report metric: accept
+one or more valid S1-syntax lines when every normalized letter agrees; score
+the shared letter against gold. Conflicting letters and no valid line remain
+wrong. Original S1/S0 artifacts stay intact. The authorized interim rescore
+uses only the frozen7032 snapshot (common362), freezes S2 specifications and
+all predictions before gold, and remains posthoc exploratory. Final8064
+analysis follows the same S2 primary rule after full raw/identity closure;
+acquisition and scheduler settings remain unchanged.
