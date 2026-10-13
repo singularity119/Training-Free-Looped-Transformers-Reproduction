@@ -32,3 +32,6 @@ Newjobset exactstartup check:49inflight(8RUNNING+41PENDING),onecarriedjobnowterm
 2026-10-13 01:14UTC /09:14CST all50currentjobs closed0:0; independent1000record/shard check passed,prior3539=>4539complete. Currentsettled31.841667GPUh; accumulatedD4all119.282500GPUh. New48batches220-267, exactnoncontiguousIDs inwave220submission(12996845first/12996898last),960newpairs/96GPUhmaxreservation. Total5499submitted,2565unsubmitted,next268. Observerbaseline4539/no carry. No failures,retries,gold,MMLU.
 
 New48jobset startup exactlymatchedlocalmonitor:6RUNNING+42PENDING,no failures/missingIDs;4539complete. Same60min observer ACTIVE, pinnedruntimeunchanged.
+
+2026-10-13 consolidated remaining2565pairs after receipt/worklist exactset verification. Producerba218fc, local/pinnedremote5CPU recoverytests; debug12997841_0 COMPLETED0:0/51s. Submitted12997851_0..7, emergency_gpu/max8/packing5, actualTimeLimit14days. Kept allold jobs; all8064 now submitted, no gold/MMLU. Observer pending-array accounting repaired (parent query + compact expansion), targeted2tests; observer remains paused until exact56-ID check and lifecycle restoration.
+Observer restored ACTIVE after exact56-ID check:8RUNNING/33PENDING/15COMPLETED, nofailed/missing, aggregate4879/8064 gold-unread. Confirmed automation_update ACTIVE response retained in monitor/evidence.

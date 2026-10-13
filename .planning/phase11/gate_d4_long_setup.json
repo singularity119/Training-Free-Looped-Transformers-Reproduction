@@ -1,0 +1,105 @@
+{
+  "gate": "D-4",
+  "executor": "01a12f40-cbc9-7790-ac6e-f3fe1c454ab0",
+  "runtime_commit": "ba218fc60cc7eb3bd0e45a7e30002549b4404357",
+  "previous_runtime_commit": "5fc00f067773b2a20e355bf4def462781214b99f",
+  "science_path_direct_diff_unchanged": [
+    "run_phase11_accuracy.py",
+    "phase11_runtime.py",
+    "phase11_adapter.py",
+    "phase11_accuracy.py",
+    "wrapper.py",
+    "phase11_panel.json",
+    "phase11_gpqa_8192.json"
+  ],
+  "checkpoint_tests": {
+    "local": 5,
+    "pinned_remote": 5,
+    "passed": true,
+    "half_write_quarantined": true,
+    "valid_success_not_overwritten": true,
+    "state_update_crash_recovered": true
+  },
+  "user_latest_policy": "Highest-priority partition only; max8 A800",
+  "partition": "emergency_gpu",
+  "priority_tier": 300,
+  "qos": "emergency_gpu",
+  "qos_max_cpu_per_user": 64,
+  "qos_max_a800_per_user": 8,
+  "qos_max_submit_per_user": 50,
+  "partition_max_time": "14-00:00:00",
+  "root_and_user_association_limits": "no additional GrpTRES/GrpJobs/GrpSubmitJobs/MaxJobs/MaxSubmitJobs limits reported",
+  "formal_submitted_retained": 5499,
+  "unsubmitted_pairs_verified_from_remote_receipts_and_worklists": 2565,
+  "old_next_remaining_batch": 268,
+  "long_task_count": 8,
+  "packing": 5,
+  "batch_size": 1,
+  "records_per_task": [
+    310,
+    310,
+    310,
+    310,
+    286,
+    330,
+    400,
+    309
+  ],
+  "observer_pause_tool_response": {
+    "automationId": "gate-d-4-gpqa-8192-full-monitor",
+    "mode": "update",
+    "status": "PAUSED"
+  },
+  "target_gold_loaded": false,
+  "mmlu_accessed": false,
+  "array_job_id": "12997851",
+  "active_long_job_ids": [
+    "12997851_0",
+    "12997851_1",
+    "12997851_2",
+    "12997851_3",
+    "12997851_4",
+    "12997851_5",
+    "12997851_6",
+    "12997851_7"
+  ],
+  "actual_scheduler_time_limit": "14-00:00:00",
+  "actual_qos": "emergency_gpu",
+  "preflight": {
+    "job_id": "12997841_0",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 51,
+    "completed_records": 2,
+    "native_and_online_k3_checked": true,
+    "target_gold_loaded": false
+  },
+  "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z",
+  "formal_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
+  "cell_roots": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/cell-roots.json",
+  "observer_tests_passed": 2,
+  "observer_commit": "1d7f5489d1f6bfda4ef9acb877660884dc6d83bf",
+  "observer_active": true,
+  "latest_safe_aggregate_complete_records": 4879,
+  "latest_state_counts": {
+    "PENDING": 33,
+    "RUNNING": 8
+  },
+  "current_active_jobset_count": 56,
+  "accounting_pending_array_format": "12997851_[0-7%8]",
+  "pending_accounting_fix": "query parent IDs and expand only requested exact children",
+  "no_missing_accounting_ids": true,
+  "observer_activation_tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d-4-gpqa-8192-full-monitor\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  }
+}

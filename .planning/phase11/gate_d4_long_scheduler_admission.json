@@ -1,0 +1,13 @@
+{
+  "JobId": "12997851",
+  "ArrayJobId": "12997851",
+  "ArrayTaskId": "0",
+  "QOS": "emergency_gpu",
+  "JobState": "PENDING",
+  "Reason": "QOSMaxCpuPerUserLimit",
+  "TimeLimit": "14-00:00:00",
+  "Partition": "emergency_gpu",
+  "NumCPUs": "8",
+  "CPUs/Task": "8",
+  "ReqTRES": "cpu=8,mem=96G,node=1,billing=8,gres/gpu=1,gres/gpu:a800=1"
+}
