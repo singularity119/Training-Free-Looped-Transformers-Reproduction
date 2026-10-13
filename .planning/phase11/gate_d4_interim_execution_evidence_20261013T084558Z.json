@@ -1,0 +1,61 @@
+{
+  "snapshot": {
+    "status": "INTERIM_EXACT_SNAPSHOT_SAVED_GOLD_UNREAD",
+    "gold_read": false,
+    "started_at_utc": "2026-10-13T08:48:05.374414+00:00",
+    "frozen_at_utc": "2026-10-13T08:50:06.513760+00:00",
+    "record_count": 7032,
+    "record_counts": {
+      "gpqa_main-q4-native": 362,
+      "gpqa_main-q4-w15-18-k2-loop": 411,
+      "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.1": 382,
+      "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.5": 399,
+      "gpqa_main-q4-w15-18-k2-online-fixed-t0-lambda0.9": 396,
+      "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.1": 389,
+      "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5": 394,
+      "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.9": 370,
+      "gpqa_main-q4-w15-18-k3-loop": 434,
+      "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.1": 372,
+      "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.5": 367,
+      "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9": 387,
+      "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.1": 369,
+      "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.5": 375,
+      "gpqa_main-q4-w15-18-k3-online-lag1-lambda0.9": 410,
+      "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.1": 410,
+      "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.5": 402,
+      "gpqa_main-q4-w15-18-k3-online-current-t-lambda0.9": 403
+    },
+    "selection": "fully published valid records enumerated once per root",
+    "selection_warning": "completion depends on scheduling and output length; selected nonrandom subset",
+    "scope": "ONE_INTERIM_REPORT_SNAPSHOT_NOT_FINAL"
+  },
+  "extraction": {
+    "status": "INTERIM_S1_S0_SAVED_GOLD_UNREAD",
+    "timestamp": "2026-10-13T08:50:14.654817+00:00",
+    "record_count": 7032,
+    "S1_pattern": "final[ \\t]+answer[ \\t]*[:\uff1a][ \\t]*(?:\\([ \\t]*([A-D])[ \\t]*\\)|([A-D]))[ \\t]*[.!;,\uff0e\uff01\u3002]?",
+    "multiple_matching_lines": "failure, including duplicate identical answers",
+    "gold_read": false
+  },
+  "gold_receipt": {
+    "gold_read_timestamp": "2026-10-13T08:50:14.712945+00:00",
+    "scope": "USER_AUTHORIZED_SINGLE_INTERIM_REPORT_SNAPSHOT",
+    "snapshot_barrier": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d4-interim-20261013T084558Z/snapshot_barrier.json",
+    "extraction_barrier": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d4-interim-20261013T084558Z/extraction_barrier.json",
+    "canonical_gold_count": 448
+  },
+  "analysis_commit": "c9d6e810686f08288eb264d6893f58fb3fe07ca3",
+  "tests": {
+    "local_interim_stats": 4,
+    "remote_interim_stats": 4,
+    "local_snapshot_IO": 2,
+    "remote_snapshot_IO": 2,
+    "real_bootstrap_synthetic": true
+  },
+  "freeze_exit_code": 0,
+  "score_exit_code": 0,
+  "gpu_jobs_submitted": false,
+  "acquisition_changed": false,
+  "mmlu_accessed": false,
+  "safe_local_export_only": true
+}
