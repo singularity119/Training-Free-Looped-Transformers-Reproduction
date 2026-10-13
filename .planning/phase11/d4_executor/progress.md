@@ -28,3 +28,7 @@ Refill startup exactjobset check:47inflight(6RUNNING+41PENDING), threecarriedjob
 2026-10-12 21:04UTC /2026-10-13 05:04CST tailwake:43closed+7running; independentlyverified860whole+24child, prior2679 =>3563complete; nextobserverbaseline3539. Settledcurrent24.732222GPUh; accumulatedall87.440833GPUh. Preserve7running and submit43batches177-219 IDs12994100-12994142,860newpairs/86GPUhmaxreservation. Total4539submitted,3525unsubmitted,next220; observer7carry+43new=50. No failures,retries,gold,MMLU.
 
 Newjobset exactstartup check:49inflight(8RUNNING+41PENDING),onecarriedjobnowterminal;3571recordscomplete, nofailures/missingIDs. Same60min observer reactivated; no scientific/launcher/runtime changes.
+
+2026-10-13 01:14UTC /09:14CST all50currentjobs closed0:0; independent1000record/shard check passed,prior3539=>4539complete. Currentsettled31.841667GPUh; accumulatedD4all119.282500GPUh. New48batches220-267, exactnoncontiguousIDs inwave220submission(12996845first/12996898last),960newpairs/96GPUhmaxreservation. Total5499submitted,2565unsubmitted,next268. Observerbaseline4539/no carry. No failures,retries,gold,MMLU.
+
+New48jobset startup exactlymatchedlocalmonitor:6RUNNING+42PENDING,no failures/missingIDs;4539complete. Same60min observer ACTIVE, pinnedruntimeunchanged.

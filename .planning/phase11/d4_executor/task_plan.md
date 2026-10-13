@@ -6,7 +6,7 @@ Goal: GPQA full448x18 at8192, S1 main/S0 auxiliary, complete closure before gold
 - [x] Independent8192 producer/config, same-path minimal debug12987865 PASS.
 - [x] Start retained A800 packing1 jobs12987870/12987871, unique60min observer.
 - [x] Verify A800 tail and longestprompt resources; packing5 admitted, packing6 exceeds20percent headroom projection.
-- [ ] Continue complete nonduplicate8064 panel:4539pairs submitted,3525unsubmitted;50jobs nowqueued/running. nextremainingbatch220, <=48jobs perwave/max50submitted/max8A800.
+- [ ] Continue complete nonduplicate8064 panel:5499pairs submitted,2565unsubmitted;48jobs nowqueued/running. nextremainingbatch268, <=48jobs perwave/max50submitted/max8A800.
 - [ ] Verify full membership; persist gold-unread barrier; S1/S0 frozen statistics.
 - [ ] Chinese aggregate report and one confirmed GATE_D4_FINAL_AUDIT to planning.
 
