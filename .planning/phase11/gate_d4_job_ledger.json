@@ -13,10 +13,14 @@
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-debug-batch",
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/gate_d4_debug_worklist.json",
       "status": "COMPLETED",
-      "reserved_gpuh": 0.48333333333333334,
+      "reserved_gpuh": 0,
       "exit_code": "0:0",
       "allocation_seconds": 24,
-      "actual_gpuh": 0.006666666666666667
+      "actual_gpuh": 0.006666666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "qos_actual": "debug",
+      "scheduler_start": "2026-10-12T16:39:49",
+      "scheduler_end": "2026-10-12T16:40:13"
     },
     {
       "job_id": "12987870",
@@ -29,10 +33,14 @@
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-formal-p1-b00",
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/gate_d4_formal_p1_b00_worklist.json",
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "exit_code": "0:0",
       "allocation_seconds": 398,
-      "actual_gpuh": 0.11055555555555556
+      "actual_gpuh": 0.11055555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T16:40:45",
+      "scheduler_end": "2026-10-12T16:47:23"
     },
     {
       "job_id": "12987871",
@@ -45,10 +53,14 @@
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-formal-p1-b01",
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/gate_d4_formal_p1_b01_worklist.json",
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "exit_code": "0:0",
       "allocation_seconds": 390,
-      "actual_gpuh": 0.10833333333333334
+      "actual_gpuh": 0.10833333333333334,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T16:40:45",
+      "scheduler_end": "2026-10-12T16:47:15"
     },
     {
       "job_id": "12987981",
@@ -62,10 +74,14 @@
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-formal-p4-batch",
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/formal-p4-worklist.json",
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "exit_code": "0:0",
       "allocation_seconds": 819,
-      "actual_gpuh": 0.2275
+      "actual_gpuh": 0.2275,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T16:50:05",
+      "scheduler_end": "2026-10-12T17:03:44"
     },
     {
       "job_id": "12988002",
@@ -79,10 +95,14 @@
       "batch_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d4-20261012T083857Z-formal-p5-batch",
       "worklist": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/formal-p5-worklist.json",
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "exit_code": "0:0",
       "allocation_seconds": 987,
-      "actual_gpuh": 0.27416666666666667
+      "actual_gpuh": 0.27416666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=128G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T16:53:35",
+      "scheduler_end": "2026-10-12T17:10:02"
     },
     {
       "number": 0,
@@ -128,10 +148,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1111,
-      "actual_gpuh": 0.3086111111111111
+      "actual_gpuh": 0.3086111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:05:50",
+      "scheduler_end": "2026-10-12T17:24:21"
     },
     {
       "number": 1,
@@ -177,10 +201,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 933,
-      "actual_gpuh": 0.25916666666666666
+      "actual_gpuh": 0.25916666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:05:50",
+      "scheduler_end": "2026-10-12T17:21:23"
     },
     {
       "number": 2,
@@ -226,10 +254,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1219,
-      "actual_gpuh": 0.3386111111111111
+      "actual_gpuh": 0.3386111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:05:50",
+      "scheduler_end": "2026-10-12T17:26:09"
     },
     {
       "number": 3,
@@ -275,10 +307,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1316,
-      "actual_gpuh": 0.3655555555555556
+      "actual_gpuh": 0.3655555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:05:50",
+      "scheduler_end": "2026-10-12T17:27:46"
     },
     {
       "number": 4,
@@ -324,10 +360,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1396,
-      "actual_gpuh": 0.3877777777777778
+      "actual_gpuh": 0.3877777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:05:50",
+      "scheduler_end": "2026-10-12T17:29:06"
     },
     {
       "number": 5,
@@ -373,10 +413,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1438,
-      "actual_gpuh": 0.39944444444444444
+      "actual_gpuh": 0.39944444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:05:50",
+      "scheduler_end": "2026-10-12T17:29:48"
     },
     {
       "number": 6,
@@ -422,10 +466,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1277,
-      "actual_gpuh": 0.3547222222222222
+      "actual_gpuh": 0.3547222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:10:03",
+      "scheduler_end": "2026-10-12T17:31:20"
     },
     {
       "number": 7,
@@ -471,10 +519,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1140,
-      "actual_gpuh": 0.31666666666666665
+      "actual_gpuh": 0.31666666666666665,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:10:04",
+      "scheduler_end": "2026-10-12T17:29:04"
     },
     {
       "number": 0,
@@ -520,10 +572,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1020,
-      "actual_gpuh": 0.2833333333333333
+      "actual_gpuh": 0.2833333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:21:24",
+      "scheduler_end": "2026-10-12T17:38:24"
     },
     {
       "number": 1,
@@ -569,10 +625,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1046,
-      "actual_gpuh": 0.29055555555555557
+      "actual_gpuh": 0.29055555555555557,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:24:21",
+      "scheduler_end": "2026-10-12T17:41:47"
     },
     {
       "number": 2,
@@ -618,10 +678,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1293,
-      "actual_gpuh": 0.3591666666666667
+      "actual_gpuh": 0.3591666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:26:09",
+      "scheduler_end": "2026-10-12T17:47:42"
     },
     {
       "number": 3,
@@ -667,10 +731,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1780,
-      "actual_gpuh": 0.49444444444444446
+      "actual_gpuh": 0.49444444444444446,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:27:46",
+      "scheduler_end": "2026-10-12T17:57:26"
     },
     {
       "number": 4,
@@ -716,10 +784,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 907,
-      "actual_gpuh": 0.25194444444444447
+      "actual_gpuh": 0.25194444444444447,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:29:04",
+      "scheduler_end": "2026-10-12T17:44:11"
     },
     {
       "number": 5,
@@ -765,10 +837,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1110,
-      "actual_gpuh": 0.30833333333333335
+      "actual_gpuh": 0.30833333333333335,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:29:06",
+      "scheduler_end": "2026-10-12T17:47:36"
     },
     {
       "number": 6,
@@ -814,10 +890,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 905,
-      "actual_gpuh": 0.2513888888888889
+      "actual_gpuh": 0.2513888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:29:48",
+      "scheduler_end": "2026-10-12T17:44:53"
     },
     {
       "number": 7,
@@ -863,10 +943,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2013,
-      "actual_gpuh": 0.5591666666666667
+      "actual_gpuh": 0.5591666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:31:21",
+      "scheduler_end": "2026-10-12T18:04:54"
     },
     {
       "number": 8,
@@ -912,10 +996,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2031,
-      "actual_gpuh": 0.5641666666666667
+      "actual_gpuh": 0.5641666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:38:24",
+      "scheduler_end": "2026-10-12T18:12:15"
     },
     {
       "number": 9,
@@ -961,10 +1049,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2283,
-      "actual_gpuh": 0.6341666666666667
+      "actual_gpuh": 0.6341666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:41:47",
+      "scheduler_end": "2026-10-12T18:19:50"
     },
     {
       "number": 10,
@@ -1010,10 +1102,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1292,
-      "actual_gpuh": 0.35888888888888887
+      "actual_gpuh": 0.35888888888888887,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:44:11",
+      "scheduler_end": "2026-10-12T18:05:43"
     },
     {
       "number": 11,
@@ -1059,10 +1155,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1816,
-      "actual_gpuh": 0.5044444444444445
+      "actual_gpuh": 0.5044444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:44:53",
+      "scheduler_end": "2026-10-12T18:15:09"
     },
     {
       "number": 12,
@@ -1108,10 +1208,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1819,
-      "actual_gpuh": 0.5052777777777778
+      "actual_gpuh": 0.5052777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:47:36",
+      "scheduler_end": "2026-10-12T18:17:55"
     },
     {
       "number": 13,
@@ -1157,10 +1261,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2381,
-      "actual_gpuh": 0.6613888888888889
+      "actual_gpuh": 0.6613888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:47:42",
+      "scheduler_end": "2026-10-12T18:27:23"
     },
     {
       "number": 14,
@@ -1206,10 +1314,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2149,
-      "actual_gpuh": 0.5969444444444445
+      "actual_gpuh": 0.5969444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T17:57:26",
+      "scheduler_end": "2026-10-12T18:33:15"
     },
     {
       "number": 15,
@@ -1255,10 +1367,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1717,
-      "actual_gpuh": 0.47694444444444445
+      "actual_gpuh": 0.47694444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:04:54",
+      "scheduler_end": "2026-10-12T18:33:31"
     },
     {
       "number": 16,
@@ -1304,10 +1420,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2384,
-      "actual_gpuh": 0.6622222222222223
+      "actual_gpuh": 0.6622222222222223,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:05:43",
+      "scheduler_end": "2026-10-12T18:45:27"
     },
     {
       "number": 17,
@@ -1353,10 +1473,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2069,
-      "actual_gpuh": 0.5747222222222222
+      "actual_gpuh": 0.5747222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:12:15",
+      "scheduler_end": "2026-10-12T18:46:44"
     },
     {
       "number": 18,
@@ -1402,10 +1526,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1613,
-      "actual_gpuh": 0.44805555555555554
+      "actual_gpuh": 0.44805555555555554,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:15:09",
+      "scheduler_end": "2026-10-12T18:42:02"
     },
     {
       "number": 19,
@@ -1451,10 +1579,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1533,
-      "actual_gpuh": 0.42583333333333334
+      "actual_gpuh": 0.42583333333333334,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:17:55",
+      "scheduler_end": "2026-10-12T18:43:28"
     },
     {
       "number": 20,
@@ -1500,10 +1632,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1715,
-      "actual_gpuh": 0.47638888888888886
+      "actual_gpuh": 0.47638888888888886,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:19:50",
+      "scheduler_end": "2026-10-12T18:48:25"
     },
     {
       "number": 21,
@@ -1549,10 +1685,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1609,
-      "actual_gpuh": 0.4469444444444444
+      "actual_gpuh": 0.4469444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:27:23",
+      "scheduler_end": "2026-10-12T18:54:12"
     },
     {
       "number": 22,
@@ -1598,10 +1738,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1526,
-      "actual_gpuh": 0.42388888888888887
+      "actual_gpuh": 0.42388888888888887,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:33:15",
+      "scheduler_end": "2026-10-12T18:58:41"
     },
     {
       "number": 23,
@@ -1647,10 +1791,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1291,
-      "actual_gpuh": 0.3586111111111111
+      "actual_gpuh": 0.3586111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:33:31",
+      "scheduler_end": "2026-10-12T18:55:02"
     },
     {
       "number": 24,
@@ -1696,10 +1844,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1632,
-      "actual_gpuh": 0.4533333333333333
+      "actual_gpuh": 0.4533333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:42:02",
+      "scheduler_end": "2026-10-12T19:09:14"
     },
     {
       "number": 25,
@@ -1745,10 +1897,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1567,
-      "actual_gpuh": 0.43527777777777776
+      "actual_gpuh": 0.43527777777777776,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:43:28",
+      "scheduler_end": "2026-10-12T19:09:35"
     },
     {
       "number": 26,
@@ -1794,10 +1950,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1710,
-      "actual_gpuh": 0.475
+      "actual_gpuh": 0.475,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:45:27",
+      "scheduler_end": "2026-10-12T19:13:57"
     },
     {
       "number": 27,
@@ -1843,10 +2003,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1842,
-      "actual_gpuh": 0.5116666666666667
+      "actual_gpuh": 0.5116666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:46:44",
+      "scheduler_end": "2026-10-12T19:17:26"
     },
     {
       "number": 28,
@@ -1892,10 +2056,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1282,
-      "actual_gpuh": 0.3561111111111111
+      "actual_gpuh": 0.3561111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:48:25",
+      "scheduler_end": "2026-10-12T19:09:47"
     },
     {
       "number": 29,
@@ -1941,10 +2109,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 573,
-      "actual_gpuh": 0.15916666666666668
+      "actual_gpuh": 0.15916666666666668,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:54:12",
+      "scheduler_end": "2026-10-12T19:03:45"
     },
     {
       "number": 30,
@@ -1990,10 +2162,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 586,
-      "actual_gpuh": 0.16277777777777777
+      "actual_gpuh": 0.16277777777777777,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:55:02",
+      "scheduler_end": "2026-10-12T19:04:48"
     },
     {
       "number": 31,
@@ -2039,10 +2215,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1172,
-      "actual_gpuh": 0.32555555555555554
+      "actual_gpuh": 0.32555555555555554,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T18:58:41",
+      "scheduler_end": "2026-10-12T19:18:13"
     },
     {
       "number": 32,
@@ -2088,10 +2268,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1255,
-      "actual_gpuh": 0.3486111111111111
+      "actual_gpuh": 0.3486111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:03:45",
+      "scheduler_end": "2026-10-12T19:24:40"
     },
     {
       "number": 33,
@@ -2137,10 +2321,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 561,
-      "actual_gpuh": 0.15583333333333332
+      "actual_gpuh": 0.15583333333333332,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:04:48",
+      "scheduler_end": "2026-10-12T19:14:09"
     },
     {
       "number": 34,
@@ -2186,10 +2374,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 781,
-      "actual_gpuh": 0.21694444444444444
+      "actual_gpuh": 0.21694444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:09:14",
+      "scheduler_end": "2026-10-12T19:22:15"
     },
     {
       "number": 35,
@@ -2235,10 +2427,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 677,
-      "actual_gpuh": 0.18805555555555556
+      "actual_gpuh": 0.18805555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:09:35",
+      "scheduler_end": "2026-10-12T19:20:52"
     },
     {
       "number": 36,
@@ -2284,10 +2480,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1304,
-      "actual_gpuh": 0.3622222222222222
+      "actual_gpuh": 0.3622222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:09:48",
+      "scheduler_end": "2026-10-12T19:31:32"
     },
     {
       "number": 37,
@@ -2333,10 +2533,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1646,
-      "actual_gpuh": 0.4572222222222222
+      "actual_gpuh": 0.4572222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:13:57",
+      "scheduler_end": "2026-10-12T19:41:23"
     },
     {
       "number": 38,
@@ -2382,10 +2586,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1336,
-      "actual_gpuh": 0.3711111111111111
+      "actual_gpuh": 0.3711111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:14:09",
+      "scheduler_end": "2026-10-12T19:36:25"
     },
     {
       "number": 39,
@@ -2431,10 +2639,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1104,
-      "actual_gpuh": 0.30666666666666664
+      "actual_gpuh": 0.30666666666666664,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:17:26",
+      "scheduler_end": "2026-10-12T19:35:50"
     },
     {
       "number": 40,
@@ -2480,10 +2692,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1600,
-      "actual_gpuh": 0.4444444444444444
+      "actual_gpuh": 0.4444444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:46:57",
+      "scheduler_end": "2026-10-12T20:13:37"
     },
     {
       "number": 41,
@@ -2529,10 +2745,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1451,
-      "actual_gpuh": 0.40305555555555556
+      "actual_gpuh": 0.40305555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T19:51:20",
+      "scheduler_end": "2026-10-12T20:15:31"
     },
     {
       "number": 42,
@@ -2578,10 +2798,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1326,
-      "actual_gpuh": 0.36833333333333335
+      "actual_gpuh": 0.36833333333333335,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:00:10",
+      "scheduler_end": "2026-10-12T20:22:16"
     },
     {
       "number": 43,
@@ -2627,10 +2851,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1874,
-      "actual_gpuh": 0.5205555555555555
+      "actual_gpuh": 0.5205555555555555,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:09:22",
+      "scheduler_end": "2026-10-12T20:40:36"
     },
     {
       "number": 44,
@@ -2676,10 +2904,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2334,
-      "actual_gpuh": 0.6483333333333333
+      "actual_gpuh": 0.6483333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:10:38",
+      "scheduler_end": "2026-10-12T20:49:32"
     },
     {
       "number": 45,
@@ -2725,10 +2957,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2354,
-      "actual_gpuh": 0.6538888888888889
+      "actual_gpuh": 0.6538888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:13:37",
+      "scheduler_end": "2026-10-12T20:52:51"
     },
     {
       "number": 46,
@@ -2774,10 +3010,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1770,
-      "actual_gpuh": 0.49166666666666664
+      "actual_gpuh": 0.49166666666666664,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:14:45",
+      "scheduler_end": "2026-10-12T20:44:15"
     },
     {
       "number": 47,
@@ -2823,10 +3063,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1846,
-      "actual_gpuh": 0.5127777777777778
+      "actual_gpuh": 0.5127777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:14:45",
+      "scheduler_end": "2026-10-12T20:45:31"
     },
     {
       "number": 48,
@@ -2872,10 +3116,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1675,
-      "actual_gpuh": 0.4652777777777778
+      "actual_gpuh": 0.4652777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:15:31",
+      "scheduler_end": "2026-10-12T20:43:26"
     },
     {
       "number": 49,
@@ -2921,10 +3169,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2091,
-      "actual_gpuh": 0.5808333333333333
+      "actual_gpuh": 0.5808333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:22:07",
+      "scheduler_end": "2026-10-12T20:56:58"
     },
     {
       "number": 50,
@@ -2970,10 +3222,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1690,
-      "actual_gpuh": 0.46944444444444444
+      "actual_gpuh": 0.46944444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:22:16",
+      "scheduler_end": "2026-10-12T20:50:26"
     },
     {
       "number": 51,
@@ -3019,10 +3275,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1107,
-      "actual_gpuh": 0.3075
+      "actual_gpuh": 0.3075,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:40:36",
+      "scheduler_end": "2026-10-12T20:59:03"
     },
     {
       "number": 52,
@@ -3068,10 +3328,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 728,
-      "actual_gpuh": 0.20222222222222222
+      "actual_gpuh": 0.20222222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:43:27",
+      "scheduler_end": "2026-10-12T20:55:35"
     },
     {
       "number": 53,
@@ -3117,10 +3381,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1641,
-      "actual_gpuh": 0.4558333333333333
+      "actual_gpuh": 0.4558333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:44:15",
+      "scheduler_end": "2026-10-12T21:11:36"
     },
     {
       "number": 54,
@@ -3166,10 +3434,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1987,
-      "actual_gpuh": 0.5519444444444445
+      "actual_gpuh": 0.5519444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:45:31",
+      "scheduler_end": "2026-10-12T21:18:38"
     },
     {
       "number": 55,
@@ -3215,10 +3487,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1877,
-      "actual_gpuh": 0.5213888888888889
+      "actual_gpuh": 0.5213888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:49:32",
+      "scheduler_end": "2026-10-12T21:20:49"
     },
     {
       "number": 56,
@@ -3264,10 +3540,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2063,
-      "actual_gpuh": 0.5730555555555555
+      "actual_gpuh": 0.5730555555555555,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:50:26",
+      "scheduler_end": "2026-10-12T21:24:49"
     },
     {
       "number": 57,
@@ -3313,10 +3593,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1377,
-      "actual_gpuh": 0.3825
+      "actual_gpuh": 0.3825,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:52:51",
+      "scheduler_end": "2026-10-12T21:15:48"
     },
     {
       "number": 58,
@@ -3362,10 +3646,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 918,
-      "actual_gpuh": 0.255
+      "actual_gpuh": 0.255,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:55:35",
+      "scheduler_end": "2026-10-12T21:10:53"
     },
     {
       "number": 59,
@@ -3411,10 +3699,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1137,
-      "actual_gpuh": 0.31583333333333335
+      "actual_gpuh": 0.31583333333333335,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:56:58",
+      "scheduler_end": "2026-10-12T21:15:55"
     },
     {
       "number": 60,
@@ -3460,10 +3752,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1727,
-      "actual_gpuh": 0.4797222222222222
+      "actual_gpuh": 0.4797222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T20:59:03",
+      "scheduler_end": "2026-10-12T21:27:50"
     },
     {
       "number": 61,
@@ -3509,10 +3805,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1565,
-      "actual_gpuh": 0.43472222222222223
+      "actual_gpuh": 0.43472222222222223,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:10:53",
+      "scheduler_end": "2026-10-12T21:36:58"
     },
     {
       "number": 62,
@@ -3558,10 +3858,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1462,
-      "actual_gpuh": 0.4061111111111111
+      "actual_gpuh": 0.4061111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:11:36",
+      "scheduler_end": "2026-10-12T21:35:58"
     },
     {
       "number": 63,
@@ -3607,10 +3911,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1379,
-      "actual_gpuh": 0.38305555555555554
+      "actual_gpuh": 0.38305555555555554,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:15:48",
+      "scheduler_end": "2026-10-12T21:38:47"
     },
     {
       "number": 64,
@@ -3656,10 +3964,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1416,
-      "actual_gpuh": 0.3933333333333333
+      "actual_gpuh": 0.3933333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:15:55",
+      "scheduler_end": "2026-10-12T21:39:31"
     },
     {
       "number": 65,
@@ -3705,10 +4017,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1925,
-      "actual_gpuh": 0.5347222222222222
+      "actual_gpuh": 0.5347222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:18:38",
+      "scheduler_end": "2026-10-12T21:50:43"
     },
     {
       "number": 66,
@@ -3754,10 +4070,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1684,
-      "actual_gpuh": 0.4677777777777778
+      "actual_gpuh": 0.4677777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:20:49",
+      "scheduler_end": "2026-10-12T21:48:53"
     },
     {
       "number": 67,
@@ -3803,10 +4123,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1605,
-      "actual_gpuh": 0.44583333333333336
+      "actual_gpuh": 0.44583333333333336,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:24:49",
+      "scheduler_end": "2026-10-12T21:51:34"
     },
     {
       "number": 68,
@@ -3852,10 +4176,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1522,
-      "actual_gpuh": 0.42277777777777775
+      "actual_gpuh": 0.42277777777777775,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:27:51",
+      "scheduler_end": "2026-10-12T21:53:13"
     },
     {
       "number": 69,
@@ -3901,10 +4229,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1964,
-      "actual_gpuh": 0.5455555555555556
+      "actual_gpuh": 0.5455555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:35:58",
+      "scheduler_end": "2026-10-12T22:08:42"
     },
     {
       "number": 70,
@@ -3950,10 +4282,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2050,
-      "actual_gpuh": 0.5694444444444444
+      "actual_gpuh": 0.5694444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:36:58",
+      "scheduler_end": "2026-10-12T22:11:08"
     },
     {
       "number": 71,
@@ -3999,10 +4335,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1690,
-      "actual_gpuh": 0.46944444444444444
+      "actual_gpuh": 0.46944444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:38:47",
+      "scheduler_end": "2026-10-12T22:06:57"
     },
     {
       "number": 72,
@@ -4048,10 +4388,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2012,
-      "actual_gpuh": 0.5588888888888889
+      "actual_gpuh": 0.5588888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:39:32",
+      "scheduler_end": "2026-10-12T22:13:04"
     },
     {
       "number": 73,
@@ -4097,10 +4441,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1825,
-      "actual_gpuh": 0.5069444444444444
+      "actual_gpuh": 0.5069444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:48:54",
+      "scheduler_end": "2026-10-12T22:19:19"
     },
     {
       "number": 74,
@@ -4146,10 +4494,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1609,
-      "actual_gpuh": 0.4469444444444444
+      "actual_gpuh": 0.4469444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:50:43",
+      "scheduler_end": "2026-10-12T22:17:32"
     },
     {
       "number": 75,
@@ -4195,10 +4547,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2200,
-      "actual_gpuh": 0.6111111111111112
+      "actual_gpuh": 0.6111111111111112,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:51:34",
+      "scheduler_end": "2026-10-12T22:28:14"
     },
     {
       "number": 76,
@@ -4244,10 +4600,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2627,
-      "actual_gpuh": 0.7297222222222223
+      "actual_gpuh": 0.7297222222222223,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T21:53:13",
+      "scheduler_end": "2026-10-12T22:37:00"
     },
     {
       "number": 77,
@@ -4293,10 +4653,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2755,
-      "actual_gpuh": 0.7652777777777777
+      "actual_gpuh": 0.7652777777777777,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:06:57",
+      "scheduler_end": "2026-10-12T22:52:52"
     },
     {
       "number": 78,
@@ -4342,10 +4706,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2213,
-      "actual_gpuh": 0.6147222222222222
+      "actual_gpuh": 0.6147222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:08:42",
+      "scheduler_end": "2026-10-12T22:45:35"
     },
     {
       "number": 79,
@@ -4391,10 +4759,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1344,
-      "actual_gpuh": 0.37333333333333335
+      "actual_gpuh": 0.37333333333333335,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:11:08",
+      "scheduler_end": "2026-10-12T22:33:32"
     },
     {
       "number": 80,
@@ -4440,10 +4812,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1116,
-      "actual_gpuh": 0.31
+      "actual_gpuh": 0.31,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:13:05",
+      "scheduler_end": "2026-10-12T22:31:41"
     },
     {
       "number": 81,
@@ -4489,10 +4865,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1484,
-      "actual_gpuh": 0.4122222222222222
+      "actual_gpuh": 0.4122222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:17:32",
+      "scheduler_end": "2026-10-12T22:42:16"
     },
     {
       "number": 82,
@@ -4538,10 +4918,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2605,
-      "actual_gpuh": 0.7236111111111111
+      "actual_gpuh": 0.7236111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:19:19",
+      "scheduler_end": "2026-10-12T23:02:44"
     },
     {
       "number": 83,
@@ -4587,10 +4971,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2212,
-      "actual_gpuh": 0.6144444444444445
+      "actual_gpuh": 0.6144444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:28:14",
+      "scheduler_end": "2026-10-12T23:05:06"
     },
     {
       "number": 84,
@@ -4636,10 +5024,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2711,
-      "actual_gpuh": 0.7530555555555556
+      "actual_gpuh": 0.7530555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:31:41",
+      "scheduler_end": "2026-10-12T23:16:52"
     },
     {
       "number": 85,
@@ -4685,10 +5077,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2001,
-      "actual_gpuh": 0.5558333333333333
+      "actual_gpuh": 0.5558333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:33:32",
+      "scheduler_end": "2026-10-12T23:06:53"
     },
     {
       "number": 86,
@@ -4734,10 +5130,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1450,
-      "actual_gpuh": 0.4027777777777778
+      "actual_gpuh": 0.4027777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:37:00",
+      "scheduler_end": "2026-10-12T23:01:10"
     },
     {
       "number": 87,
@@ -4783,10 +5183,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1895,
-      "actual_gpuh": 0.5263888888888889
+      "actual_gpuh": 0.5263888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:42:16",
+      "scheduler_end": "2026-10-12T23:13:51"
     },
     {
       "number": 88,
@@ -4832,10 +5236,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2255,
-      "actual_gpuh": 0.6263888888888889
+      "actual_gpuh": 0.6263888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T22:57:09",
+      "scheduler_end": "2026-10-12T23:34:44"
     },
     {
       "number": 89,
@@ -4881,10 +5289,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2836,
-      "actual_gpuh": 0.7877777777777778
+      "actual_gpuh": 0.7877777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:01:10",
+      "scheduler_end": "2026-10-12T23:48:26"
     },
     {
       "number": 90,
@@ -4930,10 +5342,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 734,
-      "actual_gpuh": 0.2038888888888889
+      "actual_gpuh": 0.2038888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:02:45",
+      "scheduler_end": "2026-10-12T23:14:59"
     },
     {
       "number": 91,
@@ -4979,10 +5395,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 862,
-      "actual_gpuh": 0.23944444444444443
+      "actual_gpuh": 0.23944444444444443,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:05:06",
+      "scheduler_end": "2026-10-12T23:19:28"
     },
     {
       "number": 92,
@@ -5028,10 +5448,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1073,
-      "actual_gpuh": 0.2980555555555556
+      "actual_gpuh": 0.2980555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:06:53",
+      "scheduler_end": "2026-10-12T23:24:46"
     },
     {
       "number": 93,
@@ -5077,10 +5501,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1732,
-      "actual_gpuh": 0.4811111111111111
+      "actual_gpuh": 0.4811111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:09:18",
+      "scheduler_end": "2026-10-12T23:38:10"
     },
     {
       "number": 94,
@@ -5126,10 +5554,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1395,
-      "actual_gpuh": 0.3875
+      "actual_gpuh": 0.3875,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:13:51",
+      "scheduler_end": "2026-10-12T23:37:06"
     },
     {
       "number": 95,
@@ -5175,10 +5607,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1846,
-      "actual_gpuh": 0.5127777777777778
+      "actual_gpuh": 0.5127777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:14:59",
+      "scheduler_end": "2026-10-12T23:45:45"
     },
     {
       "number": 96,
@@ -5224,10 +5660,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1503,
-      "actual_gpuh": 0.4175
+      "actual_gpuh": 0.4175,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:16:52",
+      "scheduler_end": "2026-10-12T23:41:55"
     },
     {
       "number": 97,
@@ -5273,10 +5713,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1735,
-      "actual_gpuh": 0.48194444444444445
+      "actual_gpuh": 0.48194444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:19:28",
+      "scheduler_end": "2026-10-12T23:48:23"
     },
     {
       "number": 98,
@@ -5322,10 +5766,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2428,
-      "actual_gpuh": 0.6744444444444444
+      "actual_gpuh": 0.6744444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:24:47",
+      "scheduler_end": "2026-10-13T00:05:15"
     },
     {
       "number": 99,
@@ -5371,10 +5819,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2298,
-      "actual_gpuh": 0.6383333333333333
+      "actual_gpuh": 0.6383333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:34:45",
+      "scheduler_end": "2026-10-13T00:13:03"
     },
     {
       "number": 100,
@@ -5420,10 +5872,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1768,
-      "actual_gpuh": 0.4911111111111111
+      "actual_gpuh": 0.4911111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:37:07",
+      "scheduler_end": "2026-10-13T00:06:35"
     },
     {
       "number": 101,
@@ -5469,10 +5925,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1797,
-      "actual_gpuh": 0.49916666666666665
+      "actual_gpuh": 0.49916666666666665,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:38:10",
+      "scheduler_end": "2026-10-13T00:08:07"
     },
     {
       "number": 102,
@@ -5518,10 +5978,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1837,
-      "actual_gpuh": 0.5102777777777778
+      "actual_gpuh": 0.5102777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:41:55",
+      "scheduler_end": "2026-10-13T00:12:32"
     },
     {
       "number": 103,
@@ -5567,10 +6031,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1742,
-      "actual_gpuh": 0.48388888888888887
+      "actual_gpuh": 0.48388888888888887,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:45:45",
+      "scheduler_end": "2026-10-13T00:14:47"
     },
     {
       "number": 104,
@@ -5616,10 +6084,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2460,
-      "actual_gpuh": 0.6833333333333333
+      "actual_gpuh": 0.6833333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:48:23",
+      "scheduler_end": "2026-10-13T00:29:23"
     },
     {
       "number": 105,
@@ -5665,10 +6137,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2412,
-      "actual_gpuh": 0.67
+      "actual_gpuh": 0.67,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-12T23:48:26",
+      "scheduler_end": "2026-10-13T00:28:38"
     },
     {
       "number": 106,
@@ -5714,10 +6190,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2731,
-      "actual_gpuh": 0.7586111111111111
+      "actual_gpuh": 0.7586111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:05:15",
+      "scheduler_end": "2026-10-13T00:50:46"
     },
     {
       "number": 107,
@@ -5763,10 +6243,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2155,
-      "actual_gpuh": 0.5986111111111111
+      "actual_gpuh": 0.5986111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:06:35",
+      "scheduler_end": "2026-10-13T00:42:30"
     },
     {
       "number": 108,
@@ -5812,10 +6296,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 577,
-      "actual_gpuh": 0.16027777777777777
+      "actual_gpuh": 0.16027777777777777,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:08:07",
+      "scheduler_end": "2026-10-13T00:17:44"
     },
     {
       "number": 109,
@@ -5861,10 +6349,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 838,
-      "actual_gpuh": 0.23277777777777778
+      "actual_gpuh": 0.23277777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:12:32",
+      "scheduler_end": "2026-10-13T00:26:30"
     },
     {
       "number": 110,
@@ -5910,10 +6402,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1132,
-      "actual_gpuh": 0.31444444444444447
+      "actual_gpuh": 0.31444444444444447,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:13:03",
+      "scheduler_end": "2026-10-13T00:31:55"
     },
     {
       "number": 111,
@@ -5959,10 +6455,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2548,
-      "actual_gpuh": 0.7077777777777777
+      "actual_gpuh": 0.7077777777777777,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:14:47",
+      "scheduler_end": "2026-10-13T00:57:15"
     },
     {
       "number": 112,
@@ -6008,10 +6508,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2260,
-      "actual_gpuh": 0.6277777777777778
+      "actual_gpuh": 0.6277777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:17:44",
+      "scheduler_end": "2026-10-13T00:55:24"
     },
     {
       "number": 113,
@@ -6057,10 +6561,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1878,
-      "actual_gpuh": 0.5216666666666666
+      "actual_gpuh": 0.5216666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:26:30",
+      "scheduler_end": "2026-10-13T00:57:48"
     },
     {
       "number": 114,
@@ -6106,10 +6614,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1016,
-      "actual_gpuh": 0.2822222222222222
+      "actual_gpuh": 0.2822222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:28:38",
+      "scheduler_end": "2026-10-13T00:45:34"
     },
     {
       "number": 115,
@@ -6155,10 +6667,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2137,
-      "actual_gpuh": 0.5936111111111111
+      "actual_gpuh": 0.5936111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:29:23",
+      "scheduler_end": "2026-10-13T01:05:00"
     },
     {
       "number": 116,
@@ -6204,10 +6720,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2751,
-      "actual_gpuh": 0.7641666666666667
+      "actual_gpuh": 0.7641666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:31:55",
+      "scheduler_end": "2026-10-13T01:17:46"
     },
     {
       "number": 117,
@@ -6253,10 +6773,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2920,
-      "actual_gpuh": 0.8111111111111111
+      "actual_gpuh": 0.8111111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:42:30",
+      "scheduler_end": "2026-10-13T01:31:10"
     },
     {
       "number": 118,
@@ -6302,10 +6826,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1611,
-      "actual_gpuh": 0.4475
+      "actual_gpuh": 0.4475,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:45:34",
+      "scheduler_end": "2026-10-13T01:12:25"
     },
     {
       "number": 119,
@@ -6351,10 +6879,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 923,
-      "actual_gpuh": 0.2563888888888889
+      "actual_gpuh": 0.2563888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:50:47",
+      "scheduler_end": "2026-10-13T01:06:10"
     },
     {
       "number": 120,
@@ -6400,10 +6932,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1068,
-      "actual_gpuh": 0.2966666666666667
+      "actual_gpuh": 0.2966666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:55:24",
+      "scheduler_end": "2026-10-13T01:13:12"
     },
     {
       "number": 121,
@@ -6449,10 +6985,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1650,
-      "actual_gpuh": 0.4583333333333333
+      "actual_gpuh": 0.4583333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:57:15",
+      "scheduler_end": "2026-10-13T01:24:45"
     },
     {
       "number": 122,
@@ -6498,10 +7038,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2540,
-      "actual_gpuh": 0.7055555555555556
+      "actual_gpuh": 0.7055555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T00:57:48",
+      "scheduler_end": "2026-10-13T01:40:08"
     },
     {
       "number": 123,
@@ -6547,10 +7091,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1892,
-      "actual_gpuh": 0.5255555555555556
+      "actual_gpuh": 0.5255555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:05:00",
+      "scheduler_end": "2026-10-13T01:36:32"
     },
     {
       "number": 124,
@@ -6596,10 +7144,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1962,
-      "actual_gpuh": 0.545
+      "actual_gpuh": 0.545,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:06:11",
+      "scheduler_end": "2026-10-13T01:38:53"
     },
     {
       "number": 125,
@@ -6645,10 +7197,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 992,
-      "actual_gpuh": 0.27555555555555555
+      "actual_gpuh": 0.27555555555555555,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:12:26",
+      "scheduler_end": "2026-10-13T01:28:58"
     },
     {
       "number": 126,
@@ -6694,10 +7250,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1785,
-      "actual_gpuh": 0.49583333333333335
+      "actual_gpuh": 0.49583333333333335,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:13:12",
+      "scheduler_end": "2026-10-13T01:42:57"
     },
     {
       "number": 127,
@@ -6743,10 +7303,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2475,
-      "actual_gpuh": 0.6875
+      "actual_gpuh": 0.6875,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:17:46",
+      "scheduler_end": "2026-10-13T01:59:01"
     },
     {
       "number": 128,
@@ -6792,10 +7356,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2311,
-      "actual_gpuh": 0.6419444444444444
+      "actual_gpuh": 0.6419444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:24:45",
+      "scheduler_end": "2026-10-13T02:03:16"
     },
     {
       "number": 129,
@@ -6841,10 +7409,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1776,
-      "actual_gpuh": 0.49333333333333335
+      "actual_gpuh": 0.49333333333333335,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:28:58",
+      "scheduler_end": "2026-10-13T01:58:34"
     },
     {
       "number": 130,
@@ -6890,10 +7462,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1623,
-      "actual_gpuh": 0.4508333333333333
+      "actual_gpuh": 0.4508333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:31:10",
+      "scheduler_end": "2026-10-13T01:58:13"
     },
     {
       "number": 131,
@@ -6939,10 +7515,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1989,
-      "actual_gpuh": 0.5525
+      "actual_gpuh": 0.5525,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:58:13",
+      "scheduler_end": "2026-10-13T02:31:22"
     },
     {
       "number": 132,
@@ -6988,10 +7568,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2246,
-      "actual_gpuh": 0.6238888888888889
+      "actual_gpuh": 0.6238888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:58:34",
+      "scheduler_end": "2026-10-13T02:36:00"
     },
     {
       "number": 133,
@@ -7037,10 +7621,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2317,
-      "actual_gpuh": 0.6436111111111111
+      "actual_gpuh": 0.6436111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T01:59:01",
+      "scheduler_end": "2026-10-13T02:37:38"
     },
     {
       "number": 134,
@@ -7086,10 +7674,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2083,
-      "actual_gpuh": 0.5786111111111111
+      "actual_gpuh": 0.5786111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:00:25",
+      "scheduler_end": "2026-10-13T02:35:08"
     },
     {
       "number": 135,
@@ -7135,10 +7727,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2457,
-      "actual_gpuh": 0.6825
+      "actual_gpuh": 0.6825,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:00:35",
+      "scheduler_end": "2026-10-13T02:41:32"
     },
     {
       "number": 136,
@@ -7184,10 +7780,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2182,
-      "actual_gpuh": 0.6061111111111112
+      "actual_gpuh": 0.6061111111111112,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:01:29",
+      "scheduler_end": "2026-10-13T02:37:51"
     },
     {
       "number": 137,
@@ -7233,10 +7833,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2808,
-      "actual_gpuh": 0.78
+      "actual_gpuh": 0.78,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:03:01",
+      "scheduler_end": "2026-10-13T02:49:49"
     },
     {
       "number": 138,
@@ -7282,10 +7886,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2866,
-      "actual_gpuh": 0.7961111111111111
+      "actual_gpuh": 0.7961111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:03:16",
+      "scheduler_end": "2026-10-13T02:51:02"
     },
     {
       "number": 139,
@@ -7331,10 +7939,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2653,
-      "actual_gpuh": 0.7369444444444444
+      "actual_gpuh": 0.7369444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:31:22",
+      "scheduler_end": "2026-10-13T03:15:35"
     },
     {
       "number": 140,
@@ -7380,10 +7992,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1286,
-      "actual_gpuh": 0.3572222222222222
+      "actual_gpuh": 0.3572222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:35:09",
+      "scheduler_end": "2026-10-13T02:56:35"
     },
     {
       "number": 141,
@@ -7429,10 +8045,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 725,
-      "actual_gpuh": 0.2013888888888889
+      "actual_gpuh": 0.2013888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:36:00",
+      "scheduler_end": "2026-10-13T02:48:05"
     },
     {
       "number": 142,
@@ -7478,10 +8098,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 545,
-      "actual_gpuh": 0.15138888888888888
+      "actual_gpuh": 0.15138888888888888,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:37:38",
+      "scheduler_end": "2026-10-13T02:46:43"
     },
     {
       "number": 143,
@@ -7527,10 +8151,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2629,
-      "actual_gpuh": 0.7302777777777778
+      "actual_gpuh": 0.7302777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:37:51",
+      "scheduler_end": "2026-10-13T03:21:40"
     },
     {
       "number": 144,
@@ -7576,10 +8204,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1889,
-      "actual_gpuh": 0.5247222222222222
+      "actual_gpuh": 0.5247222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:41:32",
+      "scheduler_end": "2026-10-13T03:13:01"
     },
     {
       "number": 145,
@@ -7625,10 +8257,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1706,
-      "actual_gpuh": 0.4738888888888889
+      "actual_gpuh": 0.4738888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:46:43",
+      "scheduler_end": "2026-10-13T03:15:09"
     },
     {
       "number": 146,
@@ -7674,10 +8310,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1944,
-      "actual_gpuh": 0.54
+      "actual_gpuh": 0.54,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:48:05",
+      "scheduler_end": "2026-10-13T03:20:29"
     },
     {
       "number": 147,
@@ -7723,10 +8363,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1408,
-      "actual_gpuh": 0.39111111111111113
+      "actual_gpuh": 0.39111111111111113,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:49:49",
+      "scheduler_end": "2026-10-13T03:13:17"
     },
     {
       "number": 148,
@@ -7772,10 +8416,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2189,
-      "actual_gpuh": 0.6080555555555556
+      "actual_gpuh": 0.6080555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:51:02",
+      "scheduler_end": "2026-10-13T03:27:31"
     },
     {
       "number": 149,
@@ -7821,10 +8469,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2429,
-      "actual_gpuh": 0.6747222222222222
+      "actual_gpuh": 0.6747222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T02:56:35",
+      "scheduler_end": "2026-10-13T03:37:04"
     },
     {
       "number": 150,
@@ -7870,10 +8522,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2021,
-      "actual_gpuh": 0.5613888888888889
+      "actual_gpuh": 0.5613888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:13:01",
+      "scheduler_end": "2026-10-13T03:46:42"
     },
     {
       "number": 151,
@@ -7919,10 +8575,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1635,
-      "actual_gpuh": 0.45416666666666666
+      "actual_gpuh": 0.45416666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:13:17",
+      "scheduler_end": "2026-10-13T03:40:32"
     },
     {
       "number": 152,
@@ -7968,10 +8628,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1541,
-      "actual_gpuh": 0.4280555555555556
+      "actual_gpuh": 0.4280555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:15:09",
+      "scheduler_end": "2026-10-13T03:40:50"
     },
     {
       "number": 153,
@@ -8017,10 +8681,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1799,
-      "actual_gpuh": 0.49972222222222223
+      "actual_gpuh": 0.49972222222222223,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:15:35",
+      "scheduler_end": "2026-10-13T03:45:34"
     },
     {
       "number": 154,
@@ -8066,10 +8734,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2051,
-      "actual_gpuh": 0.5697222222222222
+      "actual_gpuh": 0.5697222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:20:29",
+      "scheduler_end": "2026-10-13T03:54:40"
     },
     {
       "number": 155,
@@ -8115,10 +8787,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1745,
-      "actual_gpuh": 0.4847222222222222
+      "actual_gpuh": 0.4847222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:21:40",
+      "scheduler_end": "2026-10-13T03:50:45"
     },
     {
       "number": 156,
@@ -8164,10 +8840,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1725,
-      "actual_gpuh": 0.4791666666666667
+      "actual_gpuh": 0.4791666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:27:31",
+      "scheduler_end": "2026-10-13T03:56:16"
     },
     {
       "number": 157,
@@ -8213,10 +8893,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1925,
-      "actual_gpuh": 0.5347222222222222
+      "actual_gpuh": 0.5347222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:37:04",
+      "scheduler_end": "2026-10-13T04:09:09"
     },
     {
       "number": 158,
@@ -8262,10 +8946,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1363,
-      "actual_gpuh": 0.3786111111111111
+      "actual_gpuh": 0.3786111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:40:32",
+      "scheduler_end": "2026-10-13T04:03:15"
     },
     {
       "number": 159,
@@ -8311,10 +8999,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1633,
-      "actual_gpuh": 0.45361111111111113
+      "actual_gpuh": 0.45361111111111113,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:40:50",
+      "scheduler_end": "2026-10-13T04:08:03"
     },
     {
       "number": 160,
@@ -8360,10 +9052,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1429,
-      "actual_gpuh": 0.39694444444444443
+      "actual_gpuh": 0.39694444444444443,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:45:35",
+      "scheduler_end": "2026-10-13T04:09:24"
     },
     {
       "number": 161,
@@ -8409,10 +9105,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1902,
-      "actual_gpuh": 0.5283333333333333
+      "actual_gpuh": 0.5283333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:46:42",
+      "scheduler_end": "2026-10-13T04:18:24"
     },
     {
       "number": 162,
@@ -8458,10 +9158,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3267,
-      "actual_gpuh": 0.9075
+      "actual_gpuh": 0.9075,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:50:45",
+      "scheduler_end": "2026-10-13T04:45:12"
     },
     {
       "number": 163,
@@ -8507,10 +9211,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3602,
-      "actual_gpuh": 1.0005555555555556
+      "actual_gpuh": 1.0005555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:54:40",
+      "scheduler_end": "2026-10-13T04:54:42"
     },
     {
       "number": 164,
@@ -8556,10 +9264,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3224,
-      "actual_gpuh": 0.8955555555555555
+      "actual_gpuh": 0.8955555555555555,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T03:56:16",
+      "scheduler_end": "2026-10-13T04:50:00"
     },
     {
       "number": 165,
@@ -8605,10 +9317,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1824,
-      "actual_gpuh": 0.5066666666666667
+      "actual_gpuh": 0.5066666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:03:15",
+      "scheduler_end": "2026-10-13T04:33:39"
     },
     {
       "number": 166,
@@ -8654,10 +9370,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2226,
-      "actual_gpuh": 0.6183333333333333
+      "actual_gpuh": 0.6183333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:08:03",
+      "scheduler_end": "2026-10-13T04:45:09"
     },
     {
       "number": 167,
@@ -8703,10 +9423,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2300,
-      "actual_gpuh": 0.6388888888888888
+      "actual_gpuh": 0.6388888888888888,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:09:09",
+      "scheduler_end": "2026-10-13T04:47:29"
     },
     {
       "number": 168,
@@ -8752,10 +9476,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2697,
-      "actual_gpuh": 0.7491666666666666
+      "actual_gpuh": 0.7491666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:09:25",
+      "scheduler_end": "2026-10-13T04:54:22"
     },
     {
       "number": 169,
@@ -8801,10 +9529,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2591,
-      "actual_gpuh": 0.7197222222222223
+      "actual_gpuh": 0.7197222222222223,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:18:24",
+      "scheduler_end": "2026-10-13T05:01:35"
     },
     {
       "number": 170,
@@ -8850,10 +9582,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2157,
-      "actual_gpuh": 0.5991666666666666
+      "actual_gpuh": 0.5991666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:33:39",
+      "scheduler_end": "2026-10-13T05:09:36"
     },
     {
       "number": 171,
@@ -8899,10 +9635,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1881,
-      "actual_gpuh": 0.5225
+      "actual_gpuh": 0.5225,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:45:09",
+      "scheduler_end": "2026-10-13T05:16:30"
     },
     {
       "number": 172,
@@ -8948,10 +9688,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2065,
-      "actual_gpuh": 0.5736111111111111
+      "actual_gpuh": 0.5736111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:45:12",
+      "scheduler_end": "2026-10-13T05:19:37"
     },
     {
       "number": 173,
@@ -8997,10 +9741,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2340,
-      "actual_gpuh": 0.65
+      "actual_gpuh": 0.65,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:47:29",
+      "scheduler_end": "2026-10-13T05:26:29"
     },
     {
       "number": 174,
@@ -9046,10 +9794,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2661,
-      "actual_gpuh": 0.7391666666666666
+      "actual_gpuh": 0.7391666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:50:01",
+      "scheduler_end": "2026-10-13T05:34:22"
     },
     {
       "number": 175,
@@ -9095,10 +9847,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2433,
-      "actual_gpuh": 0.6758333333333333
+      "actual_gpuh": 0.6758333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:54:22",
+      "scheduler_end": "2026-10-13T05:34:55"
     },
     {
       "number": 176,
@@ -9144,10 +9900,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2359,
-      "actual_gpuh": 0.6552777777777777
+      "actual_gpuh": 0.6552777777777777,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T04:54:42",
+      "scheduler_end": "2026-10-13T05:34:01"
     },
     {
       "number": 177,
@@ -9193,10 +9953,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2539,
-      "actual_gpuh": 0.7052777777777778
+      "actual_gpuh": 0.7052777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:09:36",
+      "scheduler_end": "2026-10-13T05:51:55"
     },
     {
       "number": 178,
@@ -9242,10 +10006,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2563,
-      "actual_gpuh": 0.7119444444444445
+      "actual_gpuh": 0.7119444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:10:46",
+      "scheduler_end": "2026-10-13T05:53:29"
     },
     {
       "number": 179,
@@ -9291,10 +10059,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2521,
-      "actual_gpuh": 0.7002777777777778
+      "actual_gpuh": 0.7002777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:16:30",
+      "scheduler_end": "2026-10-13T05:58:31"
     },
     {
       "number": 180,
@@ -9340,10 +10112,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2842,
-      "actual_gpuh": 0.7894444444444444
+      "actual_gpuh": 0.7894444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:19:38",
+      "scheduler_end": "2026-10-13T06:07:00"
     },
     {
       "number": 181,
@@ -9389,10 +10165,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3126,
-      "actual_gpuh": 0.8683333333333333
+      "actual_gpuh": 0.8683333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:26:29",
+      "scheduler_end": "2026-10-13T06:18:35"
     },
     {
       "number": 182,
@@ -9438,10 +10218,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3661,
-      "actual_gpuh": 1.0169444444444444
+      "actual_gpuh": 1.0169444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:34:01",
+      "scheduler_end": "2026-10-13T06:35:02"
     },
     {
       "number": 183,
@@ -9487,10 +10271,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2423,
-      "actual_gpuh": 0.6730555555555555
+      "actual_gpuh": 0.6730555555555555,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:34:23",
+      "scheduler_end": "2026-10-13T06:14:46"
     },
     {
       "number": 184,
@@ -9536,10 +10324,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2040,
-      "actual_gpuh": 0.5666666666666667
+      "actual_gpuh": 0.5666666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:34:55",
+      "scheduler_end": "2026-10-13T06:08:55"
     },
     {
       "number": 185,
@@ -9585,10 +10377,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1931,
-      "actual_gpuh": 0.5363888888888889
+      "actual_gpuh": 0.5363888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:51:55",
+      "scheduler_end": "2026-10-13T06:24:06"
     },
     {
       "number": 186,
@@ -9634,10 +10430,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3079,
-      "actual_gpuh": 0.8552777777777778
+      "actual_gpuh": 0.8552777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:53:29",
+      "scheduler_end": "2026-10-13T06:44:48"
     },
     {
       "number": 187,
@@ -9683,10 +10483,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2999,
-      "actual_gpuh": 0.8330555555555555
+      "actual_gpuh": 0.8330555555555555,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T05:58:31",
+      "scheduler_end": "2026-10-13T06:48:30"
     },
     {
       "number": 188,
@@ -9732,10 +10536,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3124,
-      "actual_gpuh": 0.8677777777777778
+      "actual_gpuh": 0.8677777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:07:00",
+      "scheduler_end": "2026-10-13T06:59:04"
     },
     {
       "number": 189,
@@ -9781,10 +10589,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3204,
-      "actual_gpuh": 0.89
+      "actual_gpuh": 0.89,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:08:56",
+      "scheduler_end": "2026-10-13T07:02:20"
     },
     {
       "number": 190,
@@ -9830,10 +10642,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1812,
-      "actual_gpuh": 0.5033333333333333
+      "actual_gpuh": 0.5033333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:14:46",
+      "scheduler_end": "2026-10-13T06:44:58"
     },
     {
       "number": 191,
@@ -9879,10 +10695,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 946,
-      "actual_gpuh": 0.2627777777777778
+      "actual_gpuh": 0.2627777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:18:35",
+      "scheduler_end": "2026-10-13T06:34:21"
     },
     {
       "number": 192,
@@ -9928,10 +10748,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1477,
-      "actual_gpuh": 0.4102777777777778
+      "actual_gpuh": 0.4102777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:24:06",
+      "scheduler_end": "2026-10-13T06:48:43"
     },
     {
       "number": 193,
@@ -9977,10 +10801,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1794,
-      "actual_gpuh": 0.49833333333333335
+      "actual_gpuh": 0.49833333333333335,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:34:21",
+      "scheduler_end": "2026-10-13T07:04:15"
     },
     {
       "number": 194,
@@ -10026,10 +10854,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2555,
-      "actual_gpuh": 0.7097222222222223
+      "actual_gpuh": 0.7097222222222223,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:35:02",
+      "scheduler_end": "2026-10-13T07:17:37"
     },
     {
       "number": 195,
@@ -10075,10 +10907,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2210,
-      "actual_gpuh": 0.6138888888888889
+      "actual_gpuh": 0.6138888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:44:48",
+      "scheduler_end": "2026-10-13T07:21:38"
     },
     {
       "number": 196,
@@ -10124,10 +10960,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2935,
-      "actual_gpuh": 0.8152777777777778
+      "actual_gpuh": 0.8152777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:44:58",
+      "scheduler_end": "2026-10-13T07:33:53"
     },
     {
       "number": 197,
@@ -10173,10 +11013,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2128,
-      "actual_gpuh": 0.5911111111111111
+      "actual_gpuh": 0.5911111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:48:30",
+      "scheduler_end": "2026-10-13T07:23:58"
     },
     {
       "number": 198,
@@ -10222,10 +11066,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1473,
-      "actual_gpuh": 0.4091666666666667
+      "actual_gpuh": 0.4091666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:48:43",
+      "scheduler_end": "2026-10-13T07:13:16"
     },
     {
       "number": 199,
@@ -10271,10 +11119,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1703,
-      "actual_gpuh": 0.47305555555555556
+      "actual_gpuh": 0.47305555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T06:59:04",
+      "scheduler_end": "2026-10-13T07:27:27"
     },
     {
       "number": 200,
@@ -10320,10 +11172,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1899,
-      "actual_gpuh": 0.5275
+      "actual_gpuh": 0.5275,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:02:20",
+      "scheduler_end": "2026-10-13T07:33:59"
     },
     {
       "number": 201,
@@ -10369,10 +11225,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2056,
-      "actual_gpuh": 0.5711111111111111
+      "actual_gpuh": 0.5711111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:04:15",
+      "scheduler_end": "2026-10-13T07:38:31"
     },
     {
       "number": 202,
@@ -10418,10 +11278,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1677,
-      "actual_gpuh": 0.4658333333333333
+      "actual_gpuh": 0.4658333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:13:16",
+      "scheduler_end": "2026-10-13T07:41:13"
     },
     {
       "number": 203,
@@ -10467,10 +11331,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1552,
-      "actual_gpuh": 0.4311111111111111
+      "actual_gpuh": 0.4311111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:17:38",
+      "scheduler_end": "2026-10-13T07:43:30"
     },
     {
       "number": 204,
@@ -10516,10 +11384,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1741,
-      "actual_gpuh": 0.4836111111111111
+      "actual_gpuh": 0.4836111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:21:38",
+      "scheduler_end": "2026-10-13T07:50:39"
     },
     {
       "number": 205,
@@ -10565,10 +11437,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2534,
-      "actual_gpuh": 0.7038888888888889
+      "actual_gpuh": 0.7038888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:23:58",
+      "scheduler_end": "2026-10-13T08:06:12"
     },
     {
       "number": 206,
@@ -10614,10 +11490,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 3024,
-      "actual_gpuh": 0.84
+      "actual_gpuh": 0.84,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:27:27",
+      "scheduler_end": "2026-10-13T08:17:51"
     },
     {
       "number": 207,
@@ -10663,10 +11543,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2874,
-      "actual_gpuh": 0.7983333333333333
+      "actual_gpuh": 0.7983333333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:33:53",
+      "scheduler_end": "2026-10-13T08:21:47"
     },
     {
       "number": 208,
@@ -10712,10 +11596,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1594,
-      "actual_gpuh": 0.44277777777777777
+      "actual_gpuh": 0.44277777777777777,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:33:59",
+      "scheduler_end": "2026-10-13T08:00:33"
     },
     {
       "number": 209,
@@ -10761,10 +11649,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1652,
-      "actual_gpuh": 0.4588888888888889
+      "actual_gpuh": 0.4588888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:38:31",
+      "scheduler_end": "2026-10-13T08:06:03"
     },
     {
       "number": 210,
@@ -10810,10 +11702,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1819,
-      "actual_gpuh": 0.5052777777777778
+      "actual_gpuh": 0.5052777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:41:13",
+      "scheduler_end": "2026-10-13T08:11:32"
     },
     {
       "number": 211,
@@ -10859,10 +11755,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2548,
-      "actual_gpuh": 0.7077777777777777
+      "actual_gpuh": 0.7077777777777777,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:43:31",
+      "scheduler_end": "2026-10-13T08:25:59"
     },
     {
       "number": 212,
@@ -10908,10 +11808,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2486,
-      "actual_gpuh": 0.6905555555555556
+      "actual_gpuh": 0.6905555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T07:50:39",
+      "scheduler_end": "2026-10-13T08:32:05"
     },
     {
       "number": 213,
@@ -10957,10 +11861,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2581,
-      "actual_gpuh": 0.7169444444444445
+      "actual_gpuh": 0.7169444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T08:00:33",
+      "scheduler_end": "2026-10-13T08:43:34"
     },
     {
       "number": 214,
@@ -11006,10 +11914,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2438,
-      "actual_gpuh": 0.6772222222222222
+      "actual_gpuh": 0.6772222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T08:06:03",
+      "scheduler_end": "2026-10-13T08:46:41"
     },
     {
       "number": 215,
@@ -11055,10 +11967,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2283,
-      "actual_gpuh": 0.6341666666666667
+      "actual_gpuh": 0.6341666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T08:06:12",
+      "scheduler_end": "2026-10-13T08:44:15"
     },
     {
       "number": 216,
@@ -11104,10 +12020,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2205,
-      "actual_gpuh": 0.6125
+      "actual_gpuh": 0.6125,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T08:11:32",
+      "scheduler_end": "2026-10-13T08:48:17"
     },
     {
       "number": 217,
@@ -11153,10 +12073,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 1999,
-      "actual_gpuh": 0.5552777777777778
+      "actual_gpuh": 0.5552777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T08:17:51",
+      "scheduler_end": "2026-10-13T08:51:10"
     },
     {
       "number": 218,
@@ -11202,10 +12126,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2418,
-      "actual_gpuh": 0.6716666666666666
+      "actual_gpuh": 0.6716666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T08:21:47",
+      "scheduler_end": "2026-10-13T09:02:05"
     },
     {
       "number": 219,
@@ -11251,10 +12179,14 @@
       "max_seconds": 7200,
       "memory_gb": 96,
       "status": "COMPLETED",
-      "reserved_gpuh": 2,
+      "reserved_gpuh": 0,
       "state": "COMPLETED",
       "allocation_seconds": 2269,
-      "actual_gpuh": 0.6302777777777778
+      "actual_gpuh": 0.6302777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T08:25:59",
+      "scheduler_end": "2026-10-13T09:03:48"
     },
     {
       "number": 220,
@@ -11288,7 +12220,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996845",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11299,8 +12231,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2135,
+      "actual_gpuh": 0.5930555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:19:14",
+      "scheduler_end": "2026-10-13T09:54:49"
     },
     {
       "number": 221,
@@ -11334,7 +12272,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996846",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11345,8 +12283,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2492,
+      "actual_gpuh": 0.6922222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:19:15",
+      "scheduler_end": "2026-10-13T10:00:47"
     },
     {
       "number": 222,
@@ -11380,7 +12324,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996847",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11391,8 +12335,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2132,
+      "actual_gpuh": 0.5922222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:19:15",
+      "scheduler_end": "2026-10-13T09:54:47"
     },
     {
       "number": 223,
@@ -11426,7 +12376,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996848",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11437,8 +12387,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2889,
+      "actual_gpuh": 0.8025,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:19:15",
+      "scheduler_end": "2026-10-13T10:07:24"
     },
     {
       "number": 224,
@@ -11472,7 +12428,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996849",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11483,8 +12439,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 3007,
+      "actual_gpuh": 0.8352777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:19:15",
+      "scheduler_end": "2026-10-13T10:09:22"
     },
     {
       "number": 225,
@@ -11518,7 +12480,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996850",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11529,8 +12491,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 3589,
+      "actual_gpuh": 0.9969444444444444,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:19:15",
+      "scheduler_end": "2026-10-13T10:19:04"
     },
     {
       "number": 226,
@@ -11564,7 +12532,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996851",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11575,8 +12543,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2557,
+      "actual_gpuh": 0.7102777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:30:00",
+      "scheduler_end": "2026-10-13T10:12:37"
     },
     {
       "number": 227,
@@ -11610,7 +12584,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996852",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11621,8 +12595,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1775,
+      "actual_gpuh": 0.4930555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:31:02",
+      "scheduler_end": "2026-10-13T10:00:37"
     },
     {
       "number": 228,
@@ -11656,7 +12636,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996853",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11667,8 +12647,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2067,
+      "actual_gpuh": 0.5741666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:54:47",
+      "scheduler_end": "2026-10-13T10:29:14"
     },
     {
       "number": 229,
@@ -11702,7 +12688,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996854",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11713,8 +12699,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2326,
+      "actual_gpuh": 0.6461111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T09:54:49",
+      "scheduler_end": "2026-10-13T10:33:35"
     },
     {
       "number": 230,
@@ -11748,7 +12740,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996855",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11759,8 +12751,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2291,
+      "actual_gpuh": 0.6363888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:00:37",
+      "scheduler_end": "2026-10-13T10:38:48"
     },
     {
       "number": 231,
@@ -11794,7 +12792,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996856",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11805,8 +12803,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2087,
+      "actual_gpuh": 0.5797222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:00:47",
+      "scheduler_end": "2026-10-13T10:35:34"
     },
     {
       "number": 232,
@@ -11840,7 +12844,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996857",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11851,8 +12855,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1950,
+      "actual_gpuh": 0.5416666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:07:24",
+      "scheduler_end": "2026-10-13T10:39:54"
     },
     {
       "number": 233,
@@ -11886,7 +12896,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996858",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11897,8 +12907,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2205,
+      "actual_gpuh": 0.6125,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:09:22",
+      "scheduler_end": "2026-10-13T10:46:07"
     },
     {
       "number": 234,
@@ -11932,7 +12948,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996859",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11943,8 +12959,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 756,
+      "actual_gpuh": 0.21,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:12:38",
+      "scheduler_end": "2026-10-13T10:25:14"
     },
     {
       "number": 235,
@@ -11978,7 +13000,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996860",
       "stderr": "",
       "target_gold_loaded": false,
@@ -11989,8 +13011,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 438,
+      "actual_gpuh": 0.12166666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:19:04",
+      "scheduler_end": "2026-10-13T10:26:22"
     },
     {
       "number": 236,
@@ -12024,7 +13052,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996861",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12035,8 +13063,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1129,
+      "actual_gpuh": 0.3136111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:25:14",
+      "scheduler_end": "2026-10-13T10:44:03"
     },
     {
       "number": 237,
@@ -12070,7 +13104,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996862",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12081,8 +13115,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2043,
+      "actual_gpuh": 0.5675,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:26:22",
+      "scheduler_end": "2026-10-13T11:00:25"
     },
     {
       "number": 238,
@@ -12116,7 +13156,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996865",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12127,8 +13167,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1400,
+      "actual_gpuh": 0.3888888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:29:14",
+      "scheduler_end": "2026-10-13T10:52:34"
     },
     {
       "number": 239,
@@ -12162,7 +13208,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996867",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12173,8 +13219,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1304,
+      "actual_gpuh": 0.3622222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:33:35",
+      "scheduler_end": "2026-10-13T10:55:19"
     },
     {
       "number": 240,
@@ -12208,7 +13260,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996870",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12219,8 +13271,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1087,
+      "actual_gpuh": 0.30194444444444446,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:35:34",
+      "scheduler_end": "2026-10-13T10:53:41"
     },
     {
       "number": 241,
@@ -12254,7 +13312,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996872",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12265,8 +13323,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1854,
+      "actual_gpuh": 0.515,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:38:48",
+      "scheduler_end": "2026-10-13T11:09:42"
     },
     {
       "number": 242,
@@ -12300,7 +13364,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996873",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12311,8 +13375,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1878,
+      "actual_gpuh": 0.5216666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:39:54",
+      "scheduler_end": "2026-10-13T11:11:12"
     },
     {
       "number": 243,
@@ -12346,7 +13416,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996874",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12357,8 +13427,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2245,
+      "actual_gpuh": 0.6236111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:44:03",
+      "scheduler_end": "2026-10-13T11:21:28"
     },
     {
       "number": 244,
@@ -12392,7 +13468,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996875",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12403,8 +13479,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1500,
+      "actual_gpuh": 0.4166666666666667,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:46:07",
+      "scheduler_end": "2026-10-13T11:11:07"
     },
     {
       "number": 245,
@@ -12438,7 +13520,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996876",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12449,8 +13531,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 719,
+      "actual_gpuh": 0.19972222222222222,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:52:34",
+      "scheduler_end": "2026-10-13T11:04:33"
     },
     {
       "number": 246,
@@ -12484,7 +13572,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996877",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12495,8 +13583,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 909,
+      "actual_gpuh": 0.2525,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:53:41",
+      "scheduler_end": "2026-10-13T11:08:50"
     },
     {
       "number": 247,
@@ -12530,7 +13624,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996878",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12541,8 +13635,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1339,
+      "actual_gpuh": 0.37194444444444447,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T10:55:20",
+      "scheduler_end": "2026-10-13T11:17:39"
     },
     {
       "number": 248,
@@ -12576,7 +13676,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996879",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12587,8 +13687,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1185,
+      "actual_gpuh": 0.32916666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:00:25",
+      "scheduler_end": "2026-10-13T11:20:10"
     },
     {
       "number": 249,
@@ -12622,7 +13728,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996880",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12633,8 +13739,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 548,
+      "actual_gpuh": 0.15222222222222223,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:04:33",
+      "scheduler_end": "2026-10-13T11:13:41"
     },
     {
       "number": 250,
@@ -12668,7 +13780,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996881",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12679,8 +13791,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 751,
+      "actual_gpuh": 0.2086111111111111,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:08:50",
+      "scheduler_end": "2026-10-13T11:21:21"
     },
     {
       "number": 251,
@@ -12714,7 +13832,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996882",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12725,8 +13843,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 578,
+      "actual_gpuh": 0.16055555555555556,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:09:42",
+      "scheduler_end": "2026-10-13T11:19:20"
     },
     {
       "number": 252,
@@ -12760,7 +13884,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996883",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12771,8 +13895,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2045,
+      "actual_gpuh": 0.5680555555555555,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:11:07",
+      "scheduler_end": "2026-10-13T11:45:12"
     },
     {
       "number": 253,
@@ -12806,7 +13936,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996884",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12817,8 +13947,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2418,
+      "actual_gpuh": 0.6716666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:11:12",
+      "scheduler_end": "2026-10-13T11:51:30"
     },
     {
       "number": 254,
@@ -12852,7 +13988,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996885",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12863,8 +13999,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1729,
+      "actual_gpuh": 0.4802777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:13:41",
+      "scheduler_end": "2026-10-13T11:42:30"
     },
     {
       "number": 255,
@@ -12898,7 +14040,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996886",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12909,8 +14051,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1420,
+      "actual_gpuh": 0.39444444444444443,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:17:39",
+      "scheduler_end": "2026-10-13T11:41:19"
     },
     {
       "number": 256,
@@ -12944,7 +14092,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996887",
       "stderr": "",
       "target_gold_loaded": false,
@@ -12955,8 +14103,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2327,
+      "actual_gpuh": 0.6463888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:19:20",
+      "scheduler_end": "2026-10-13T11:58:07"
     },
     {
       "number": 257,
@@ -12990,7 +14144,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996888",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13001,8 +14155,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1913,
+      "actual_gpuh": 0.5313888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:20:10",
+      "scheduler_end": "2026-10-13T11:52:03"
     },
     {
       "number": 258,
@@ -13036,7 +14196,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996889",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13047,8 +14207,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 2131,
+      "actual_gpuh": 0.5919444444444445,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:21:21",
+      "scheduler_end": "2026-10-13T11:56:52"
     },
     {
       "number": 259,
@@ -13082,7 +14248,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996890",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13093,8 +14259,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 828,
+      "actual_gpuh": 0.23,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:21:29",
+      "scheduler_end": "2026-10-13T11:35:17"
     },
     {
       "number": 260,
@@ -13128,7 +14300,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996891",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13139,8 +14311,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 393,
+      "actual_gpuh": 0.10916666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:35:17",
+      "scheduler_end": "2026-10-13T11:41:50"
     },
     {
       "number": 261,
@@ -13174,7 +14352,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996892",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13185,8 +14363,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 401,
+      "actual_gpuh": 0.11138888888888888,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:41:19",
+      "scheduler_end": "2026-10-13T11:48:00"
     },
     {
       "number": 262,
@@ -13220,7 +14404,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996893",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13231,8 +14415,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1940,
+      "actual_gpuh": 0.5388888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:41:50",
+      "scheduler_end": "2026-10-13T12:14:10"
     },
     {
       "number": 263,
@@ -13266,7 +14456,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996894",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13277,8 +14467,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 949,
+      "actual_gpuh": 0.26361111111111113,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:42:30",
+      "scheduler_end": "2026-10-13T11:58:19"
     },
     {
       "number": 264,
@@ -13312,7 +14508,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996895",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13323,8 +14519,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 933,
+      "actual_gpuh": 0.25916666666666666,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:45:12",
+      "scheduler_end": "2026-10-13T12:00:45"
     },
     {
       "number": 265,
@@ -13358,7 +14560,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996896",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13369,8 +14571,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 720,
+      "actual_gpuh": 0.2,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:48:00",
+      "scheduler_end": "2026-10-13T12:00:00"
     },
     {
       "number": 266,
@@ -13404,7 +14612,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996897",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13415,8 +14623,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1598,
+      "actual_gpuh": 0.4438888888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:51:30",
+      "scheduler_end": "2026-10-13T12:18:08"
     },
     {
       "number": 267,
@@ -13450,7 +14664,7 @@
         "--commit",
         "5fc00f067773b2a20e355bf4def462781214b99f"
       ],
-      "exit_code": 0,
+      "exit_code": "0:0",
       "stdout": "12996898",
       "stderr": "",
       "target_gold_loaded": false,
@@ -13461,8 +14675,14 @@
       "gpu": "a800",
       "max_seconds": 7200,
       "memory_gb": 96,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 2
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
+      "allocation_seconds": 1549,
+      "actual_gpuh": 0.43027777777777776,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "qos_actual": "emergency_gpu",
+      "scheduler_start": "2026-10-13T11:52:03",
+      "scheduler_end": "2026-10-13T12:17:52"
     },
     {
       "job_id": "12997841_0",
@@ -13480,7 +14700,10 @@
       "exit_code": "0:0",
       "allocation_seconds": 51,
       "actual_gpuh": 0.014166666666666666,
-      "reserved_gpuh": 0.48333333333333334
+      "reserved_gpuh": 0,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1",
+      "scheduler_start": "2026-10-13T10:32:00",
+      "scheduler_end": "2026-10-13T10:32:51"
     },
     {
       "job_id": "12997851_0",
@@ -13500,8 +14723,8 @@
       "cpus_per_task": 8,
       "memory_gb": 96,
       "max_seconds": 1209600,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 336,
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
       "command": [
         "/opt/slurm/bin/sbatch",
         "--parsable",
@@ -13521,7 +14744,13 @@
         "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
         "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
         "ba218fc60cc7eb3bd0e45a7e30002549b4404357"
-      ]
+      ],
+      "exit_code": "0:0",
+      "allocation_seconds": 29884,
+      "actual_gpuh": 8.301111111111112,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "scheduler_start": "2026-10-13T11:56:52",
+      "scheduler_end": "2026-10-13T20:14:56"
     },
     {
       "job_id": "12997851_1",
@@ -13541,8 +14770,8 @@
       "cpus_per_task": 8,
       "memory_gb": 96,
       "max_seconds": 1209600,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 336,
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
       "command": [
         "/opt/slurm/bin/sbatch",
         "--parsable",
@@ -13562,7 +14791,13 @@
         "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
         "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
         "ba218fc60cc7eb3bd0e45a7e30002549b4404357"
-      ]
+      ],
+      "exit_code": "0:0",
+      "allocation_seconds": 27657,
+      "actual_gpuh": 7.6825,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "scheduler_start": "2026-10-13T11:58:07",
+      "scheduler_end": "2026-10-13T19:39:04"
     },
     {
       "job_id": "12997851_2",
@@ -13582,8 +14817,8 @@
       "cpus_per_task": 8,
       "memory_gb": 96,
       "max_seconds": 1209600,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 336,
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
       "command": [
         "/opt/slurm/bin/sbatch",
         "--parsable",
@@ -13603,7 +14838,13 @@
         "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
         "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
         "ba218fc60cc7eb3bd0e45a7e30002549b4404357"
-      ]
+      ],
+      "exit_code": "0:0",
+      "allocation_seconds": 28894,
+      "actual_gpuh": 8.026111111111112,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "scheduler_start": "2026-10-13T11:58:20",
+      "scheduler_end": "2026-10-13T19:59:54"
     },
     {
       "job_id": "12997851_3",
@@ -13623,8 +14864,8 @@
       "cpus_per_task": 8,
       "memory_gb": 96,
       "max_seconds": 1209600,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 336,
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
       "command": [
         "/opt/slurm/bin/sbatch",
         "--parsable",
@@ -13644,7 +14885,13 @@
         "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
         "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
         "ba218fc60cc7eb3bd0e45a7e30002549b4404357"
-      ]
+      ],
+      "exit_code": "0:0",
+      "allocation_seconds": 28121,
+      "actual_gpuh": 7.811388888888889,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "scheduler_start": "2026-10-13T12:00:00",
+      "scheduler_end": "2026-10-13T19:48:41"
     },
     {
       "job_id": "12997851_4",
@@ -13664,8 +14911,8 @@
       "cpus_per_task": 8,
       "memory_gb": 96,
       "max_seconds": 1209600,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 336,
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
       "command": [
         "/opt/slurm/bin/sbatch",
         "--parsable",
@@ -13685,7 +14932,13 @@
         "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
         "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
         "ba218fc60cc7eb3bd0e45a7e30002549b4404357"
-      ]
+      ],
+      "exit_code": "0:0",
+      "allocation_seconds": 25725,
+      "actual_gpuh": 7.145833333333333,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "scheduler_start": "2026-10-13T12:00:45",
+      "scheduler_end": "2026-10-13T19:09:30"
     },
     {
       "job_id": "12997851_5",
@@ -13705,8 +14958,8 @@
       "cpus_per_task": 8,
       "memory_gb": 96,
       "max_seconds": 1209600,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 336,
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
       "command": [
         "/opt/slurm/bin/sbatch",
         "--parsable",
@@ -13726,7 +14979,13 @@
         "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
         "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
         "ba218fc60cc7eb3bd0e45a7e30002549b4404357"
-      ]
+      ],
+      "exit_code": "0:0",
+      "allocation_seconds": 28868,
+      "actual_gpuh": 8.018888888888888,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "scheduler_start": "2026-10-13T12:14:10",
+      "scheduler_end": "2026-10-13T20:15:18"
     },
     {
       "job_id": "12997851_6",
@@ -13746,8 +15005,8 @@
       "cpus_per_task": 8,
       "memory_gb": 96,
       "max_seconds": 1209600,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 336,
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
       "command": [
         "/opt/slurm/bin/sbatch",
         "--parsable",
@@ -13767,7 +15026,13 @@
         "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
         "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
         "ba218fc60cc7eb3bd0e45a7e30002549b4404357"
-      ]
+      ],
+      "exit_code": "0:0",
+      "allocation_seconds": 33074,
+      "actual_gpuh": 9.187222222222223,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "scheduler_start": "2026-10-13T12:17:52",
+      "scheduler_end": "2026-10-13T21:29:06"
     },
     {
       "job_id": "12997851_7",
@@ -13787,8 +15052,8 @@
       "cpus_per_task": 8,
       "memory_gb": 96,
       "max_seconds": 1209600,
-      "status": "SUBMITTED",
-      "reserved_gpuh": 336,
+      "status": "COMPLETED",
+      "reserved_gpuh": 0,
       "command": [
         "/opt/slurm/bin/sbatch",
         "--parsable",
@@ -13808,20 +15073,26 @@
         "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
         "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
         "ba218fc60cc7eb3bd0e45a7e30002549b4404357"
-      ]
+      ],
+      "exit_code": "0:0",
+      "allocation_seconds": 26794,
+      "actual_gpuh": 7.442777777777778,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "scheduler_start": "2026-10-13T12:18:08",
+      "scheduler_end": "2026-10-13T19:44:42"
     }
   ],
-  "target_gold_loaded": false,
+  "target_gold_loaded": true,
   "formal_completed_resource_records": 11,
   "formal_submitted_records": 8064,
   "formal_target_records": 8064,
   "next_remaining_batch": null,
   "formal_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-long-20261013T023035Z/formal/plan.json",
-  "formal_verified_complete_records": 4539,
-  "settled_formal_actual_gpuh": 119.27583333333338,
-  "settled_all_actual_gpuh": 119.28250000000004,
-  "new_wave_reserved_gpuh": 96,
-  "formal_whole_job_complete_records": 4539,
+  "formal_verified_complete_records": 8064,
+  "settled_formal_actual_gpuh": 204.68583333333333,
+  "settled_all_actual_gpuh": 204.70666666666668,
+  "new_wave_reserved_gpuh": 0,
+  "formal_whole_job_complete_records": 8064,
   "formal_unsubmitted_records": 0,
   "previous_formal_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-20261012T083857Z/full-p5-remaining/plan.json",
   "continuation_mode": "CONSOLIDATED_ALL_REMAINING_SUBMITTED",
@@ -13832,5 +15103,9 @@
   "new_long_requested_gpuh_upper_bound": 2688,
   "consolidated_records": 2565,
   "consolidated_task_count": 8,
-  "max_concurrent_a800": 8
+  "max_concurrent_a800": 8,
+  "settled_debug_actual_gpuh": 0.020833333333333332,
+  "current_inflight_count": 0,
+  "final_analysis": ".planning/phase11/gate_d4_final_analysis_20261013T141800Z.json",
+  "full_raw_closure_verified": true
 }
