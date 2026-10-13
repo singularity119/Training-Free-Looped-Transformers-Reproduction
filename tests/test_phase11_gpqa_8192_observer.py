@@ -32,8 +32,10 @@ class ArrayObserverTests(unittest.TestCase):
                 'prior_verified_complete_records': 4539, 'unsubmitted_records': 0}))
             queue = subprocess.CompletedProcess([], 0, '\n'.join(f'{i}|PENDING|QOSMaxCpuPerUserLimit' for i in ids), '')
             account = subprocess.CompletedProcess([], 0, '12997851_[0-7%8]|PENDING|0:0|0\n', '')
-            with patch.object(observer.subprocess, 'run', side_effect=[queue, account]):
+            with patch.object(observer.subprocess, 'run', side_effect=[queue, account]) as queries:
                 value = observer.run(jobset)
+            command = queries.call_args_list[1].args[0]
+            self.assertEqual(command[command.index('-j') + 1], '12997851')
             self.assertEqual(value['missing_accounting_ids'], [])
             self.assertEqual(value['accounting_state_counts'], {'PENDING': 8})
             self.assertEqual(value['verified_complete_formal_records'], 4539 + 16)

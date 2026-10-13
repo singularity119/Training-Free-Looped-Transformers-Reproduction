@@ -33,7 +33,10 @@ def run(jobset_path):
     assert jobs and len(ids) == len(set(ids)) and ids == jobset["active_job_ids"]
     queue_result = subprocess.run(["/opt/slurm/bin/squeue", "-h", "-r", "-j", ",".join(ids),
         "-o", "%i|%T|%R"], capture_output=True, text=True, timeout=15)
-    account_result = subprocess.run(["/opt/slurm/bin/sacct", "-X", "-n", "-P", "-j", ",".join(ids),
+    # Pending children have no individual accounting row until instantiated.
+    # Query their parent, then retain only the exact requested children below.
+    account_query_ids = list(dict.fromkeys(i.split('_', 1)[0] for i in ids))
+    account_result = subprocess.run(["/opt/slurm/bin/sacct", "-X", "-n", "-P", "-j", ",".join(account_query_ids),
         "-o", "JobID,State,ExitCode,ElapsedRaw"], capture_output=True, text=True, timeout=15)
     assert queue_result.returncode == account_result.returncode == 0, (queue_result.stderr, account_result.stderr)
     queue = [line.split("|") for line in queue_result.stdout.splitlines() if line.strip()]
