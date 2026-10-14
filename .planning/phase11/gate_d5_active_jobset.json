@@ -1,0 +1,15 @@
+{
+  "job_ids": [
+    "13030531_0",
+    "13030531_1",
+    "13030531_2",
+    "13030531_3",
+    "13030531_4",
+    "13030531_5",
+    "13030531_6",
+    "13030531_7"
+  ],
+  "plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/formal-plan.json",
+  "wait_class": "full",
+  "next_action": "All102796 raw+predictions closure then one combined gold/reproducibility analysis; failed attempts diagnose/recover only missing invalid"
+}

@@ -1,0 +1,9 @@
+{
+  "command": "cd /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/analysis-source-dfdc881 && PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python -m unittest discover -s tests -p 'test_phase11_d5*.py'",
+  "exit_code": 0,
+  "stdout": "{\"status\": \"SCORES_COMPLETE\", \"count\": 2, \"cell_id\": \"q4-w15-18-k2-online-current-t-lambda0.9\", \"synthetic\": false, \"process_elapsed_seconds\": 0.0029086489230394363}\n{\"status\": \"SCORES_COMPLETE\", \"count\": 2, \"cell_id\": \"q4-w15-18-k2-online-current-t-lambda0.9\", \"synthetic\": false, \"process_elapsed_seconds\": 0.0007820352911949158}\n",
+  "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n.........................\n----------------------------------------------------------------------\nRan 25 tests in 0.288s\n\nOK\n",
+  "analysis_commit": "dfdc881f295809886eb53c6c031c67de3369da8a",
+  "synthetic_tests_only": true,
+  "target_gold_loaded": false
+}

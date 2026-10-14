@@ -1,0 +1,42 @@
+{
+  "automation_id": "gate-d5-fresh-repeat-execution-monitor",
+  "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "status": "ACTIVE",
+  "wait_class": "full",
+  "interval_minutes": 60,
+  "active_jobset": ".planning/phase11/gate_d5_active_jobset.json",
+  "stable_running_evidence": {
+    "13029862_0": 130,
+    "13029862_1": 81
+  },
+  "tool_response": {
+    "automationId": "gate-d5-fresh-repeat-execution-monitor",
+    "mode": "create",
+    "status": "ACTIVE"
+  },
+  "created_at_utc": "2026-10-14T03:37:01.634907+00:00",
+  "terminal_route": "pause monitor then confirmed AUTOMATION_TERMINAL_RESUME to exact executor; fallback relay to planning",
+  "target_gold_loaded": false,
+  "job_ids": [
+    "13030531_0",
+    "13030531_1",
+    "13030531_2",
+    "13030531_3",
+    "13030531_4",
+    "13030531_5",
+    "13030531_6",
+    "13030531_7"
+  ],
+  "debug_pause_confirmed": {
+    "automationId": "gate-d5-fresh-repeat-execution-monitor",
+    "mode": "update",
+    "status": "PAUSED"
+  },
+  "formal_activation_confirmed": {
+    "automationId": "gate-d5-fresh-repeat-execution-monitor",
+    "mode": "update",
+    "status": "ACTIVE"
+  },
+  "updated_at_utc": "2026-10-14T03:42:33.823461+00:00"
+}

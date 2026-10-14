@@ -1,0 +1,16 @@
+{
+  "event": "D5_FIRST_FORMAL_SUBMISSION_DELIVERED",
+  "not_terminal": true,
+  "planning_thread": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "planning_host": "local",
+  "executor_thread": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9",
+  "delivery_tool": "mcp__codex_app__send_message_to_thread",
+  "tool_response": {
+    "threadId": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f"
+  },
+  "delivered_at_utc": "2026-10-14T03:49:14.344472+00:00",
+  "formal_array": "13030531",
+  "scope": "28 cells,102796 fresh records; two runtime seeds,original input unchanged",
+  "monitor": "gate-d5-fresh-repeat-execution-monitor ACTIVE full60min",
+  "target_gold_loaded": false
+}
