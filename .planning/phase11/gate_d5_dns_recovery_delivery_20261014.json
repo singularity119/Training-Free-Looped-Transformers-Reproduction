@@ -1,0 +1,14 @@
+{
+  "destination": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local",
+  "event": "D5_OBSERVER_RECOVERY",
+  "delivery_confirmed": true,
+  "tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f\"}"
+      }
+    ],
+    "isError": false
+  }
+}

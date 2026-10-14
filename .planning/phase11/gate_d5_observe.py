@@ -48,6 +48,7 @@ def main():
     p.add_argument("--jobset", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--ssh-bind-interface", help="Read current IPv4 from this interface; change no system settings")
+    p.add_argument("--ssh-dns-resolver", help="Resolve the original hostname via bounded TCP DNS; preserve its SSH trust identity")
     args = p.parse_args()
     root = Path(__file__).resolve().parent
     setup = json.loads((root / "gate_d5_setup.json").read_text())
@@ -64,6 +65,18 @@ def main():
             raise RuntimeError("bound interface requires exactly one current IPv4 address")
         bind_address = addresses[0]
         ssh += ["-4", "-b", bind_address]
+    resolved_address = None
+    if args.ssh_dns_resolver:
+        hostname = "hpc2login.hpc.hkust-gz.edu.cn"
+        dns = ["dig", "@" + args.ssh_dns_resolver, "+tcp", "+time=3", "+tries=1", "+short", hostname, "A"]
+        if bind_address:
+            dns[1:1] = ["-b", bind_address]
+        result = subprocess.run(dns, capture_output=True, text=True, check=True, timeout=8)
+        addresses = result.stdout.strip().splitlines()
+        if len(addresses) != 1 or not re.fullmatch(r"\d+\.\d+\.\d+\.\d+", addresses[0]):
+            raise RuntimeError("TCP DNS requires exactly one current IPv4 address: " + result.stdout + result.stderr)
+        resolved_address = addresses[0]
+        ssh += ["-o", "Hostname=" + resolved_address, "-o", "HostKeyAlias=" + hostname]
     result = subprocess.run(ssh + ["hpc2-hkustgz", cmd], input=REMOTE, capture_output=True, text=True, timeout=70)
     if result.returncode:
         raise RuntimeError(result.stderr + result.stdout)
@@ -72,6 +85,8 @@ def main():
     value["executor"] = setup["executor"]
     value["ssh_bind_interface"] = args.ssh_bind_interface
     value["ssh_bind_address"] = bind_address
+    value["ssh_dns_resolver"] = args.ssh_dns_resolver
+    value["ssh_resolved_address"] = resolved_address
     args.output.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps({k: v for k, v in value.items() if k != "progress"}, ensure_ascii=False))
 

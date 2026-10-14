@@ -1,0 +1,68 @@
+{
+  "event": "D5_OBSERVER_DNS_RECOVERY",
+  "observed_at_utc": "2026-10-14T13:00:18.377465+00:00",
+  "visibility_error": "Could not resolve hostname hpc2login.hpc.hkust-gz.edu.cn",
+  "read_only_findings": {
+    "utun7_ipv4": "10.21.1.11",
+    "school_dns": "10.90.63.2",
+    "tcp_dns_current_a": "10.120.18.63",
+    "ssh_hostkey_alias": "hpc2login.hpc.hkust-gz.edu.cn",
+    "login_host": "mgmt-3"
+  },
+  "observer_command": "python3 .planning/phase11/gate_d5_observe.py --jobset .planning/phase11/gate_d5_active_jobset.json --output .planning/phase11/gate_d5_monitor_latest.json --ssh-bind-interface utun7 --ssh-dns-resolver 10.90.63.2",
+  "snapshot": "gate_d5_connection_recovered_20261014T1300Z.json",
+  "exact_jobs": [
+    "13030531_0",
+    "13030531_1",
+    "13030531_2",
+    "13030531_3",
+    "13030531_4",
+    "13030531_5",
+    "13030531_6",
+    "13030531_7"
+  ],
+  "all_jobs_state": "RUNNING",
+  "terminal_failures": [],
+  "done_record_count": 101157,
+  "target_count": 102796,
+  "gold_read": false,
+  "source_change": "Observer connection options only; GPU producer4d9bd14 and analysis dfdc881 unchanged",
+  "system_configuration_changed": false,
+  "ssh_trust_changed": false,
+  "jobs_cancelled_or_requeued": false,
+  "monitor_pause_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d5-fresh-repeat-execution-monitor\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "self_resume_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a1385a-fdfa-7d43-a6b8-1405a585b8b9\"}"
+      }
+    ],
+    "isError": false
+  },
+  "monitor_reactivation_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d5-fresh-repeat-execution-monitor\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  }
+}

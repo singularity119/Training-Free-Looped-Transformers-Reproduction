@@ -1,0 +1,37 @@
+{
+  "schema": "gate_d5_monitor_visibility_v1",
+  "observed_at": "2026-10-14T12:54:21.368Z",
+  "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9/local",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local",
+  "jobs": [
+    "13030531_0",
+    "13030531_1",
+    "13030531_2",
+    "13030531_3",
+    "13030531_4",
+    "13030531_5",
+    "13030531_6",
+    "13030531_7"
+  ],
+  "observer_exit_code": 1,
+  "error": "ssh: Could not resolve hostname hpc2login.hpc.hkust-gz.edu.cn: nodename nor servname provided, or not known",
+  "classification": "REMOTE_VISIBILITY_UNAVAILABLE_NOT_JOB_FAILURE",
+  "current_jobs_states": "UNKNOWN",
+  "current_counts": "UNKNOWN",
+  "gold_read": false,
+  "ssh_bind_interface": "utun7",
+  "monitor_pause_tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d5-fresh-repeat-execution-monitor\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "next_action": "Exact executor diagnoses DNS/SSH visibility read-only, preserving jobs and SSH trust; independently verifies original jobs after access recovery. No requeue, cancellation, outcome read, Gate PASS/BLOCK, or next Gate inferred."
+}
