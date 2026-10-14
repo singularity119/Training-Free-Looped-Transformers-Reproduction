@@ -1,0 +1,132 @@
+{
+  "event": "D5_CONNECTION_RECOVERED",
+  "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9",
+  "job_ids": [
+    "13030531_0",
+    "13030531_1",
+    "13030531_2",
+    "13030531_3",
+    "13030531_4",
+    "13030531_5",
+    "13030531_6",
+    "13030531_7"
+  ],
+  "monitor_delivery_confirmed": {
+    "threadId": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9"
+  },
+  "problem": "default IPv4 SSH connect failed Can't assign requested address",
+  "observed_vpn_interface": "utun7",
+  "current_interface_address": "10.21.1.11",
+  "route_gateway_old_address": "10.21.0.83",
+  "recovery": "per-command SSH source binding to current interface IPv4",
+  "ssh_flags": [
+    "-4",
+    "-b <current utun7 IPv4>",
+    "BatchMode=yes",
+    "ClearAllForwardings=yes",
+    "StrictHostKeyChecking=yes",
+    "UpdateHostKeys=no"
+  ],
+  "vpn_route_hosts_ssh_config_unchanged": true,
+  "scheduler_snapshot": [
+    {
+      "job_id": "13030531_0",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 29505,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "Unknown"
+    },
+    {
+      "job_id": "13030531_1",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 29505,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "Unknown"
+    },
+    {
+      "job_id": "13030531_2",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 29505,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "Unknown"
+    },
+    {
+      "job_id": "13030531_3",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 29225,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:45:37",
+      "end": "Unknown"
+    },
+    {
+      "job_id": "13030531_4",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 28914,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:50:48",
+      "end": "Unknown"
+    },
+    {
+      "job_id": "13030531_5",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 28688,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:54:34",
+      "end": "Unknown"
+    },
+    {
+      "job_id": "13030531_6",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 28601,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:56:01",
+      "end": "Unknown"
+    },
+    {
+      "job_id": "13030531_7",
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 28240,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T12:02:02",
+      "end": "Unknown"
+    }
+  ],
+  "done_record_count": 100761,
+  "target_count": 102796,
+  "jobs_cancelled_or_resubmitted": 0,
+  "target_gold_loaded": false,
+  "monitor_reactivation": {
+    "automationId": "gate-d5-fresh-repeat-execution-monitor",
+    "mode": "update",
+    "status": "ACTIVE",
+    "interval_minutes": 60
+  },
+  "observed_at_utc": "2026-10-14T11:52:44.424361+00:00"
+}

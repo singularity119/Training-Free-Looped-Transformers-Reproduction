@@ -38,5 +38,13 @@
     "mode": "update",
     "status": "ACTIVE"
   },
-  "updated_at_utc": "2026-10-14T03:42:33.823461+00:00"
+  "updated_at_utc": "2026-10-14T11:55:44.612535+00:00",
+  "ssh_bind_interface": "utun7",
+  "connection_recovery": "gate_d5_connection_recovery_20261014.json",
+  "latest_reactivation_tool_response": {
+    "automationId": "gate-d5-fresh-repeat-execution-monitor",
+    "mode": "update",
+    "status": "ACTIVE",
+    "interval_minutes": 60
+  }
 }

@@ -1,0 +1,34 @@
+{
+  "event": "MONITOR_VISIBILITY_FAILURE",
+  "gate": "D-5",
+  "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9",
+  "automation_id": "gate-d5-fresh-repeat-execution-monitor",
+  "observed_at_utc": "2026-10-14T11:46:51.160Z",
+  "error": "ssh: connect to host hpc2login.hpc.hkust-gz.edu.cn port 22: Can't assign requested address",
+  "observer_exit_code": 1,
+  "current_jobs_state": "UNKNOWN_VISIBILITY_FAILURE",
+  "job_ids": [
+    "13030531_0",
+    "13030531_1",
+    "13030531_2",
+    "13030531_3",
+    "13030531_4",
+    "13030531_5",
+    "13030531_6",
+    "13030531_7"
+  ],
+  "last_confirmed_snapshot": {
+    "utc": "2026-10-14T10:50:35.309889+00:00",
+    "states": "8 RUNNING",
+    "done_records": 100396,
+    "target": 102796
+  },
+  "monitor_pause_tool_response": {
+    "automationId": "gate-d5-fresh-repeat-execution-monitor",
+    "mode": "update",
+    "status": "PAUSED"
+  },
+  "no_jobs_cancelled_or_resubmitted": true,
+  "gold_read": false,
+  "next_action": "Wake exact executor for bounded read-only connection diagnosis; preserve jobs and original scientific contract"
+}

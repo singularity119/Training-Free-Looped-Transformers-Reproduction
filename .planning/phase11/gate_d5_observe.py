@@ -4,6 +4,7 @@ import argparse
 import datetime
 import json
 from pathlib import Path
+import re
 import shlex
 import subprocess
 
@@ -46,17 +47,31 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--jobset", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--ssh-bind-interface", help="Read current IPv4 from this interface; change no system settings")
     args = p.parse_args()
     root = Path(__file__).resolve().parent
     setup = json.loads((root / "gate_d5_setup.json").read_text())
     jobset = json.loads(args.jobset.read_text())
     cmd = shlex.quote(setup["python"]) + " - " + shlex.quote(json.dumps(setup)) + " " + shlex.quote(json.dumps(jobset))
-    result = subprocess.run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "-o", "ClearAllForwardings=yes", "hpc2-hkustgz", cmd], input=REMOTE, capture_output=True, text=True, timeout=70)
+    ssh = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "-o", "ClearAllForwardings=yes",
+           "-o", "StrictHostKeyChecking=yes", "-o", "UpdateHostKeys=no"]
+    bind_address = None
+    if args.ssh_bind_interface:
+        interface = subprocess.run(["ifconfig", args.ssh_bind_interface], capture_output=True, text=True,
+                                   check=True, timeout=5)
+        addresses = re.findall(r"\binet\s+(\d+\.\d+\.\d+\.\d+)\b", interface.stdout)
+        if len(addresses) != 1:
+            raise RuntimeError("bound interface requires exactly one current IPv4 address")
+        bind_address = addresses[0]
+        ssh += ["-4", "-b", bind_address]
+    result = subprocess.run(ssh + ["hpc2-hkustgz", cmd], input=REMOTE, capture_output=True, text=True, timeout=70)
     if result.returncode:
         raise RuntimeError(result.stderr + result.stdout)
     value = json.loads(result.stdout)
     value["observed_at_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
     value["executor"] = setup["executor"]
+    value["ssh_bind_interface"] = args.ssh_bind_interface
+    value["ssh_bind_address"] = bind_address
     args.output.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps({k: v for k, v in value.items() if k != "progress"}, ensure_ascii=False))
 
