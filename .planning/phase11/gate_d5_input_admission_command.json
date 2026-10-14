@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "stdout": "{\"checks\": 56, \"all_passed\": true, \"evidence\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/input-admission.json\"}\n",
+  "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n",
+  "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z"
+}
