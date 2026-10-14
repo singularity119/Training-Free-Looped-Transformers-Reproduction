@@ -2,7 +2,7 @@
   "automation_id": "gate-d5-fresh-repeat-execution-monitor",
   "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9",
   "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
-  "status": "ACTIVE",
+  "status": "PAUSED",
   "wait_class": "full",
   "interval_minutes": 60,
   "active_jobset": ".planning/phase11/gate_d5_active_jobset.json",
@@ -40,7 +40,7 @@
   },
   "updated_at_utc": "2026-10-14T11:55:44.612535+00:00",
   "ssh_bind_interface": "utun7",
-  "connection_recovery": "gate_d5_connection_recovery_20261014T1300Z.json",
+  "connection_recovery": "gate_d5_connection_unavailable_20261014T170452Z.json",
   "ssh_dns_resolver": "10.90.63.2",
   "latest_reactivation_tool_response": {
     "automationId": "gate-d5-fresh-repeat-execution-monitor",

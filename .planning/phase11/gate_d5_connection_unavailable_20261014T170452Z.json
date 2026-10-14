@@ -1,0 +1,56 @@
+{
+  "event": "D5_REMOTE_VISIBILITY_UNAVAILABLE",
+  "observed_at_local": "2026-10-15T01:05:42+08:00",
+  "utun7_ipv4": "10.21.1.11",
+  "school_dns_tcp_error": "host unreachable",
+  "hpc2_ssh_error": "No route to host",
+  "hpc2_ipv4_verified_by_general_dns": "10.120.18.63",
+  "hpc2_route": {
+    "gateway": "198.18.0.1",
+    "interface": "utun2",
+    "network": "8.0.0.0/5"
+  },
+  "school_dns_route": {
+    "gateway": "198.18.0.1",
+    "interface": "utun2"
+  },
+  "utun7_ipv4_routes_present": false,
+  "monitor_status": "PAUSED",
+  "pause_tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d5-fresh-repeat-execution-monitor\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "self_resume_confirmed": true,
+  "job_states_current": "UNKNOWN",
+  "last_verified": {
+    "observed_at": "2026-10-14T16:00:37.810059Z",
+    "done": 102147,
+    "total": 102796,
+    "completed": [
+      "13030531_0",
+      "13030531_5"
+    ],
+    "running": [
+      "13030531_1",
+      "13030531_2",
+      "13030531_3",
+      "13030531_4",
+      "13030531_6",
+      "13030531_7"
+    ],
+    "terminal_failures": []
+  },
+  "configuration_changed_by_executor": false,
+  "gpu_resubmitted_or_cancelled": false,
+  "gold_read": false,
+  "next_action": "Restore existing authorized VPN access externally; executor then verifies original exact jobs and continues same Gate. No job failure or Gate BLOCK inferred."
+}

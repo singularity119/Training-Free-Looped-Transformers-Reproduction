@@ -1,0 +1,27 @@
+{
+  "observed_at": "2026-10-14T17:04:52.423Z",
+  "event": "D5_DNS_VISIBILITY_FAILURE",
+  "observer_exit_code": 1,
+  "dig_exit_code": 9,
+  "command": "dig -b 10.21.1.11 @10.90.63.2 +tcp +time=3 +tries=1 +short hpc2login.hpc.hkust-gz.edu.cn A",
+  "current_job_states": "UNKNOWN",
+  "current_counts": "UNKNOWN",
+  "last_verified_at": "2026-10-14T16:00:37.810059Z",
+  "last_verified_done": 102147,
+  "last_verified_states": "13030531_0,5 COMPLETED0:0; other6 RUNNING",
+  "pause_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d5-fresh-repeat-execution-monitor\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "gold_read": false,
+  "job_failure_inferred": false
+}

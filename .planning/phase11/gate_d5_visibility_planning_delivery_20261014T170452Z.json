@@ -1,0 +1,14 @@
+{
+  "event": "D5_REMOTE_VISIBILITY_UNAVAILABLE",
+  "destination": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local",
+  "confirmed": true,
+  "response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f\"}"
+      }
+    ],
+    "isError": false
+  }
+}
