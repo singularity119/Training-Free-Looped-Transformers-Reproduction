@@ -102,5 +102,7 @@
     "next_gate_started": false,
     "self_pass": false
   },
-  "terminal_delivery": "PENDING_TOOL_CONFIRMATION"
+  "terminal_delivery": "TOOL_CONFIRMED",
+  "delivery_evidence": "gate_d5_terminal_delivery_20261015.json",
+  "audited_evidence_commit": "0b39d676c8529d31b27a765b34225ca058e79d99"
 }
