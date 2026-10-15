@@ -15,11 +15,13 @@ s,j=json.loads(sys.argv[1]),json.loads(sys.argv[2]); ids=j['job_ids']; wanted=se
 parents=','.join(sorted({i.split('_')[0] for i in ids}))
 acct=subprocess.run(['/opt/slurm/bin/sacct','-n','-P','-j',parents,'--format=JobID,State,ExitCode,ElapsedRaw,AllocTRES,Partition,QOS,Start,End'],capture_output=True,text=True,timeout=25)
 queue=subprocess.run(['/opt/slurm/bin/squeue','--array','-h','-j',parents,'-o','%i|%T|%M|%R'],capture_output=True,text=True,timeout=25)
-if acct.returncode or queue.returncode: raise RuntimeError('scheduler visibility failed: '+acct.stderr+queue.stderr)
+if acct.returncode: raise RuntimeError('scheduler accounting visibility failed: '+acct.stderr)
 states={}
 for line in acct.stdout.splitlines():
  f=line.split('|')
  if f[0] in wanted: states[f[0]]={'job_id':f[0],'state':f[1].split()[0],'exit_code':f[2],'elapsed_seconds':int(f[3] or 0),'alloc_tres':f[4],'partition':f[5],'qos':f[6],'start':f[7],'end':f[8]}
+queue_retired=queue.returncode and 'Invalid job id specified' in queue.stderr and wanted.issubset(states)
+if queue.returncode and not queue_retired: raise RuntimeError('scheduler queue visibility failed: '+queue.stderr)
 for line in queue.stdout.splitlines():
  f=line.split('|')
  if f[0] in wanted and f[0] not in states: states[f[0]]={'job_id':f[0],'state':f[1],'queue_elapsed':f[2],'reason':f[3],'exit_code':None,'elapsed_seconds':0}
@@ -38,7 +40,7 @@ terminal={'COMPLETED','FAILED','CANCELLED','TIMEOUT','PREEMPTED','NODE_FAIL','OU
 all_terminal=not missing and all(x['state'] in terminal for x in states.values())
 all_success=all_terminal and all(x['state']=='COMPLETED' and x['exit_code']=='0:0' for x in states.values())
 failed=[x for x in states.values() if x['state'] in terminal and (x['state']!='COMPLETED' or x['exit_code']!='0:0')]
-v={'gate':'D-5','wait_class':j['wait_class'],'job_ids':ids,'scheduler':list(states.values()),'missing_job_ids':missing,'all_terminal':all_terminal,'all_success':all_success,'terminal_failures':failed,'done_record_count':done,'target_count':total,'progress':progress,'target_gold_loaded':False}
+v={'gate':'D-5','wait_class':j['wait_class'],'job_ids':ids,'scheduler':list(states.values()),'missing_job_ids':missing,'all_terminal':all_terminal,'all_success':all_success,'terminal_failures':failed,'done_record_count':done,'target_count':total,'progress':progress,'target_gold_loaded':False,'queue_retired_with_complete_accounting':bool(queue_retired)}
 print(json.dumps(v,ensure_ascii=False))
 '''
 

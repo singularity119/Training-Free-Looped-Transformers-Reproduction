@@ -66,7 +66,7 @@
       },
       "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/arc-analysis-attempt1-20261008/gold.json",
       "format": "base_aligned_json",
-      "historical_analysis": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/arc-analysis-attempt1-20261008/analysis.json"
+      "historical_analysis": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/arc-analysis-attempt1-20261008/tables/analysis.json"
     },
     "p11-instruct-arc": {
       "pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/arc_challenge-prepared/arc_challenge-pool.json",
@@ -144,8 +144,8 @@
           "reference0_runtime_seed": 20261008
         }
       },
-      "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/arc_challenge-prepared/sealed/arc_challenge-gold.jsonl",
-      "format": "p11_jsonl",
+      "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-sealed_gold.json",
+      "format": "p11_json",
       "historical_analysis": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d-20261009T023200Z-arc-full-analysis.json"
     },
     "p11-instruct-gpqa": {

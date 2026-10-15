@@ -1,0 +1,25 @@
+{
+  "event": "D5_ANALYSIS_BINDING_REPAIR",
+  "failed_attempt": {
+    "source": "dfdc881f295809886eb53c6c031c67de3369da8a",
+    "exit_code": 1,
+    "error": "one or more canonical gold paths are absent; no gold has been read",
+    "analysis_output_created": false,
+    "target_gold_read": false
+  },
+  "repair": {
+    "p11_arc_gold": "Original Gate D canonical ARC sealed JSON at inputs/phase11-gate-d-20261009T023200Z/arc-sealed_gold.json; add existing p11 JSON container loader feeding the same gold_indices exact join",
+    "p10_arc_historical": "Use existing arc-analysis-attempt1-20261008/tables/analysis.json",
+    "observer": "Accept squeue Invalid job id only with all exact jobs present in successful sacct accounting"
+  },
+  "science_changed": false,
+  "statistics_changed": false,
+  "gpu_producer_changed": false,
+  "raw_prediction_closure_preserved": true,
+  "validation": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -p test_phase11_d5_analysis.py",
+    "tests": 8,
+    "exit_code": 0
+  },
+  "next": "Archive committed CPU-only repair into a new analysis source; use fresh binding-v2 and output analysis-attempt2. Preserve dfdc881 source and original binding."
+}

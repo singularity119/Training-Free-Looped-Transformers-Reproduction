@@ -108,6 +108,11 @@ class D5AnalysisTests(unittest.TestCase):
             p11_path = Path(temp) / "gold.jsonl"
             p11_path.write_text('{"identity":"id","gold_letter":"B","category":"s"}\n')
             self.assertEqual(analysis.load_gold({"format": "p11_jsonl", "gold": str(p11_path)}, pool, ["id"]), [1])
+            sealed_path = Path(temp) / "arc-sealed_gold.json"
+            sealed_path.write_text('{"rows":[{"identity":"id","label_index":1,"category":"s"}]}')
+            self.assertEqual(analysis.load_gold({"format": "p11_json", "gold": str(sealed_path)}, pool, ["id"]), [1])
+            with self.assertRaisesRegex(ValueError, "unknown or duplicate identity"):
+                analysis.load_gold({"format": "p11_json", "gold": str(sealed_path)}, pool, ["other"])
 
     def test_old_full_grid_p_is_a_side_column_not_the_new_adjustment(self):
         data, gold = synthetic()

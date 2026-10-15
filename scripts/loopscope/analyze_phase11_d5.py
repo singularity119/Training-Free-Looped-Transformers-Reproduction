@@ -123,8 +123,9 @@ def load_gold(binding, pool_rows, identities):
                 "aligned Base gold identity/order/count differs")
         gold = value["gold"]
     else:
-        require(binding["format"] == "p11_jsonl", "unknown canonical gold format")
-        gold = gold_indices(lines(binding["gold"]), identities,
+        require(binding["format"] in ("p11_jsonl", "p11_json"), "unknown canonical gold format")
+        rows = lines(binding["gold"]) if binding["format"] == "p11_jsonl" else read(binding["gold"])
+        gold = gold_indices(rows, identities,
             {identity: row["choice_labels"] for identity, row in zip(identities, pool_rows)},
             {identity: row["subject"] for identity, row in zip(identities, pool_rows)})
     for value, row in zip(gold, pool_rows):
