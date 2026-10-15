@@ -6,6 +6,7 @@ no tokenizer or dataset is silently downloaded.
 """
 from __future__ import annotations
 
+import copy
 import csv
 import json
 import random
@@ -29,6 +30,8 @@ MMLU_SAFE_COLUMNS = ("question_id", "question", "options", "category", "src")
 GPQA_COLUMNS = ("Question", "Correct Answer", "Incorrect Answer 1", "Incorrect Answer 2", "Incorrect Answer 3")
 INSTRUCTION = ("Reason step by step, then end your response with exactly one line in the form "
                "Final answer: (X), where X is the letter of the correct option.")
+DIRECT_INSTRUCTION = ("Do not provide reasoning or explanation. Respond with exactly one line in the form "
+                      "Final answer: (X), where X is the letter of the correct option.")
 SCHEMA = "loopscope.phase11.inputs.v1"
 
 
@@ -36,6 +39,42 @@ def require_revision(value):
     if not isinstance(value, str) or len(value) != 40 or any(c not in "0123456789abcdef" for c in value):
         raise ValueError("source revision must be an exact commit")
     return value
+
+
+def prepare_gpqa_prompt_row(row, tokenizer, prompt_mode="cot", max_length=262144, max_new_tokens=8192):
+    """Derive D6 prompt variants from frozen, already shuffled model inputs.
+
+    Only the exact instruction in the rendered chat text changes. In particular,
+    the original ``Answer: Let's think step by step.`` prefix, chat roles, and
+    generation suffix remain as frozen; no source/gold reader or RNG is used.
+    """
+    if prompt_mode not in ("cot", "direct") or row.get("task") != "gpqa_main":
+        raise ValueError("GPQA prompt mode must be cot or direct")
+    prompt = row["prompt"]
+    if prompt.count(INSTRUCTION) != 1:
+        raise ValueError("frozen GPQA prompt must contain the exact CoT instruction once")
+    if tokenizer.encode(prompt, add_special_tokens=False) != row["input_ids"]:
+        raise ValueError("frozen GPQA prompt IDs differ from the bound tokenizer")
+    result = copy.deepcopy(row)
+    if prompt_mode == "direct":
+        result["prompt"] = prompt.replace(INSTRUCTION, DIRECT_INSTRUCTION, 1)
+        result["input_ids"] = list(tokenizer.encode(result["prompt"], add_special_tokens=False))
+        result["prompt_token_length"] = len(result["input_ids"])
+    if (not result["input_ids"] or result["prompt_token_length"] != len(result["input_ids"])
+            or len(result["input_ids"]) + max_new_tokens > max_length):
+        raise ValueError("complete GPQA variant prompt plus generation exceeds context; truncation forbidden")
+    return result
+
+
+def derive_gpqa_prompt_pool(pool, tokenizer, prompt_mode="cot", max_length=262144, max_new_tokens=8192):
+    """Gold-free prompt derivation with unchanged canonical sample identities."""
+    if pool.get("task") != "gpqa_main" or pool.get("target_gold_loaded") is not False:
+        raise ValueError("GPQA prompt derivation requires a gold-free GPQA pool")
+    result = copy.deepcopy(pool)
+    result["rows"] = [prepare_gpqa_prompt_row(row, tokenizer, prompt_mode, max_length, max_new_tokens)
+                      for row in pool["rows"]]
+    result["prompt_mode"] = prompt_mode
+    return result
 
 
 def option_labels(options):

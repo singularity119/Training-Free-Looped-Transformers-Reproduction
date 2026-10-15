@@ -183,17 +183,24 @@ def runtime_telemetry(runtime):
     fits = {str(t): 0 for t in range(runtime.k)}
     calls = {str(t): 0 for t in range(runtime.k)}
     applied = {str(t): 0 for t in range(runtime.k)}
+    stage_applied = {kind: {str(t): 0 for t in range(runtime.k)} for kind in ("prefill", "decode")}
+    stage_callbacks = {"prefill": 0, "decode": 0}
     decode_fit_count = 0
     for call in runtime.calls:
         t = str(call["t"])
         calls[t] += 1
         applied[t] += int(call["applied"])
+        stage_applied[call["forward_kind"]][t] += int(call["applied"])
+        stage_callbacks[call["forward_kind"]] += 1
         if call["direction_fit_t"] is not None:
             fits[str(call["direction_fit_t"])] += 1
             decode_fit_count += int(call["forward_kind"] == "decode")
     require(decode_fit_count == 0, "incremental decode fitted a new direction")
     return {"forward_count": forwards, "callback_count": len(runtime.calls), "callbacks_by_t": calls,
             "applied_by_t": applied, "direction_fits_by_t": fits, "decode_fit_count": decode_fit_count,
+            "damping_scope": runtime.damping_scope,
+            "prefill_applied_by_t": stage_applied["prefill"], "decode_applied_by_t": stage_applied["decode"],
+            "prefill_callback_count": stage_callbacks["prefill"], "decode_callback_count": stage_callbacks["decode"],
             "directions_released": True,
             "last_prefill_fit_metadata": {str(t): dict(value) for t, value in runtime._last_fit_metadata.items()}}
 

@@ -21,11 +21,14 @@ def direction_schedule(policy, k):
 
 
 class Phase11Runtime:
-    def __init__(self, policy, k, strength):
+    def __init__(self, policy, k, strength, damping_scope="full"):
         self.schedule = direction_schedule(policy, k)
+        if damping_scope not in ("full", "prefill_only"):
+            raise ValueError("Phase 11 damping scope must be full or prefill_only")
         if not math.isfinite(strength) or not 0 <= strength <= 1:
             raise ValueError("Phase 11 strength must be finite and in [0, 1]")
         self.direction_policy, self.k, self.strength = policy, k, float(strength)
+        self.damping_scope = damping_scope
         self.intervention_mode = "spectral"
         self._active = None
         self._forward = None
@@ -163,12 +166,14 @@ class Phase11Runtime:
             self._fit_native_direction(delta, fit_t)
         if used_t is not None and used_t not in self._directions:
             raise RuntimeError("required prefill direction was not fitted")
-        applied = used_t is not None and self.strength != 0
+        applied = (used_t is not None and self.strength != 0
+                   and (kind == "prefill" or self.damping_scope == "full"))
         result = self._damp(delta, position, self._directions[used_t]) if applied else delta
         self.calls.append({"identity": self._active["identity"], "t": t,
             "forward_kind": kind, "forward_index": self._forward["index"], "position": position,
             "valid_token_count": len(self._active["valid_positions"]) if kind == "prefill" else 1,
             "direction_policy": self.direction_policy, "intervention_mode": "spectral",
+            "damping_scope": self.damping_scope,
             "direction_fit_t": fit_t if fitted else None, "direction_used_fit_t": used_t,
             "fit_from_unmodified_current_residual": fitted, "applied": applied,
             "applied_t": t if applied else None, **self._mutation(delta, result, position)})
@@ -177,7 +182,8 @@ class Phase11Runtime:
 
     def summary(self):
         return {"direction_policy": self.direction_policy, "intervention_mode": "spectral",
-            "k": self.k, "strength": self.strength, "call_count": len(self.calls),
+            "k": self.k, "strength": self.strength, "damping_scope": self.damping_scope,
+            "call_count": len(self.calls),
             "calls": list(self.calls), "context_summaries": list(self.context_summaries),
             "cache_reset_count": self.cache_reset_count,
             "fit_metadata_by_t": {str(t): dict(m) for t, m in self._last_fit_metadata.items()},
@@ -192,7 +198,8 @@ def make_runtime(cell):
         return None
     if cell.get("intervention_mode", "spectral") != "spectral":
         raise ValueError("Phase 11 Online requires spectral intervention")
-    return Phase11Runtime(cell["direction_policy"], cell["k"], cell["strength"])
+    return Phase11Runtime(cell["direction_policy"], cell["k"], cell["strength"],
+                          damping_scope=cell.get("damping_scope", "full"))
 
 
 def validate_calls(runtime, k=None):
@@ -207,7 +214,10 @@ def validate_calls(runtime, k=None):
     for call in runtime.calls:
         _, used, fit = schedule[call["t"]]
         expected_fit = fit if call["forward_kind"] == "prefill" else None
-        expected_applied = used is not None and runtime.strength != 0
+        expected_applied = (used is not None and runtime.strength != 0
+                            and (call["forward_kind"] == "prefill" or runtime.damping_scope == "full"))
+        if call.get("damping_scope") != runtime.damping_scope:
+            raise RuntimeError("Phase 11 callback damping scope differs")
         if call["direction_used_fit_t"] != used or call["direction_fit_t"] != expected_fit:
             raise RuntimeError("Phase 11 fit/use direction timing differs from frozen schedule")
         if call["nonanswer_max_abs_change"] != 0 or bool(call["applied"]) != expected_applied:
