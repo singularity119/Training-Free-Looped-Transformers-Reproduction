@@ -1,0 +1,23 @@
+{
+  "gate": "D-5",
+  "status": "CLOSED_AFTER_PLANNING_PASS",
+  "planning_decision": "PASS",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local",
+  "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9/local",
+  "audited_commit": "0b39d676c8529d31b27a765b34225ca058e79d99",
+  "acceptance": "loopscope_phase11_gate_d5_acceptance.md",
+  "planning_verification": "gate_d5_planning_verification_20261015.json",
+  "decision_received_via": "codex_app.send_message_to_thread from exact planning; local acceptance/control readback agrees",
+  "recorded_at_utc": "2026-10-15T02:32:00.114690+00:00",
+  "monitor": {
+    "id": "gate-d5-fresh-repeat-execution-monitor",
+    "status": "PAUSED",
+    "verified_from_current_automation_toml": true
+  },
+  "gpu_scheduler_new_analysis_authority": "CLOSED",
+  "mmlu_pro": "PAUSED",
+  "next_gate": "NOT_AUTHORIZED",
+  "new_compute_after_acceptance": false,
+  "evidence_preserved": true,
+  "scientific_interpretation": "Execution/reproducibility acceptance only; same-input repeats and postselected configurations do not establish independent efficacy; disclosed A40 native drift accepted without causal proof."
+}
