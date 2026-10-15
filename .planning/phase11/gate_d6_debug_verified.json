@@ -1,0 +1,579 @@
+{
+  "status": "D6_DEBUG_VERIFIED",
+  "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535",
+  "count": 12,
+  "facts": [
+    {
+      "cell_key": "cot_native",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "cot_loop_k2",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "cot_loop_k3",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "cot_current_k2_full",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "cot_fixed_k3_full",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "direct_native",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "direct_loop_k2",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "direct_loop_k3",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "direct_current_k2_full",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "direct_fixed_k3_full",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "cot_current_k2_prefill",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    },
+    {
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 1,
+      "generated_tokens": 3,
+      "runtime_seed": 20261015
+    }
+  ],
+  "scope_check": {
+    "status": "D6_SCOPE_CUDA_VERIFIED",
+    "target_gold_loaded": false,
+    "source": {
+      "source_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/source",
+      "source_branch": "loopscope",
+      "source_head": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    "environment": {
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "platform": "Linux-5.4.0-162-generic-x86_64-with-glibc2.31",
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "tokenizer_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "dtype": "torch.bfloat16",
+      "native_generation_eos_ids": [
+        151645,
+        151643
+      ],
+      "max_length": 262144,
+      "gpu": "NVIDIA A40",
+      "total_memory": 50899648512,
+      "job_id": "13073061",
+      "partition": "debug",
+      "qos": "debug",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11"
+      }
+    },
+    "synthetic_generated_tokens": 3,
+    "evidence": {
+      "cot_current_k2_full:full": {
+        "wrapper": [
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 75,
+              "hidden_seq_length": 76,
+              "cache_position_length": 76,
+              "is_incremental_decode_step": false,
+              "cache_seq_length": 76
+            },
+            "body_call_count": 2,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          },
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 76,
+              "hidden_seq_length": 1,
+              "cache_position_length": 1,
+              "is_incremental_decode_step": true,
+              "cache_seq_length": 77
+            },
+            "body_call_count": 2,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          },
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 77,
+              "hidden_seq_length": 1,
+              "cache_position_length": 1,
+              "is_incremental_decode_step": true,
+              "cache_seq_length": 78
+            },
+            "body_call_count": 2,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          }
+        ],
+        "online": {
+          "forward_count": 3,
+          "callback_count": 6,
+          "callbacks_by_t": {
+            "0": 3,
+            "1": 3
+          },
+          "applied_by_t": {
+            "0": 3,
+            "1": 3
+          },
+          "direction_fits_by_t": {
+            "0": 1,
+            "1": 1
+          },
+          "decode_fit_count": 0,
+          "damping_scope": "full",
+          "prefill_applied_by_t": {
+            "0": 1,
+            "1": 1
+          },
+          "decode_applied_by_t": {
+            "0": 2,
+            "1": 2
+          },
+          "prefill_callback_count": 2,
+          "decode_callback_count": 4,
+          "directions_released": true,
+          "last_prefill_fit_metadata": {
+            "0": {
+              "algorithm": "cuda_gesvd_fp32_reduced_svd",
+              "row_count": 73,
+              "hidden_size": 2560,
+              "top1_energy_fraction": 0.19224396347999573,
+              "singular_value_1": 123.184814453125,
+              "singular_value_2": 100.86272430419922,
+              "singular_value_gap": 22.32209014892578,
+              "singular_value_relative_gap": 0.18120813225253435,
+              "svd_seconds": 0.03497817611694336,
+              "svd_wall_seconds": 0.07043150707613677,
+              "svd_timing": "cuda_event"
+            },
+            "1": {
+              "algorithm": "cuda_gesvd_fp32_reduced_svd",
+              "row_count": 73,
+              "hidden_size": 2560,
+              "top1_energy_fraction": 0.24080735445022583,
+              "singular_value_1": 101.25895690917969,
+              "singular_value_2": 66.23274993896484,
+              "singular_value_gap": 35.026206970214844,
+              "singular_value_relative_gap": 0.3459072465226977,
+              "svd_seconds": 0.005722943782806396,
+              "svd_wall_seconds": 0.00625607103575021,
+              "svd_timing": "cuda_event"
+            }
+          }
+        }
+      },
+      "cot_current_k2_full:prefill_only": {
+        "wrapper": [
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 75,
+              "hidden_seq_length": 76,
+              "cache_position_length": 76,
+              "is_incremental_decode_step": false,
+              "cache_seq_length": 76
+            },
+            "body_call_count": 2,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          },
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 76,
+              "hidden_seq_length": 1,
+              "cache_position_length": 1,
+              "is_incremental_decode_step": true,
+              "cache_seq_length": 77
+            },
+            "body_call_count": 2,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          },
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 77,
+              "hidden_seq_length": 1,
+              "cache_position_length": 1,
+              "is_incremental_decode_step": true,
+              "cache_seq_length": 78
+            },
+            "body_call_count": 2,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          }
+        ],
+        "online": {
+          "forward_count": 3,
+          "callback_count": 6,
+          "callbacks_by_t": {
+            "0": 3,
+            "1": 3
+          },
+          "applied_by_t": {
+            "0": 1,
+            "1": 1
+          },
+          "direction_fits_by_t": {
+            "0": 1,
+            "1": 1
+          },
+          "decode_fit_count": 0,
+          "damping_scope": "prefill_only",
+          "prefill_applied_by_t": {
+            "0": 1,
+            "1": 1
+          },
+          "decode_applied_by_t": {
+            "0": 0,
+            "1": 0
+          },
+          "prefill_callback_count": 2,
+          "decode_callback_count": 4,
+          "directions_released": true,
+          "last_prefill_fit_metadata": {
+            "0": {
+              "algorithm": "cuda_gesvd_fp32_reduced_svd",
+              "row_count": 73,
+              "hidden_size": 2560,
+              "top1_energy_fraction": 0.19224396347999573,
+              "singular_value_1": 123.184814453125,
+              "singular_value_2": 100.86272430419922,
+              "singular_value_gap": 22.32209014892578,
+              "singular_value_relative_gap": 0.18120813225253435,
+              "svd_seconds": 0.005812032222747803,
+              "svd_wall_seconds": 0.006295338971540332,
+              "svd_timing": "cuda_event"
+            },
+            "1": {
+              "algorithm": "cuda_gesvd_fp32_reduced_svd",
+              "row_count": 73,
+              "hidden_size": 2560,
+              "top1_energy_fraction": 0.24080735445022583,
+              "singular_value_1": 101.25895690917969,
+              "singular_value_2": 66.23274993896484,
+              "singular_value_gap": 35.026206970214844,
+              "singular_value_relative_gap": 0.3459072465226977,
+              "svd_seconds": 0.005700543880462646,
+              "svd_wall_seconds": 0.006171540939249098,
+              "svd_timing": "cuda_event"
+            }
+          }
+        }
+      },
+      "cot_fixed_k3_full:full": {
+        "wrapper": [
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 75,
+              "hidden_seq_length": 76,
+              "cache_position_length": 76,
+              "is_incremental_decode_step": false,
+              "cache_seq_length": 76
+            },
+            "body_call_count": 3,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          },
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 76,
+              "hidden_seq_length": 1,
+              "cache_position_length": 1,
+              "is_incremental_decode_step": true,
+              "cache_seq_length": 77
+            },
+            "body_call_count": 3,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          },
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 77,
+              "hidden_seq_length": 1,
+              "cache_position_length": 1,
+              "is_incremental_decode_step": true,
+              "cache_seq_length": 78
+            },
+            "body_call_count": 3,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          }
+        ],
+        "online": {
+          "forward_count": 3,
+          "callback_count": 9,
+          "callbacks_by_t": {
+            "0": 3,
+            "1": 3,
+            "2": 3
+          },
+          "applied_by_t": {
+            "0": 0,
+            "1": 3,
+            "2": 3
+          },
+          "direction_fits_by_t": {
+            "0": 1,
+            "1": 0,
+            "2": 0
+          },
+          "decode_fit_count": 0,
+          "damping_scope": "full",
+          "prefill_applied_by_t": {
+            "0": 0,
+            "1": 1,
+            "2": 1
+          },
+          "decode_applied_by_t": {
+            "0": 0,
+            "1": 2,
+            "2": 2
+          },
+          "prefill_callback_count": 3,
+          "decode_callback_count": 6,
+          "directions_released": true,
+          "last_prefill_fit_metadata": {
+            "0": {
+              "algorithm": "cuda_gesvd_fp32_reduced_svd",
+              "row_count": 73,
+              "hidden_size": 2560,
+              "top1_energy_fraction": 0.19224396347999573,
+              "singular_value_1": 123.184814453125,
+              "singular_value_2": 100.86272430419922,
+              "singular_value_gap": 22.32209014892578,
+              "singular_value_relative_gap": 0.18120813225253435,
+              "svd_seconds": 0.005789792060852051,
+              "svd_wall_seconds": 0.006255591055378318,
+              "svd_timing": "cuda_event"
+            }
+          }
+        }
+      },
+      "cot_fixed_k3_full:prefill_only": {
+        "wrapper": [
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 75,
+              "hidden_seq_length": 76,
+              "cache_position_length": 76,
+              "is_incremental_decode_step": false,
+              "cache_seq_length": 76
+            },
+            "body_call_count": 3,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          },
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 76,
+              "hidden_seq_length": 1,
+              "cache_position_length": 1,
+              "is_incremental_decode_step": true,
+              "cache_seq_length": 77
+            },
+            "body_call_count": 3,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          },
+          {
+            "wrapper_forward": {
+              "wrapper_type": "block",
+              "bypass": false,
+              "use_cache": true,
+              "past_key_value_non_null": true,
+              "past_key_values_non_null": false,
+              "has_decode_cache": true,
+              "cache_position": 77,
+              "hidden_seq_length": 1,
+              "cache_position_length": 1,
+              "is_incremental_decode_step": true,
+              "cache_seq_length": 78
+            },
+            "body_call_count": 3,
+            "stash_pass_count": 1,
+            "stash_cache_strategy": "first"
+          }
+        ],
+        "online": {
+          "forward_count": 3,
+          "callback_count": 9,
+          "callbacks_by_t": {
+            "0": 3,
+            "1": 3,
+            "2": 3
+          },
+          "applied_by_t": {
+            "0": 0,
+            "1": 1,
+            "2": 1
+          },
+          "direction_fits_by_t": {
+            "0": 1,
+            "1": 0,
+            "2": 0
+          },
+          "decode_fit_count": 0,
+          "damping_scope": "prefill_only",
+          "prefill_applied_by_t": {
+            "0": 0,
+            "1": 1,
+            "2": 1
+          },
+          "decode_applied_by_t": {
+            "0": 0,
+            "1": 0,
+            "2": 0
+          },
+          "prefill_callback_count": 3,
+          "decode_callback_count": 6,
+          "directions_released": true,
+          "last_prefill_fit_metadata": {
+            "0": {
+              "algorithm": "cuda_gesvd_fp32_reduced_svd",
+              "row_count": 73,
+              "hidden_size": 2560,
+              "top1_energy_fraction": 0.19224396347999573,
+              "singular_value_1": 123.184814453125,
+              "singular_value_2": 100.86272430419922,
+              "singular_value_gap": 22.32209014892578,
+              "singular_value_relative_gap": 0.18120813225253435,
+              "svd_seconds": 0.005802207946777343,
+              "svd_wall_seconds": 0.006257937056943774,
+              "svd_timing": "cuda_event"
+            }
+          }
+        }
+      }
+    },
+    "scope_comparisons": [
+      {
+        "method": "cot_current_k2_full",
+        "prefill_logits": {
+          "max_abs_error": 0.0,
+          "allclose": true,
+          "atol": 0.0001,
+          "rtol": 0.0001
+        }
+      },
+      {
+        "method": "cot_fixed_k3_full",
+        "prefill_logits": {
+          "max_abs_error": 0.0,
+          "allclose": true,
+          "atol": 0.0001,
+          "rtol": 0.0001
+        }
+      }
+    ],
+    "resource_sizing": false
+  },
+  "target_gold_loaded": false
+}

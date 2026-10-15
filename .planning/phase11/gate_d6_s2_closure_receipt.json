@@ -1,0 +1,25 @@
+{
+  "status": "S2_PREDICTIONS_CLOSED_GOLD_UNREAD",
+  "record_count": 5376,
+  "cell_count": 12,
+  "closure_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d6-20261015T033000Z/closure/closure.json",
+  "predictions_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d6-20261015T033000Z/closure/predictions.jsonl",
+  "command": [
+    "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/source/scripts/loopscope/analyze_phase11_d6.py",
+    "--close",
+    "--plan",
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/plans/execution-plan.json",
+    "--output-dir",
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d6-20261015T033000Z/closure"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"status\": \"GOLD_UNREAD\", \"record_count\": 5376, \"cell_count\": 12, \"closure\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d6-20261015T033000Z/closure/closure.json\"}\n",
+  "closed_at_utc": "2026-10-15T16:50:45.950643+00:00",
+  "closure_mtime_ns": 1792083045643662000,
+  "target_gold_loaded": false,
+  "sealed_filenames": [
+    "gpqa_main-gold.jsonl"
+  ],
+  "scheduler_start_end_csv": "13073647_8|COMPLETED|0:0|2026-10-15T11:44:53|2026-10-15T11:53:13|500|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n13075683_0|COMPLETED|0:0|2026-10-15T12:38:06|2026-10-15T20:23:17|27911|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n13075683_1|COMPLETED|0:0|2026-10-15T12:38:06|2026-10-15T21:30:37|31951|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n13075683_2|COMPLETED|0:0|2026-10-15T12:38:06|2026-10-15T22:48:07|36601|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n13075683_3|COMPLETED|0:0|2026-10-15T12:38:06|2026-10-16T00:20:17|42131|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n13075683_4|COMPLETED|0:0|2026-10-15T12:38:06|2026-10-15T23:32:14|39248|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n13075683_5|COMPLETED|0:0|2026-10-15T12:38:06|2026-10-15T20:45:37|29251|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n13075683_6|COMPLETED|0:0|2026-10-15T12:38:06|2026-10-15T22:23:12|35106|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n13075683_7|COMPLETED|0:0|2026-10-15T12:38:06|2026-10-15T22:03:06|33900|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1\n"
+}

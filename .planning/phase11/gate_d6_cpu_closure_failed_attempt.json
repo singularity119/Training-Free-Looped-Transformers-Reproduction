@@ -1,0 +1,10 @@
+{
+  "stage": "tokenizer read-only verification",
+  "exception": "LocalEntryNotFoundError/OSError",
+  "reason": "Closure invocation omitted existing HF_HOME; default cache has no bound tokenizer",
+  "source_artifact_mutation": false,
+  "gold_read": false,
+  "gpu_rerun": false,
+  "repair": "Export same pinned cache environment as formal launcher",
+  "recorded_at_utc": "2026-10-15T16:48:50.644487+00:00"
+}

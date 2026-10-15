@@ -1,0 +1,817 @@
+{
+  "schema": "loopscope.phase11.d6.runtime_closure.v1",
+  "status": "ALL_RAW_RUNTIME_INPUTS_CLOSED_GOLD_UNREAD",
+  "checked_at_utc": "2026-10-15T16:50:06.716945+00:00",
+  "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535",
+  "record_count": 5376,
+  "cell_counts": {
+    "cot_native": 448,
+    "cot_loop_k2": 448,
+    "cot_loop_k3": 448,
+    "cot_current_k2_full": 448,
+    "cot_fixed_k3_full": 448,
+    "direct_native": 448,
+    "direct_loop_k2": 448,
+    "direct_loop_k3": 448,
+    "direct_current_k2_full": 448,
+    "direct_fixed_k3_full": 448,
+    "cot_current_k2_prefill": 448,
+    "cot_fixed_k3_prefill": 448
+  },
+  "process_roots_checked": 108,
+  "effective_seed_process_counts": {
+    "20261015": 108
+  },
+  "cot_original_rows_identical": true,
+  "direct_only_exact_instruction_replaced": true,
+  "prompt_tokenizations_checked": 896,
+  "shared_identity_count": 448,
+  "scope_lifecycle_validated": true,
+  "ordinary_loop_decode": "full",
+  "cache_strategy": "first",
+  "max_new_tokens": 8192,
+  "runtime_seed": 20261015,
+  "input_seed": 20261008,
+  "per_cell_resources": {
+    "cot_native": {
+      "peak_allocated_bytes": 9918667264,
+      "peak_reserved_bytes": 12721324032,
+      "sum_question_elapsed_seconds": 133937.1411177056
+    },
+    "cot_loop_k2": {
+      "peak_allocated_bytes": 9919187456,
+      "peak_reserved_bytes": 12742295552,
+      "sum_question_elapsed_seconds": 165015.36934830877
+    },
+    "cot_loop_k3": {
+      "peak_allocated_bytes": 9918667264,
+      "peak_reserved_bytes": 12769558528,
+      "sum_question_elapsed_seconds": 169486.95391089888
+    },
+    "cot_current_k2_full": {
+      "peak_allocated_bytes": 9899852288,
+      "peak_reserved_bytes": 11429478400,
+      "sum_question_elapsed_seconds": 221971.14129596384
+    },
+    "cot_fixed_k3_full": {
+      "peak_allocated_bytes": 9621054976,
+      "peak_reserved_bytes": 11383341056,
+      "sum_question_elapsed_seconds": 232816.42396642617
+    },
+    "direct_native": {
+      "peak_allocated_bytes": 8751293440,
+      "peak_reserved_bytes": 9030336512,
+      "sum_question_elapsed_seconds": 211.07037753076293
+    },
+    "direct_loop_k2": {
+      "peak_allocated_bytes": 8751293440,
+      "peak_reserved_bytes": 9084862464,
+      "sum_question_elapsed_seconds": 274.9324905979447
+    },
+    "direct_loop_k3": {
+      "peak_allocated_bytes": 8751293440,
+      "peak_reserved_bytes": 9084862464,
+      "sum_question_elapsed_seconds": 287.8510610515368
+    },
+    "direct_current_k2_full": {
+      "peak_allocated_bytes": 8751313920,
+      "peak_reserved_bytes": 9026142208,
+      "sum_question_elapsed_seconds": 564.3358890640666
+    },
+    "direct_fixed_k3_full": {
+      "peak_allocated_bytes": 8751303680,
+      "peak_reserved_bytes": 9026142208,
+      "sum_question_elapsed_seconds": 519.405372712703
+    },
+    "cot_current_k2_prefill": {
+      "peak_allocated_bytes": 9919207936,
+      "peak_reserved_bytes": 11821645824,
+      "sum_question_elapsed_seconds": 124068.28652155492
+    },
+    "cot_fixed_k3_prefill": {
+      "peak_allocated_bytes": 9572837888,
+      "peak_reserved_bytes": 11228151808,
+      "sum_question_elapsed_seconds": 113993.35609071847
+    }
+  },
+  "device_peak_used_MiB": 60170.0,
+  "device_memory_total_MiB": 81920.0,
+  "free_fraction_at_device_peak": 0.2655029296875,
+  "device_memory_samples": 54816,
+  "batches": [
+    {
+      "task": 8,
+      "job_id": "13073647",
+      "elapsed_seconds": 491.70403096824884,
+      "packing": 5,
+      "process_count": 12
+    },
+    {
+      "task": 0,
+      "job_id": "13075684",
+      "elapsed_seconds": 27908.552489629947,
+      "packing": 5,
+      "process_count": 12
+    },
+    {
+      "task": 1,
+      "job_id": "13075685",
+      "elapsed_seconds": 31949.142739600968,
+      "packing": 5,
+      "process_count": 12
+    },
+    {
+      "task": 2,
+      "job_id": "13075686",
+      "elapsed_seconds": 36591.77064900659,
+      "packing": 5,
+      "process_count": 12
+    },
+    {
+      "task": 3,
+      "job_id": "13075687",
+      "elapsed_seconds": 42121.81709734537,
+      "packing": 5,
+      "process_count": 12
+    },
+    {
+      "task": 4,
+      "job_id": "13075688",
+      "elapsed_seconds": 39238.99324931763,
+      "packing": 5,
+      "process_count": 12
+    },
+    {
+      "task": 5,
+      "job_id": "13075689",
+      "elapsed_seconds": 29241.75811112486,
+      "packing": 5,
+      "process_count": 12
+    },
+    {
+      "task": 6,
+      "job_id": "13075690",
+      "elapsed_seconds": 35096.65214269981,
+      "packing": 5,
+      "process_count": 12
+    },
+    {
+      "task": 7,
+      "job_id": "13075683",
+      "elapsed_seconds": 33896.79127987474,
+      "packing": 5,
+      "process_count": 12
+    }
+  ],
+  "run_roots": [
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/cot_native",
+      "cell_key": "cot_native",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/cot_loop_k2",
+      "cell_key": "cot_loop_k2",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/cot_loop_k3",
+      "cell_key": "cot_loop_k3",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/cot_current_k2_full",
+      "cell_key": "cot_current_k2_full",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/cot_fixed_k3_full",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/direct_native",
+      "cell_key": "direct_native",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/direct_loop_k2",
+      "cell_key": "direct_loop_k2",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/direct_loop_k3",
+      "cell_key": "direct_loop_k3",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/direct_current_k2_full",
+      "cell_key": "direct_current_k2_full",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/direct_fixed_k3_full",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/cot_current_k2_prefill",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/canary/cot_fixed_k3_prefill",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 1,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_native/slice-00",
+      "cell_key": "cot_native",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k2/slice-00",
+      "cell_key": "cot_loop_k2",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k3/slice-00",
+      "cell_key": "cot_loop_k3",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_full/slice-00",
+      "cell_key": "cot_current_k2_full",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_full/slice-00",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_native/slice-00",
+      "cell_key": "direct_native",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k2/slice-00",
+      "cell_key": "direct_loop_k2",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k3/slice-00",
+      "cell_key": "direct_loop_k3",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_current_k2_full/slice-00",
+      "cell_key": "direct_current_k2_full",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_fixed_k3_full/slice-00",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_prefill/slice-00",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_prefill/slice-00",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 55,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_native/slice-01",
+      "cell_key": "cot_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k2/slice-01",
+      "cell_key": "cot_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k3/slice-01",
+      "cell_key": "cot_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_full/slice-01",
+      "cell_key": "cot_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_full/slice-01",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_native/slice-01",
+      "cell_key": "direct_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k2/slice-01",
+      "cell_key": "direct_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k3/slice-01",
+      "cell_key": "direct_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_current_k2_full/slice-01",
+      "cell_key": "direct_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_fixed_k3_full/slice-01",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_prefill/slice-01",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_prefill/slice-01",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_native/slice-02",
+      "cell_key": "cot_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k2/slice-02",
+      "cell_key": "cot_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k3/slice-02",
+      "cell_key": "cot_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_full/slice-02",
+      "cell_key": "cot_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_full/slice-02",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_native/slice-02",
+      "cell_key": "direct_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k2/slice-02",
+      "cell_key": "direct_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k3/slice-02",
+      "cell_key": "direct_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_current_k2_full/slice-02",
+      "cell_key": "direct_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_fixed_k3_full/slice-02",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_prefill/slice-02",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_prefill/slice-02",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_native/slice-03",
+      "cell_key": "cot_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k2/slice-03",
+      "cell_key": "cot_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k3/slice-03",
+      "cell_key": "cot_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_full/slice-03",
+      "cell_key": "cot_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_full/slice-03",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_native/slice-03",
+      "cell_key": "direct_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k2/slice-03",
+      "cell_key": "direct_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k3/slice-03",
+      "cell_key": "direct_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_current_k2_full/slice-03",
+      "cell_key": "direct_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_fixed_k3_full/slice-03",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_prefill/slice-03",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_prefill/slice-03",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_native/slice-04",
+      "cell_key": "cot_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k2/slice-04",
+      "cell_key": "cot_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k3/slice-04",
+      "cell_key": "cot_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_full/slice-04",
+      "cell_key": "cot_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_full/slice-04",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_native/slice-04",
+      "cell_key": "direct_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k2/slice-04",
+      "cell_key": "direct_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k3/slice-04",
+      "cell_key": "direct_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_current_k2_full/slice-04",
+      "cell_key": "direct_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_fixed_k3_full/slice-04",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_prefill/slice-04",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_prefill/slice-04",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_native/slice-05",
+      "cell_key": "cot_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k2/slice-05",
+      "cell_key": "cot_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k3/slice-05",
+      "cell_key": "cot_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_full/slice-05",
+      "cell_key": "cot_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_full/slice-05",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_native/slice-05",
+      "cell_key": "direct_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k2/slice-05",
+      "cell_key": "direct_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k3/slice-05",
+      "cell_key": "direct_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_current_k2_full/slice-05",
+      "cell_key": "direct_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_fixed_k3_full/slice-05",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_prefill/slice-05",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_prefill/slice-05",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_native/slice-06",
+      "cell_key": "cot_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k2/slice-06",
+      "cell_key": "cot_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k3/slice-06",
+      "cell_key": "cot_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_full/slice-06",
+      "cell_key": "cot_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_full/slice-06",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_native/slice-06",
+      "cell_key": "direct_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k2/slice-06",
+      "cell_key": "direct_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k3/slice-06",
+      "cell_key": "direct_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_current_k2_full/slice-06",
+      "cell_key": "direct_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_fixed_k3_full/slice-06",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_prefill/slice-06",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_prefill/slice-06",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_native/slice-07",
+      "cell_key": "cot_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k2/slice-07",
+      "cell_key": "cot_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_loop_k3/slice-07",
+      "cell_key": "cot_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_full/slice-07",
+      "cell_key": "cot_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_full/slice-07",
+      "cell_key": "cot_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_native/slice-07",
+      "cell_key": "direct_native",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k2/slice-07",
+      "cell_key": "direct_loop_k2",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_loop_k3/slice-07",
+      "cell_key": "direct_loop_k3",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_current_k2_full/slice-07",
+      "cell_key": "direct_current_k2_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/direct_fixed_k3_full/slice-07",
+      "cell_key": "direct_fixed_k3_full",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_current_k2_prefill/slice-07",
+      "cell_key": "cot_current_k2_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    },
+    {
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/cot_fixed_k3_prefill/slice-07",
+      "cell_key": "cot_fixed_k3_prefill",
+      "count": 56,
+      "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+    }
+  ],
+  "target_gold_loaded": false
+}

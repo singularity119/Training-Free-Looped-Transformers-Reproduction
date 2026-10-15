@@ -1,0 +1,123 @@
+{
+  "gate": "D-6",
+  "checked_at_utc": "2026-10-15T03:31:04.436811+00:00",
+  "executor": "01a13d93-a681-7d20-ab05-434dc91e1097",
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/plans/debug-jobset.json",
+  "job_ids": [
+    "13073061_0"
+  ],
+  "scheduler": {
+    "13073061_0": {
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "allocation_seconds": 0,
+      "alloc_tres": ""
+    }
+  },
+  "queue": [
+    [
+      "13073061_0",
+      "PENDING",
+      "(MaxJobsPerAccount)"
+    ]
+  ],
+  "queue_state_counts": {
+    "PENDING": 1
+  },
+  "missing_job_ids": [],
+  "all_terminal": false,
+  "terminal_failures": [],
+  "batch_states": [],
+  "done_record_count": 0,
+  "target_count": 12,
+  "all_success": false,
+  "trigger_resume": false,
+  "allocation_gpuh": 0.0,
+  "progress": [
+    {
+      "cell_key": "cot_native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/cot_native",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "cot_loop_k2",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/cot_loop_k2",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "cot_loop_k3",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/cot_loop_k3",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "cot_current_k2_full",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/cot_current_k2_full",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "cot_fixed_k3_full",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/cot_fixed_k3_full",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "direct_native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/direct_native",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "direct_loop_k2",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/direct_loop_k2",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "direct_loop_k3",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/direct_loop_k3",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "direct_current_k2_full",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/direct_current_k2_full",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "direct_fixed_k3_full",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/direct_fixed_k3_full",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "cot_current_k2_prefill",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/cot_current_k2_prefill",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "cot_fixed_k3_prefill",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z/debug/cot_fixed_k3_prefill",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    }
+  ],
+  "target_gold_loaded": false
+}

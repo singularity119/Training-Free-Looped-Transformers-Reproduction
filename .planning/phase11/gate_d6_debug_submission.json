@@ -1,0 +1,5 @@
+{
+  "stdout": "{\"remote_cpu_tests_exit\": 0, \"tests\": 18, \"evidence\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/verification/cpu_tests.out\"}\n{\"debug_job_id\": \"13073061_0\", \"jobset\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/plans/debug-jobset.json\", \"plan\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/plans/debug-plan.json\", \"submission_exit\": 0}\n",
+  "exit_code": 0,
+  "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+}

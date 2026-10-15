@@ -1,0 +1,14 @@
+{
+  "gate": "D-6",
+  "executor": "01a13d93-a681-7d20-ab05-434dc91e1097",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535",
+  "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z",
+  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/source",
+  "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d6-20261015T033000Z",
+  "input_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d6-20261015T033000Z",
+  "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+  "git_archive_exit": 0,
+  "deployment_exit": 0,
+  "target_gold_loaded": false
+}

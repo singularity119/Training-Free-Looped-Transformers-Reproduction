@@ -1,0 +1,25 @@
+{
+  "report_directory": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015",
+  "mirrored_files": [
+    "CoT与decode衰减分析报告.md",
+    "analysis.json",
+    "analysis_spec.json",
+    "auxiliary_contrasts.csv",
+    "cells.csv",
+    "cross_prompt_descriptive.csv",
+    "gold_read_receipt.json",
+    "length_contrasts.csv",
+    "primary_contrasts.csv",
+    "resource_summary.json",
+    "结果摘要与资源.md"
+  ],
+  "forbidden_raw_or_predictions_downloaded": false,
+  "remote_analysis_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d6-20261015T033000Z/analysis",
+  "closure_before_gold_verified": true,
+  "runtime_count": 5376,
+  "analysis_count": 5376,
+  "cell_count": 12,
+  "main_test_count": 4,
+  "aux_test_count": 10,
+  "interpretation_boundary": "same-question post-selection exploratory; retained historical reasoning prefix; no proven decode incremental gain"
+}

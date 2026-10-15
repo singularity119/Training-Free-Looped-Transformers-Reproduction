@@ -1,0 +1,90 @@
+{
+  "automation_id": "phase11-d6",
+  "name": "Phase11 D6 唯一预检与正式监控",
+  "status": "PAUSED",
+  "wait_class": "full",
+  "cadence_minutes": 60,
+  "executor": "01a13d93-a681-7d20-ab05-434dc91e1097",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "job_ids": [
+    "13073647_8",
+    "13075683_0",
+    "13075683_1",
+    "13075683_2",
+    "13075683_3",
+    "13075683_4",
+    "13075683_5",
+    "13075683_6",
+    "13075683_7"
+  ],
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/plans/formal-all-jobset.json",
+  "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535",
+  "observer_commit": "1b879ed4c47d8d170c8e968f2d5ca74a4eab9f4a",
+  "queue_phase_exception": "Planning authorized 2026-10-15 for exact debug13073061_0; no resource/retry change",
+  "terminal_route": "pause then AUTOMATION_TERMINAL_RESUME to exact executor; relay planning on unconfirmed delivery",
+  "created_at_utc": "2026-10-15T03:33:21.369101+00:00",
+  "create_tool_confirmation": {
+    "automationId": "phase11-d6",
+    "mode": "create",
+    "status": "ACTIVE"
+  },
+  "next_authorized_action": "On all jobs terminal, validate all5376 raw/runtime/config/S2 before gold; fixed aggregate analysis and single planning terminal delivery. Attempt failure resumes same executor for authorized recovery.",
+  "target_gold_loaded": false,
+  "updated_at_utc": "2026-10-15T04:38:44.408245+00:00",
+  "update_tool_confirmation": {
+    "automationId": "phase11-d6",
+    "mode": "update",
+    "status": "ACTIVE"
+  },
+  "history": [
+    {
+      "job_ids": [
+        "13073061_0"
+      ],
+      "state": "COMPLETED0:0",
+      "records": 12,
+      "debug_verified": ".planning/phase11/gate_d6_debug_verified.json",
+      "monitor_terminal_resume_delivered": true
+    },
+    {
+      "job_ids": [
+        "13073647_8"
+      ],
+      "terminal_job_state": "COMPLETED",
+      "terminal_exit_code": "0:0",
+      "done_record_count": 12,
+      "target_count": 12
+    },
+    {
+      "job_ids": [
+        "13073647_8"
+      ],
+      "state": "COMPLETED0:0",
+      "record_count": 12,
+      "verification": ".planning/phase11/gate_d6_formal_first_verified.json",
+      "observed_peak_memory_MiB": 44026,
+      "total_memory_MiB": 81920
+    }
+  ],
+  "target_count": 5376,
+  "pause_reason": "All formal attempts terminal success; resume executor for full closure before gold",
+  "paused_at_utc": "2026-10-15T16:46:39.682698+00:00",
+  "pause_tool_confirmation": {
+    "automationId": "phase11-d6",
+    "mode": "update",
+    "status": "PAUSED"
+  },
+  "terminal_evidence": ".planning/phase11/gate_d6_monitor_latest.json",
+  "terminal_job_state": "ALL_COMPLETED",
+  "terminal_exit_code": "ALL0:0",
+  "done_record_count": 5376,
+  "formal_allocation_gpuh": 76.83305555555556,
+  "terminal_resume_delivery": {
+    "destination_thread": "01a13d93-a681-7d20-ab05-434dc91e1097",
+    "host": "local",
+    "tool_response": {
+      "threadId": "01a13d93-a681-7d20-ab05-434dc91e1097"
+    },
+    "confirmed_at_utc": "2026-10-15T16:47:03.893495+00:00"
+  }
+}

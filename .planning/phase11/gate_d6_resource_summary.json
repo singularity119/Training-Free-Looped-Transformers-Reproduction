@@ -1,0 +1,42 @@
+{
+  "gate": "D-6",
+  "formal_job_count": 9,
+  "debug_job_ids": [
+    "13073061_0"
+  ],
+  "formal_job_ids": [
+    "13073647_8",
+    "13075683_0",
+    "13075683_1",
+    "13075683_2",
+    "13075683_3",
+    "13075683_4",
+    "13075683_5",
+    "13075683_6",
+    "13075683_7"
+  ],
+  "all_formal_states": "COMPLETED0:0",
+  "formal_allocation_gpuh": 76.83305555555556,
+  "debug_allocation_gpuh": 0.042222222222222223,
+  "total_allocation_gpuh": 76.87527777777778,
+  "gpu": "NVIDIA A800-SXM4-80GB",
+  "debug_gpu": "A40",
+  "formal_max_concurrent_gpu": 8,
+  "packing": 5,
+  "cpus_per_gpu": 8,
+  "partition": "emergency_gpu",
+  "qos": "emergency_gpu",
+  "formal_first_start_slurm_local": "2026-10-15T11:44:53",
+  "formal_last_end_slurm_local": "2026-10-16T00:20:17",
+  "formal_wall_span_seconds": 45324.0,
+  "formal_remaining_array_span_seconds": 42131,
+  "failed_gpu_attempts": 0,
+  "oom_count": 0,
+  "peak_used_MiB": 60170.0,
+  "gpu_total_MiB": 81920.0,
+  "free_fraction_at_peak": 0.2655029296875,
+  "record_count": 5376,
+  "process_count": 108,
+  "cpu_closure_failed_attempt": "HF_HOME omitted on first CPU verifier invocation; corrected to original cache; no GPU rerun, no gold read on failed attempt",
+  "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535"
+}

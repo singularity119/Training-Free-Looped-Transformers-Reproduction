@@ -1,0 +1,38 @@
+{
+  "gate": "D-6",
+  "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535",
+  "branch": "loopscope",
+  "tests": [
+    {
+      "command": "PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_phase11_d6*.py' -v",
+      "count": 18,
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_phase11_accuracy_entry.py'",
+      "count": 6,
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_phase11_runtime.py'",
+      "count": 6,
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_phase11_data.py'",
+      "count": 8,
+      "exit_code": 0
+    }
+  ],
+  "shell_syntax_exit": 0,
+  "diff_check_exit": 0,
+  "protected_common_changes": [],
+  "remote_cpu_tests": {
+    "count": 18,
+    "exit_code": 0,
+    "evidence": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d6-20261015T033000Z/verification/cpu_tests.out"
+  },
+  "planning_dirty": "Preserved, unstaged and not included in source commit",
+  "created_at_utc": "2026-10-15T03:31:20.037535+00:00",
+  "target_gold_loaded": false
+}
