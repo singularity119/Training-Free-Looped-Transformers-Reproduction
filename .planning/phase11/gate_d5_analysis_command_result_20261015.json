@@ -1,0 +1,7 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/analysis-source-bb7c147/src /hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/analysis-source-bb7c147/scripts/loopscope/analyze_phase11_d5.py --closure /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/closure-attempt1/closure.json --reference-binding /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/reference-binding-v2.json --output-dir /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/analysis-attempt2",
+  "source_commit": "bb7c147a4ee76cdacc995841019530c1f2c9b392",
+  "exit_code": 0,
+  "stdout": "{\"status\": \"D5_ANALYZED_COMPLETE_REPEATS\", \"cells\": 42, \"contrasts\": 30, \"output\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/analysis-attempt2\"}\n",
+  "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n"
+}

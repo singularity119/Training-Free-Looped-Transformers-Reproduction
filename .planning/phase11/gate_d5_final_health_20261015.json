@@ -1,0 +1,111 @@
+{
+  "observed_at_utc": "2026-10-15T02:19:35.732322+00:00",
+  "batches": [
+    {
+      "task": "task-00",
+      "status": "BATCH_COMPLETE",
+      "job_id": "13030533",
+      "target_count": 12842,
+      "children": 28,
+      "failed_children": [],
+      "attempt_count": 1,
+      "packing": 5,
+      "device_peak_mib": 55592.0,
+      "device_total_mib": 81920.0,
+      "device_memory_samples": 8372
+    },
+    {
+      "task": "task-01",
+      "status": "BATCH_COMPLETE",
+      "job_id": "13030534",
+      "target_count": 12854,
+      "children": 28,
+      "failed_children": [],
+      "attempt_count": 1,
+      "packing": 5,
+      "device_peak_mib": 61147.0,
+      "device_total_mib": 81920.0,
+      "device_memory_samples": 9735
+    },
+    {
+      "task": "task-02",
+      "status": "BATCH_COMPLETE",
+      "job_id": "13030535",
+      "target_count": 12842,
+      "children": 28,
+      "failed_children": [],
+      "attempt_count": 1,
+      "packing": 5,
+      "device_peak_mib": 55386.0,
+      "device_total_mib": 81920.0,
+      "device_memory_samples": 10303
+    },
+    {
+      "task": "task-03",
+      "status": "BATCH_COMPLETE",
+      "job_id": "13030639",
+      "target_count": 12860,
+      "children": 28,
+      "failed_children": [],
+      "attempt_count": 1,
+      "packing": 5,
+      "device_peak_mib": 55211.0,
+      "device_total_mib": 81920.0,
+      "device_memory_samples": 12575
+    },
+    {
+      "task": "task-04",
+      "status": "BATCH_COMPLETE",
+      "job_id": "13030739",
+      "target_count": 12842,
+      "children": 28,
+      "failed_children": [],
+      "attempt_count": 1,
+      "packing": 5,
+      "device_peak_mib": 55917.0,
+      "device_total_mib": 81920.0,
+      "device_memory_samples": 11126
+    },
+    {
+      "task": "task-05",
+      "status": "BATCH_COMPLETE",
+      "job_id": "13030844",
+      "target_count": 12854,
+      "children": 28,
+      "failed_children": [],
+      "attempt_count": 1,
+      "packing": 5,
+      "device_peak_mib": 55927.0,
+      "device_total_mib": 81920.0,
+      "device_memory_samples": 8442
+    },
+    {
+      "task": "task-06",
+      "status": "BATCH_COMPLETE",
+      "job_id": "13030850",
+      "target_count": 12842,
+      "children": 28,
+      "failed_children": [],
+      "attempt_count": 1,
+      "packing": 5,
+      "device_peak_mib": 60160.0,
+      "device_total_mib": 81920.0,
+      "device_memory_samples": 11317
+    },
+    {
+      "task": "task-07",
+      "status": "BATCH_COMPLETE",
+      "job_id": "13030531",
+      "target_count": 12860,
+      "children": 28,
+      "failed_children": [],
+      "attempt_count": 1,
+      "packing": 5,
+      "device_peak_mib": 59806.0,
+      "device_total_mib": 81920.0,
+      "device_memory_samples": 10104
+    }
+  ],
+  "errors": [],
+  "target_gold_loaded": false
+}

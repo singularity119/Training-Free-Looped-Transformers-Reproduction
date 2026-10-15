@@ -1,0 +1,25 @@
+{
+  "source_commit": "bb7c147a4ee76cdacc995841019530c1f2c9b392",
+  "paths_exist": {
+    "p10-base-mmlu": {
+      "gold": true,
+      "historical_analysis": true
+    },
+    "p10-base-arc": {
+      "gold": true,
+      "historical_analysis": true
+    },
+    "p11-instruct-arc": {
+      "gold": true,
+      "historical_analysis": true
+    },
+    "p11-instruct-gpqa": {
+      "gold": true,
+      "historical_analysis": true
+    }
+  },
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.356s\n\nOK\n",
+  "target_gold_loaded": false
+}

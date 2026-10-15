@@ -1,0 +1,17 @@
+{
+  "automation": "gate-d5-fresh-repeat-execution-monitor",
+  "status": "PAUSED",
+  "tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"gate-d5-fresh-repeat-execution-monitor\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  }
+}

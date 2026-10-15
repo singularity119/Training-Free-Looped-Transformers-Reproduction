@@ -1,0 +1,106 @@
+{
+  "packet": "GATE_D5_FINAL_AUDIT",
+  "result": "AUDIT_REQUESTED",
+  "gate": "D-5",
+  "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9/local",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local",
+  "gpu_producer_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c",
+  "raw_closure_commit": "dfdc881f295809886eb53c6c031c67de3369da8a",
+  "analysis_commit": "bb7c147a4ee76cdacc995841019530c1f2c9b392",
+  "scope": {
+    "families": [
+      "p10-base-mmlu",
+      "p10-base-arc",
+      "p11-instruct-arc",
+      "p11-instruct-gpqa"
+    ],
+    "new_cells": 28,
+    "records": 102796,
+    "repeat1_seed": 20261014,
+    "repeat2_seed": 20261015,
+    "input_binding": "original canonical pools/order/fewshot/prompt/options unchanged",
+    "reference0_is_historical_not_fresh_repeat": true
+  },
+  "decisive_facts": {
+    "status": "D5_ANALYZED_COMPLETE_REPEATS",
+    "cells": 42,
+    "contrasts": 30,
+    "reproduction_pairs": 42,
+    "new_record_count": 102796,
+    "repeat1_vs_repeat2": {
+      "strict_prediction_cells": 14,
+      "strict_score_cells": 9,
+      "strict_gpqa_token_cells": 5
+    },
+    "reference0_vs_each_repeat": {
+      "strict_prediction_cells": 13,
+      "strict_score_cells": 8,
+      "strict_gpqa_token_cells": 5,
+      "native_mmlu_changed_predictions": 14,
+      "native_mmlu_wrong_to_right": 8,
+      "native_mmlu_right_to_wrong": 6,
+      "native_mmlu_differences_entirely_in_old_A40_512": true
+    },
+    "main_holm_rejections": 4,
+    "secondary_holm_rejections": 2,
+    "formal_gpu_hours": 114.80583333333334,
+    "debug_gpu_hours": 0.10027777777777777,
+    "aggregate_report_root": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d5-repeat-20261015",
+    "source": {
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/analysis-source-bb7c147",
+      "commit": "bb7c147a4ee76cdacc995841019530c1f2c9b392",
+      "reference_binding": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/reference-binding-v2.json",
+      "recipe": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/recipe.json",
+      "formal_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/formal-plan.json",
+      "closure_output": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/closure-attempt1",
+      "analysis_output": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/analysis-attempt2",
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "raw_producer_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c",
+      "gold_read": true,
+      "original_analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/analysis-source-dfdc881",
+      "original_analysis_commit": "dfdc881f295809886eb53c6c031c67de3369da8a",
+      "original_reference_binding": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/reference-binding.json",
+      "repair_evidence": "gate_d5_analysis_binding_repair_20261015.json",
+      "gold_read_receipt": "gate_d5_gold_read_receipt_20261015.json"
+    },
+    "gate_pass_claimed": false,
+    "independent_dataset_confirmation": false
+  },
+  "evidence": {
+    "terminal": "gate_d5_formal_terminal_20261015.json",
+    "health": "gate_d5_final_health_20261015.json",
+    "raw_prediction_closure": "gate_d5_raw_prediction_closure_20261015.json",
+    "gold_receipt": "gate_d5_gold_read_receipt_20261015.json",
+    "native_drift": "gate_d5_native_drift_diagnostic_20261015.json",
+    "analysis_command": "gate_d5_analysis_command_result_20261015.json",
+    "monitor_pause": "gate_d5_terminal_monitor_pause_20261015.json",
+    "self_resume": "gate_d5_terminal_resume_delivery_20261015.json",
+    "analysis_repair": "gate_d5_analysis_binding_repair_20261015.json",
+    "remote_repair_tests": "gate_d5_analysis_repair_remote_tests_20261015.json"
+  },
+  "validation": {
+    "original_targeted_tests": 25,
+    "original_exit_code": 0,
+    "repair_targeted_tests": 8,
+    "repair_local_exit_code": 0,
+    "repair_remote_exit_code": 0,
+    "raw_closure_exit_code": 0,
+    "unified_analysis_exit_code": 0,
+    "aggregate_consistency_assertions": "42 cells/30 contrasts/42 reproduction pairs;102796 records;14 strict prediction/9 strictscore/5 stricttoken betweennewrepeats;224childrenexit0"
+  },
+  "repairs_and_deviations": [
+    "VPN/DNS/source-route visibility loss paused and confirmed self-resume; no GPU cancellation/requeue or SSH trust/config mutation",
+    "squeue retired completed array ID; accepted only with all exact sacct records",
+    "First CPU analysis stopped before any gold due absent guessed ARC sealed path; original gold JSON and historical table path bound explicitly in v2; scoring/statistics unchanged",
+    "Historical Native MMLU differences confined to original A40 512-row shard; other13530originalA800scorevectors strictsame; no causal hardware proof/no rerun"
+  ],
+  "protected_state": {
+    "runtime_hooks_changed": false,
+    "historical_raw_or_inputs_changed": false,
+    "gold_or_raw_downloaded_to_mac": false,
+    "mmlu_pro_accessed": false,
+    "next_gate_started": false,
+    "self_pass": false
+  },
+  "terminal_delivery": "PENDING_TOOL_CONFIRMATION"
+}

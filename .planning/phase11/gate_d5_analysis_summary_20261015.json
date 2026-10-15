@@ -1,0 +1,45 @@
+{
+  "status": "D5_ANALYZED_COMPLETE_REPEATS",
+  "cells": 42,
+  "contrasts": 30,
+  "reproduction_pairs": 42,
+  "new_record_count": 102796,
+  "repeat1_vs_repeat2": {
+    "strict_prediction_cells": 14,
+    "strict_score_cells": 9,
+    "strict_gpqa_token_cells": 5
+  },
+  "reference0_vs_each_repeat": {
+    "strict_prediction_cells": 13,
+    "strict_score_cells": 8,
+    "strict_gpqa_token_cells": 5,
+    "native_mmlu_changed_predictions": 14,
+    "native_mmlu_wrong_to_right": 8,
+    "native_mmlu_right_to_wrong": 6,
+    "native_mmlu_differences_entirely_in_old_A40_512": true
+  },
+  "main_holm_rejections": 4,
+  "secondary_holm_rejections": 2,
+  "formal_gpu_hours": 114.80583333333334,
+  "debug_gpu_hours": 0.10027777777777777,
+  "aggregate_report_root": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d5-repeat-20261015",
+  "source": {
+    "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/analysis-source-bb7c147",
+    "commit": "bb7c147a4ee76cdacc995841019530c1f2c9b392",
+    "reference_binding": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/reference-binding-v2.json",
+    "recipe": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/recipe.json",
+    "formal_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/formal-plan.json",
+    "closure_output": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/closure-attempt1",
+    "analysis_output": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/analysis-attempt2",
+    "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+    "raw_producer_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c",
+    "gold_read": true,
+    "original_analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/analysis-source-dfdc881",
+    "original_analysis_commit": "dfdc881f295809886eb53c6c031c67de3369da8a",
+    "original_reference_binding": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/reference-binding.json",
+    "repair_evidence": "gate_d5_analysis_binding_repair_20261015.json",
+    "gold_read_receipt": "gate_d5_gold_read_receipt_20261015.json"
+  },
+  "gate_pass_claimed": false,
+  "independent_dataset_confirmation": false
+}

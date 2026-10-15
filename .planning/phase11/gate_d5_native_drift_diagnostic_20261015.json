@@ -1,0 +1,234 @@
+{
+  "family": "p10-base-mmlu",
+  "cell": "q4-native",
+  "reference_root_breakdown": [
+    {
+      "reference_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260905T142900Z-canary-q4-a1/q4-native",
+      "records": 512,
+      "score_vectors_changed": 326,
+      "beyond_frozen_tolerance": 317,
+      "predictions_changed": 14,
+      "max_abs_score_difference": 0.5,
+      "environment": {
+        "source_commit": "2dd3dfd59caf547a3abbc0a1516bc4a3207d9af0",
+        "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+        "model_dtype": "torch.bfloat16",
+        "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+        "versions": {
+          "torch": "2.3.1+cu121",
+          "transformers": "4.51.3",
+          "lm_eval": "0.4.11",
+          "datasets": "5.0.0"
+        },
+        "job_id": "12650740",
+        "partition": "emergency_gpua40",
+        "gpu": "NVIDIA A40",
+        "total_memory": 50897289216
+      }
+    },
+    {
+      "reference_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260906T031200Z-a800-canary-q4-a1/q4-native",
+      "records": 512,
+      "score_vectors_changed": 0,
+      "beyond_frozen_tolerance": 0,
+      "predictions_changed": 0,
+      "max_abs_score_difference": 0,
+      "environment": {
+        "source_commit": "2dd3dfd59caf547a3abbc0a1516bc4a3207d9af0",
+        "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+        "model_dtype": "torch.bfloat16",
+        "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+        "versions": {
+          "torch": "2.3.1+cu121",
+          "transformers": "4.51.3",
+          "lm_eval": "0.4.11",
+          "datasets": "5.0.0"
+        },
+        "job_id": "12652573",
+        "partition": "emergency_gpu",
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "total_memory": 85094825984
+      }
+    },
+    {
+      "reference_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase8-gate-d-20260906T032700Z-a800-remaining-q4-a1/q4-native",
+      "records": 13018,
+      "score_vectors_changed": 0,
+      "beyond_frozen_tolerance": 0,
+      "predictions_changed": 0,
+      "max_abs_score_difference": 0,
+      "environment": {
+        "source_commit": "2dd3dfd59caf547a3abbc0a1516bc4a3207d9af0",
+        "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+        "model_dtype": "torch.bfloat16",
+        "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+        "versions": {
+          "torch": "2.3.1+cu121",
+          "transformers": "4.51.3",
+          "lm_eval": "0.4.11",
+          "datasets": "5.0.0"
+        },
+        "job_id": "12652622",
+        "partition": "emergency_gpu",
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "total_memory": 85094825984
+      }
+    }
+  ],
+  "new_repeat1_environments": [
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "model_dtype": "torch.bfloat16",
+      "effective_rng_seeds": {
+        "python": 20261014,
+        "numpy": 20261014,
+        "torch": 20261014,
+        "cuda_all_devices": 20261014
+      },
+      "source_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "model_dtype": "torch.bfloat16",
+      "effective_rng_seeds": {
+        "python": 20261014,
+        "numpy": 20261014,
+        "torch": 20261014,
+        "cuda_all_devices": 20261014
+      },
+      "source_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "model_dtype": "torch.bfloat16",
+      "effective_rng_seeds": {
+        "python": 20261014,
+        "numpy": 20261014,
+        "torch": 20261014,
+        "cuda_all_devices": 20261014
+      },
+      "source_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "model_dtype": "torch.bfloat16",
+      "effective_rng_seeds": {
+        "python": 20261014,
+        "numpy": 20261014,
+        "torch": 20261014,
+        "cuda_all_devices": 20261014
+      },
+      "source_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "model_dtype": "torch.bfloat16",
+      "effective_rng_seeds": {
+        "python": 20261014,
+        "numpy": 20261014,
+        "torch": 20261014,
+        "cuda_all_devices": 20261014
+      },
+      "source_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "model_dtype": "torch.bfloat16",
+      "effective_rng_seeds": {
+        "python": 20261014,
+        "numpy": 20261014,
+        "torch": 20261014,
+        "cuda_all_devices": 20261014
+      },
+      "source_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "model_dtype": "torch.bfloat16",
+      "effective_rng_seeds": {
+        "python": 20261014,
+        "numpy": 20261014,
+        "torch": 20261014,
+        "cuda_all_devices": 20261014
+      },
+      "source_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "versions": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.51.3",
+        "lm_eval": "0.4.11",
+        "datasets": "5.0.0"
+      },
+      "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "model_revision": "906bfd4b4dc7f14ee4320094d8b41684abff8539",
+      "model_dtype": "torch.bfloat16",
+      "effective_rng_seeds": {
+        "python": 20261014,
+        "numpy": 20261014,
+        "torch": 20261014,
+        "cuda_all_devices": 20261014
+      },
+      "source_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c"
+    }
+  ],
+  "gold_read_for_diagnostic": false,
+  "scientific_input_and_seed_binding_closure": "gate_d5_raw_prediction_closure_20261015.json"
+}

@@ -38,14 +38,17 @@
     "mode": "update",
     "status": "ACTIVE"
   },
-  "updated_at_utc": "2026-10-14T11:55:44.612535+00:00",
+  "updated_at_utc": "2026-10-15T02:24:20.432065+00:00",
   "ssh_bind_interface": "utun7",
-  "connection_recovery": "gate_d5_connection_unavailable_20261014T170452Z.json",
+  "connection_recovery": "gate_d5_formal_terminal_20261015.json",
   "ssh_dns_resolver": "10.90.63.2",
   "latest_reactivation_tool_response": {
     "automationId": "gate-d5-fresh-repeat-execution-monitor",
     "mode": "update",
     "status": "ACTIVE",
     "interval_minutes": 60
-  }
+  },
+  "reason": "All original exact jobs COMPLETED0:0; full 102796 acquisition complete; authorized CPU closure/analysis proceeding",
+  "terminal_pause_confirmation": "gate_d5_terminal_monitor_pause_20261015.json",
+  "terminal_resume_confirmation": "gate_d5_terminal_resume_delivery_20261015.json"
 }

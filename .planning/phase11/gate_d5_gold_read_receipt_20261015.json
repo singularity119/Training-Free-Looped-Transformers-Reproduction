@@ -1,0 +1,23 @@
+{
+  "timestamp_utc": "2026-10-15T02:24:12.510421+00:00",
+  "prior_prediction_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/closure-attempt1/closure.json",
+  "read_once_per_family": true,
+  "sources": {
+    "p10-base-mmlu": {
+      "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/mmlu-gold-aligned-once.json",
+      "n": 14042
+    },
+    "p10-base-arc": {
+      "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/arc-analysis-attempt1-20261008/gold.json",
+      "n": 1172
+    },
+    "p11-instruct-arc": {
+      "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-sealed_gold.json",
+      "n": 1172
+    },
+    "p11-instruct-gpqa": {
+      "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/sealed/gpqa_main-gold.jsonl",
+      "n": 448
+    }
+  }
+}

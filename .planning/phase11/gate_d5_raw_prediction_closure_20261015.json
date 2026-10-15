@@ -1,0 +1,13 @@
+{
+  "status": "GOLD_UNREAD",
+  "prediction_closed": true,
+  "record_count": 102796,
+  "cell_count": 28,
+  "process_exit_code": 0,
+  "target_gold_loaded": false,
+  "source_commit": "dfdc881f295809886eb53c6c031c67de3369da8a",
+  "raw_producer_commit": "4d9bd140c9c8217252024a72651a90cd8ad3894c",
+  "closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/closure-attempt1/closure.json",
+  "predictions": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/closure-attempt1/predictions.jsonl",
+  "verification": "Frozen close_phase11_d5.py verified full canonical population, no missing/duplicates, finite scores, config/provenance, effective runtime seeds, original tokenization and lifecycle telemetry before saving predictions."
+}
