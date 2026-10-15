@@ -1,0 +1,27 @@
+{
+  "gate": "D-6",
+  "status": "FINAL_AUDIT_DELIVERED",
+  "executor": "01a13d93-a681-7d20-ab05-434dc91e1097",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "destination_host": "local",
+  "tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f\"}"
+      }
+    ],
+    "isError": false
+  },
+  "confirmed_at_utc": "2026-10-15T16:56:22.287389+00:00",
+  "terminal_packet": ".planning/phase11/gate_d6_final_audit.md",
+  "packet_commit": "eebf6362099d4d5cf0926b9b439d526b7dca3b33",
+  "evidence_commit": "a5405d27b411f814f11ecebe97cc9e70e48bfd2f",
+  "source_commit": "b1130f8ca66140d4c2d4add5078c6eab64b07535",
+  "record_count": 5376,
+  "cells": 12,
+  "monitor_id": "phase11-d6",
+  "monitor_status": "PAUSED",
+  "planning_decision": "PENDING",
+  "executor_next_action": "Await planning acceptance or bounded same-Gate repair; no next Gate/MMLU-Pro"
+}

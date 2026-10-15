@@ -86,5 +86,11 @@
       "threadId": "01a13d93-a681-7d20-ab05-434dc91e1097"
     },
     "confirmed_at_utc": "2026-10-15T16:47:03.893495+00:00"
+  },
+  "gate_terminal_delivery": {
+    "status": "FINAL_AUDIT_DELIVERED",
+    "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+    "receipt": ".planning/phase11/gate_d6_terminal_delivery.json",
+    "confirmed_at_utc": "2026-10-15T16:56:22.287389+00:00"
   }
 }
