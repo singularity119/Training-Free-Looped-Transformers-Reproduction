@@ -21,8 +21,8 @@ def observe(jobset_path):
     account = subprocess.run(['/opt/slurm/bin/sacct', '-X', '-n', '-P', '-j',
         ','.join(dict.fromkeys(i.split('_')[0] for i in ids)),
         '-o', 'JobID,State,ExitCode,ElapsedRaw,AllocTRES'], capture_output=True, text=True, timeout=20)
-    if queue.returncode or account.returncode:
-        raise RuntimeError((queue.returncode, queue.stderr, account.returncode, account.stderr))
+    if account.returncode:
+        raise RuntimeError((account.returncode, account.stderr))
     qrows = [r.split('|') for r in queue.stdout.splitlines() if r.strip()]
     facts = {}
     for line in account.stdout.splitlines():
@@ -30,6 +30,13 @@ def observe(jobset_path):
         for job_id in accounting_ids(row[0], ids):
             facts[job_id] = dict(state=row[1], exit_code=row[2], allocation_seconds=int(row[3]), alloc_tres=row[4])
     terminal = {'COMPLETED', 'FAILED', 'TIMEOUT', 'CANCELLED', 'OUT_OF_MEMORY', 'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL', 'DEADLINE'}
+    # Finished jobs may leave squeue before the hourly observation. Accounting
+    # still has to prove every exact child terminal before accepting that case.
+    queue_retired = bool(queue.returncode and 'Invalid job id' in queue.stderr
+        and not queue.stdout.strip() and set(facts) == set(ids)
+        and all(v['state'].split()[0] in terminal for v in facts.values()))
+    if queue.returncode and not queue_retired:
+        raise RuntimeError((queue.returncode, queue.stderr))
     failed = [{'job_id': i, **v} for i, v in facts.items()
               if v['state'].split()[0] in terminal and
               (v['state'] != 'COMPLETED' or v['exit_code'] != '0:0')]
@@ -51,6 +58,7 @@ def observe(jobset_path):
     return {'gate': 'D-6', 'checked_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'executor': jobset['executor'], 'jobset': str(jobset_path), 'job_ids': ids,
         'scheduler': facts, 'queue': qrows, 'queue_state_counts': dict(Counter(v[1] for v in qrows)),
+        'queue_retired_with_complete_accounting': queue_retired,
         'missing_job_ids': missing, 'all_terminal': all_terminal, 'terminal_failures': failed,
         'batch_states': batch_states, 'done_record_count': done, 'target_count': target,
         'all_success': all_terminal and not failed and done == target and all(v['summary_exists'] for v in progress),
