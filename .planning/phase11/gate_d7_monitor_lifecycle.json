@@ -2,14 +2,16 @@
   "automation_id": "phase11-d7",
   "name": "Phase11 D7 \u552f\u4e00\u9884\u68c0\u4e0e\u6b63\u5f0f\u76d1\u63a7",
   "status": "ACTIVE",
-  "wait_class": "smoke",
-  "cadence_minutes": 10,
+  "wait_class": "full",
+  "cadence_minutes": 60,
   "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
   "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
   "job_ids": [
-    "13114497_0"
+    "13115090_0",
+    "13115090_1",
+    "13115090_2"
   ],
-  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/debug-jobset.json",
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/canary-jobset.json",
   "source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
   "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source",
   "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z",
@@ -21,14 +23,43 @@
     "mode": "create",
     "status": "ACTIVE"
   },
-  "next_authorized_action": "Verify debug5 synthetic plus scope/seed/cache then retainable12 formal canary first3cells, resource/cost report, first36096 raw closure before formal Loop last24064, full60160 S2 closure before firstgold adapter and analysis",
+  "next_authorized_action": "Verify retainable12 and report actual resource/KV/cost; preserve successes, freeze packing and acquire first remaining36084; first36096 raw closure before formalLoop24064; no gold before all60160 raw/S2",
   "target_gold_loaded": false,
   "analysis_source_binding": ".planning/phase11/gate_d7_analysis_binding.json",
   "analysis_source_commit": "4b28daa12fd833aeecf9c64661c7ae1764972323",
-  "updated_at_utc": "2026-10-16T03:19:59.255321+00:00",
+  "updated_at_utc": "2026-10-16T03:30:36.760271+00:00",
   "update_tool_confirmation": {
     "automationId": "phase11-d7",
     "mode": "update",
     "status": "ACTIVE"
-  }
+  },
+  "paused_at_utc": "2026-10-16T03:27:26.059856+00:00",
+  "pause_reason": "debug exact13114497_0 terminal COMPLETED0:0; executor resume for independent preflight verification and next authorized canary",
+  "pause_tool_confirmation": {
+    "automationId": "phase11-d7",
+    "mode": "update",
+    "status": "PAUSED"
+  },
+  "terminal_observation": ".planning/phase11/gate_d7_monitor_latest.json",
+  "continuation_state": "MONITORING_CANARY",
+  "terminal_resume_delivery": {
+    "threadId": "01a142a7-562a-7e83-b085-70999fbbc780",
+    "host": "local",
+    "tool_response": {
+      "threadId": "01a142a7-562a-7e83-b085-70999fbbc780"
+    },
+    "confirmed_at_utc": "2026-10-16T03:28:02.119961+00:00"
+  },
+  "history": [
+    {
+      "status": "PAUSED",
+      "wait_class": "smoke",
+      "cadence_minutes": 10,
+      "job_ids": [
+        "13114497_0"
+      ],
+      "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/debug-jobset.json"
+    }
+  ],
+  "stage": "canary"
 }

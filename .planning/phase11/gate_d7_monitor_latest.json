@@ -1,0 +1,72 @@
+{
+  "gate": "D-7",
+  "checked_at_utc": "2026-10-16T03:26:44.293969+00:00",
+  "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/debug-jobset.json",
+  "job_ids": [
+    "13114497_0"
+  ],
+  "scheduler": {
+    "13114497_0": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 69,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a40=1,gres/gpu=1,mem=64G,node=1"
+    }
+  },
+  "queue": [],
+  "queue_state_counts": {},
+  "queue_retired_with_complete_accounting": false,
+  "missing_job_ids": [],
+  "all_terminal": true,
+  "terminal_failures": [],
+  "batch_states": [
+    {
+      "job_id": "13114497_0",
+      "status": "BATCH_COMPLETE"
+    }
+  ],
+  "done_record_count": 5,
+  "target_count": 5,
+  "all_success": true,
+  "trigger_resume": true,
+  "allocation_gpuh": 0.019166666666666665,
+  "progress": [
+    {
+      "cell_key": "native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/debug/native",
+      "done": 1,
+      "target": 1,
+      "summary_exists": true
+    },
+    {
+      "cell_key": "current_t_k2_l05",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/debug/current_t_k2_l05",
+      "done": 1,
+      "target": 1,
+      "summary_exists": true
+    },
+    {
+      "cell_key": "fixed_t0_k3_l09",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/debug/fixed_t0_k3_l09",
+      "done": 1,
+      "target": 1,
+      "summary_exists": true
+    },
+    {
+      "cell_key": "loop_k2",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/debug/loop_k2",
+      "done": 1,
+      "target": 1,
+      "summary_exists": true
+    },
+    {
+      "cell_key": "loop_k3",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/debug/loop_k3",
+      "done": 1,
+      "target": 1,
+      "summary_exists": true
+    }
+  ],
+  "target_gold_loaded": false
+}
