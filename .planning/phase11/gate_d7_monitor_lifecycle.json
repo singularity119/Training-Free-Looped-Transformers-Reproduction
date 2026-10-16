@@ -1,0 +1,26 @@
+{
+  "automation_id": "phase11-d7",
+  "name": "Phase11 D7 \u552f\u4e00\u9884\u68c0\u4e0e\u6b63\u5f0f\u76d1\u63a7",
+  "status": "ACTIVE",
+  "wait_class": "smoke",
+  "cadence_minutes": 10,
+  "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "job_ids": [
+    "13114497_0"
+  ],
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/debug-jobset.json",
+  "source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source",
+  "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z",
+  "queue_phase_authorization": "D7 exact handoff permits debug10min from PENDING",
+  "terminal_route": "pause then confirmed AUTOMATION_TERMINAL_RESUME to exact executor; unconfirmed relay planning",
+  "created_at_utc": "2026-10-16T03:16:27.196027+00:00",
+  "create_tool_confirmation": {
+    "automationId": "phase11-d7",
+    "mode": "create",
+    "status": "ACTIVE"
+  },
+  "next_authorized_action": "Verify debug5 synthetic plus scope/seed/cache then retainable12 formal canary first3cells, resource/cost report, first36096 raw closure before formal Loop last24064, full60160 S2 closure before firstgold adapter and analysis",
+  "target_gold_loaded": false
+}

@@ -1,0 +1,5 @@
+{
+  "exit_code": 0,
+  "stdout": "{\"path\": \"/hpc2hdd/home/xhuang225/shared/hf_home/hub/datasets--TIGER-Lab--MMLU-Pro/snapshots/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet\", \"num_rows\": 12032, \"projected_columns\": {\"question_id\": \"int64\", \"answer_index\": \"int64\", \"category\": \"string\"}, \"target_gold_loaded\": false, \"metadata_only\": true}\n",
+  "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n"
+}

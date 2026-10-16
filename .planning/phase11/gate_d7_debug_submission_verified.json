@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/opt/slurm/bin/sbatch",
+    "--parsable",
+    "--account=root",
+    "--partition=debug",
+    "--qos=debug",
+    "--gres=gpu:a40:1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=00:29:00",
+    "--array=0-0",
+    "--job-name=p11-d7-debug",
+    "--output=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/logs/debug-%A_%a.out",
+    "--error=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/logs/debug-%A_%a.err",
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source/scripts/loopscope/phase11_d7.sbatch",
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source",
+    "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/debug/debug-plan.json"
+  ],
+  "exit_code": 0,
+  "stdout": "13114497\n",
+  "stderr": "",
+  "submitted_at_utc": "2026-10-16T03:15:17.101854+00:00",
+  "source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+  "target_gold_loaded": false,
+  "job_ids": [
+    "13114497_0"
+  ],
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/debug-jobset.json",
+  "initial_scontrol": "JobId=13114497 ArrayJobId=13114497 ArrayTaskId=0 JobName=p11-d7-debug UserId=xhuang225(204599) GroupId=menglinyang_team(203488) MCS_label=N/A Priority=4293735443 Nice=0 Account=root QOS=debug JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:34 TimeLimit=00:29:00 TimeMin=N/A SubmitTime=2026-10-16T11:15:17 EligibleTime=2026-10-16T11:15:17 AccrueTime=2026-10-16T11:15:17 StartTime=2026-10-16T11:15:17 EndTime=2026-10-16T11:44:17 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-16T11:15:17 Scheduler=Main Partition=debug AllocNode:Sid=mgmt-4:3763092 ReqNodeList=(null) ExcNodeList=(null) NodeList=gpu3-9 BatchHost=gpu3-9 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8,gres/gpu=1,gres/gpu:a40=1 AllocTRES=cpu=8,mem=64G,node=1,billing=8,gres/gpu=1,gres/gpu:a40=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source/scripts/loopscope/phase11_d7.sbatch WorkDir=/hpc2hdd/home/xhuang225 StdErr=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/logs/debug-13114497_0.err StdIn=/dev/null StdOut=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/logs/debug-13114497_0.out Power= TresPerNode=gres:gpu:a40:1",
+  "verification_repair": "Slurm prints JobId base plus separate ArrayTaskId; original submission retained, no resubmission"
+}

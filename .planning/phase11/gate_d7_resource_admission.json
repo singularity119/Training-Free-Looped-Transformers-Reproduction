@@ -1,0 +1,39 @@
+{
+  "checked_at_utc": "2026-10-16T03:14:00.190749+00:00",
+  "host": "hpc2-hkustgz",
+  "login_node": "mgmt-4",
+  "no_user_inflight_at_admission": true,
+  "account": "root",
+  "formal": {
+    "partition": "emergency_gpu",
+    "qos": "emergency_gpu",
+    "priority_tier": 300,
+    "gpu_type": "a800",
+    "qos_max_gpus": 8,
+    "qos_max_cpus": 64,
+    "cpus_per_gpu": 8,
+    "partition_max_time": "14-00:00:00",
+    "qos_priority": 0,
+    "cumulative_gpuh_cap": null
+  },
+  "engineering": {
+    "partition": "debug",
+    "qos": "debug",
+    "gpu_type": "a40",
+    "time_limit": "00:29:00",
+    "partition_max_time": "00:30:00",
+    "qos_max_gpus": 2
+  },
+  "evidence_commands": [
+    "/opt/slurm/bin/squeue -u xhuang225",
+    "/opt/slurm/bin/scontrol show partition debug",
+    "/opt/slurm/bin/scontrol show partition emergency_gpu",
+    "/opt/slurm/bin/sacctmgr -nP show assoc where user=xhuang225 format=Cluster,Account,User,Partition,QOS,DefaultQOS",
+    "/opt/slurm/bin/sacctmgr -nP show qos format=Name,Priority,MaxTRESPU,MaxJobsPU,MaxSubmitPU,MaxWall"
+  ],
+  "notes": [
+    "Initial shell PATH did not include Slurm; corrected to explicit /opt/slurm/bin without changing settings.",
+    "scontrol show partition with two bare names was rejected; queried each partition separately."
+  ],
+  "target_gold_loaded": false
+}

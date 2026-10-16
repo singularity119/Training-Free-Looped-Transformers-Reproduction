@@ -1,0 +1,5 @@
+{
+  "exit_code": 0,
+  "stdout": "{\"status\": \"D7_INPUTS_PREPARED\", \"count\": 12032, \"max_prompt_tokens\": 2860, \"target_gold_loaded\": false}\n{\"status\": \"D7_INPUTS_PREPARED\", \"count\": 1, \"max_prompt_tokens\": 564, \"target_gold_loaded\": false}\n{\"stage\": \"debug\", \"cells\": 5, \"records\": 5, \"scheduled_records\": 5, \"tasks\": 1, \"target_gold_loaded\": false}\n{\"status\": \"D7_CPU_INPUTS_AND_DEBUG_PLAN_READY\", \"source_commit\": \"3866f6aa0d775f0b6e721f90a88fff0af5455abc\", \"tests\": 21, \"target_gold_loaded\": false}\n",
+  "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n"
+}
