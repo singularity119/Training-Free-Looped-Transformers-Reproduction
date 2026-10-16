@@ -1,0 +1,16 @@
+# Phase 11 Gate D-7 execution
+
+Authority: `.planning/phase11/loopscope_phase11_gate_d7_handoff.md` and current control. Executor `01a142a7-562a-7e83-b085-70999fbbc780/local`; planning `01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local`.
+
+The five fixed cells are Native, current_t K2 lambda .5, fixed_t0 K3 lambda .9, Loop K2 and Loop K3. All use unchanged Gate A MMLU-Pro test12032/category-validation-first-five CoT prompts, runtime seed20261016, greedy native EOS, max8192. Full damping uses the existing shared runtime without modifying protected code.
+
+S2 parser and analysis freeze: [S2 rules](loopscope_phase11_d7_s2.md). Code must be committed before formal generation. No new accuracy, gold or flips before all60160 raw and S2 predictions close.
+
+1. Deploy a new immutable source under workspace/staging/phase11-gate-d7-TIMESTAMP/source, leave the original source/venv/cache read-only. `phase11_d7.py --prepare-inputs` checks every original cached prompt/token ID and 8192 capacity and copies the pool to a new input root; `--synthetic` builds a ten-choice, five-shot engineering prompt.
+2. `build_phase11_d7_plan.py --stage debug` creates a five-cell synthetic plan. Submit only debug, one A40,8CPU,<30min. `phase11_d7.sbatch` runs the batch producer and `check_phase11_d7_gpu.py`. Debug must have RAW_COMPLETE/BATCH_COMPLETE, exit0 and D7_FULL_DAMPING_CUDA_VERIFIED before formal submission. This proves function, not formal memory sizing.
+3. Build `--stage canary`: exactly first three cells, four frozen prompt-length quantiles per cell; three A800 tasks, packing1. Keep all12 successes in the panel. Use measured resources and the8192 KV bound to freeze conservative packing with approximately20% memory headroom, and report cost to planning.
+4. Build `--stage first --canary-plan ... --packing P --tasks8`: canary12 plus remaining36084, no Loop formal work. After full36096 raw completeness run `analyze_phase11_d7.py --close-first-batch --plan FIRST --output-dir NEW`.
+5. Build `--stage last --first-plan FIRST --first-closure RECEIPT --packing P --tasks8`: plan includes all5 cells, scheduled work only last24064 Loop records. Receipt is checked at plan creation and allocated batch startup. Preserve all completed records; attempt failures and retries use immutable attempt roots and never overwrite successful bundles.
+6. After every exact job is accounted terminal and all60160 close: `analyze_phase11_d7.py --close --plan LAST --output-dir NEW` saves S2 predictions first. Then `--closure NEW/closure.json --gold ORIGINAL_SEALED --output-dir ANOTHER_NEW` performs the one authorized gold read and six frozen paired contrasts. Keep records/predictions/gold remote; fetch only aggregate report/CSVs/resources.
+
+Only the executor submits or repairs. Exactly one heartbeat observes exact jobs; debug10min from PENDING, formal60min. Healthy runs stay quiet. At attempt terminal, pause monitor then visibly send AUTOMATION_TERMINAL_RESUME to exact executor. The executor diagnoses and continues within this Gate, including first-to-last transition. A job failure alone is not Gate BLOCK. Send one GATE_D7_FINAL_AUDIT with visible delivery to planning; only planning decides PASS.

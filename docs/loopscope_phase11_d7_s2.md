@@ -1,0 +1,11 @@
+# Gate D-7 S2-MMLU-Pro parser freeze
+
+Version: `S2-MMLU-Pro-v1-20261016`. Frozen before D-7 formal generation or any new outcome. The opt-in implementation is `phase11_mmlupro_s2.extract_mmlupro_s2`; the historical GPQA parser remains unchanged.
+
+The parser receives only the generated continuation, never the prompt or few-shot demonstrations. It strips each line and requires the entire line to match the existing S1/S2 grammar: case-insensitive `Final answer`, one or more spaces/tabs between those words, optional spaces/tabs before a colon (`:` or `：`), then a single Latin A-Z letter, optionally enclosed in parentheses with interior spaces/tabs. Optional trailing spaces/tabs and at most one character from `.!;,．！。` are allowed. No prose answer recovery is performed. Unicode case-fold lookalikes are excluded.
+
+Legal labels are A through the last option in that question's original `choices` list; options and gold are never reordered. A syntactically matching line outside that range makes the response `out_of_range`, even if another line is legal or legal lines conflict. If all matched lines are legal but disagree, status is `conflict`. Repeated legal lines with the same normalized letter are `ok`; zero matching lines is `no_match`. Every failure predicts null and counts as wrong in the full 12032 denominator. Counts for all four statuses are reported.
+
+The frozen primary family contains four paired contrasts: current_t K2 lambda .5 minus Native and Loop K2; fixed_t0 K3 lambda .9 minus Native and Loop K3. A separate baseline family contains Loop K2 and K3 minus Native. Both use two-sided exact McNemar with separate Holm correction at .05. All contrast CIs use 10000 category-stratified paired bootstrap draws, seed 20261008, fixed category sample sizes and original micro weights; these are nominal 95% percentile CIs. Category accuracies and their unweighted macro mean are descriptive. No category significance search is performed.
+
+`analyze_phase11_d7.py --close-first-batch` closes only the first three raw populations without parsing or reading gold. `--close` closes all 60160 raw records and saves all S2 predictions with no gold access. Analysis verifies that saved predictions still match raw text before calling the gold loader once. All paths are write-once; aggregate report and CSVs exclude questions, responses, predictions and gold.
