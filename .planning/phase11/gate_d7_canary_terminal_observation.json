@@ -1,0 +1,80 @@
+{
+  "gate": "D-7",
+  "checked_at_utc": "2026-10-16T03:47:52.008176+00:00",
+  "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/canary-jobset.json",
+  "job_ids": [
+    "13115090_0",
+    "13115090_1",
+    "13115090_2"
+  ],
+  "scheduler": {
+    "13115090_0": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 490,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13115090_1": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 611,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13115090_2": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 525,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    }
+  },
+  "queue": [],
+  "queue_state_counts": {},
+  "queue_retired_with_complete_accounting": false,
+  "missing_job_ids": [],
+  "all_terminal": true,
+  "terminal_failures": [],
+  "batch_states": [
+    {
+      "job_id": "13115090_0",
+      "status": "BATCH_COMPLETE"
+    },
+    {
+      "job_id": "13115090_1",
+      "status": "BATCH_COMPLETE"
+    },
+    {
+      "job_id": "13115090_2",
+      "status": "BATCH_COMPLETE"
+    }
+  ],
+  "done_record_count": 12,
+  "target_count": 12,
+  "all_success": true,
+  "trigger_resume": true,
+  "allocation_gpuh": 0.45166666666666666,
+  "progress": [
+    {
+      "cell_key": "native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/canary/native",
+      "done": 4,
+      "target": 4,
+      "summary_exists": true
+    },
+    {
+      "cell_key": "current_t_k2_l05",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/canary/current_t_k2_l05",
+      "done": 4,
+      "target": 4,
+      "summary_exists": true
+    },
+    {
+      "cell_key": "fixed_t0_k3_l09",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/canary/fixed_t0_k3_l09",
+      "done": 4,
+      "target": 4,
+      "summary_exists": true
+    }
+  ],
+  "target_gold_loaded": false
+}

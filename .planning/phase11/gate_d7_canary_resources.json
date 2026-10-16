@@ -1,0 +1,458 @@
+{
+  "schema": "loopscope.phase11.d7.resources.v1",
+  "target_gold_loaded": false,
+  "generated_text_or_answers_extracted": false,
+  "plans": [
+    "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/canary/canary-plan.json"
+  ],
+  "model_config_path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/models--Qwen--Qwen3-4B-Instruct-2507/snapshots/cdbee75f17c01a7cc42f958dc650907174af0554/config.json",
+  "population_per_cell": 12032,
+  "target_record_count": 60160,
+  "cells": {
+    "current_t_k2_l05": {
+      "record_count": 4,
+      "canonical_indices": [
+        3485,
+        6011,
+        10500,
+        11972
+      ],
+      "statistics": {
+        "generated_token_count": {
+          "n": 4,
+          "mean": 3340.0,
+          "min": 424,
+          "median": 3060.5,
+          "p90": 6139.1,
+          "max": 6815
+        },
+        "prefill_input_tokens": {
+          "n": 4,
+          "mean": 1717.75,
+          "min": 1118,
+          "median": 1446.5,
+          "p90": 2478.4,
+          "max": 2860
+        },
+        "elapsed_seconds": {
+          "n": 4,
+          "mean": 137.6931217990059,
+          "min": 17.923090887023136,
+          "median": 126.02068625349784,
+          "p90": 251.9190362122958,
+          "max": 280.80802380200475
+        },
+        "prefill_elapsed_seconds": {
+          "n": 4,
+          "mean": 2.257163482666016,
+          "min": 0.9161619873046875,
+          "median": 2.2223438720703124,
+          "p90": 3.524319604492187,
+          "max": 3.66780419921875
+        },
+        "decode_elapsed_seconds": {
+          "n": 4,
+          "mean": 133.734437573433,
+          "min": 16.820627201080327,
+          "median": 121.97565955734262,
+          "p90": 246.29738524932878,
+          "max": 274.16580397796645
+        },
+        "peak_allocated_bytes": {
+          "n": 4,
+          "mean": 9161519616.0,
+          "min": 8626462208,
+          "median": 9161519616.0,
+          "p90": 9696577024.0,
+          "max": 9696577024
+        },
+        "peak_reserved_bytes": {
+          "n": 4,
+          "mean": 9691987968.0,
+          "min": 8799649792,
+          "median": 9691987968.0,
+          "p90": 10584326144.0,
+          "max": 10584326144
+        }
+      },
+      "end_reason_counts": {
+        "eos": 4
+      },
+      "padded_process_memory_bytes": 12214009856
+    },
+    "fixed_t0_k3_l09": {
+      "record_count": 4,
+      "canonical_indices": [
+        3485,
+        6011,
+        10500,
+        11972
+      ],
+      "statistics": {
+        "generated_token_count": {
+          "n": 4,
+          "mean": 2639.0,
+          "min": 403,
+          "median": 1922.5,
+          "p90": 5040.200000000001,
+          "max": 6308
+        },
+        "prefill_input_tokens": {
+          "n": 4,
+          "mean": 1717.75,
+          "min": 1118,
+          "median": 1446.5,
+          "p90": 2478.4,
+          "max": 2860
+        },
+        "elapsed_seconds": {
+          "n": 4,
+          "mean": 121.54143098555505,
+          "min": 18.777908289805055,
+          "median": 88.90289690997452,
+          "p90": 231.08594919499012,
+          "max": 289.5820218324661
+        },
+        "prefill_elapsed_seconds": {
+          "n": 4,
+          "mean": 1.0908569259643555,
+          "min": 0.5000417785644531,
+          "median": 0.9727703552246093,
+          "p90": 1.7345601928710939,
+          "max": 1.91784521484375
+        },
+        "decode_elapsed_seconds": {
+          "n": 4,
+          "mean": 118.88399733448051,
+          "min": 18.06454797363281,
+          "median": 86.40774382972728,
+          "p90": 227.15295528717093,
+          "max": 284.65595370483464
+        },
+        "peak_allocated_bytes": {
+          "n": 4,
+          "mean": 9137897472.0,
+          "min": 8660836864,
+          "median": 9137897472.0,
+          "p90": 9614958080.0,
+          "max": 9614958080
+        },
+        "peak_reserved_bytes": {
+          "n": 4,
+          "mean": 9610199040.0,
+          "min": 8829009920,
+          "median": 9610199040.0,
+          "p90": 10391388160.0,
+          "max": 10391388160
+        }
+      },
+      "end_reason_counts": {
+        "eos": 4
+      },
+      "padded_process_memory_bytes": 12021071872
+    },
+    "native": {
+      "record_count": 4,
+      "canonical_indices": [
+        3485,
+        6011,
+        10500,
+        11972
+      ],
+      "statistics": {
+        "generated_token_count": {
+          "n": 4,
+          "mean": 3315.5,
+          "min": 417,
+          "median": 2326.5,
+          "p90": 6556.700000000001,
+          "max": 8192
+        },
+        "prefill_input_tokens": {
+          "n": 4,
+          "mean": 1717.75,
+          "min": 1118,
+          "median": 1446.5,
+          "p90": 2478.4,
+          "max": 2860
+        },
+        "elapsed_seconds": {
+          "n": 4,
+          "mean": 106.82799132401124,
+          "min": 13.316528400406241,
+          "median": 74.95179994776845,
+          "p90": 210.95802811617034,
+          "max": 264.0918370001018
+        },
+        "prefill_elapsed_seconds": {
+          "n": 4,
+          "mean": 0.2490091552734375,
+          "min": 0.06906380462646484,
+          "median": 0.12537550735473632,
+          "p90": 0.523887339782715,
+          "max": 0.6762218017578125
+        },
+        "decode_elapsed_seconds": {
+          "n": 4,
+          "mean": 104.85711443424233,
+          "min": 13.053548418045043,
+          "median": 73.02080571937557,
+          "p90": 207.9280303079608,
+          "max": 260.3332978801731
+        },
+        "peak_allocated_bytes": {
+          "n": 4,
+          "mean": 9305326080.0,
+          "min": 8686291456,
+          "median": 9305326080.0,
+          "p90": 9924360704.0,
+          "max": 9924360704
+        },
+        "peak_reserved_bytes": {
+          "n": 4,
+          "mean": 10486808576.0,
+          "min": 8805941248,
+          "median": 10486808576.0,
+          "p90": 12167675904.0,
+          "max": 12167675904
+        }
+      },
+      "end_reason_counts": {
+        "eos": 3,
+        "length_limit": 1
+      },
+      "padded_process_memory_bytes": 13797359616
+    }
+  },
+  "environments": [
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "total_memory": 85094825984,
+      "job_id": "13115091"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "total_memory": 85094825984,
+      "job_id": "13115092"
+    },
+    {
+      "gpu": "NVIDIA A800-SXM4-80GB",
+      "total_memory": 85095874560,
+      "job_id": "13115090"
+    }
+  ],
+  "devices": [
+    {
+      "uuid": "GPU-f5a2f2cb-2bc4-c80b-e8d2-ca127d5ed9c9",
+      "name": "NVIDIA A800-SXM4-80GB",
+      "total_bytes": 85899345920.0,
+      "peak_used_bytes": 12707692544.0,
+      "samples": 97
+    },
+    {
+      "uuid": "GPU-96acdcdc-6eb3-2ae4-f7f8-59f8ccc0ef0d",
+      "name": "NVIDIA A800-SXM4-80GB",
+      "total_bytes": 85899345920.0,
+      "peak_used_bytes": 11157897216.0,
+      "samples": 121
+    },
+    {
+      "uuid": "GPU-718df050-f8bd-6ce9-2492-fdef8d99ef17",
+      "name": "NVIDIA A800-SXM4-80GB",
+      "total_bytes": 85899345920.0,
+      "peak_used_bytes": 10968104960.0,
+      "samples": 104
+    }
+  ],
+  "batch_attempts": [
+    {
+      "job_id": "13115091",
+      "status": "BATCH_COMPLETE",
+      "packing": 1,
+      "elapsed_seconds": 486.53740098048
+    },
+    {
+      "job_id": "13115092",
+      "status": "BATCH_COMPLETE",
+      "packing": 1,
+      "elapsed_seconds": 606.735217083944
+    },
+    {
+      "job_id": "13115090",
+      "status": "BATCH_COMPLETE",
+      "packing": 1,
+      "elapsed_seconds": 521.0643756147474
+    }
+  ],
+  "kv_bound": {
+    "num_hidden_layers": 36,
+    "num_key_value_heads": 8,
+    "head_dim": 128,
+    "dtype_bytes": 2,
+    "batch_size": 1,
+    "max_prompt_tokens": 2860,
+    "max_new_tokens": 8192,
+    "kv_bytes_per_token": 147456,
+    "full_context_kv_bytes": 1629683712,
+    "loop_cache_multiplier": 1
+  },
+  "packing": {
+    "candidate_from_memory_bound": 4,
+    "device_capacity_bytes": 85094825984,
+    "headroom_fraction": 0.2,
+    "largest_padded_process_bytes": 14337376256.0,
+    "single_process_device_peak_bytes": 12707692544.0,
+    "method": "max(observed peak reserved, packing-1 device peak when available) plus entire worst-context KV; observed KV is intentionally counted twice",
+    "validated_concurrency": [
+      1
+    ],
+    "limitation": "Candidate is a conservative KV-based estimate, not validated packed execution. Prefill/SVD/attention workspace and allocator competition require bounded first packed execution."
+  },
+  "cost_scenarios_by_cell": {
+    "native": {
+      "observed_cell": "native",
+      "proxy_not_measured": false,
+      "sample_mean_serial_process_hours": 357.0428865584731,
+      "observed_min_max_serial_process_hours": [
+        44.506797142691084,
+        882.6536063292291
+      ],
+      "all_questions_8192_serial_process_hours": 882.6536063292291
+    },
+    "current_t_k2_l05": {
+      "observed_cell": "current_t_k2_l05",
+      "proxy_not_measured": false,
+      "sample_mean_serial_process_hours": 460.20101152378857,
+      "observed_min_max_serial_process_hours": [
+        59.902952653517325,
+        938.5228173293671
+      ],
+      "all_questions_8192_serial_process_hours": 1123.6969925127478
+    },
+    "fixed_t0_k3_l09": {
+      "observed_cell": "fixed_t0_k3_l09",
+      "proxy_not_measured": false,
+      "sample_mean_serial_process_hours": 406.2184715606107,
+      "observed_min_max_serial_process_hours": [
+        62.75994237303734,
+        967.847468524509
+      ],
+      "all_questions_8192_serial_process_hours": 1252.0406550851144
+    },
+    "loop_k2": {
+      "observed_cell": "current_t_k2_l05",
+      "proxy_not_measured": true,
+      "sample_mean_serial_process_hours": 460.20101152378857,
+      "observed_min_max_serial_process_hours": [
+        59.902952653517325,
+        938.5228173293671
+      ],
+      "all_questions_8192_serial_process_hours": 1123.6969925127478
+    },
+    "loop_k3": {
+      "observed_cell": "fixed_t0_k3_l09",
+      "proxy_not_measured": true,
+      "sample_mean_serial_process_hours": 406.2184715606107,
+      "observed_min_max_serial_process_hours": [
+        62.75994237303734,
+        967.847468524509
+      ],
+      "all_questions_8192_serial_process_hours": 1252.0406550851144
+    }
+  },
+  "cost_projection": {
+    "full_five_cell_projection": true,
+    "assumed_packing": 4,
+    "sample_mean_allocation_gpuh": 522.4704631818179,
+    "all_8192_scenario_allocation_gpuh": 1408.5322253812383,
+    "ideal_8_gpu_wall_hours_scenarios": [
+      65.30880789772723,
+      176.06652817265478
+    ],
+    "limitation": "Conditional scenarios, not statistical intervals; prompt-quantile n=4 is not a random runtime sample, output lengths may differ by method, Loop proxies are unmeasured, and queues/startup/tails/stage barriers can increase wall time."
+  },
+  "selection_bias": {
+    "design": "four prompt-length quantiles .25/.5/.75/1, tie-break canonical index",
+    "caveat": "Prompt length is not generated length; maximum-prompt early EOS does not validate worst 8192 memory or typical throughput. n=4 output lengths cannot establish population runtime quantiles."
+  },
+  "scheduler_records": {
+    "gate": "D-7",
+    "checked_at_utc": "2026-10-16T03:47:52.008176+00:00",
+    "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
+    "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/canary-jobset.json",
+    "job_ids": [
+      "13115090_0",
+      "13115090_1",
+      "13115090_2"
+    ],
+    "scheduler": {
+      "13115090_0": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 490,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115090_1": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 611,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115090_2": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 525,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      }
+    },
+    "queue": [],
+    "queue_state_counts": {},
+    "queue_retired_with_complete_accounting": false,
+    "missing_job_ids": [],
+    "all_terminal": true,
+    "terminal_failures": [],
+    "batch_states": [
+      {
+        "job_id": "13115090_0",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115090_1",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115090_2",
+        "status": "BATCH_COMPLETE"
+      }
+    ],
+    "done_record_count": 12,
+    "target_count": 12,
+    "all_success": true,
+    "trigger_resume": true,
+    "allocation_gpuh": 0.45166666666666666,
+    "progress": [
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/canary/native",
+        "done": 4,
+        "target": 4,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/canary/current_t_k2_l05",
+        "done": 4,
+        "target": 4,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/canary/fixed_t0_k3_l09",
+        "done": 4,
+        "target": 4,
+        "summary_exists": true
+      }
+    ],
+    "target_gold_loaded": false
+  }
+}

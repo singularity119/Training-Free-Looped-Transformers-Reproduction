@@ -1,0 +1,33 @@
+{
+  "status": "D7_RETAINABLE_CANARY_VERIFIED",
+  "verified_at_utc": "2026-10-16T03:49:08.017642+00:00",
+  "record_count": 12,
+  "facts": [
+    {
+      "cell_key": "native",
+      "raw_count": 4,
+      "seed_verified": 20261016,
+      "source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+      "identity_order_verified": true,
+      "cache_and_direction_lifecycle_verified": true
+    },
+    {
+      "cell_key": "current_t_k2_l05",
+      "raw_count": 4,
+      "seed_verified": 20261016,
+      "source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+      "identity_order_verified": true,
+      "cache_and_direction_lifecycle_verified": true
+    },
+    {
+      "cell_key": "fixed_t0_k3_l09",
+      "raw_count": 4,
+      "seed_verified": 20261016,
+      "source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+      "identity_order_verified": true,
+      "cache_and_direction_lifecycle_verified": true
+    }
+  ],
+  "generated_text_or_answers_examined": false,
+  "target_gold_loaded": false
+}
