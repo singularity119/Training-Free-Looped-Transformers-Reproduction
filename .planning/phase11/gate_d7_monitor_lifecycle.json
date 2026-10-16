@@ -22,5 +22,13 @@
     "status": "ACTIVE"
   },
   "next_authorized_action": "Verify debug5 synthetic plus scope/seed/cache then retainable12 formal canary first3cells, resource/cost report, first36096 raw closure before formal Loop last24064, full60160 S2 closure before firstgold adapter and analysis",
-  "target_gold_loaded": false
+  "target_gold_loaded": false,
+  "analysis_source_binding": ".planning/phase11/gate_d7_analysis_binding.json",
+  "analysis_source_commit": "4b28daa12fd833aeecf9c64661c7ae1764972323",
+  "updated_at_utc": "2026-10-16T03:19:59.255321+00:00",
+  "update_tool_confirmation": {
+    "automationId": "phase11-d7",
+    "mode": "update",
+    "status": "ACTIVE"
+  }
 }

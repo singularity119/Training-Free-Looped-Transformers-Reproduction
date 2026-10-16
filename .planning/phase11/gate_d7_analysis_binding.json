@@ -1,0 +1,11 @@
+{
+  "gate": "D-7",
+  "analysis_source_commit": "4b28daa12fd833aeecf9c64661c7ae1764972323",
+  "analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/analysis-source-4b28daa",
+  "producer_source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+  "producer_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source",
+  "runtime_source_unchanged": true,
+  "gold_adapter_tests": 6,
+  "target_gold_loaded": false,
+  "deployment_exit": 0
+}
