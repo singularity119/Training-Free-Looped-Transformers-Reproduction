@@ -1,6 +1,6 @@
 {
   "automation_id": "phase11-d7",
-  "name": "Phase11 D7 \u552f\u4e00\u9884\u68c0\u4e0e\u6b63\u5f0f\u76d1\u63a7",
+  "name": "Phase11 D7 唯一预检与正式监控",
   "status": "ACTIVE",
   "wait_class": "full",
   "cadence_minutes": 60,
@@ -29,7 +29,7 @@
     "status": "ACTIVE"
   },
   "next_authorized_action": "Validate full first36096 including canary12; first raw closure then submit Loop K2/K3 last24064; all60160 S2 closure before gold",
-  "target_gold_loaded": false,
+  "target_gold_loaded": true,
   "analysis_source_binding": ".planning/phase11/gate_d7_analysis_binding.json",
   "analysis_source_commit": "4b28daa12fd833aeecf9c64661c7ae1764972323",
   "updated_at_utc": "2026-10-16T03:51:21.584321+00:00",
@@ -81,5 +81,9 @@
   "stage": "first",
   "resource_packing": 4,
   "scheduled_record_count": 36084,
-  "retained_canary_count": 12
+  "retained_canary_count": 12,
+  "first_gold_access_context": "USER_AUTHORIZED_TWO_CELL_INTERIM",
+  "first_gold_access_started_after_utc": "2026-10-17T17:35:52.986717+00:00",
+  "interim_evidence": ".planning/phase11/gate_d7_interim_evidence.json",
+  "remaining_outcomes_protected": true
 }

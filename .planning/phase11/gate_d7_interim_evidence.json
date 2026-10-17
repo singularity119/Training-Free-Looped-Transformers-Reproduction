@@ -1,0 +1,151 @@
+{
+  "aggregate.json": {
+    "authorization": "2026-10-18 user single interim exception: Native and current_t K2 lambda0.5 only",
+    "source_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json",
+    "record_count": 24064,
+    "cell_count": 2,
+    "cell_keys": [
+      "native",
+      "current_t_k2_l05"
+    ],
+    "parser_version": "S2-MMLU-Pro-v1-20261016",
+    "predictions_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/predictions.jsonl",
+    "producer_sources": {
+      "native": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+      "current_t_k2_l05": "3866f6aa0d775f0b6e721f90a88fff0af5455abc"
+    },
+    "status": "INTERIM_TWO_CELL_SCORED_NOT_GATE_TERMINAL",
+    "target_gold_loaded": true,
+    "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/interim_closure.json",
+    "first_gold_projection_started_after_utc": "2026-10-17T17:35:52.986717+00:00",
+    "first_gold_projection_completed_at_utc": "2026-10-17T17:35:53.868792+00:00",
+    "scored_at_utc": "2026-10-17T17:35:53.950961+00:00",
+    "cells": [
+      {
+        "cell_key": "native",
+        "correct": 8342,
+        "n": 12032,
+        "accuracy_percent": 69.33178191489361,
+        "format_counts": {
+          "ok": 11916,
+          "no_match": 62,
+          "conflict": 47,
+          "out_of_range": 7
+        },
+        "format_failure_count": 116,
+        "delta_native_pp": 0.0
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "correct": 8273,
+        "n": 12032,
+        "accuracy_percent": 68.75831117021276,
+        "format_counts": {
+          "ok": 11945,
+          "no_match": 60,
+          "conflict": 19,
+          "out_of_range": 8
+        },
+        "format_failure_count": 87,
+        "delta_native_pp": -0.5734707446808471
+      }
+    ],
+    "remaining_cell_outcomes_read": false,
+    "full_panel_first_gold_claim_permitted": false
+  },
+  "pre_gold_access.json": {
+    "authorization": "2026-10-18 user single interim exception: Native and current_t K2 lambda0.5 only",
+    "source_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json",
+    "record_count": 24064,
+    "cell_count": 2,
+    "cell_keys": [
+      "native",
+      "current_t_k2_l05"
+    ],
+    "parser_version": "S2-MMLU-Pro-v1-20261016",
+    "predictions_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/predictions.jsonl",
+    "producer_sources": {
+      "native": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+      "current_t_k2_l05": "3866f6aa0d775f0b6e721f90a88fff0af5455abc"
+    },
+    "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/interim_closure.json",
+    "source_path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/datasets--TIGER-Lab--MMLU-Pro/snapshots/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet",
+    "source_revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+    "projection_columns": [
+      "question_id",
+      "answer_index",
+      "category"
+    ],
+    "closure_closed_at_utc": "2026-10-17T17:35:52.968990+00:00",
+    "first_access_context": "USER_AUTHORIZED_INTERIM_BEFORE_FULL_PANEL",
+    "timestamp_utc": "2026-10-17T17:35:52.986717+00:00",
+    "target_gold_read": false,
+    "status": "INTERIM_CLOSURE_VERIFIED_BEFORE_FIRST_GOLD_ACCESS"
+  },
+  "post_gold_access.json": {
+    "authorization": "2026-10-18 user single interim exception: Native and current_t K2 lambda0.5 only",
+    "source_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json",
+    "record_count": 24064,
+    "cell_count": 2,
+    "cell_keys": [
+      "native",
+      "current_t_k2_l05"
+    ],
+    "parser_version": "S2-MMLU-Pro-v1-20261016",
+    "predictions_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/predictions.jsonl",
+    "producer_sources": {
+      "native": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+      "current_t_k2_l05": "3866f6aa0d775f0b6e721f90a88fff0af5455abc"
+    },
+    "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/interim_closure.json",
+    "source_path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/datasets--TIGER-Lab--MMLU-Pro/snapshots/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet",
+    "source_revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+    "projection_columns": [
+      "question_id",
+      "answer_index",
+      "category"
+    ],
+    "closure_closed_at_utc": "2026-10-17T17:35:52.968990+00:00",
+    "first_access_context": "USER_AUTHORIZED_INTERIM_BEFORE_FULL_PANEL",
+    "target_gold_read": true,
+    "status": "FIRST_GOLD_PROJECTION_READ_INTERIM_EXCEPTION",
+    "projection_started_after_utc": "2026-10-17T17:35:52.986717+00:00",
+    "projection_completed_at_utc": "2026-10-17T17:35:53.868792+00:00",
+    "projected_row_count": 12032
+  },
+  "gold_adapter_receipt.json": {
+    "authorization": "2026-10-18 user single interim exception: Native and current_t K2 lambda0.5 only",
+    "source_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json",
+    "record_count": 24064,
+    "cell_count": 2,
+    "cell_keys": [
+      "native",
+      "current_t_k2_l05"
+    ],
+    "parser_version": "S2-MMLU-Pro-v1-20261016",
+    "predictions_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/predictions.jsonl",
+    "producer_sources": {
+      "native": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+      "current_t_k2_l05": "3866f6aa0d775f0b6e721f90a88fff0af5455abc"
+    },
+    "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/interim_closure.json",
+    "source_path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/datasets--TIGER-Lab--MMLU-Pro/snapshots/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet",
+    "source_revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+    "projection_columns": [
+      "question_id",
+      "answer_index",
+      "category"
+    ],
+    "closure_closed_at_utc": "2026-10-17T17:35:52.968990+00:00",
+    "first_access_context": "USER_AUTHORIZED_INTERIM_BEFORE_FULL_PANEL",
+    "target_gold_read": true,
+    "status": "GOLD_PROJECTED_EXACT_JOIN_SEALED",
+    "joined_count": 12032,
+    "missing_count": 0,
+    "duplicate_count": 0,
+    "category_match": true,
+    "option_range_valid": true,
+    "gold_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/sealed/gold.jsonl",
+    "joined_at_utc": "2026-10-17T17:35:53.950239+00:00"
+  }
+}

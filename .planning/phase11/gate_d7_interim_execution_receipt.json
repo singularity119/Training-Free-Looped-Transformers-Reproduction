@@ -1,0 +1,17 @@
+{
+  "exit_code": 0,
+  "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n",
+  "stdout": "{\"authorization\": \"2026-10-18 user single interim exception: Native and current_t K2 lambda0.5 only\", \"source_plan\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json\", \"record_count\": 24064, \"cell_count\": 2, \"cell_keys\": [\"native\", \"current_t_k2_l05\"], \"parser_version\": \"S2-MMLU-Pro-v1-20261016\", \"predictions_path\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/predictions.jsonl\", \"producer_sources\": {\"native\": \"3866f6aa0d775f0b6e721f90a88fff0af5455abc\", \"current_t_k2_l05\": \"3866f6aa0d775f0b6e721f90a88fff0af5455abc\"}, \"status\": \"INTERIM_TWO_CELL_SCORED_NOT_GATE_TERMINAL\", \"target_gold_loaded\": true, \"source_closure\": \"/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/interim_closure.json\", \"first_gold_projection_started_after_utc\": \"2026-10-17T17:35:52.986717+00:00\", \"first_gold_projection_completed_at_utc\": \"2026-10-17T17:35:53.868792+00:00\", \"scored_at_utc\": \"2026-10-17T17:35:53.950961+00:00\", \"cells\": [{\"cell_key\": \"native\", \"correct\": 8342, \"n\": 12032, \"accuracy_percent\": 69.33178191489361, \"format_counts\": {\"ok\": 11916, \"no_match\": 62, \"conflict\": 47, \"out_of_range\": 7}, \"format_failure_count\": 116, \"delta_native_pp\": 0.0}, {\"cell_key\": \"current_t_k2_l05\", \"correct\": 8273, \"n\": 12032, \"accuracy_percent\": 68.75831117021276, \"format_counts\": {\"ok\": 11945, \"no_match\": 60, \"conflict\": 19, \"out_of_range\": 8}, \"format_failure_count\": 87, \"delta_native_pp\": -0.5734707446808471}], \"remaining_cell_outcomes_read\": false, \"full_panel_first_gold_claim_permitted\": false}\n",
+  "binding": {
+    "source_commit": "2b7afa4926bfbed9e430cbeeb36b5b3e9d506bb4",
+    "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/interim-source-2b7afa4",
+    "output_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
+    "analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/analysis-source-4b28daa",
+    "plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json",
+    "authorization": "2026-10-18 two-cell interim user exception",
+    "target_cells": [
+      "native",
+      "current_t_k2_l05"
+    ]
+  }
+}

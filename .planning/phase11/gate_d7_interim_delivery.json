@@ -1,0 +1,20 @@
+{
+  "monitor_update_tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"phase11-d7\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  },
+  "planning_delivery_tool_response": {
+    "threadId": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f"
+  },
+  "message_kind": "D7_INTERIM_TWO_CELL_RESULT",
+  "gate_terminal": false
+}
