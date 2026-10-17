@@ -14,3 +14,13 @@ S2 parser and analysis freeze: [S2 rules](loopscope_phase11_d7_s2.md). Code must
 6. After every exact job is accounted terminal and all60160 close: `analyze_phase11_d7.py --close --plan LAST --output-dir NEW` saves S2 predictions first. Then run `prepare_phase11_d7_gold.py --closure NEW/closure.json --output-dir NEW_GOLD_ROOT` from the separately pinned analysis source: it verifies the full raw/S2 closure, saves a pre-access receipt, projects only question_id/answer_index/category from the exact original revision parquet, exact-joins12032 identities and option ranges, and seals new JSONL with post-access receipts. This adapter is the first target-gold access. Finally `analyze_phase11_d7.py --closure NEW/closure.json --gold NEW_GOLD_ROOT/sealed/gold.jsonl --output-dir ANOTHER_NEW` computes the six frozen paired contrasts. Keep records/predictions/gold remote; fetch only aggregate report/CSVs/resources.
 
 Only the executor submits or repairs. Exactly one heartbeat observes exact jobs; debug10min from PENDING, formal60min. Healthy runs stay quiet. At attempt terminal, pause monitor then visibly send AUTOMATION_TERMINAL_RESUME to exact executor. The executor diagnoses and continues within this Gate, including first-to-last transition. A job failure alone is not Gate BLOCK. Send one GATE_D7_FINAL_AUDIT with visible delivery to planning; only planning decides PASS.
+
+2026-10-18 user exception: only complete Native and current_t K2 lambda .5 may
+be scored once before the full panel. `score_phase11_d7_interim.py --plan FIRST
+--output-dir NEW_INTERIM` reads just these two cells, validates all24064 identities
+and raw bindings, freezes/rechecks S2 predictions, then reuses the pinned gold
+projection and exact-join functions. It records the actual first parquet answer
+read as interim access. No K3/Loop outcomes or significance tests are included.
+The ordered acquisition remains fixed; final reporting must cite this earlier
+access and must not call the final full-panel projection the first gold read.
+This separate entry does not relax the full-panel closure/analysis CLI.
