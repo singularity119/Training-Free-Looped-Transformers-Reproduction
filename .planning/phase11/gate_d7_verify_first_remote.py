@@ -7,8 +7,20 @@ x = json.loads(sys.argv[1])
 b = x['execution']
 sys.path[:0] = [b['source']+'/src', b['source']+'/scripts/loopscope']
 from phase11_d7 import load_job, binding, TAG_FIELDS
+import phase11_d7 as driver
 from summarize_phase11_d7_resources import summarize
 from analyze_phase11_d7 import close, write, read
+
+# Every shard shares the same immutable pool/config. Run the original full pool
+# validation once per exact binding; retain all per-shard and per-record checks.
+pool_cache = {}
+original_load_pool = driver.load_pool
+def cached_pool(path, dataset, scope, config=None):
+ key = (str(path), dataset, scope, json.dumps(config, sort_keys=True))
+ if key not in pool_cache:
+  pool_cache[key] = original_load_pool(path, dataset, scope, config)
+ return pool_cache[key]
+driver.load_pool = cached_pool
 
 now = lambda: datetime.now(timezone.utc).isoformat()
 first_path = b['stage']+'/plans/first/first-plan.json'
