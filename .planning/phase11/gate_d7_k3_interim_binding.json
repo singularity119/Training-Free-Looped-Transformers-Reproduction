@@ -1,0 +1,8 @@
+{
+  "source_commit": "4b90daadf7914d93e0383ac6e7413b5978e73325",
+  "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/k3-interim-source-4b90daa",
+  "output_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-k3-20261017T222743Z",
+  "prior_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
+  "analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/analysis-source-4b28daa",
+  "plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json"
+}

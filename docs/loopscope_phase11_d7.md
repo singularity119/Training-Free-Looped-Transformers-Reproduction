@@ -4,7 +4,7 @@ Authority: `.planning/phase11/loopscope_phase11_gate_d7_handoff.md` and current 
 
 The five fixed cells are Native, current_t K2 lambda .5, fixed_t0 K3 lambda .9, Loop K2 and Loop K3. All use unchanged Gate A MMLU-Pro test12032/category-validation-first-five CoT prompts, runtime seed20261016, greedy native EOS, max8192. Full damping uses the existing shared runtime without modifying protected code.
 
-S2 parser and analysis freeze: [S2 rules](loopscope_phase11_d7_s2.md). Code must be committed before formal generation. No new accuracy, gold or flips before all60160 raw and S2 predictions close.
+S2 parser and analysis freeze: [S2 rules](loopscope_phase11_d7_s2.md). Code must be committed before formal generation. Original barrier: no accuracy, gold or flips before all60160 raw and S2 predictions close. The dated user-authorized interim exceptions below supersede this only for the complete first-three cells; Loop outcomes remain protected until full closure.
 
 1. Deploy a new immutable source under workspace/staging/phase11-gate-d7-TIMESTAMP/source, leave the original source/venv/cache read-only. `phase11_d7.py --prepare-inputs` checks every original cached prompt/token ID and 8192 capacity and copies the pool to a new input root; `--synthetic` builds a ten-choice, five-shot engineering prompt.
 2. `build_phase11_d7_plan.py --stage debug` creates a five-cell synthetic plan. Submit only debug, one A40,8CPU,<30min. `phase11_d7.sbatch` runs the batch producer and `check_phase11_d7_gpu.py`. Debug must have RAW_COMPLETE/BATCH_COMPLETE, exit0 and D7_FULL_DAMPING_CUDA_VERIFIED before formal submission. This proves function, not formal memory sizing.
@@ -24,3 +24,20 @@ read as interim access. No K3/Loop outcomes or significance tests are included.
 The ordered acquisition remains fixed; final reporting must cite this earlier
 access and must not call the final full-panel projection the first gold read.
 This separate entry does not relax the full-panel closure/analysis CLI.
+
+2026-10-18 K3 extension: `score_phase11_d7_k3.py --plan FIRST --prior-interim
+PRIOR_TWO_CELL_ROOT --output-dir NEW_K3_ROOT` freezes complete12032 S2 identities
+then reads only the previously sealed exact-bound gold JSONL; the prior two-cell
+snapshot remains unchanged. No partial scoring or additional significance tests.
+
+After all first36096 raw records independently verify, the immutable producer
+requires the legacy `FIRST_BATCH_RAW_CLOSED_GOLD_UNREAD` receipt status and
+`target_gold_loaded=false`. These denote the closure process itself reading no
+gold. Attach `gate_target_gold_previously_loaded=true`, the interim receipt path,
+and an explicit explanation so these compatibility fields never imply the Gate
+has not seen gold. The last plan retains that disclosure. Runtime source remains
+3866f6a. At final60160 raw/S2 closure attach the same earlier-access disclosure,
+verify the existing gold adapter receipt/revision/exact identities, and run the
+frozen full-panel analysis with the prior sealed gold JSONL. Do not rerun the
+first-gold adapter or label final analysis as first access. Report all three-cell
+interim scoring times and preserve the original frozen six-contrast families.

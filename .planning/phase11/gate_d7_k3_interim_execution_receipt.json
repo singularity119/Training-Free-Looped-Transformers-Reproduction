@@ -1,0 +1,73 @@
+{
+  "exit_code": 0,
+  "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n",
+  "binding": {
+    "source_commit": "4b90daadf7914d93e0383ac6e7413b5978e73325",
+    "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/k3-interim-source-4b90daa",
+    "output_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-k3-20261017T222743Z",
+    "prior_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
+    "analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/analysis-source-4b28daa",
+    "plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json"
+  },
+  "aggregate": {
+    "authorization": "2026-10-18 complete K3 interim extension",
+    "source_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json",
+    "cell_key": "fixed_t0_k3_l09",
+    "record_count": 12032,
+    "predictions_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-k3-20261017T222743Z/predictions.jsonl",
+    "parser_version": "S2-MMLU-Pro-v1-20261016",
+    "prior_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
+    "prior_gold_access": true,
+    "status": "K3_INTERIM_SCORED_NOT_GATE_TERMINAL",
+    "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-k3-20261017T222743Z/interim_closure.json",
+    "reused_gold_read_started_at_utc": "2026-10-17T22:28:04.630787+00:00",
+    "reused_gold_read_completed_at_utc": "2026-10-17T22:28:04.705731+00:00",
+    "first_gold_projection_started_after_utc": "2026-10-17T17:35:52.986717+00:00",
+    "scored_at_utc": "2026-10-17T22:28:04.712360+00:00",
+    "cells": [
+      {
+        "cell_key": "native",
+        "correct": 8342,
+        "n": 12032,
+        "accuracy_percent": 69.33178191489361,
+        "format_counts": {
+          "ok": 11916,
+          "no_match": 62,
+          "conflict": 47,
+          "out_of_range": 7
+        },
+        "format_failure_count": 116,
+        "delta_native_pp": 0.0
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "correct": 8273,
+        "n": 12032,
+        "accuracy_percent": 68.75831117021276,
+        "format_counts": {
+          "ok": 11945,
+          "no_match": 60,
+          "conflict": 19,
+          "out_of_range": 8
+        },
+        "format_failure_count": 87,
+        "delta_native_pp": -0.5734707446808471
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "correct": 8290,
+        "n": 12032,
+        "accuracy_percent": 68.89960106382979,
+        "delta_native_pp": -0.4321808510638192,
+        "format_failure_count": 82,
+        "format_counts": {
+          "ok": 11950,
+          "no_match": 62,
+          "conflict": 14,
+          "out_of_range": 6
+        }
+      }
+    ],
+    "loop_outcomes_read": false
+  }
+}

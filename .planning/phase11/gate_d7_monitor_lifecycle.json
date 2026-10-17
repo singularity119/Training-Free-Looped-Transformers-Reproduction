@@ -1,7 +1,7 @@
 {
   "automation_id": "phase11-d7",
   "name": "Phase11 D7 唯一预检与正式监控",
-  "status": "ACTIVE",
+  "status": "PAUSED",
   "wait_class": "full",
   "cadence_minutes": 60,
   "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
@@ -38,22 +38,22 @@
     "mode": "update",
     "status": "ACTIVE"
   },
-  "paused_at_utc": "2026-10-16T03:48:19.222376+00:00",
-  "pause_reason": "User explicitly resumed executor; exact canary3 jobs COMPLETED0:0/12complete",
+  "paused_at_utc": "2026-10-17T22:26:40.521781+00:00",
+  "pause_reason": "All exact first-batch8 jobs COMPLETED0:0; array36084/36084 plus retained12",
   "pause_tool_confirmation": {
     "automationId": "phase11-d7",
     "mode": "update",
     "status": "PAUSED"
   },
   "terminal_observation": ".planning/phase11/gate_d7_monitor_latest.json",
-  "continuation_state": "MONITORING_FIRST_BATCH_REMAINING",
+  "continuation_state": "FIRST_BATCH_TERMINAL_EXECUTOR_SELF_WAKE_CONFIRMED",
   "terminal_resume_delivery": {
     "threadId": "01a142a7-562a-7e83-b085-70999fbbc780",
     "host": "local",
     "tool_response": {
       "threadId": "01a142a7-562a-7e83-b085-70999fbbc780"
     },
-    "confirmed_at_utc": "2026-10-16T03:28:02.119961+00:00"
+    "confirmed_at_utc": "2026-10-17T22:26:54.639087+00:00"
   },
   "history": [
     {
