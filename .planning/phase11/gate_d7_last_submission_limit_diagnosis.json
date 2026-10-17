@@ -1,0 +1,107 @@
+{
+  "failed_submission": {
+    "command": [
+      "/opt/slurm/bin/sbatch",
+      "--parsable",
+      "--account=root",
+      "--partition=emergency_gpu",
+      "--qos=emergency_gpu",
+      "--gres=gpu:a800:1",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=14-00:00:00",
+      "--array=0-7%8",
+      "--job-name=p11-d7-last",
+      "--output=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/logs/last-%A_%a.out",
+      "--error=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z/logs/last-%A_%a.err",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source/scripts/loopscope/phase11_d7.sbatch",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source",
+      "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/last/last-plan.json"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "sbatch: error: AssocGrpSubmitJobsLimit\nsbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)\n",
+    "source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+    "submitted_at_utc": "2026-10-17T22:45:41.939750+00:00",
+    "full_panel_total": 60160,
+    "scheduled_records": 24064,
+    "first_retained_complete": 36096,
+    "gpus": 8,
+    "packing": 4,
+    "child_processes": 94,
+    "first_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/first-closure-20261017T224332Z/first_batch_closure.json",
+    "gold_provenance": {
+      "gate_prior_gold_access": true,
+      "first_gold_access_context": "USER_AUTHORIZED_TWO_CELL_INTERIM",
+      "prior_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
+      "k3_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-k3-20261017T222743Z",
+      "producer_gold_access": false,
+      "note": "Immutable producer GOLD_UNREAD fields denote its own gold-free collection/closure only; Gate already accessed gold under explicit user exceptions. No score-driven change."
+    }
+  },
+  "policy": [
+    {
+      "command": [
+        "/opt/slurm/bin/sacctmgr",
+        "-nP",
+        "show",
+        "assoc",
+        "where",
+        "user=xhuang225",
+        "format=Cluster,Account,User,Partition,ParentName,GrpSubmit,MaxSubmit,GrpJobs,MaxJobs,GrpTRES,MaxTRES"
+      ],
+      "exit": 0,
+      "stdout": "hkuhpc-ai|root|xhuang225|||0|||||\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/slurm/bin/sacctmgr",
+        "-nP",
+        "show",
+        "assoc",
+        "where",
+        "account=root",
+        "format=Cluster,Account,User,Partition,ParentName,GrpSubmit,MaxSubmit,GrpJobs,MaxJobs,GrpTRES"
+      ],
+      "exit": 0,
+      "stdout": "hkuhpc-ai|root||||||||\nhkuhpc-ai|root|xhuang225|||0||||\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/slurm/bin/squeue",
+        "-h",
+        "-r",
+        "-A",
+        "root",
+        "-o",
+        "%a|%u|%T"
+      ],
+      "exit": 0,
+      "stdout": {
+        "account": "root",
+        "state_counts": {
+          "PENDING": 2049,
+          "RUNNING": 453
+        }
+      },
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/slurm/bin/squeue",
+        "-h",
+        "-r",
+        "-u",
+        "xhuang225",
+        "-o",
+        "%i|%a|%P|%T|%b"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

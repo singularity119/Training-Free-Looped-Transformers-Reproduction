@@ -1,0 +1,146 @@
+{
+  "execution": {
+    "gate": "D-7",
+    "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
+    "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+    "source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+    "stage": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z",
+    "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source",
+    "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d7-20261016T031135Z",
+    "input_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d7-20261016T031135Z",
+    "artifact_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z",
+    "python": "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+    "original_pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/mmlu_pro-prepared/mmlu_pro-pool.json",
+    "runtime_seed": 20261016,
+    "target_gold_loaded": false,
+    "git_archive_exit": 0,
+    "deployment_exit": 0
+  },
+  "analysis": {
+    "gate": "D-7",
+    "analysis_source_commit": "4b28daa12fd833aeecf9c64661c7ae1764972323",
+    "analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/analysis-source-4b28daa",
+    "producer_source_commit": "3866f6aa0d775f0b6e721f90a88fff0af5455abc",
+    "producer_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/source",
+    "runtime_source_unchanged": true,
+    "gold_adapter_tests": 6,
+    "target_gold_loaded": false,
+    "deployment_exit": 0
+  },
+  "scheduler": {
+    "gate": "D-7",
+    "checked_at_utc": "2026-10-17T22:26:31.056439+00:00",
+    "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
+    "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first-jobset.json",
+    "job_ids": [
+      "13115919_0",
+      "13115919_1",
+      "13115919_2",
+      "13115919_3",
+      "13115919_4",
+      "13115919_5",
+      "13115919_6",
+      "13115919_7"
+    ],
+    "scheduler": {
+      "13115919_0": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 94113,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115919_1": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 102968,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115919_2": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 114811,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115919_3": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 137821,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115919_4": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 149950,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115919_5": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 133023,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115919_6": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 121280,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13115919_7": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 98373,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      }
+    },
+    "queue": [],
+    "queue_state_counts": {},
+    "queue_retired_with_complete_accounting": false,
+    "missing_job_ids": [],
+    "all_terminal": true,
+    "terminal_failures": [],
+    "batch_states": [
+      {
+        "job_id": "13115919_0",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115919_1",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115919_2",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115919_3",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115919_4",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115919_5",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115919_6",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13115919_7",
+        "status": "BATCH_COMPLETE"
+      }
+    ],
+    "done_record_count": 36084,
+    "target_count": 36084,
+    "all_success": true,
+    "trigger_resume": true,
+    "allocation_gpuh": 264.5386111111111,
+    "target_gold_loaded": false,
+    "gate_prior_interim_gold_access": true,
+    "gold_access_context": "Observer does not load gold; Gate prior interim exception is recorded separately"
+  },
+  "prior_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
+  "output_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/first-closure-20261017T222822Z"
+}

@@ -1,0 +1,27 @@
+{
+  "status": "AWAITING_NORMAL_SUBMIT_ELIGIBILITY",
+  "gate_terminal": false,
+  "gate_block_declared": false,
+  "first_batch_raw_closed": true,
+  "first_record_count": 36096,
+  "last_scheduled_record_count": 24064,
+  "last_submission_created_job_ids": false,
+  "last_formal_outputs": 0,
+  "submission_failure": "AssocGrpSubmitJobsLimit",
+  "association_user": "xhuang225",
+  "association_account": "root",
+  "association_grp_submit": 0,
+  "self_inflight_job_count": 0,
+  "scientific_or_packing_change": false,
+  "monitor_status": "PAUSED",
+  "next_authorized_action": "After external restoration of normal existing-association submit eligibility, recheck exact retained last plan/source/first closure and create new write-once submission attempt, then same full60 exact-job monitor",
+  "recorded_at_utc": "2026-10-17T22:46:32.157049+00:00",
+  "planning_delivery_tool_confirmation": {
+    "threadId": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f"
+  },
+  "monitor_tool_confirmation": {
+    "automationId": "phase11-d7",
+    "mode": "update",
+    "status": "PAUSED"
+  }
+}

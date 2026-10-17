@@ -1,0 +1,710 @@
+{
+  "output_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/first-closure-20261017T224332Z",
+  "verification": {
+    "status": "D7_FIRST_36096_INDEPENDENTLY_VERIFIED",
+    "verified_at_utc": "2026-10-17T22:44:59.653744+00:00",
+    "count": 36096,
+    "identity_seed_source_cache_direction_verified": true,
+    "generated_text_or_answers_examined": false,
+    "verifier_gold_read": false,
+    "gate_prior_interim_gold_access": true,
+    "prior_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
+    "debug_kbody_stash1_first_evidence": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/verification/debug_verified.json",
+    "scheduler": {
+      "gate": "D-7",
+      "checked_at_utc": "2026-10-17T22:26:31.056439+00:00",
+      "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
+      "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first-jobset.json",
+      "job_ids": [
+        "13115919_0",
+        "13115919_1",
+        "13115919_2",
+        "13115919_3",
+        "13115919_4",
+        "13115919_5",
+        "13115919_6",
+        "13115919_7"
+      ],
+      "scheduler": {
+        "13115919_0": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 94113,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_1": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 102968,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_2": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 114811,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_3": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 137821,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_4": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 149950,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_5": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 133023,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_6": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 121280,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_7": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 98373,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        }
+      },
+      "queue": [],
+      "queue_state_counts": {},
+      "queue_retired_with_complete_accounting": false,
+      "missing_job_ids": [],
+      "all_terminal": true,
+      "terminal_failures": [],
+      "batch_states": [
+        {
+          "job_id": "13115919_0",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_1",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_2",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_3",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_4",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_5",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_6",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_7",
+          "status": "BATCH_COMPLETE"
+        }
+      ],
+      "done_record_count": 36084,
+      "target_count": 36084,
+      "all_success": true,
+      "trigger_resume": true,
+      "allocation_gpuh": 264.5386111111111,
+      "target_gold_loaded": false,
+      "gate_prior_interim_gold_access": true,
+      "gold_access_context": "Observer does not load gold; Gate prior interim exception is recorded separately"
+    }
+  },
+  "resources": {
+    "schema": "loopscope.phase11.d7.resources.v1",
+    "target_gold_loaded": false,
+    "generated_text_or_answers_extracted": false,
+    "plans": [
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/canary/canary-plan.json",
+      "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json"
+    ],
+    "model_config_path": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/models--Qwen--Qwen3-4B-Instruct-2507/snapshots/cdbee75f17c01a7cc42f958dc650907174af0554/config.json",
+    "population_per_cell": 12032,
+    "target_record_count": 60160,
+    "cells": {
+      "current_t_k2_l05": {
+        "record_count": 12032,
+        "statistics": {
+          "generated_token_count": {
+            "n": 12032,
+            "mean": 888.6995511968086,
+            "min": 46,
+            "median": 386.0,
+            "p90": 2175.8999999999996,
+            "max": 8192
+          },
+          "prefill_input_tokens": {
+            "n": 12032,
+            "mean": 1375.588597074468,
+            "min": 866,
+            "median": 1305.5,
+            "p90": 1801.0,
+            "max": 2860
+          },
+          "elapsed_seconds": {
+            "n": 12032,
+            "mean": 109.97594896562924,
+            "min": 3.38447024486959,
+            "median": 48.846247400622815,
+            "p90": 250.64092097897083,
+            "max": 1398.9921564757824
+          },
+          "prefill_elapsed_seconds": {
+            "n": 12032,
+            "mean": 3.8966879923901647,
+            "min": 0.9161619873046875,
+            "median": 3.421251708984375,
+            "p90": 6.0526388671875,
+            "max": 10.7794990234375
+          },
+          "decode_elapsed_seconds": {
+            "n": 12032,
+            "mean": 100.16119397293663,
+            "min": 2.3514428215026846,
+            "median": 42.12899166870116,
+            "p90": 233.20467469406117,
+            "max": 1315.9700035858166
+          },
+          "peak_allocated_bytes": {
+            "n": 12032,
+            "mean": 9264651982.723404,
+            "min": 8328977920,
+            "median": 9392787968.0,
+            "p90": 9744888320.0,
+            "max": 9833800192
+          },
+          "peak_reserved_bytes": {
+            "n": 12032,
+            "mean": 10115128821.106382,
+            "min": 8380219392,
+            "median": 10215227392.0,
+            "p90": 11330912256.0,
+            "max": 11622416384
+          }
+        },
+        "end_reason_counts": {
+          "eos": 11974,
+          "length_limit": 58
+        },
+        "padded_process_memory_bytes": 13252100096
+      },
+      "fixed_t0_k3_l09": {
+        "record_count": 12032,
+        "statistics": {
+          "generated_token_count": {
+            "n": 12032,
+            "mean": 885.4853723404256,
+            "min": 40,
+            "median": 393.0,
+            "p90": 2169.8999999999996,
+            "max": 8192
+          },
+          "prefill_input_tokens": {
+            "n": 12032,
+            "mean": 1375.588597074468,
+            "min": 866,
+            "median": 1305.5,
+            "p90": 1801.0,
+            "max": 2860
+          },
+          "elapsed_seconds": {
+            "n": 12032,
+            "mean": 91.71601101051525,
+            "min": 3.2076809806749225,
+            "median": 44.52544914238388,
+            "p90": 198.81177421482278,
+            "max": 1252.3965055905282
+          },
+          "prefill_elapsed_seconds": {
+            "n": 12032,
+            "mean": 1.7994266234940635,
+            "min": 0.5000417785644531,
+            "median": 1.5940835571289063,
+            "p90": 2.8580076171875,
+            "max": 5.34375341796875
+          },
+          "decode_elapsed_seconds": {
+            "n": 12032,
+            "mean": 86.1023295022957,
+            "min": 2.4537819633483884,
+            "median": 40.71104665946959,
+            "p90": 189.97326100692757,
+            "max": 1191.8985035324138
+          },
+          "peak_allocated_bytes": {
+            "n": 12032,
+            "mean": 9275354526.085106,
+            "min": 8329145856,
+            "median": 9495712256.0,
+            "p90": 9747921408.0,
+            "max": 9850018304
+          },
+          "peak_reserved_bytes": {
+            "n": 12032,
+            "mean": 10120813720.51064,
+            "min": 8380219392,
+            "median": 10276044800.0,
+            "p90": 11288969216.0,
+            "max": 11609833472
+          }
+        },
+        "end_reason_counts": {
+          "eos": 11973,
+          "length_limit": 59
+        },
+        "padded_process_memory_bytes": 13239517184
+      },
+      "native": {
+        "record_count": 12032,
+        "statistics": {
+          "generated_token_count": {
+            "n": 12032,
+            "mean": 967.3080950797872,
+            "min": 16,
+            "median": 365.0,
+            "p90": 2715.2999999999975,
+            "max": 8192
+          },
+          "prefill_input_tokens": {
+            "n": 12032,
+            "mean": 1375.588597074468,
+            "min": 866,
+            "median": 1305.5,
+            "p90": 1801.0,
+            "max": 2860
+          },
+          "elapsed_seconds": {
+            "n": 12032,
+            "mean": 78.50944303226241,
+            "min": 1.3314939038828015,
+            "median": 27.969080124341417,
+            "p90": 212.24716622326522,
+            "max": 903.226572486572
+          },
+          "prefill_elapsed_seconds": {
+            "n": 12032,
+            "mean": 0.2898117454787519,
+            "min": 0.06906380462646484,
+            "median": 0.2672306518554688,
+            "p90": 0.3831426300048828,
+            "max": 1.3850140380859375
+          },
+          "decode_elapsed_seconds": {
+            "n": 12032,
+            "mean": 69.88389933380353,
+            "min": 0.9169937973022461,
+            "median": 24.249436002731322,
+            "p90": 187.9162733242038,
+            "max": 814.5557793235823
+          },
+          "peak_allocated_bytes": {
+            "n": 12032,
+            "mean": 9331719420.085106,
+            "min": 8327818240,
+            "median": 9636770304.0,
+            "p90": 9778680320.0,
+            "max": 9924360704
+          },
+          "peak_reserved_bytes": {
+            "n": 12032,
+            "mean": 10577692192.680851,
+            "min": 8371830784,
+            "median": 11303649280.0,
+            "p90": 11846811648.0,
+            "max": 12167675904
+          }
+        },
+        "end_reason_counts": {
+          "eos": 11893,
+          "length_limit": 139
+        },
+        "padded_process_memory_bytes": 13797359616
+      }
+    },
+    "devices": [
+      {
+        "uuid": "GPU-f5a2f2cb-2bc4-c80b-e8d2-ca127d5ed9c9",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 48999956480.0,
+        "samples": 18801
+      },
+      {
+        "uuid": "GPU-96acdcdc-6eb3-2ae4-f7f8-59f8ccc0ef0d",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 11157897216.0,
+        "samples": 121
+      },
+      {
+        "uuid": "GPU-718df050-f8bd-6ce9-2492-fdef8d99ef17",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 10968104960.0,
+        "samples": 104
+      },
+      {
+        "uuid": "GPU-69c47d0c-6439-ca53-50fe-e6327926ad15",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 48733618176.0,
+        "samples": 20433
+      },
+      {
+        "uuid": "GPU-928cc438-30b6-91ba-9d03-b63dafe261b4",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 46605008896.0,
+        "samples": 22770
+      },
+      {
+        "uuid": "GPU-4bd64701-d43e-db22-73ca-0bd0a8111bc1",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 48068820992.0,
+        "samples": 27332
+      },
+      {
+        "uuid": "GPU-c12f321d-adf6-baab-e704-6d18b3900f8b",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 47033876480.0,
+        "samples": 29703
+      },
+      {
+        "uuid": "GPU-e6408609-8355-a02e-8e34-9f3c7df614e6",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 47526707200.0,
+        "samples": 26354
+      },
+      {
+        "uuid": "GPU-28d927b0-62cd-f482-436d-623560fe4ba1",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 47839182848.0,
+        "samples": 24026
+      },
+      {
+        "uuid": "GPU-31daac9c-cc13-b913-f22a-fbc6467b445d",
+        "name": "NVIDIA A800-SXM4-80GB",
+        "total_bytes": 85899345920.0,
+        "peak_used_bytes": 48028975104.0,
+        "samples": 19523
+      }
+    ],
+    "batch_attempts": [
+      {
+        "job_id": "13115091",
+        "status": "BATCH_COMPLETE",
+        "packing": 1,
+        "elapsed_seconds": 486.53740098048
+      },
+      {
+        "job_id": "13115092",
+        "status": "BATCH_COMPLETE",
+        "packing": 1,
+        "elapsed_seconds": 606.735217083944
+      },
+      {
+        "job_id": "13115090",
+        "status": "BATCH_COMPLETE",
+        "packing": 1,
+        "elapsed_seconds": 521.0643756147474
+      },
+      {
+        "job_id": "13115920",
+        "status": "BATCH_COMPLETE",
+        "packing": 4,
+        "elapsed_seconds": 94110.94237099681
+      },
+      {
+        "job_id": "13115921",
+        "status": "BATCH_COMPLETE",
+        "packing": 4,
+        "elapsed_seconds": 102964.42754995998
+      },
+      {
+        "job_id": "13115922",
+        "status": "BATCH_COMPLETE",
+        "packing": 4,
+        "elapsed_seconds": 114805.89409947768
+      },
+      {
+        "job_id": "13115923",
+        "status": "BATCH_COMPLETE",
+        "packing": 4,
+        "elapsed_seconds": 137816.11691974755
+      },
+      {
+        "job_id": "13115924",
+        "status": "BATCH_COMPLETE",
+        "packing": 4,
+        "elapsed_seconds": 149945.7497300245
+      },
+      {
+        "job_id": "13115925",
+        "status": "BATCH_COMPLETE",
+        "packing": 4,
+        "elapsed_seconds": 133019.30117772333
+      },
+      {
+        "job_id": "13115926",
+        "status": "BATCH_COMPLETE",
+        "packing": 4,
+        "elapsed_seconds": 121275.80344267376
+      },
+      {
+        "job_id": "13115919",
+        "status": "BATCH_COMPLETE",
+        "packing": 4,
+        "elapsed_seconds": 98369.72428704193
+      }
+    ],
+    "kv_bound": {
+      "num_hidden_layers": 36,
+      "num_key_value_heads": 8,
+      "head_dim": 128,
+      "dtype_bytes": 2,
+      "batch_size": 1,
+      "max_prompt_tokens": 2860,
+      "max_new_tokens": 8192,
+      "kv_bytes_per_token": 147456,
+      "full_context_kv_bytes": 1629683712,
+      "loop_cache_multiplier": 1
+    },
+    "packing": {
+      "candidate_from_memory_bound": 4,
+      "device_capacity_bytes": 85094825984,
+      "headroom_fraction": 0.2,
+      "largest_padded_process_bytes": 14337376256.0,
+      "single_process_device_peak_bytes": 12707692544.0,
+      "method": "max(observed peak reserved, packing-1 device peak when available) plus entire worst-context KV; observed KV is intentionally counted twice",
+      "validated_concurrency": [
+        1,
+        4
+      ],
+      "limitation": "Packing4 completed all first36096; retain cap4, batch1 independent processes. Full8192 KV additive bound retained."
+    },
+    "cost_scenarios_by_cell": {
+      "native": {
+        "observed_cell": "native",
+        "proxy_not_measured": false,
+        "sample_mean_serial_process_hours": 262.39600515671697,
+        "observed_min_max_serial_process_hours": [
+          4.450148514310519,
+          3018.7839222662315
+        ],
+        "all_questions_8192_serial_process_hours": 3018.7839222662315
+      },
+      "current_t_k2_l05": {
+        "observed_cell": "current_t_k2_l05",
+        "proxy_not_measured": false,
+        "sample_mean_serial_process_hours": 367.56406054290306,
+        "observed_min_max_serial_process_hours": [
+          11.311651662853029,
+          4675.742674087948
+        ],
+        "all_questions_8192_serial_process_hours": 4871.951212058829
+      },
+      "fixed_t0_k3_l09": {
+        "observed_cell": "fixed_t0_k3_l09",
+        "proxy_not_measured": false,
+        "sample_mean_serial_process_hours": 306.53529013292206,
+        "observed_min_max_serial_process_hours": [
+          10.720782655411297,
+          4185.787432018121
+        ],
+        "all_questions_8192_serial_process_hours": 4212.868187971726
+      },
+      "loop_k2": {
+        "observed_cell": "current_t_k2_l05",
+        "proxy_not_measured": true,
+        "sample_mean_serial_process_hours": 367.56406054290306,
+        "observed_min_max_serial_process_hours": [
+          11.311651662853029,
+          4675.742674087948
+        ],
+        "all_questions_8192_serial_process_hours": 4871.951212058829
+      },
+      "loop_k3": {
+        "observed_cell": "fixed_t0_k3_l09",
+        "proxy_not_measured": true,
+        "sample_mean_serial_process_hours": 306.53529013292206,
+        "observed_min_max_serial_process_hours": [
+          10.720782655411297,
+          4185.787432018121
+        ],
+        "all_questions_8192_serial_process_hours": 4212.868187971726
+      }
+    },
+    "cost_projection": {
+      "full_five_cell_projection": true,
+      "assumed_packing": 4,
+      "sample_mean_allocation_gpuh": 402.6486766270918,
+      "all_8192_scenario_allocation_gpuh": 5297.105680581835,
+      "ideal_8_gpu_wall_hours_scenarios": [
+        50.33108457838647,
+        662.1382100727294
+      ],
+      "limitation": "Conditional scenarios, not statistical intervals; prompt-quantile n=4 is not a random runtime sample, output lengths may differ by method, Loop proxies are unmeasured, and queues/startup/tails/stage barriers can increase wall time."
+    },
+    "selection_bias": {
+      "design": "All first-three cells, each full12032 including retainedcanary4; Loop cells still unmeasured proxies",
+      "caveat": "Full first-cell observed means and packed interference now measured; Loop generation lengths may differ, queue/startup/tails remain. Projections are not confidence intervals or upper bounds."
+    },
+    "scheduler_records": {
+      "gate": "D-7",
+      "checked_at_utc": "2026-10-17T22:26:31.056439+00:00",
+      "executor": "01a142a7-562a-7e83-b085-70999fbbc780",
+      "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first-jobset.json",
+      "job_ids": [
+        "13115919_0",
+        "13115919_1",
+        "13115919_2",
+        "13115919_3",
+        "13115919_4",
+        "13115919_5",
+        "13115919_6",
+        "13115919_7"
+      ],
+      "scheduler": {
+        "13115919_0": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 94113,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_1": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 102968,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_2": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 114811,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_3": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 137821,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_4": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 149950,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_5": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 133023,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_6": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 121280,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        },
+        "13115919_7": {
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "allocation_seconds": 98373,
+          "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+        }
+      },
+      "queue": [],
+      "queue_state_counts": {},
+      "queue_retired_with_complete_accounting": false,
+      "missing_job_ids": [],
+      "all_terminal": true,
+      "terminal_failures": [],
+      "batch_states": [
+        {
+          "job_id": "13115919_0",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_1",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_2",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_3",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_4",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_5",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_6",
+          "status": "BATCH_COMPLETE"
+        },
+        {
+          "job_id": "13115919_7",
+          "status": "BATCH_COMPLETE"
+        }
+      ],
+      "done_record_count": 36084,
+      "target_count": 36084,
+      "all_success": true,
+      "trigger_resume": true,
+      "allocation_gpuh": 264.5386111111111,
+      "target_gold_loaded": false,
+      "gate_prior_interim_gold_access": true,
+      "gold_access_context": "Observer does not load gold; Gate prior interim exception is recorded separately"
+    },
+    "environment_count": 144,
+    "gate_prior_interim_gold_access": true,
+    "actual_device_min_headroom_fraction": 0.4295654296875,
+    "actual_first_allocation_gpuh": 264.99027777777775,
+    "debug_allocation_gpuh": 0.019166666666666665,
+    "actual_gate_to_date_gpuh": 265.0094444444444
+  },
+  "closure": {
+    "schema": "loopscope.phase11.d7.first_batch_raw_closure.v1",
+    "status": "FIRST_BATCH_RAW_CLOSED_GOLD_UNREAD",
+    "target_gold_loaded": false,
+    "record_count": 36096,
+    "cell_count": 3,
+    "cell_keys": [
+      "native",
+      "current_t_k2_l05",
+      "fixed_t0_k3_l09"
+    ],
+    "closed_at_utc": "2026-10-17T22:45:20.309192+00:00",
+    "source_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json",
+    "gate_target_gold_previously_loaded": true,
+    "prior_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
+    "gold_provenance_note": "Legacy GOLD_UNREAD status is required by immutable producer barrier and means this raw-only closure did not read gold. Gate previously read gold under explicit user interim exception; no claim of Gate-level unread gold.",
+    "independent_verification": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/first-closure-20261017T224332Z/verification.json"
+  }
+}

@@ -142,5 +142,6 @@
     "gold_access_context": "Observer does not load gold; Gate prior interim exception is recorded separately"
   },
   "prior_interim": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z",
-  "output_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/first-closure-20261017T222822Z"
+  "output_dir": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/first-closure-20261017T224332Z",
+  "verification_efficiency_repair": "Original input validation once per identical immutable pool/config; per-record checks unchanged; no GPU retry"
 }
