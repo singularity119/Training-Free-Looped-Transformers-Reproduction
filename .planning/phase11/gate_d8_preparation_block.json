@@ -1,0 +1,162 @@
+{
+  "gate": "D-8",
+  "status": "PREPARED_BUT_GPU_ADMISSION_BLOCKED",
+  "timestamp_utc": "2026-10-18T12:43:42.700036+00:00",
+  "executor": "01a14eeb-0aae-7733-a86e-62b55c8dde54",
+  "planning": "01a14da8-5e0b-7550-9874-5bd47416bc6f",
+  "runtime_source": {
+    "source_commit": "9f7ca50fef085529b15d2cc4f46774bae19845a3",
+    "source_branch": "loopscope",
+    "source_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261018T121451Z/source-r2",
+    "parent_export_commit": "da751a3d03c04fc578f330e7e259cbba4bedc987",
+    "delta_paths": [
+      "scripts/loopscope/phase11_d8.py",
+      "src/tflt/loopscope/phase11_d8.py",
+      "tests/test_phase11_d8.py"
+    ],
+    "export_mode": "Fresh parent source copy plus committed and clean-admitted delta; exported HEAD/ref files are provenance metadata",
+    "target_gold_loaded": false
+  },
+  "cpu_verification": {
+    "command": [
+      "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_phase11_d8*.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "count": 11,
+    "source_commit": "9f7ca50fef085529b15d2cc4f46774bae19845a3",
+    "target_gold_loaded": false
+  },
+  "legacy_entry_checks": {
+    "command": [
+      "/hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_phase11_accuracy_entry.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "log": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261018T121451Z/cpu-check-1.out"
+  },
+  "input_verification": {
+    "source_commit": "9f7ca50fef085529b15d2cc4f46774bae19845a3",
+    "count": 448,
+    "identity_question_options_unchanged": true,
+    "max_prompt_tokens": 2819,
+    "min_prompt_tokens": 89,
+    "native_capacity": 40960,
+    "max_new_tokens": 32768,
+    "min_context_headroom": 5373,
+    "model": "Qwen/Qwen3-4B",
+    "model_revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "think_open_id": 151667,
+    "think_close_id": 151668,
+    "target_gold_loaded": false
+  },
+  "scheduler_admission": {
+    "gate": "D-8",
+    "timestamp_utc": "2026-10-18T12:37:01.620202+00:00",
+    "command": [
+      "sbatch",
+      "--test-only",
+      "--partition=debug",
+      "--qos=debug",
+      "--gres=gpu:a40:1",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=00:29:00",
+      "--array=0",
+      "--job-name=p11-d8-debug",
+      "--wrap",
+      "/bin/bash /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261018T121451Z/source/scripts/loopscope/phase11_d8.sbatch /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261018T121451Z/source /hpc2hdd/home/xhuang225/projects/training_free_looped_transformers_loopscope/.venv-loopscope-cu121-20260711/bin/python /hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261018T121451Z/debug-plan.json"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "sbatch: error: AssocGrpSubmitJobsLimit\nallocation failure: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)\n",
+    "association_command": [
+      "sacctmgr",
+      "-P",
+      "show",
+      "assoc",
+      "where",
+      "user=xhuang225",
+      "format=Cluster,Account,User,GrpSubmitJobs,GrpJobs,MaxSubmitJobs,MaxJobs"
+    ],
+    "association_exit": 0,
+    "association": "Cluster|Account|User|GrpSubmit|GrpJobs|MaxSubmit|MaxJobs\nhkuhpc-ai|root|xhuang225|0|||\n",
+    "real_job_created": false,
+    "target_gold_loaded": false
+  },
+  "latest_association": {
+    "exit_code": 0,
+    "stdout": "Cluster|Account|User|GrpSubmit|GrpJobs|MaxSubmit|MaxJobs\nhkuhpc-ai|root|xhuang225|0|||\n",
+    "stderr": ""
+  },
+  "latest_queue": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "model": {
+    "repo": "Qwen/Qwen3-4B",
+    "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "tokenizer_revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "think_open_id": 151667,
+    "think_close_id": 151668,
+    "status": "TOKENIZER_AND_CONFIG_READY_WEIGHTS_INCOMPLETE"
+  },
+  "download_state": {
+    "status": "DOWNLOAD_PRESERVED_PENDING_SUBMIT_RECOVERY",
+    "reason": "Confirmed AssocGrpSubmitJobsLimit with GrpSubmit=0 prevents D8 GPU admission; stop only owned download and close its temporary tunnel.",
+    "owned_pid": 3021221,
+    "timestamp_utc": "2026-10-18T12:41:08.667829+00:00",
+    "cached_snapshot_files": [
+      "config.json",
+      "generation_config.json",
+      "merges.txt",
+      "model.safetensors.index.json",
+      "tokenizer.json",
+      "tokenizer_config.json",
+      "vocab.json"
+    ],
+    "partial_file_bytes": [
+      0,
+      0,
+      39501
+    ],
+    "target_gold_loaded": false
+  },
+  "tunnel_lifecycle": {
+    "status": "CLOSED",
+    "host": "mgmt-4",
+    "listener_check_exit": 0,
+    "listener_check": "State   Recv-Q   Send-Q     Local Address:Port     Peer Address:Port  Process   \n",
+    "owned_download_pid": 3021221,
+    "reason": "Submission blocked; owned download stopped, cache retained.",
+    "timestamp_utc": "2026-10-18T12:42:47.924881+00:00"
+  },
+  "real_job_ids": [],
+  "completed_raw_records": 0,
+  "required_raw_records": 1344,
+  "actual_gpu_hours": 0,
+  "monitor": {
+    "status": "NOT_CREATED_NO_REAL_JOB",
+    "D7_untouched": true
+  },
+  "target_gold_loaded": false,
+  "resume_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261018T121451Z/source-r2",
+  "resume_debug_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261018T121451Z/debug-plan-r2.json",
+  "formal_pool": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d8-20261018T121451Z/formal-r2/thinking-pool.json",
+  "remote_artifact_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261018T121451Z"
+}
