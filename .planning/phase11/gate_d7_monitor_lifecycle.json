@@ -28,7 +28,7 @@
     "mode": "create",
     "status": "ACTIVE"
   },
-  "next_authorized_action": "After external restoration of normal existing-association submit eligibility, recheck exact retained last plan/source/first closure and create new write-once submission attempt, then same full60 exact-job monitor",
+  "next_authorized_action": "After user unlocks and reconnects existing campus VPN, strict SSH + original association policy/no inflight checks, then submit retained last24064 under existing authorization using fresh submission receipt; current GrpSubmit UNKNOWN",
   "target_gold_loaded": true,
   "analysis_source_binding": ".planning/phase11/gate_d7_analysis_binding.json",
   "analysis_source_commit": "4b28daa12fd833aeecf9c64661c7ae1764972323",
@@ -46,7 +46,7 @@
     "status": "PAUSED"
   },
   "terminal_observation": ".planning/phase11/gate_d7_monitor_latest.json",
-  "continuation_state": "FIRST_RAW_CLOSED_LAST_SUBMISSION_REJECTED_GRP_SUBMIT_ZERO",
+  "continuation_state": "AWAITING_USER_UNLOCK_AND_CAMPUS_VPN_RECONNECT_THEN_SUBMIT_ELIGIBILITY_CHECK",
   "terminal_resume_delivery": {
     "threadId": "01a142a7-562a-7e83-b085-70999fbbc780",
     "host": "local",
@@ -88,5 +88,6 @@
   "remaining_outcomes_protected": true,
   "first_closure_binding": ".planning/phase11/gate_d7_first_closure_binding.json",
   "last_admission_state": ".planning/phase11/gate_d7_last_admission_state.json",
-  "k3_interim": ".planning/phase11/gate_d7_k3_interim_binding.json"
+  "k3_interim": ".planning/phase11/gate_d7_k3_interim_binding.json",
+  "ssh_diagnosis": ".planning/phase11/gate_d7_ssh_vpn_path_diagnosis.json"
 }

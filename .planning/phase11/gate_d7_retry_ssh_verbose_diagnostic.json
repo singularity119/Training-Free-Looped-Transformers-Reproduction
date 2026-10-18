@@ -1,0 +1,12 @@
+{
+  "exit_code": 255,
+  "stdout": "",
+  "diagnostic": [
+    "debug1: Authenticator provider $SSH_SK_PROVIDER did not resolve; disabling",
+    "debug1: Connecting to hpc2login.hpc.hkust-gz.edu.cn [10.120.18.63] port 22.",
+    "debug1: Connection established.",
+    "debug1: Local version string SSH-2.0-OpenSSH_10.3",
+    "kex_exchange_identification: Connection closed by remote host",
+    "Connection closed by 10.120.18.63 port 22"
+  ]
+}

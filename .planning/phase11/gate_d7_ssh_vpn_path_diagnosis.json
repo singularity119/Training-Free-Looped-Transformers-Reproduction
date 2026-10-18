@@ -1,0 +1,33 @@
+{
+  "checked_at_utc": "2026-10-18T04:26:18.244330+00:00",
+  "status": "WAITING_USER_UNLOCK_AND_CAMPUS_VPN_RECONNECT",
+  "evidence": {
+    "last_good_ssh_utc": "2026-10-18T04:16:39Z",
+    "easyconnect_logout_events_beijing": [
+      "2026-10-18 12:20:34",
+      "2026-10-18 12:20:48"
+    ],
+    "current_ipv4_tunnels": [
+      "utun2=198.18.0.1 proxy TUN"
+    ],
+    "hpc2_route_gateway": "198.18.0.1",
+    "hpc2_route_interface": "utun2",
+    "default_socket_source": "198.18.0.1",
+    "default_tcp22_banner": "empty connection close ~5s",
+    "en0_bound_tcp22": "timeout8s",
+    "desktop_tool": "Mac locked; automatic unlock failed"
+  },
+  "conclusion": "Campus VPN session/routes absent following logout; internal HPC2 connection currently follows local proxy TUN, SSH server side not reached/confirmed",
+  "not_a_verified_ssh_hostkey_or_privatekey_error": true,
+  "network_or_ssh_trust_changed": false,
+  "current_grp_submit": "UNKNOWN_NOT_QUERIED_SINCE_SSH_LOSS",
+  "submission_attempted_this_turn": false,
+  "next_action": "After user unlock/VPN reconnect, recheck strict SSH then association eligibility/no inflight and submit retained final Loop24064 with new attempt receipt",
+  "user_authorized_retry": true,
+  "monitor_status": "PAUSED",
+  "vpn_entry_direct_https_status": 200,
+  "vpn_entry_current_dns": "218.107.35.197",
+  "planning_tool_confirmation": {
+    "threadId": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f"
+  }
+}

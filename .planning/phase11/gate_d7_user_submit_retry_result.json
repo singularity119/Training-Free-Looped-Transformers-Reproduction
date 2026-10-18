@@ -1,0 +1,17 @@
+{
+  "checked_at_utc": "2026-10-18T04:23:58.719395+00:00",
+  "status": "SUBMISSION_RETRY_UNABLE_TO_REACH_REMOTE_COMMAND",
+  "ssh_exit_code": 255,
+  "failure_stage": "server closed connection before SSH remote protocol/key exchange/authentication",
+  "host": "hpc2-hkustgz",
+  "resolved_ip": "10.120.18.63",
+  "current_grp_submit": "UNKNOWN_NOT_QUERIED",
+  "last_observed_grp_submit": 0,
+  "sbatch_attempted": false,
+  "new_job_created": false,
+  "remote_mutation_performed": false,
+  "monitor_status": "PAUSED",
+  "planning_delivery_confirmation": {
+    "threadId": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f"
+  }
+}
