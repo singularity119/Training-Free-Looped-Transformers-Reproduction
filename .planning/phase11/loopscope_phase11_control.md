@@ -1,3 +1,8 @@
+2026-10-18用户新增D8：本线程01a14da8-5e0b-7550-9874-5bd47416bc6f负责D8规划验收。GPQA Main448，Qwen/Qwen3-4B thinking，32768，官方采样固定seed，仅Native及K2 current_t .5/K3 fixed_t0 .9，共1344。D8绑定executor01a14eeb-0aae-7733-a86e-62b55c8dde54/local，gpt-6-luna/max；D7独立保持原授权/状态，不接管或迁移其监控。
+GATE_D8=AUTHORIZED
+GATE_D8_EXECUTOR=01a14eeb-0aae-7733-a86e-62b55c8dde54
+GATE_D8_HANDOFF=loopscope_phase11_gate_d8_handoff.md
+
 2026-10-18跨设备同步状态：D7 ACTIVE等待正常VPN/SSH与提交准入。first36096已raw闭合，Loop24064尚无成功job；GrpSubmit最后观察0，SSH失联后当前UNKNOWN。monitor PAUSED，原executor唯一绑定未迁移，新设备必须核对host/身份避免双调度。接续见docs/phase11_d7_device_handoff_20261018.md；本次仅Git同步，不授予新executor或新实验。
 
 2026-10-16用户解除MMLU-Pro暂停并授权D7：Native、K2 current_t .5、K3 fixed_t0 .9先完成，再运行普通LoopK2/K3，共5×12032=60160 fresh。用户明确8192＋S2（按MMLU合法选项范围预先适配），保留5-shot CoT输入；runtime seed20261016。exact executor01a142a7-562a-7e83-b085-70999fbbc780/local，gpt-6.1-sol/high。max8A800、阶段无累计GPUh上限、唯一heartbeat，范围及gold屏障以D7 handoff为准；旧18臂不重开，D6关闭，D7后等用户讨论。下文MMLU暂停措辞为已被限定覆盖的历史。

@@ -1,0 +1,19 @@
+{
+  "gate": "D-8",
+  "executor": "01a14eeb-0aae-7733-a86e-62b55c8dde54",
+  "planning": "01a14da8-5e0b-7550-9874-5bd47416bc6f",
+  "base_commit": "4ccd8c18d674cf8e33b6e7ffee8e035d8881cdb4",
+  "model": "Qwen/Qwen3-4B",
+  "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+  "tokenizer_revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+  "native_context_capacity": 40960,
+  "max_new_tokens": 32768,
+  "tests": [
+    {"command": "PYTHONPATH=src python3 -S -m unittest discover -s tests -p test_phase11_d8.py -v", "count": 8, "exit_code": 0},
+    {"command": "PYTHONPATH=src python3 -m unittest discover -s tests -p test_phase11_d8*.py -v", "count": 9, "exit_code": 0, "note": "Includes both analysis tests; followed by final 8-test producer run"},
+    {"command": "PYTHONPATH=src python3 -m unittest discover -s tests -p test_phase11_accuracy_entry.py -v", "count": 6, "exit_code": 0}
+  ],
+  "protected_numeric_core_modified": false,
+  "preserved_unrelated_dirty": ["AGENTS.md"],
+  "target_gold_loaded": false
+}

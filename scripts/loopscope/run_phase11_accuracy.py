@@ -243,7 +243,7 @@ class ForwardTiming:
 
 
 def acquire_row(torch, model, tokenizer, adapter, eos_ids, row, index, cell, config, scope, max_new_tokens,
-                engineering_steps):
+                engineering_steps, *, generation_options=None, preserve_special_tokens=False):
     from tflt.wrapper import looped_model
     from tflt.loopscope.phase11_adapter import generation_forward_context
     from tflt.loopscope.phase11_runtime import make_runtime
@@ -269,6 +269,8 @@ def acquire_row(torch, model, tokenizer, adapter, eos_ids, row, index, cell, con
         inputs = torch.tensor([tokens], dtype=torch.long, device=model.device)
         attention = torch.ones_like(inputs)
         options = {"do_sample": False, "num_beams": 1, "use_cache": True, "max_new_tokens": max_new_tokens}
+        if generation_options is not None:
+            options.update(generation_options)
         if engineering_steps is not None:
             options["min_new_tokens"] = engineering_steps
         with manager, generation_forward_context(model, runtime, row["identity"], tokens,
@@ -278,7 +280,7 @@ def acquire_row(torch, model, tokenizer, adapter, eos_ids, row, index, cell, con
         output_ids = output[0].tolist()
         require(output_ids[:len(tokens)] == tokens, "generation output does not preserve the original full prompt")
         generated = output_ids[len(tokens):]
-        text = tokenizer.decode(generated, skip_special_tokens=True)
+        text = tokenizer.decode(generated, skip_special_tokens=not preserve_special_tokens)
         record = generation_record(row, text, generated, eos_ids, max_new_tokens, index)
         if engineering_steps is not None:
             require(lifecycle["decode_count"] >= 2, "synthetic preflight lacks two real incremental decode steps")
