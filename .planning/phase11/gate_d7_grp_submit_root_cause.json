@@ -1,0 +1,33 @@
+{
+  "status": "ROOT_MODIFICATION_CONFIRMED_BUSINESS_REASON_NOT_RECORDED",
+  "checked_at_utc": "2026-10-18T04:17:39.501238+00:00",
+  "cluster": "hkuhpc-ai",
+  "account": "root",
+  "user": "xhuang225",
+  "association_id": 2544,
+  "current_grp_submit": 0,
+  "current_inflight": 0,
+  "user_admin_level": "None",
+  "server_timezone": "Asia/Shanghai",
+  "transactions": [
+    {
+      "time_beijing": "2026-10-10T10:56:40+08:00",
+      "actor": "root",
+      "action": "Modify Associations",
+      "info": "grp_submit_jobs=NULL"
+    },
+    {
+      "time_beijing": "2026-10-16T17:38:47+08:00",
+      "actor": "root",
+      "action": "Modify Associations",
+      "info": "grp_submit_jobs=0"
+    }
+  ],
+  "reason_not_available_in_transaction_info": true,
+  "outlook_notice_search": "UNAUTHORIZED_REAUTHENTICATION_REQUIRED; no email body accessed",
+  "recovery": "HPC administrator confirms original reason and restores normal existing-association policy by removing explicit user cap, e.g. GrpSubmitJobs=-1 per Slurm documentation; user must not bypass with other account/QoS",
+  "official_contact": "https://docs.hpc.hkust-gz.edu.cn/docs/contact/",
+  "official_billing": "https://docs.hpc.hkust-gz.edu.cn/docs/charges/billing-payment/",
+  "slurm_reference": "https://slurm.schedmd.com/sacctmgr.html",
+  "admin_mutation_or_submission_performed": false
+}

@@ -1,0 +1,73 @@
+{
+  "checked_at_utc": "2026-10-18T04:15:54.981017+00:00",
+  "facts": [
+    {
+      "command": [
+        "/opt/slurm/bin/sacctmgr",
+        "-nP",
+        "show",
+        "assoc",
+        "where",
+        "user=xhuang225",
+        "format=ID,Cluster,Account,User,Partition,ParentName,GrpSubmit,MaxSubmit,GrpJobs,MaxJobs,GrpTRES,QOS,DefaultQOS"
+      ],
+      "exit": 0,
+      "stdout": "2544|hkuhpc-ai|root|xhuang225|||0|||||a128m512u,a128m512ue,cpu2600,cpu5000,czhangcn_rent,debug,debuglimit,emergency_cpu,emergency_gpu,emergency_gpua40,gpu16,gpu24,gpu32,gputest,i64m1tga40u,i64m1tga40u8ka,i64m1tga40ue,i64m1tga800u,i64m1tga800u8ka,i64m1tga800ue,i64m512r,i64m512re,i64m512u,i64m512ue,i96m3tu,i96m3tue,long_cpu,long_gpu|\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/slurm/bin/sacctmgr",
+        "-nP",
+        "show",
+        "assoc",
+        "where",
+        "account=root",
+        "OnlyDefaults",
+        "format=ID,Cluster,Account,User,ParentName,GrpSubmit,MaxSubmit,GrpJobs,MaxJobs"
+      ],
+      "exit": 0,
+      "stdout": "2544|hkuhpc-ai|root|xhuang225||0|||",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/slurm/bin/sacctmgr",
+        "-nP",
+        "show",
+        "user",
+        "where",
+        "name=xhuang225",
+        "withassoc",
+        "format=User,DefaultAccount,AdminLevel,Account,Cluster,GrpSubmit,MaxSubmit"
+      ],
+      "exit": 0,
+      "stdout": "xhuang225|root|None|root|hkuhpc-ai|0|\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/slurm/bin/squeue",
+        "-h",
+        "-r",
+        "-u",
+        "xhuang225",
+        "-o",
+        "%i|%a|%P|%T|%R"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/bin/bash",
+        "-lc",
+        "type -a mybalance balance hpcinfo account_info showquota quota lfs 2>/dev/null"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

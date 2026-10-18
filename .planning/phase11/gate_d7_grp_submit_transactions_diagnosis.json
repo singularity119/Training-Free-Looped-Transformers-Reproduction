@@ -1,0 +1,55 @@
+{
+  "checked_at_utc": "2026-10-18T04:16:14.672074+00:00",
+  "facts": [
+    {
+      "command": [
+        "/opt/slurm/bin/sacctmgr",
+        "-nP",
+        "show",
+        "transactions",
+        "Start=2026-10-15T00:00:00",
+        "Users=xhuang225",
+        "format=Time,Action,Actor,Where,Info"
+      ],
+      "exit": 0,
+      "stdout": "2026-10-10T10:56:40|Modify Associations|root|(id_assoc=2544)|grp_submit_jobs=NULL\n2026-10-16T17:38:47|Modify Associations|root|(id_assoc=2544)|grp_submit_jobs=0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/slurm/bin/sacctmgr",
+        "-nP",
+        "show",
+        "assoc",
+        "where",
+        "ids=1",
+        "format=ID,Cluster,Account,User,ParentName,GrpSubmit,MaxSubmit"
+      ],
+      "exit": 0,
+      "stdout": "1|hkuhpc-ai|root||||\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/slurm/bin/scontrol",
+        "show",
+        "assoc_mgr",
+        "users=xhuang225",
+        "flags=assoc"
+      ],
+      "exit": 0,
+      "stdout": "Current Association Manager state\n\nAssociation Records\n\nClusterName=hkuhpc-ai Account=root UserName= Partition= Priority=0 ID=1\n    SharesRaw/Norm/Level/Factor=1/18446744073709551616.00/1/0.00\n    UsageRaw/Norm/Efctv=0.00/1.00/0.00\n    ParentAccount= Lft=1 DefAssoc=No\n    GrpJobs=N(450) GrpJobsAccrue=N(533)\n    GrpSubmitJobs=N(3138) GrpWall=N(0.00)\n    GrpTRES=cpu=N(8297),mem=N(56278432),energy=N(0),node=N(148),billing=N(8297),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(195),gres/gpu:a40=N(39),gres/gpu:a800=N(156),gres/gpumem=N(0),gres/gpuutil=N(0)\n    GrpTRESMins=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpu:a40=N(0),gres/gpu:a800=N(0),gres/gpumem=N(0),gres/gpuutil=N(0)\n    GrpTRESRunMins=cpu=N(1258469906287),mem=N(7675685145927008),energy=N(0),node=N(55838023840),billing=N(1258469906287),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(128850031451),gres/gpu:a40=N(251489),gres/gpu:a800=N(128849779962),gres/gpumem=N(0),gres/gpuutil=N(0)\n    MaxJobs= MaxJobsAccrue= MaxSubmitJobs= MaxWallPJ=\n    MaxTRESPJ=\n    MaxTRESPN=\n    MaxTRESMinsPJ=\n    MinPrioThresh=\n    Comment=(null)\nClusterName=hkuhpc-ai Account=root UserName=xhuang225(204599) Partition= Priority=0 ID=2544\n    SharesRaw/Norm/Level/Factor=1/18446744073709551616.00/1/0.00\n    UsageRaw/Norm/Efctv=0.00/1.00/0.00\n    ParentAccount= Lft=2226 DefAssoc=Yes\n    GrpJobs=N(0) GrpJobsAccrue=N(0)\n    GrpSubmitJobs=0(0) GrpWall=N(0.00)\n    GrpTRES=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpu:a40=N(0),gres/gpu:a800=N(0),gres/gpumem=N(0),gres/gpuutil=N(0)\n    GrpTRESMins=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpu:a40=N(0),gres/gpu:a800=N(0),gres/gpumem=N(0),gres/gpuutil=N(0)\n    GrpTRESRunMins=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpu:a40=N(0),gres/gpu:a800=N(0),gres/gpumem=N(0),gres/gpuutil=N(0)\n    MaxJobs= MaxJobsAccrue= MaxSubmitJobs= MaxWallPJ=\n    MaxTRESPJ=\n    MaxTRESPN=\n    MaxTRESMinsPJ=\n    MinPrioThresh=\n    Comment=(null)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/bin/bash",
+        "-lc",
+        "ls -l /etc/motd /etc/profile.d /opt 2>/dev/null"
+      ],
+      "exit": 2,
+      "stdout": "/etc/profile.d:\ntotal 44\n-rw-r--r-- 1 root root   96 Dec  5  2019 01-locale-fix.sh\n-rw-r--r-- 1 root root  835 May 29  2023 apps-bin-path.sh\n-rw-r--r-- 1 root root  729 Feb  2  2020 bash_completion.sh\n-rw-r--r-- 1 root root 1003 Aug 13  2019 cedilla-portuguese.sh\n-rw-r--r-- 1 root root 1107 Nov  4  2019 gawk.csh\n-rw-r--r-- 1 root root  757 Nov  4  2019 gawk.sh\n-rw-r--r-- 1 root root  349 Oct 29  2020 im-config_wayland.sh\nlrwxrwxrwx 1 root root   35 Jul 29  2023 modules.csh -> /usr/local/Modules/init/profile.csh\nlrwxrwxrwx 1 root root   34 Jul 29  2023 modules.sh -> /usr/local/Modules/init/profile.sh\n-rw-r--r-- 1 root root 1368 Jun 12  2020 vte-2.91.sh\n-rw-r--r-- 1 root root  966 Jun 12  2020 vte.csh\n-rw-r--r-- 1 root root  954 Mar 26  2020 xdg_dirs_desktop_session.sh\n-rw-r--r-- 1 root root 1557 Feb 17  2020 Z97-byobu.sh\n\n/opt:\ntotal 56\ndrwxr-xr-x  5 root root 4096 Jul 22  2023 compilers\ndrwx--x--x  4 root root 4096 Jul 22  2023 containerd\ndrwxr-xr-x  3 root root 4096 Jul 26  2023 google\ndrwxr-xr-x 16 root root 4096 Jul 20 10:45 hkust\ndrwxr-xr-x  5 root root 4096 Feb 23  2024 intel\ndrwxr-xr-x  6 root root 4096 Dec  5  2023 jhinno\ndrwxr-xr-x  4 root root 4096 Aug 25  2023 jhinsightdatacollector\ndrwxr-xr-x  3 root root 4096 Jul 21  2023 knem-1.1.4.90mlnx1\ndrwxr-xr-x  7 root root 4096 Jul 21  2023 mellanox\ndrwxr-xr-x 10 root root 4096 Jul 25  2023 mpi\ndrwxr-xr-x  7 root root 4096 Jul 22  2023 munge\ndrwxr-xr-x 11 root root 4096 Jul 24  2023 openfoam11\ndrwxr-xr-x  7 root root 4096 Jul 24  2023 paraviewopenfoam510\ndrwxr-xr-x  9 root root 4096 Jul 29  2023 slurm\n",
+      "stderr": ""
+    }
+  ]
+}
