@@ -16,6 +16,16 @@ SAMPLING = {"do_sample": True, "temperature": .6, "top_p": .95, "top_k": 20,
 PARSER = "D8-first-think-close-then-GPQA-S2-v1"
 
 
+def engineering_pool(original):
+    require(original.get("engineering_synthetic") is True and original.get("scope") == "PREFLIGHT_ONLY",
+            "D8 engineering fixture cannot replace a formal population")
+    identity = "phase11-d8-synthetic:gpqa_main:0"
+    row = {"identity": identity, "sample_id": identity, "task": "gpqa_main", "split": "synthetic",
+        "source_index": 0, "source_id": 0, "subject": "synthetic", "question": "What is one plus one?",
+        "choices": ["two", "three", "four", "five"], "choice_labels": list("ABCD"), "fewshot_sample_ids": []}
+    return dict(original, rows=[row], test_identities=[identity])
+
+
 def selected_cells(config=None):
     originals = {c["cell_id"]: c for c in build_panel("gpqa_main", config)["cells"]}
     suffixes = ("native", "w15-18-k2-online-current-t-lambda0.5",

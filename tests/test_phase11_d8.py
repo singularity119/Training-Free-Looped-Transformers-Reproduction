@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from tflt.loopscope.phase11_d8 import (MODEL, REVISION, SAMPLING, actual_seed,
-    answer_span, selected_cells, prepare_pool)
+    answer_span, selected_cells, prepare_pool, engineering_pool)
 
 
 class Tokenizer:
@@ -94,6 +94,17 @@ class D8Tests(unittest.TestCase):
         self.assertEqual([m["role"] for m in self.tok.messages], ["user"])
         self.assertTrue(self.tok.options["enable_thinking"])
         self.assertEqual(new["sampling"], SAMPLING)
+
+    def test_legacy_two_option_engineering_fixture_gets_own_four_options(self):
+        old = {"scope": "PREFLIGHT_ONLY", "engineering_synthetic": True,
+               "rows": [{"choices": ["old one", "old two"], "choice_labels": ["A", "B"]}]}
+        before = copy.deepcopy(old)
+        new = engineering_pool(old)
+        self.assertEqual(old, before)
+        self.assertEqual(new["rows"][0]["choice_labels"], list("ABCD"))
+        self.assertEqual(len(new["rows"][0]["choices"]), 4)
+        with self.assertRaises(ValueError):
+            engineering_pool({"scope": "FORMAL_TEST", "engineering_synthetic": False})
 
     def test_actual_generation_options_and_all_rng_resets(self):
         sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts/loopscope"))

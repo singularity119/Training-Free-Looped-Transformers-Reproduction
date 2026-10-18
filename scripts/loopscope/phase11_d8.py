@@ -13,7 +13,7 @@ from tflt.loopscope.phase11_accuracy import load_pool, select_indices, validate_
 from tflt.loopscope.phase11_checkpoint import RecordStore
 from tflt.loopscope.phase11_panel import load_config, require, write_json_once
 from tflt.loopscope.phase11_d8 import (MODEL, REVISION, SEED, MAX_LENGTH, MAX_NEW_TOKENS,
-    SAMPLING, selected_cells, prepare_pool, validate_pool, actual_seed, answer_span, validate_job)
+    SAMPLING, selected_cells, prepare_pool, validate_pool, actual_seed, answer_span, validate_job, engineering_pool)
 from run_phase11_accuracy import acquire_row, load_runtime, source_provenance, ForwardTiming
 
 
@@ -35,7 +35,7 @@ def prepare(args):
     config = load_config()
     original = load_pool(args.original_pool, "gpqa_main", "PREFLIGHT_ONLY" if args.synthetic else "FORMAL_TEST", config)
     if args.synthetic:
-        original = dict(original, rows=original["rows"][:1], test_identities=original["test_identities"][:1])
+        original = engineering_pool(original)
     tokenizer = AutoTokenizer.from_pretrained(MODEL, revision=REVISION, local_files_only=True)
     model_config = AutoConfig.from_pretrained(MODEL, revision=REVISION, local_files_only=True)
     require(model_config.max_position_embeddings == MAX_LENGTH and model_config.rope_scaling is None and

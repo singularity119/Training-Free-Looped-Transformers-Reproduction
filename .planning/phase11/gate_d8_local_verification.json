@@ -9,7 +9,7 @@
   "native_context_capacity": 40960,
   "max_new_tokens": 32768,
   "tests": [
-    {"command": "PYTHONPATH=src python3 -S -m unittest discover -s tests -p test_phase11_d8.py -v", "count": 8, "exit_code": 0},
+    {"command": "PYTHONPATH=src python3 -S -m unittest discover -s tests -p test_phase11_d8.py -v", "count": 9, "exit_code": 0},
     {"command": "PYTHONPATH=src python3 -m unittest discover -s tests -p test_phase11_d8*.py -v", "count": 9, "exit_code": 0, "note": "Includes both analysis tests; followed by final 8-test producer run"},
     {"command": "PYTHONPATH=src python3 -m unittest discover -s tests -p test_phase11_accuracy_entry.py -v", "count": 6, "exit_code": 0}
   ],
