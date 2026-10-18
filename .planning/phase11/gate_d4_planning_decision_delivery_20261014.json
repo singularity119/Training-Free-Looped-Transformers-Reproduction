@@ -1,0 +1,11 @@
+{
+  "event": "GATE_D4_AUDIT_DECISION",
+  "decision": "PASS",
+  "recipient": "01a12f40-cbc9-7790-ac6e-f3fe1c454ab0",
+  "host": "local",
+  "delivery_confirmed": true,
+  "tool_response": {
+    "threadId": "01a12f40-cbc9-7790-ac6e-f3fe1c454ab0"
+  },
+  "acceptance": "loopscope_phase11_gate_d4_acceptance.md"
+}

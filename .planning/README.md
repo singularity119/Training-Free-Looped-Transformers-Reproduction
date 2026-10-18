@@ -1,3 +1,11 @@
+> 2026-10-16当前入口：[D7 MMLU-Pro五配置](phase11/loopscope_phase11_gate_d7_handoff.md)／[control](phase11/loopscope_phase11_control.md)。Native与两方法先完成，普通Loop最后；8192＋S2。D6已关闭，下文当前措辞为历史。
+
+> 2026-10-16：Gate D-6已PASS，5376记录及探索性统计已验收；无活动实验授权，等待用户讨论，MMLU-Pro暂停。见[验收](phase11/loopscope_phase11_gate_d6_acceptance.md)。下文当前措辞为历史。
+
+> 2026-10-15当前执行入口：[Phase11 control](phase11/loopscope_phase11_control.md) / [Gate D-6 CoT与decode对照](phase11/loopscope_phase11_gate_d6_handoff.md)。D4/D5已PASS；D6仅GPQA12cells，MMLU-Pro暂停。下文为历史导航。
+
+> 2026-10-14当前执行入口：[Phase11 control](phase11/loopscope_phase11_control.md) / [Gate D-5两次原样重复](phase11/loopscope_phase11_gate_d5_handoff.md)。此Gate限定重复第10/11阶段4B最优配置与对照，旧Gate均不重开，MMLU-Pro暂停。下文较早“当前”均为历史导航。
+
 > 2026-10-02：第十阶段总体规划已建立：[Phase 10 plan](phase10/loopscope_phase10_plan.md) / [control](phase10/loopscope_phase10_control.md)。范围为指定三组配置、fixed_t0/lag1九档强度消融、MMLU与ARC-Challenge 25-shot；已获逐Gate推进授权，当前Gate身份及权限以Phase10 control为准。下文为历史导航与归档状态。
 
 > 2026-09-24：Phase 9 A–D 主线已完成 47-cell panel，追加 Gate E 已完成 12 个逐轮方向 cell；当前无活动执行任务或新计算授权。逐题 Online-t0 与可切换的 fixed_t0/lag1 方向策略均以增量模块保留，第八阶段实现未覆盖。以 [Phase 9 control](phase9/loopscope_phase9_control.md) 和 [Gate E 验收](phase9/loopscope_phase9_gate_e_acceptance.md) 为准；中文报告位于 Git 仓库外层 `资产/报告/phase9/`。

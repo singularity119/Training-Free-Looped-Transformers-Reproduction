@@ -1,0 +1,10 @@
+{
+  "message_kind": "D7_K3_USER_CHECK",
+  "planning_delivery_tool_confirmation": {"threadId": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f"},
+  "monitor_update_tool_confirmation": {"automationId": "phase11-d7", "mode": "update", "status": "ACTIVE"},
+  "k3_complete": false,
+  "k3_done_including_canary": 11912,
+  "k3_target": 12032,
+  "k3_scored": false,
+  "gate_terminal": false
+}

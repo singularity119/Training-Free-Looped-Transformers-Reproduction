@@ -1,0 +1,16 @@
+{
+  "decision": "PASS",
+  "audit_scope": "local delivered evidence, implementation inspection, independent aggregate count/delta/exact McNemar/Holm recomputation; no new SSH or raw rerun",
+  "records": 5376,
+  "cells": 12,
+  "formal_jobs": 9,
+  "barrier_order_verified": true,
+  "statistical_families_verified": [
+    4,
+    10
+  ],
+  "monitor_paused": true,
+  "source": "b1130f8ca66140d4c2d4add5078c6eab64b07535",
+  "evidence_commit": "a5405d27b411f814f11ecebe97cc9e70e48bfd2f",
+  "accepted_limitation": "direct instruction replacement preserves historical CoT suffix; exploratory prompt effect, not removal of reasoning"
+}

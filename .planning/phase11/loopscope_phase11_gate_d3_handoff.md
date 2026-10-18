@@ -1,5 +1,7 @@
 # Gate D-3 — GPQA length pilot
 
+
+2026-10-12用户最新压缩修订（优先于下文336条/配置覆盖要求）：停止新增pilot提交；以已完成90条及当前已RUNNING任务形成实际样本闭合，保留全部成功结果，不为凑配置补跑。允许executor核对exact D-3 job后取消仍PENDING的未启动任务，记录为用户缩减范围；不取消RUNNING任务。立即汇总实际各cell/n的2048/4096/8192完成率、格式、成本及已有长尾资源证据，非平衡小样本仅用于长度/资源准入，不作准确率比较。禁止gold。D-3验收不再要求336条或18组全覆盖；已有决定性证据足够即回传，随后planning派发全量GPQA独立Gate。MMLU仍暂停。
 2026-10-12；用户明确授权按已讨论路线派发。Executor01a12e14-57d6-7e51-9cfa-588f4d038352/local，gpt-6.1-sol/high；planning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。按照research-gate-orchestrator技能及protocol协作，实际读AGENTS。Base c825b2edf8ff5bc3f49bde30f1800b84e27f9d77，nested loopscope-tflt/loopscope。保留并可随本Gate提交未提交D2 acceptance/control。
 
 ## 科学边界

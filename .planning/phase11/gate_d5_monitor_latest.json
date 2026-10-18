@@ -1,0 +1,2136 @@
+{
+  "gate": "D-5",
+  "wait_class": "full",
+  "job_ids": [
+    "13030531_0",
+    "13030531_1",
+    "13030531_2",
+    "13030531_3",
+    "13030531_4",
+    "13030531_5",
+    "13030531_6",
+    "13030531_7"
+  ],
+  "scheduler": [
+    {
+      "job_id": "13030531_0",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 42213,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "2026-10-14T23:24:30"
+    },
+    {
+      "job_id": "13030531_1",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 49200,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "2026-10-15T01:20:57"
+    },
+    {
+      "job_id": "13030531_2",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 52060,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "2026-10-15T02:08:37"
+    },
+    {
+      "job_id": "13030531_3",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 63342,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:45:37",
+      "end": "2026-10-15T05:21:19"
+    },
+    {
+      "job_id": "13030531_4",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 56032,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:50:48",
+      "end": "2026-10-15T03:24:40"
+    },
+    {
+      "job_id": "13030531_5",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 42510,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:54:34",
+      "end": "2026-10-14T23:43:04"
+    },
+    {
+      "job_id": "13030531_6",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 57003,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:56:01",
+      "end": "2026-10-15T03:46:04"
+    },
+    {
+      "job_id": "13030531_7",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 50941,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T12:02:02",
+      "end": "2026-10-15T02:11:03"
+    }
+  ],
+  "missing_job_ids": [],
+  "all_terminal": true,
+  "all_success": true,
+  "terminal_failures": [],
+  "done_record_count": 102796,
+  "target_count": 102796,
+  "progress": [
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-native/slice-00",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-loop/slice-00",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-00",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-native/slice-00",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-loop/slice-00",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-00",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-native/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-loop/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-native/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-loop/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-native/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-native/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-00",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-native/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-native/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-00",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-native/slice-01",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-loop/slice-01",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-01",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-native/slice-01",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-loop/slice-01",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-01",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-native/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-loop/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-native/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-loop/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-native/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-native/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-01",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-native/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-native/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-01",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-native/slice-02",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-loop/slice-02",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-02",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-native/slice-02",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-loop/slice-02",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-02",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-native/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-loop/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-native/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-loop/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-native/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-native/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-02",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-native/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-native/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-02",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-native/slice-03",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-loop/slice-03",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-03",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-native/slice-03",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-loop/slice-03",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-03",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-native/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-loop/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-native/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-loop/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-native/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-native/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-03",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-native/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-native/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-03",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-native/slice-04",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-loop/slice-04",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-04",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-native/slice-04",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-loop/slice-04",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-04",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-native/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-loop/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-native/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-loop/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-native/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-native/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-04",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-native/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-native/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-04",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-native/slice-05",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-loop/slice-05",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-05",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-native/slice-05",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-loop/slice-05",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-05",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-native/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-loop/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-native/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-loop/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-native/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-native/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-05",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-native/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-native/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-05",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-native/slice-06",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-loop/slice-06",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-06",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-native/slice-06",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-loop/slice-06",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-06",
+      "done": 1755,
+      "target": 1755,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-native/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-loop/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-native/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-loop/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-native/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-native/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-06",
+      "done": 146,
+      "target": 146,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-native/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-native/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-06",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-native/slice-07",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-loop/slice-07",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-07",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-native/slice-07",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-loop/slice-07",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-mmlu",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-current-t-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-mmlu/q4-w15-18-k2-online-current-t-lambda0.9/slice-07",
+      "done": 1756,
+      "target": 1756,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-native/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-loop/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 1,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-native/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-loop/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p10-base-arc",
+      "repeat": 2,
+      "cell_id": "q4-w15-18-k2-online-fixed-t0-lambda0.4",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p10-base-arc/q4-w15-18-k2-online-fixed-t0-lambda0.4/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-native/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 1,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-native/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-loop/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-arc",
+      "repeat": 2,
+      "cell_id": "arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-arc/arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9/slice-07",
+      "done": 147,
+      "target": 147,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-native/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 1,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat1/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-native/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-loop/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-loop",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-loop/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    },
+    {
+      "family": "p11-instruct-gpqa",
+      "repeat": 2,
+      "cell_id": "gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d5-20261014T031414Z/repeat2/p11-instruct-gpqa/gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9/slice-07",
+      "done": 56,
+      "target": 56,
+      "summary_exists": true
+    }
+  ],
+  "target_gold_loaded": false,
+  "queue_retired_with_complete_accounting": true,
+  "observed_at_utc": "2026-10-15T02:18:05.879328+00:00",
+  "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9",
+  "ssh_bind_interface": "utun7",
+  "ssh_bind_address": "10.21.0.68",
+  "ssh_dns_resolver": "10.90.63.2",
+  "ssh_resolved_address": "10.120.18.63"
+}

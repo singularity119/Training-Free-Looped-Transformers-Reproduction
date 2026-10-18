@@ -1,0 +1,54 @@
+{
+  "checked_at_utc": "2026-10-14T02:35:05.290874+00:00",
+  "status": "D4_DECISIVE_CHECKS_PASSED",
+  "analysis_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d4-final-s2-20261013T092046Z/source",
+  "analysis_commit": "f40cd50247dae1d4c196e9252acb43c6119e70e9",
+  "record_count": 8064,
+  "cell_count": 18,
+  "samples_per_cell": 448,
+  "fresh_raw_membership_and_lifecycle_verified": true,
+  "frozen_s2_predictions_matching": 8064,
+  "cells_independently_recounted": 18,
+  "contrasts_independently_recomputed": 44,
+  "family_counts": {
+    "ONLINE_VS_NATIVE_AND_LOOP_EXPLORATORY": 30,
+    "STRATEGY_EXPLORATORY": 12,
+    "LOOP_VS_NATIVE_BASE": 2
+  },
+  "max_exact_p_error": 4.4297898682543746e-14,
+  "max_ci_error_pp": 0.0,
+  "holm_rejections": 0,
+  "minimum_holm_p": 0.06584726723341444,
+  "original_barrier_order_verified": true,
+  "raw_closure_time": "2026-10-13T14:20:20.384576+00:00",
+  "extraction_barrier_time": "2026-10-13T14:20:25.646889+00:00",
+  "gold_read_time": "2026-10-13T14:20:25.741138+00:00",
+  "s2_mode_counts": {
+    "conflicting_multiple": 57,
+    "single": 6353,
+    "consistent_multiple": 1090,
+    "no_match": 564
+  },
+  "end_reasons": {
+    "eos": 7645,
+    "length_limit": 419
+  },
+  "parser_boundary_screen_full_population": {
+    "accepted": 7443,
+    "accepted_in_fence": 0,
+    "accepted_length_limit": 83,
+    "nonempty_tail": 64,
+    "different_final_answer_surface_after": 1
+  },
+  "scheduler_exact_jobs": 290,
+  "scheduler_all_completed_zero": true,
+  "inflight_exact_jobs": 0,
+  "costs_gpuh": {
+    "debug": 0.020833333333333332,
+    "formal": 204.68583333333333
+  },
+  "peak_formal_a800": 8,
+  "gold_and_predictions_exported": false,
+  "remote_writes": false,
+  "gpu_execution": false
+}

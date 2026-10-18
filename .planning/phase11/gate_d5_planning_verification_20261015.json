@@ -1,0 +1,150 @@
+{
+  "gate": "D-5",
+  "wait_class": "full",
+  "job_ids": [
+    "13030531_0",
+    "13030531_1",
+    "13030531_2",
+    "13030531_3",
+    "13030531_4",
+    "13030531_5",
+    "13030531_6",
+    "13030531_7"
+  ],
+  "scheduler": [
+    {
+      "job_id": "13030531_0",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 42213,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "2026-10-14T23:24:30"
+    },
+    {
+      "job_id": "13030531_1",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 49200,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "2026-10-15T01:20:57"
+    },
+    {
+      "job_id": "13030531_2",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 52060,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:40:57",
+      "end": "2026-10-15T02:08:37"
+    },
+    {
+      "job_id": "13030531_3",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 63342,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:45:37",
+      "end": "2026-10-15T05:21:19"
+    },
+    {
+      "job_id": "13030531_4",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 56032,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:50:48",
+      "end": "2026-10-15T03:24:40"
+    },
+    {
+      "job_id": "13030531_5",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 42510,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:54:34",
+      "end": "2026-10-14T23:43:04"
+    },
+    {
+      "job_id": "13030531_6",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 57003,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T11:56:01",
+      "end": "2026-10-15T03:46:04"
+    },
+    {
+      "job_id": "13030531_7",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 50941,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=96G,node=1",
+      "partition": "emergency_gpu",
+      "qos": "emergency_gpu",
+      "start": "2026-10-14T12:02:02",
+      "end": "2026-10-15T02:11:03"
+    }
+  ],
+  "missing_job_ids": [],
+  "all_terminal": true,
+  "all_success": true,
+  "terminal_failures": [],
+  "done_record_count": 102796,
+  "target_count": 102796,
+  "queue_retired_with_complete_accounting": true,
+  "observed_at_utc": "2026-10-15T02:29:30.555495+00:00",
+  "executor": "01a1385a-fdfa-7d43-a6b8-1405a585b8b9",
+  "ssh_bind_interface": "utun7",
+  "ssh_bind_address": "10.21.0.68",
+  "ssh_dns_resolver": "10.90.63.2",
+  "ssh_resolved_address": "10.120.18.63",
+  "note": "Observer hardcoded target_gold_loaded was not used; actual final gold receipt confirms authorized post-closure analysis.",
+  "prediction_readback": {
+    "record_count": 102796,
+    "cells": 28,
+    "unique_identity_per_cell": true,
+    "repeat_prediction_identity": true,
+    "seeds_verified": true,
+    "closure_mtime": 1792030788.237846,
+    "gold_receipt": {
+      "timestamp_utc": "2026-10-15T02:24:12.510421+00:00",
+      "prior_prediction_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/closure-attempt1/closure.json",
+      "read_once_per_family": true,
+      "sources": {
+        "p10-base-mmlu": {
+          "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-c-20261002T081604Z/mmlu-gold-aligned-once.json",
+          "n": 14042
+        },
+        "p10-base-arc": {
+          "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase10-gate-d-20261006T161109Z/arc-analysis-attempt1-20261008/gold.json",
+          "n": 1172
+        },
+        "p11-instruct-arc": {
+          "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-d-20261009T023200Z/arc-sealed_gold.json",
+          "n": 1172
+        },
+        "p11-instruct-gpqa": {
+          "gold": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/sealed/gpqa_main-gold.jsonl",
+          "n": 448
+        }
+      }
+    }
+  },
+  "statistics_check": "30 aggregate deltas/exact binomial McNemar p and MAIN20/SECONDARY10 Holm independently recomputed; all agree <1e-10."
+}

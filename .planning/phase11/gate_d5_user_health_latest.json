@@ -1,0 +1,143 @@
+{
+  "batches": [
+    {
+      "task": 0,
+      "progress": {
+        "finished_processes": 20,
+        "target_processes": 28,
+        "failed": false,
+        "target_gold_loaded": false
+      },
+      "completed_processes": 20,
+      "failed_processes": 0,
+      "device_peak_mib": 54556.0,
+      "device_latest": {
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "used_mib": 53848.0,
+        "total_mib": 81920.0
+      }
+    },
+    {
+      "task": 1,
+      "progress": {
+        "finished_processes": 18,
+        "target_processes": 28,
+        "failed": false,
+        "target_gold_loaded": false
+      },
+      "completed_processes": 18,
+      "failed_processes": 0,
+      "device_peak_mib": 61147.0,
+      "device_latest": {
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "used_mib": 54326.0,
+        "total_mib": 81920.0
+      }
+    },
+    {
+      "task": 2,
+      "progress": {
+        "finished_processes": 18,
+        "target_processes": 28,
+        "failed": false,
+        "target_gold_loaded": false
+      },
+      "completed_processes": 18,
+      "failed_processes": 0,
+      "device_peak_mib": 55110.0,
+      "device_latest": {
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "used_mib": 55110.0,
+        "total_mib": 81920.0
+      }
+    },
+    {
+      "task": 3,
+      "progress": {
+        "finished_processes": 18,
+        "target_processes": 28,
+        "failed": false,
+        "target_gold_loaded": false
+      },
+      "completed_processes": 18,
+      "failed_processes": 0,
+      "device_peak_mib": 54674.0,
+      "device_latest": {
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "used_mib": 54674.0,
+        "total_mib": 81920.0
+      }
+    },
+    {
+      "task": 4,
+      "progress": {
+        "finished_processes": 18,
+        "target_processes": 28,
+        "failed": false,
+        "target_gold_loaded": false
+      },
+      "completed_processes": 18,
+      "failed_processes": 0,
+      "device_peak_mib": 54704.0,
+      "device_latest": {
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "used_mib": 54704.0,
+        "total_mib": 81920.0
+      }
+    },
+    {
+      "task": 5,
+      "progress": {
+        "finished_processes": 19,
+        "target_processes": 28,
+        "failed": false,
+        "target_gold_loaded": false
+      },
+      "completed_processes": 19,
+      "failed_processes": 0,
+      "device_peak_mib": 55391.0,
+      "device_latest": {
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "used_mib": 55238.0,
+        "total_mib": 81920.0
+      }
+    },
+    {
+      "task": 6,
+      "progress": {
+        "finished_processes": 18,
+        "target_processes": 28,
+        "failed": false,
+        "target_gold_loaded": false
+      },
+      "completed_processes": 18,
+      "failed_processes": 0,
+      "device_peak_mib": 59838.0,
+      "device_latest": {
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "used_mib": 59838.0,
+        "total_mib": 81920.0
+      }
+    },
+    {
+      "task": 7,
+      "progress": {
+        "finished_processes": 18,
+        "target_processes": 28,
+        "failed": false,
+        "target_gold_loaded": false
+      },
+      "completed_processes": 18,
+      "failed_processes": 0,
+      "device_peak_mib": 59806.0,
+      "device_latest": {
+        "gpu": "NVIDIA A800-SXM4-80GB",
+        "used_mib": 55340.0,
+        "total_mib": 81920.0
+      }
+    }
+  ],
+  "failed_children": [],
+  "stderr_or_telemetry_errors": [],
+  "target_gold_loaded": false
+}

@@ -1,3 +1,5 @@
+> 2026-10-18最新接续入口：[Phase11 D7跨设备接续](docs/phase11_d7_device_handoff_20261018.md)。D7前三组已完成，最后Loop两组尚未成功提交；VPN/调度准入待恢复，非PASS。以下早期当前状态为历史。
+
 > 2026-09-24：Phase9追加Gate E已PASS结项，12个Lag1新cell/168504条评分+旧47cell复用，12项预设探索比较Holm均未通过；4B13:16 K3 Lag1-Online−Lag1-Matched +0.2493pp nominal但Holm p0.1763，减固定Online-t0为−0.0214pp。见 .planning/phase9/loopscope_phase9_gate_e_acceptance.md 与外层资产/报告/phase9/LoopScope_第九阶段GateE逐轮方向实验报告.md。无活动executor或新实验授权；下文为先前主线历史。
 
 > 2026-09-23：第九阶段已完成，A/B/C/D与阶段终审PASS；47逻辑配置（18新+29复用）每配置14042题。K3 4B13:16 Online−Loop +41题/+0.291981pp通过次family，但相对Matched未通过，尚未确证方向处理额外价值。见 .planning/phase9/loopscope_phase9_gate_d_and_phase_final_audit.md 与外层资产/报告/phase9/LoopScope_第九阶段实验结果报告.md。无活动executor或新实验授权；下文为历史记录。

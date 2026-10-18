@@ -1,5 +1,11 @@
 # Gate D-4 — GPQA 8192 full acquisition and analysis
 
+2026-10-13最新用户资源收敛：用户在D4执行聊天明确“就使用最高优先级分区，最多八卡吧”，覆盖此前max-legally-available扩展授权。仅emergency_gpu及其最高合法QoS，总最多8A800；不扩其它分区。剩余2565条已合并array12997851_0..7，TimeLimit14天，全部8064已提交；逐题落盘与断点恢复保持。
+
+2026-10-13用户最新授权：允许使用正常权限范围内尽可能多的A800，覆盖此前max8A800及最多8个长任务的人为限制。D4须现场核对用户/账户association、partition、QoS的GPU/CPU/submit/节点限制及可用性，使用合法可获资源扩大并行；不申请管理员专属资源、不修改权限。长任务数按实际可用并行GPU数与剩余工作量确定，优先最少必要长任务/array且不牺牲吞吐。实测packing5、batch1、科学合同、逐题落盘/断点续跑及成功记录去重不变，已提交任务不盲取消；MMLU继续暂停。
+
+2026-10-13用户最新调度修订（覆盖下文每job2h/旧20条批次约束）：仅尚未提交exact pairs合并为尽可能少的长任务，已提交/运行/排队不取消。D4先现场ledger划定剩余范围；保持max8A800及实测packing5/batch1，优先单job-array最多8长任务，在并行不下降前提下减少作业。取消人为单job2h及累计GPUh硬上限；申请集群正常权限允许最大时长，系统MaxTime仍必须遵守。每条完成立即完整落盘flush并保存可恢复状态；以已验证成功输出重建done集合，重启只做未完成/无效记录，半条隔离重算，不覆盖成功结果。断点默认题间恢复，非token级KV恢复。新增恢复层先做CPU模拟中断/恢复及必要最小同路径debug；不新增长度预检。完整8064闭合后gold及MMLU暂停保持。
+
 2026-10-12用户明确立即派发全量，不再长度预检。Executor01a12f40-cbc9-7790-ac6e-f3fe1c454ab0/local；planning01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local；gpt-6.1-sol/high。按照research-gate-orchestrator skill/protocol及AGENTS执行。
 
 ## 冻结范围
