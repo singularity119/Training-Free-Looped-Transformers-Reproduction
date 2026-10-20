@@ -24,7 +24,7 @@
   ],
   "debug_jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/debug-r3-jobset.json",
   "monitor_id": "phase11-d8",
-  "monitor_state": "ACTIVE",
+  "monitor_state": "PAUSED",
   "debug_attempt_status": "PASSED",
   "preserved_failed_debug": {
     "job": "13230892_0",
@@ -44,7 +44,7 @@
   ],
   "canary_count": 3,
   "formal_submitted": true,
-  "target_gold_loaded": false,
+  "target_gold_loaded": true,
   "D7_untouched": true,
   "debug_verification": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/debug-r3-path-verified.json",
   "debug_accounting": {
@@ -74,7 +74,7 @@
   "current_jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/full-jobset-r4.json",
   "current_run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z",
   "formal_submitted_count": 1344,
-  "formal_completed_count": 4,
+  "formal_completed_count": 1344,
   "full_panel_submitted": true,
   "observation_timestamp_utc": "2026-10-20T04:40:14.988095+00:00",
   "full_job_ids": [
@@ -102,5 +102,9 @@
   "full_submission_evidence": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/full-submission-r4.json",
   "retained_canary_record_count": 3,
   "new_full_submitted_record_count": 1341,
-  "direct_full_submission_authorized": true
+  "direct_full_submission_authorized": true,
+  "execution_state": "ANALYZED_AWAITING_PLANNING_AUDIT",
+  "closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/closure-20261021T0203/closure.json",
+  "analysis_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/analysis-20261021T0203",
+  "final_audit": "gate_d8_final_audit_20261021.json"
 }

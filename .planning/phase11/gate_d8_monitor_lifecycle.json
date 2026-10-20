@@ -1,6 +1,6 @@
 {
   "automation_id": "phase11-d8",
-  "state": "ACTIVE",
+  "state": "PAUSED",
   "wait_class": "full",
   "interval_minutes": 60,
   "executor": "01a15760-371e-7e61-af51-d8375a503bdc",
@@ -54,8 +54,66 @@
       "event": "retargeted same ACTIVE hourly monitor to complete 1344 jobset under direct user full-submission authority"
     }
   ],
-  "target_gold_loaded": false,
+  "target_gold_loaded": true,
   "D7_untouched": true,
   "registry": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261020T033700Z/full-r4/full-registry.json",
-  "target_count": 1344
+  "target_count": 1344,
+  "paused_at_utc": "2026-10-20 10:47:36 UTC",
+  "pause_reason": "SSH_VISIBILITY_BLOCKED",
+  "pause_evidence": {
+    "gate": "D-8",
+    "checked_at_utc": "2026-10-20 10:47:36 UTC",
+    "observer_status": "VISIBILITY_BLOCKED",
+    "ssh_exit_code": 255,
+    "error": "Connection closed by 10.120.18.63 port 22",
+    "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/full-jobset-r4.json",
+    "scheduler_current": "UNKNOWN",
+    "raw_count_current": "UNKNOWN",
+    "last_verified": {
+      "checked_at_utc": "2026-10-20T09:22:54.063642+00:00",
+      "done": 748,
+      "target": 1344,
+      "cells": {
+        "native": 448,
+        "current_t_k2_l05": 299,
+        "fixed_t0_k3_l09": 1
+      },
+      "queue_state_counts": {
+        "RUNNING": 7
+      },
+      "terminal_failures": []
+    },
+    "target_gold_loaded": false,
+    "remote_mutation": false
+  },
+  "pause_confirmation": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"phase11-d8\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  },
+  "resume_delivery_status": "CONFIRMED",
+  "resume_delivery_confirmation": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"01a15760-371e-7e61-af51-d8375a503bdc\"}"
+      }
+    ],
+    "isError": false
+  },
+  "resume_packet": "AUTOMATION_TERMINAL_RESUME\nPhase11 D-8 observer detected SSH visibility blockage; this is not evidence of job failure or Gate BLOCK. Resume the exact executor in a fresh turn to diagnose bounded connectivity and inspect original exact IDs after access returns. Do not duplicate or cancel running work; preserve all attempts and successful raw. Keep target gold/partial accuracy sealed until all1344 predictions close. Do not touch D7. If access recovers and jobs are healthy, restore this same phase11-d8 hourly monitor, without creating another.\nExecutor=01a15760-371e-7e61-af51-d8375a503bdc/local; planning=01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local\njobset=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/full-jobset-r4.json\nregistry=/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261020T033700Z/full-r4/full-registry.json\nexact_job_ids=[\"13231104_0\",\"13231104_1\",\"13231104_2\",\"13231534_0\",\"13231534_1\",\"13231534_2\",\"13231534_3\",\"13231534_4\",\"13231534_5\",\"13231534_6\"]\nCurrent single read-only SSH exit255: Connection closed by 10.120.18.63 port 22\nCurrent scheduler and raw counts UNKNOWN. Last verified at 2026-10-20T09:22:54.063642+00:00:748/1344 (Native448,current_t299,fixed_t0 1),7 RUNNING,3canaries COMPLETED0:0,no observed failures. This count is stale.\nPause confirmed by automation_update: phase11-d8 PAUSED. Local lifecycle and latest saved in .planning/phase11/gate_d8_monitor_lifecycle.json and gate_d8_monitor_latest.json at 2026-10-20 10:47:36 UTC. No remote mutation or gold access. Retain delivery confirmation; this packet is operational continuation, not a final Gate audit.",
+  "completion_verified_at_utc": "2026-10-20T18:02:21.642797+00:00",
+  "completion_evidence": "gate_d8_completion_evidence_20261021.json",
+  "completion_state": "ALL_EXACT_COMPLETED_0_0",
+  "continuation": "User resumed exact executor for closure and analysis; monitor stays paused",
+  "gate_execution_state": "ANALYZED_AWAITING_PLANNING_AUDIT",
+  "final_audit": "gate_d8_final_audit_20261021.json"
 }

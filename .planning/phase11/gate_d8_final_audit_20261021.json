@@ -1,0 +1,180 @@
+{
+  "gate": "D-8",
+  "state": "AUDIT_REQUESTED",
+  "executor": "01a15760-371e-7e61-af51-d8375a503bdc",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "source_commit": "316e467d1a0129ff46509637dd1a90b4e941604e",
+  "source_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261020T033700Z/source-r3",
+  "model": "Qwen/Qwen3-4B",
+  "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+  "record_count": 1344,
+  "cell_count": 3,
+  "exact_jobs": {
+    "13231104_0": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 573,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231104_1": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 825,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231104_2": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 946,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231534_0": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 33002,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231534_1": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 35734,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231534_2": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 30290,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231534_3": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 33935,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231534_4": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 31948,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231534_5": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 38199,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231534_6": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 35704,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    }
+  },
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/full-jobset-r4.json",
+  "registry": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261020T033700Z/full-r4/full-registry.json",
+  "closure": {
+    "status": "GOLD_UNREAD",
+    "timestamp_utc": "2026-10-20T18:04:29.574943+00:00",
+    "record_count": 1344,
+    "prediction_closed": true,
+    "path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/closure-20261021T0203/closure.json"
+  },
+  "gold_read_receipt": {
+    "timestamp_utc": "2026-10-20T18:05:07.032380+00:00",
+    "gold_path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/inputs/phase11-gate-a-20261008T094044Z/gpqa_main-prepared/sealed/gpqa_main-gold.jsonl",
+    "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/closure-20261021T0203/closure.json",
+    "prior_prediction_closed": true,
+    "n": 448
+  },
+  "analysis_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/analysis-20261021T0203",
+  "diagnostics_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/diagnostics-20261021T0203",
+  "results": [
+    {
+      "cell": "native",
+      "n": 448,
+      "correct": 183,
+      "accuracy_percent": 40.848214285714285,
+      "delta_native_pp": 0,
+      "S2_no_match": 80
+    },
+    {
+      "cell": "current_t_k2_l05",
+      "n": 448,
+      "correct": 164,
+      "accuracy_percent": 36.607142857142854,
+      "delta_native_pp": -4.241071428571429,
+      "S2_no_match": 140
+    },
+    {
+      "cell": "fixed_t0_k3_l09",
+      "n": 448,
+      "correct": 154,
+      "accuracy_percent": 34.375,
+      "delta_native_pp": -6.473214285714286,
+      "S2_no_match": 126
+    }
+  ],
+  "contrasts": [
+    {
+      "treatment": "current_t_k2_l05",
+      "reference": "native",
+      "n": 448,
+      "delta_pp": -4.241071428571429,
+      "wrong_to_right": 37,
+      "right_to_wrong": 56,
+      "mcnemar_exact_p": 0.06138589870445832,
+      "bootstrap": {
+        "replicates": 10000,
+        "seed": 20261018,
+        "method": "paired_item_index_percentile",
+        "ci_level": 0.95,
+        "ci_low_pp": -8.705357142857142,
+        "ci_high_pp": -0.2232142857142857,
+        "nominal": true
+      },
+      "holm_family_size": 2,
+      "holm_adjusted_p": 0.06138589870445832,
+      "holm_reject_alpha_0_05": false
+    },
+    {
+      "treatment": "fixed_t0_k3_l09",
+      "reference": "native",
+      "n": 448,
+      "delta_pp": -6.4732142857142865,
+      "wrong_to_right": 43,
+      "right_to_wrong": 72,
+      "mcnemar_exact_p": 0.008735108684333012,
+      "bootstrap": {
+        "replicates": 10000,
+        "seed": 20261018,
+        "method": "paired_item_index_percentile",
+        "ci_level": 0.95,
+        "ci_low_pp": -11.160714285714286,
+        "ci_high_pp": -1.7857142857142856,
+        "nominal": true
+      },
+      "holm_family_size": 2,
+      "holm_adjusted_p": 0.017470217368666024,
+      "holm_reject_alpha_0_05": true
+    }
+  ],
+  "formal_gpuh": 66.98777777777778,
+  "debug_gpuh": 0.058611111111111114,
+  "monitor_state": "PAUSED",
+  "monitor_pause_confirmation": "automation_update confirmed PAUSED 2026-10-20; local automation.toml read back PAUSED during terminal verification 2026-10-21",
+  "resource_limitations": {
+    "sampled_peak_mib": 81031,
+    "total_mib": 81920,
+    "sampled_headroom_fraction": 0.010852050781249956,
+    "oom_log_occurrences": 0,
+    "prior_estimated_headroom_did_not_hold": true
+  },
+  "tests": "Prior same-source targeted10 local/HPC passed; current closure and analysis exit0; all1344 records revalidated twice; two exact p independently reproduced by combinatorial tails within1e-12.",
+  "report": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d8-gpqa-thinking-20261021/实验结果解读.md",
+  "D7_untouched": true,
+  "no_new_gpu_submission": true,
+  "scientific_changes": false,
+  "interpretation": "Configurations selected on the same GPQA items. Single-sample exploratory transfer across checkpoint/thinking recipe; not independent-item confirmation, not a separate causal effect of thinking or checkpoint, and no sampling-variance estimate.",
+  "terminal_delivery": "PENDING"
+}

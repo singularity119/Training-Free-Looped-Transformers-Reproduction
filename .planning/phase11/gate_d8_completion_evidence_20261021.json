@@ -1,0 +1,933 @@
+{
+  "observation": {
+    "gate": "D-8",
+    "checked_at_utc": "2026-10-20T18:02:21.642797+00:00",
+    "executor": "01a15760-371e-7e61-af51-d8375a503bdc",
+    "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/full-jobset-r4.json",
+    "job_ids": [
+      "13231104_0",
+      "13231104_1",
+      "13231104_2",
+      "13231534_0",
+      "13231534_1",
+      "13231534_2",
+      "13231534_3",
+      "13231534_4",
+      "13231534_5",
+      "13231534_6"
+    ],
+    "scheduler": {
+      "13231104_0": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 573,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231104_1": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 825,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231104_2": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 946,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231534_0": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 33002,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231534_1": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 35734,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231534_2": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 30290,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231534_3": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 33935,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231534_4": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 31948,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231534_5": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 38199,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      },
+      "13231534_6": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "allocation_seconds": 35704,
+        "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+      }
+    },
+    "queue": [],
+    "queue_state_counts": {},
+    "queue_retired_with_complete_accounting": false,
+    "missing_job_ids": [],
+    "all_terminal": true,
+    "terminal_failures": [],
+    "batch_states": [
+      {
+        "job_id": "13231104_0",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231104_1",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231104_2",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231534_0",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231534_1",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231534_2",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231534_3",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231534_4",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231534_5",
+        "status": "BATCH_COMPLETE"
+      },
+      {
+        "job_id": "13231534_6",
+        "status": "BATCH_COMPLETE"
+      }
+    ],
+    "done_record_count": 1344,
+    "target_count": 1344,
+    "all_success": true,
+    "trigger_resume": true,
+    "allocation_gpuh": 66.98777777777778,
+    "progress": [
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/canary-r3/native",
+        "done": 1,
+        "target": 1,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/canary-r3/current_t_k2_l05",
+        "done": 1,
+        "target": 1,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/canary-r3/fixed_t0_k3_l09",
+        "done": 1,
+        "target": 1,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-00/native-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-00/native-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-00/current_t_k2_l05-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-00/current_t_k2_l05-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-00/fixed_t0_k3_l09-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-00/fixed_t0_k3_l09-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-01/native-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-01/native-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-01/current_t_k2_l05-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-01/current_t_k2_l05-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-01/fixed_t0_k3_l09-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-01/fixed_t0_k3_l09-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-02/native-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-02/native-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-02/current_t_k2_l05-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-02/current_t_k2_l05-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-02/fixed_t0_k3_l09-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-02/fixed_t0_k3_l09-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-03/native-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-03/native-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-03/current_t_k2_l05-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-03/current_t_k2_l05-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-03/fixed_t0_k3_l09-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-03/fixed_t0_k3_l09-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-04/native-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-04/native-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-04/current_t_k2_l05-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-04/current_t_k2_l05-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-04/fixed_t0_k3_l09-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-04/fixed_t0_k3_l09-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-05/native-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-05/native-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-05/current_t_k2_l05-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-05/current_t_k2_l05-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-05/fixed_t0_k3_l09-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-05/fixed_t0_k3_l09-lane1",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-06/native-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "native",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-06/native-lane1",
+        "done": 31,
+        "target": 31,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-06/current_t_k2_l05-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "current_t_k2_l05",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-06/current_t_k2_l05-lane1",
+        "done": 31,
+        "target": 31,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-06/fixed_t0_k3_l09-lane0",
+        "done": 32,
+        "target": 32,
+        "summary_exists": true
+      },
+      {
+        "cell_key": "fixed_t0_k3_l09",
+        "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/full-r4/task-06/fixed_t0_k3_l09-lane1",
+        "done": 31,
+        "target": 31,
+        "summary_exists": true
+      }
+    ],
+    "target_gold_loaded": false
+  },
+  "resource": {
+    "schema": "loopscope.phase11.d8.resources.v1",
+    "batches": [
+      {
+        "job_id": "13231104_0",
+        "status": "BATCH_COMPLETE",
+        "packing": 1,
+        "processes": 1,
+        "device_peak_mib": 16136,
+        "telemetry_samples": 113,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "native": 565.6525514498353
+        }
+      },
+      {
+        "job_id": "13231104_1",
+        "status": "BATCH_COMPLETE",
+        "packing": 1,
+        "processes": 1,
+        "device_peak_mib": 16843,
+        "telemetry_samples": 163,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "current_t_k2_l05": 817.0774707868695
+        }
+      },
+      {
+        "job_id": "13231104_2",
+        "status": "BATCH_COMPLETE",
+        "packing": 1,
+        "processes": 1,
+        "device_peak_mib": 17736,
+        "telemetry_samples": 186,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "fixed_t0_k3_l09": 937.9710036870092
+        }
+      },
+      {
+        "job_id": "13231534_0",
+        "status": "BATCH_COMPLETE",
+        "packing": 2,
+        "processes": 6,
+        "device_peak_mib": 31166,
+        "telemetry_samples": 6533,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "native": 19923.012312717736,
+          "current_t_k2_l05": 20588.929111791775,
+          "fixed_t0_k3_l09": 23669.197302620858
+        }
+      },
+      {
+        "job_id": "13231534_1",
+        "status": "BATCH_COMPLETE",
+        "packing": 2,
+        "processes": 6,
+        "device_peak_mib": 42145,
+        "telemetry_samples": 7075,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "native": 20820.69250673242,
+          "current_t_k2_l05": 21663.411132507026,
+          "fixed_t0_k3_l09": 21428.168837118894
+        }
+      },
+      {
+        "job_id": "13231534_2",
+        "status": "BATCH_COMPLETE",
+        "packing": 2,
+        "processes": 6,
+        "device_peak_mib": 33421,
+        "telemetry_samples": 6014,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "native": 18014.43161335122,
+          "current_t_k2_l05": 18175.061481663957,
+          "fixed_t0_k3_l09": 22846.696365504526
+        }
+      },
+      {
+        "job_id": "13231534_3",
+        "status": "BATCH_COMPLETE",
+        "packing": 2,
+        "processes": 6,
+        "device_peak_mib": 36960,
+        "telemetry_samples": 6722,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "native": 19837.173622204922,
+          "current_t_k2_l05": 22086.21282413602,
+          "fixed_t0_k3_l09": 20916.1782857948
+        }
+      },
+      {
+        "job_id": "13231534_4",
+        "status": "BATCH_COMPLETE",
+        "packing": 2,
+        "processes": 6,
+        "device_peak_mib": 36506,
+        "telemetry_samples": 6330,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "native": 20034.367639428005,
+          "current_t_k2_l05": 20756.163304058835,
+          "fixed_t0_k3_l09": 22406.658977059647
+        }
+      },
+      {
+        "job_id": "13231534_5",
+        "status": "BATCH_COMPLETE",
+        "packing": 2,
+        "processes": 6,
+        "device_peak_mib": 81031,
+        "telemetry_samples": 7568,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "native": 19381.622342184186,
+          "current_t_k2_l05": 25777.05843664473,
+          "fixed_t0_k3_l09": 24896.83701925678
+        }
+      },
+      {
+        "job_id": "13231534_6",
+        "status": "BATCH_COMPLETE",
+        "packing": 2,
+        "processes": 6,
+        "device_peak_mib": 40591,
+        "telemetry_samples": 7076,
+        "telemetry_errors": 0,
+        "child_elapsed_seconds_by_cell": {
+          "native": 19179.725968251005,
+          "current_t_k2_l05": 21481.728601142764,
+          "fixed_t0_k3_l09": 30643.64005176723
+        }
+      }
+    ],
+    "batch_attempts": 10,
+    "child_processes": 45,
+    "nonzero_child_exits": 0,
+    "device_peak_mib": 81031,
+    "device_total_mib": 81920,
+    "sampled_headroom_fraction": 0.010852050781249956,
+    "telemetry_samples": 47780,
+    "telemetry_errors": 0,
+    "oom_log_occurrences": 0,
+    "sacct": "13231104_0|COMPLETED|0:0|2026-10-20T12:22:44|2026-10-20T12:32:17|573|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231104_1|COMPLETED|0:0|2026-10-20T12:22:44|2026-10-20T12:36:29|825|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231104_2|COMPLETED|0:0|2026-10-20T12:22:44|2026-10-20T12:38:30|946|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231534_0|COMPLETED|0:0|2026-10-20T12:38:27|2026-10-20T21:48:29|33002|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231534_1|COMPLETED|0:0|2026-10-20T12:38:27|2026-10-20T22:34:01|35734|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231534_2|COMPLETED|0:0|2026-10-20T12:38:27|2026-10-20T21:03:17|30290|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231534_3|COMPLETED|0:0|2026-10-20T12:38:27|2026-10-20T22:04:02|33935|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231534_4|COMPLETED|0:0|2026-10-20T12:38:27|2026-10-20T21:30:55|31948|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231534_5|COMPLETED|0:0|2026-10-20T12:38:30|2026-10-20T23:15:09|38199|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n13231534_6|COMPLETED|0:0|2026-10-20T12:41:53|2026-10-20T22:36:57|35704|billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1\n",
+    "debug_failed_gpuh": 0.03777777777777778,
+    "debug_passed_gpuh": 0.020833333333333332
+  },
+  "closure": {
+    "status": "GOLD_UNREAD",
+    "timestamp_utc": "2026-10-20T18:04:29.574943+00:00",
+    "record_count": 1344,
+    "prediction_closed": true,
+    "path": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/closure-20261021T0203/closure.json"
+  },
+  "memory_timeline": [
+    {
+      "job": "13231104_0",
+      "peak": [
+        16136,
+        565.3725084811449,
+        "GPU-e9f5c359-2016-9941-34bd-5c35e23ca76e"
+      ],
+      "start_device_samples": [
+        [
+          5,
+          0.03840868920087814,
+          "GPU-e9f5c359-2016-9941-34bd-5c35e23ca76e"
+        ],
+        [
+          5,
+          5.077358581125736,
+          "GPU-e9f5c359-2016-9941-34bd-5c35e23ca76e"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          16136,
+          560.3170898128301,
+          "GPU-e9f5c359-2016-9941-34bd-5c35e23ca76e"
+        ],
+        [
+          16136,
+          565.3725084811449,
+          "GPU-e9f5c359-2016-9941-34bd-5c35e23ca76e"
+        ]
+      ]
+    },
+    {
+      "job": "13231104_1",
+      "peak": [
+        16843,
+        810.0260536754504,
+        "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+      ],
+      "start_device_samples": [
+        [
+          0,
+          0.015835922211408615,
+          "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+        ],
+        [
+          0,
+          5.031555422581732,
+          "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          16843,
+          810.0260536754504,
+          "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+        ],
+        [
+          16811,
+          815.040502618067,
+          "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+        ]
+      ]
+    },
+    {
+      "job": "13231104_2",
+      "peak": [
+        17736,
+        929.1430257856846,
+        "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+      ],
+      "start_device_samples": [
+        [
+          4,
+          0.053920865058898926,
+          "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+        ],
+        [
+          4,
+          5.106912425719202,
+          "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          17736,
+          929.1430257856846,
+          "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+        ],
+        [
+          17704,
+          934.1938245557249,
+          "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+        ]
+      ]
+    },
+    {
+      "job": "13231534_0",
+      "peak": [
+        31166,
+        9913.362122761086,
+        "GPU-6b426528-c500-19d7-53ca-545aa3b22c3d"
+      ],
+      "start_device_samples": [
+        [
+          6,
+          0.05653282441198826,
+          "GPU-6b426528-c500-19d7-53ca-545aa3b22c3d"
+        ],
+        [
+          6,
+          5.110197952017188,
+          "GPU-6b426528-c500-19d7-53ca-545aa3b22c3d"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          15836,
+          32983.3310585618,
+          "GPU-6b426528-c500-19d7-53ca-545aa3b22c3d"
+        ],
+        [
+          15836,
+          32988.38305453397,
+          "GPU-6b426528-c500-19d7-53ca-545aa3b22c3d"
+        ]
+      ]
+    },
+    {
+      "job": "13231534_1",
+      "peak": [
+        42145,
+        9060.187369054183,
+        "GPU-ef627bf6-4ed5-102b-bc3e-bede00c1d5ef"
+      ],
+      "start_device_samples": [
+        [
+          4,
+          0.05746317841112614,
+          "GPU-ef627bf6-4ed5-102b-bc3e-bede00c1d5ef"
+        ],
+        [
+          4,
+          5.11000107601285,
+          "GPU-ef627bf6-4ed5-102b-bc3e-bede00c1d5ef"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          18129,
+          35718.8625140544,
+          "GPU-ef627bf6-4ed5-102b-bc3e-bede00c1d5ef"
+        ],
+        [
+          18129,
+          35723.94013958238,
+          "GPU-ef627bf6-4ed5-102b-bc3e-bede00c1d5ef"
+        ]
+      ]
+    },
+    {
+      "job": "13231534_2",
+      "peak": [
+        33421,
+        28743.673461959697,
+        "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+      ],
+      "start_device_samples": [
+        [
+          0,
+          0.015900460071861744,
+          "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+        ],
+        [
+          4,
+          5.152171103283763,
+          "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          18975,
+          30278.575150163844,
+          "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+        ],
+        [
+          18975,
+          30283.590911155567,
+          "GPU-61879933-2d91-2dfb-78dd-769ad058aed8"
+        ]
+      ]
+    },
+    {
+      "job": "13231534_3",
+      "peak": [
+        36960,
+        18709.068418604787,
+        "GPU-7aa585e0-66fa-ecc9-351d-1ac56e2000ae"
+      ],
+      "start_device_samples": [
+        [
+          5,
+          0.045818539801985025,
+          "GPU-7aa585e0-66fa-ecc9-351d-1ac56e2000ae"
+        ],
+        [
+          5,
+          5.081211449112743,
+          "GPU-7aa585e0-66fa-ecc9-351d-1ac56e2000ae"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          18412,
+          33922.89885050291,
+          "GPU-7aa585e0-66fa-ecc9-351d-1ac56e2000ae"
+        ],
+        [
+          18412,
+          33927.95130574005,
+          "GPU-7aa585e0-66fa-ecc9-351d-1ac56e2000ae"
+        ]
+      ]
+    },
+    {
+      "job": "13231534_4",
+      "peak": [
+        36506,
+        9983.26462338306,
+        "GPU-94504f84-71b0-3957-c3bc-8583dc59f589"
+      ],
+      "start_device_samples": [
+        [
+          42,
+          0.05454300343990326,
+          "GPU-94504f84-71b0-3957-c3bc-8583dc59f589"
+        ],
+        [
+          42,
+          5.106877814978361,
+          "GPU-94504f84-71b0-3957-c3bc-8583dc59f589"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          17654,
+          31929.15652579069,
+          "GPU-94504f84-71b0-3957-c3bc-8583dc59f589"
+        ],
+        [
+          17654,
+          31934.191215656698,
+          "GPU-94504f84-71b0-3957-c3bc-8583dc59f589"
+        ]
+      ]
+    },
+    {
+      "job": "13231534_5",
+      "peak": [
+        81031,
+        24445.412612284068,
+        "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+      ],
+      "start_device_samples": [
+        [
+          4,
+          0.035594557877629995,
+          "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+        ],
+        [
+          39,
+          5.111262919846922,
+          "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          25134,
+          38191.43487110594,
+          "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+        ],
+        [
+          4,
+          38196.47988389572,
+          "GPU-26c116c1-6bdb-eb08-57dd-bfec2d57d8b6"
+        ]
+      ]
+    },
+    {
+      "job": "13231534_6",
+      "peak": [
+        40591,
+        35603.90162074007,
+        "GPU-aab1d8d7-2b16-e765-8b25-e0973c56a26f"
+      ],
+      "start_device_samples": [
+        [
+          5,
+          0.0545479841530323,
+          "GPU-aab1d8d7-2b16-e765-8b25-e0973c56a26f"
+        ],
+        [
+          5,
+          5.10685208812356,
+          "GPU-aab1d8d7-2b16-e765-8b25-e0973c56a26f"
+        ]
+      ],
+      "end_device_samples": [
+        [
+          23523,
+          35694.80945683457,
+          "GPU-aab1d8d7-2b16-e765-8b25-e0973c56a26f"
+        ],
+        [
+          23523,
+          35699.86671717651,
+          "GPU-aab1d8d7-2b16-e765-8b25-e0973c56a26f"
+        ]
+      ]
+    }
+  ]
+}

@@ -6,6 +6,21 @@ exact executor、source、jobset和监控绑定集中在
 [replacement execution](../.planning/phase11/gate_d8_replacement_execution.json)。
 本文是操作说明，不授予新Gate权限；D7保持原独立executor和monitor。
 
+## 2026-10-21 完整结果
+
+1344条已完成完整性与预测闭合，10个正式exact作业均`COMPLETED 0:0`。
+Native为183/448（40.85%），current_t K2 λ0.5为164/448（36.61%），
+fixed_t0 K3 λ0.9为154/448（34.38%）。两项Holm p分别0.06139和0.01747；
+仅K3的下降达到冻结检验标准。S2格式状态变化是失分的重要部分，不能把主指标
+变化直接解释成推理能力变化。完整中文解释与聚合表见
+[实验结果解读](../../资产/报告/phase11/gate-d8-gpqa-thinking-20261021/实验结果解读.md)。
+
+正式66.987778 GPUh，无OOM记录；实际整卡采样峰值81031/81920 MiB，
+约1.09%余量，原先36.5%只是估计，未在全量成立。监控保持PAUSED。
+机器证据见`.planning/phase11/gate_d8_completion_evidence_20261021.json`及
+`gate_d8_analysis_aggregate_20261021.json`。执行完成后提交planning验收，
+不由executor自行PASS；下文保留执行过程和原准入依据。
+
 ## 冻结配方
 
 - `Qwen/Qwen3-4B@1cfa9a7208912126459214e8b04321603b3df60c`，原生thinking模板。
