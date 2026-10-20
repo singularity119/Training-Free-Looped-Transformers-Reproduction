@@ -1,4 +1,4 @@
-> 2026-10-16当前入口：[D7 MMLU-Pro五配置](phase11/loopscope_phase11_gate_d7_handoff.md)／[control](phase11/loopscope_phase11_control.md)。Native与两方法先完成，普通Loop最后；8192＋S2。D6已关闭，下文当前措辞为历史。
+> 2026-10-20入口：[Phase11 control](phase11/loopscope_phase11_control.md)／[D8 GPQA thinking](phase11/loopscope_phase11_gate_d8_handoff.md)／[D8接续说明](../docs/loopscope_phase11_d8.md)。D7保持[原独立绑定](phase11/loopscope_phase11_gate_d7_handoff.md)，不由D8接管。下方较早“当前”措辞为历史；精确权限以control和对应handoff为准。
 
 > 2026-10-16：Gate D-6已PASS，5376记录及探索性统计已验收；无活动实验授权，等待用户讨论，MMLU-Pro暂停。见[验收](phase11/loopscope_phase11_gate_d6_acceptance.md)。下文当前措辞为历史。
 
@@ -24,8 +24,10 @@
 
 ## 当前控制入口
 
-最新阶段的动态控制入口是 [Phase 9 control](phase9/loopscope_phase9_control.md)：主线和追加 Gate E 均已完成，当前无活动执行任务。第八阶段及更早阶段的 control/handoff 仅作历史依据，不授予新实验权限。
-[Phase 9 总体计划](phase9/loopscope_phase9_plan.md) / [主线科学合同](phase9/loopscope_phase9_contract_v2.md) / [Gate E 合同](phase9/loopscope_phase9_gate_e_lag1_contract.md) / [Gate E runbook](../docs/loopscope_phase9_gate_e.md)。
+当前阶段入口是 [Phase 11 control](phase11/loopscope_phase11_control.md)。D7与D8分别由各自独立executor负责；开始任何操作前核对该Gate的exact绑定、handoff和现存job，不能从阶段编号或历史记录推断权限。
+D8接续机器绑定见 [replacement execution](phase11/gate_d8_replacement_execution.json)，运行说明见 [D8 runbook](../docs/loopscope_phase11_d8.md)。
+
+历史Phase 9主线和追加Gate E均已完成：[总体计划](phase9/loopscope_phase9_plan.md) / [科学合同](phase9/loopscope_phase9_contract_v2.md) / [Gate E合同](phase9/loopscope_phase9_gate_e_lag1_contract.md) / [runbook](../docs/loopscope_phase9_gate_e.md)。历史control/handoff不授予新实验权限。
 
 ## 阶段和方法索引
 
@@ -40,6 +42,8 @@
 | `phase7/` | 三种 Base 架构、V3.1 与 Gate E/F outcome | [control](phase7/loopscope_phase7_control.md) | [runbook](../docs/loopscope_phase7.md) |
 | `phase8/` | 双 Base 模型四窗口的谱软衰减与配对 acc | [control](phase8/loopscope_phase8_control.md) | [阶段报告](../docs/loopscope_phase8.md) / [总体计划](phase8/loopscope_phase8_plan.md) |
 | `phase9/` | 逐题在线主方向与逐轮方向更新；主线及 Gate E 已完成 | [control](phase9/loopscope_phase9_control.md) | [Gate E runbook](../docs/loopscope_phase9_gate_e.md) / [总体计划](phase9/loopscope_phase9_plan.md) |
+| `phase10/` | 4B Base模型的方向策略与强度实验 | [control](phase10/loopscope_phase10_control.md) | [总体计划](phase10/loopscope_phase10_plan.md) |
+| `phase11/` | Qwen3-4B Instruct评测及独立D7 MMLU-Pro、D8 GPQA thinking增量 | [control](phase11/loopscope_phase11_control.md) | [总体计划](phase11/loopscope_phase11_plan.md) / [D8 runbook](../docs/loopscope_phase11_d8.md) |
 | `selector_rules/` | 跨阶段版本化方法定义；不授予实验权限 | [规则索引](selector_rules/README.md) | [V3.1.0](selector_rules/aggregate_common_turn_v3_absolute_rate.md) |
 
 最近的终态依据：
