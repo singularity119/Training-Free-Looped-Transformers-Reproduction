@@ -1,5 +1,7 @@
+2026-10-18 D8 planning记录BLOCK：核对本地聚合原始命令/exit1/AssocGrpSubmitJobsLimit及GrpSubmit=0、CPU exit0/448输入容量、隧道CLOSED证据，未重新SSH或运行GPU。准备已完成，权重尚不完整，raw0/1344、GPUh0、未读取目标gold、无monitor。保持executor01a14eeb-0aae-7733-a86e-62b55c8dde54；外部恢复合法提交资格后由planning恢复同一executor，续缺失权重→source-r2/debug-plan-r2真实debug→1344采集。不是GPU验证PASS或科学负结果；D7不变。证据gate_d8_preparation_block.json、gate_d8_block_20261018.md；运行源码9f7ca50，交付11a7ba42。
+
 2026-10-18用户新增D8：本线程01a14da8-5e0b-7550-9874-5bd47416bc6f负责D8规划验收。GPQA Main448，Qwen/Qwen3-4B thinking，32768，官方采样固定seed，仅Native及K2 current_t .5/K3 fixed_t0 .9，共1344。D8绑定executor01a14eeb-0aae-7733-a86e-62b55c8dde54/local，gpt-6-luna/max；D7独立保持原授权/状态，不接管或迁移其监控。
-GATE_D8=AUTHORIZED
+GATE_D8=BLOCKED_SUBMIT_ADMISSION
 GATE_D8_EXECUTOR=01a14eeb-0aae-7733-a86e-62b55c8dde54
 GATE_D8_HANDOFF=loopscope_phase11_gate_d8_handoff.md
 
