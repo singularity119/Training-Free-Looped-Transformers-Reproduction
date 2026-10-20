@@ -150,6 +150,20 @@ class D8Tests(unittest.TestCase):
         self.assertFalse(old_options["do_sample"])
         self.assertNotIn("temperature", old_options)
 
+    def test_gpu_verifier_distinguishes_no_match_from_generation_failure(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts/loopscope"))
+        from check_phase11_d8_gpu import validate_generation_path
+        span = {"unclosed_thinking": False, "thinking_token_count": 316,
+                "final_empty": False, "prediction_index": None}
+        self.assertFalse(validate_generation_path({"final_span": span}, {"decode_count": 325}))
+        self.assertTrue(validate_generation_path(
+            {"final_span": dict(span, prediction_index=0)}, {"decode_count": 325}))
+        for change in ({"unclosed_thinking": True}, {"thinking_token_count": 0}, {"final_empty": True}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                validate_generation_path({"final_span": dict(span, **change)}, {"decode_count": 325})
+        with self.assertRaises(ValueError):
+            validate_generation_path({"final_span": span}, {"decode_count": 1})
+
 
 if __name__ == "__main__":
     unittest.main()
