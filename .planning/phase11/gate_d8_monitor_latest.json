@@ -1,0 +1,61 @@
+{
+  "gate": "D-8",
+  "checked_at_utc": "2026-10-20T04:12:46.950729+00:00",
+  "executor": "01a15760-371e-7e61-af51-d8375a503bdc",
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/debug-r3-jobset.json",
+  "job_ids": [
+    "13230943_0"
+  ],
+  "scheduler": {
+    "13230943_0": {
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "allocation_seconds": 0,
+      "alloc_tres": ""
+    }
+  },
+  "queue": [
+    [
+      "13230943_0",
+      "PENDING",
+      "(MaxJobsPerAccount)"
+    ]
+  ],
+  "queue_state_counts": {
+    "PENDING": 1
+  },
+  "queue_retired_with_complete_accounting": false,
+  "missing_job_ids": [],
+  "all_terminal": false,
+  "terminal_failures": [],
+  "batch_states": [],
+  "done_record_count": 0,
+  "target_count": 3,
+  "all_success": false,
+  "trigger_resume": false,
+  "allocation_gpuh": 0,
+  "progress": [
+    {
+      "cell_key": "native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/debug-r3/native",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "current_t_k2_l05",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/debug-r3/current_t_k2_l05",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    },
+    {
+      "cell_key": "fixed_t0_k3_l09",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/debug-r3/fixed_t0_k3_l09",
+      "done": 0,
+      "target": 1,
+      "summary_exists": false
+    }
+  ],
+  "target_gold_loaded": false
+}

@@ -1,0 +1,18 @@
+{
+  "automation_id": "phase11-d8",
+  "state": "ACTIVE",
+  "reactivation_evidence": "automation_update confirmed phase11-d8 ACTIVE for fresh 13230943_0 after verifier-only repair; same ten-minute monitor reused",
+  "pause_evidence": "automation_update confirmed phase11-d8 PAUSED after active executor observed 13230892_0 FAILED 1:0; three debug raw bundles complete",
+  "continuation": "Executor already active and diagnosing this attempt; no duplicate wakeup is needed",
+  "wait_class": "smoke",
+  "interval_minutes": 10,
+  "executor": "01a15760-371e-7e61-af51-d8375a503bdc",
+  "planning": "01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f",
+  "exact_job_ids": ["13230943_0"],
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/debug-r3-jobset.json",
+  "creation_evidence": "automation_update returned automationId=phase11-d8 status=ACTIVE; local automation.toml confirms target_thread_id and ten-minute schedule",
+  "pending_debug_monitor_explicitly_authorized": true,
+  "terminal_route": "pause monitor, persist evidence, send AUTOMATION_TERMINAL_RESUME to exact executor; on unconfirmed delivery send AUTOMATION_RELAY_REQUIRED to exact planning",
+  "target_gold_loaded": false,
+  "D7_untouched": true
+}
