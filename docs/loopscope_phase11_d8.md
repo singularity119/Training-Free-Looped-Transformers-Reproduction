@@ -26,8 +26,10 @@ exact executor、source、jobset和监控绑定集中在
 `debug-r3-path-verified.json`确认三组真实thinking/final区间、S2、decode/cache和方向生命周期。
 旧`13230892_0`失败记录及三条synthetic raw保留，消耗136秒；不覆盖历史尝试。
 
-先运行三条可保留正式canary，每组canonical_index344（最长prompt2819 tokens），
-packing1；成功后用整卡/进程peak memory、生成长度和吞吐决定其余1341条的packing。
+三条可保留正式canary各用canonical_index344（最长prompt2819 tokens），packing1。
+2026-10-20用户直接授权提交其余1341条：真实debug通过且已有容量证据时，
+允许结合整卡/进程peak memory与保守完整KV预算提交全量，无需等待全部canary终态。
+各组剩余计划都排除344，成功/在途canary均保留；完整registry严格为三组各448。
 短算术debug不能用于推定32768预算的正式显存。预留约20%显存余量，禁止OOM导向的盲目packing。
 每次提交核对普通用户最高合法A800分区/QoS；整个Phase11与D7合计最多8张A800，
 每GPU最多8CPU。成功正式记录保留，仅缺失/无效项可在新路径恢复。

@@ -8,11 +8,18 @@
   "exact_job_ids": [
     "13231104_0",
     "13231104_1",
-    "13231104_2"
+    "13231104_2",
+    "13231534_0",
+    "13231534_1",
+    "13231534_2",
+    "13231534_3",
+    "13231534_4",
+    "13231534_5",
+    "13231534_6"
   ],
-  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/canary-jobset-r3.json",
-  "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/canary-r3",
-  "last_update_evidence": "automation_update confirmed phase11-d8 ACTIVE with FREQ=HOURLY;INTERVAL=1 for formal canary",
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/full-jobset-r4.json",
+  "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z",
+  "last_update_evidence": "automation_update confirmed same phase11-d8 ACTIVE/full60min for all retained canary and newly submitted full IDs",
   "terminal_route": "pause monitor, persist lifecycle, send AUTOMATION_TERMINAL_RESUME to exact executor; if delivery unconfirmed send AUTOMATION_RELAY_REQUIRED to exact planning",
   "healthy_nonterminal": "quiet after one bounded read-only observation",
   "prior_lifecycle": [
@@ -33,8 +40,22 @@
         "13230943_0"
       ],
       "event": "PAUSED after COMPLETED0:0; active executor verified debug and submitted formal canary"
+    },
+    {
+      "jobs": [
+        "13231534_0",
+        "13231534_1",
+        "13231534_2",
+        "13231534_3",
+        "13231534_4",
+        "13231534_5",
+        "13231534_6"
+      ],
+      "event": "retargeted same ACTIVE hourly monitor to complete 1344 jobset under direct user full-submission authority"
     }
   ],
   "target_gold_loaded": false,
-  "D7_untouched": true
+  "D7_untouched": true,
+  "registry": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261020T033700Z/full-r4/full-registry.json",
+  "target_count": 1344
 }
