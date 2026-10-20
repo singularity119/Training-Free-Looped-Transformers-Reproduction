@@ -176,5 +176,7 @@
   "no_new_gpu_submission": true,
   "scientific_changes": false,
   "interpretation": "Configurations selected on the same GPQA items. Single-sample exploratory transfer across checkpoint/thinking recipe; not independent-item confirmation, not a separate causal effect of thinking or checkpoint, and no sampling-variance estimate.",
-  "terminal_delivery": "PENDING"
+  "terminal_delivery": "CONFIRMED",
+  "delivery_evidence": "gate_d8_terminal_delivery_20261021.json",
+  "evidence_commit": "6c161939aadd194a9a50fe70652172c8299b9b75"
 }
