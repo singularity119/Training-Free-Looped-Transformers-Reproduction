@@ -19,21 +19,55 @@
   "download_endpoint": "https://hf-mirror.com",
   "tokenizer_source": "existing official fixed-revision cache",
   "temporary_tunnel": "CLOSED_RELEASE_VERIFIED",
-  "debug_job_ids": ["13230943_0"],
+  "debug_job_ids": [
+    "13230943_0"
+  ],
   "debug_jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/debug-r3-jobset.json",
   "monitor_id": "phase11-d8",
   "monitor_state": "ACTIVE",
-  "debug_attempt_status": "R3_SUBMITTED_REAL_DEBUG_PASS_REQUIRED",
-  "preserved_failed_debug": {"job": "13230892_0", "exit_code": "1:0", "raw_complete": 3, "allocation_seconds": 136, "cause": "verifier rejected correctly extracted S2 no_match; producer and scoring unchanged"},
-  "monitor_class": "smoke",
-  "monitor_interval_minutes": 10,
+  "debug_attempt_status": "PASSED",
+  "preserved_failed_debug": {
+    "job": "13230892_0",
+    "exit_code": "1:0",
+    "raw_complete": 3,
+    "allocation_seconds": 136,
+    "cause": "verifier rejected correctly extracted S2 no_match; producer and scoring unchanged"
+  },
+  "monitor_class": "full",
+  "monitor_interval_minutes": 60,
   "observer_source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261020T033700Z/observer-source",
   "observer_commit": "9f7ca50fef085529b15d2cc4f46774bae19845a3",
   "observer_validation": "2026-10-20T04:04:59.351896+00:00: exact 13230892_0 PENDING, accounting complete, 0/3, no gold access",
   "canary_plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d8-20261020T033700Z/canary-plan-r3.json",
-  "canary_indices": [344],
+  "canary_indices": [
+    344
+  ],
   "canary_count": 3,
-  "formal_submitted": false,
+  "formal_submitted": true,
   "target_gold_loaded": false,
-  "D7_untouched": true
+  "D7_untouched": true,
+  "debug_verification": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/debug-r3-path-verified.json",
+  "debug_accounting": {
+    "job_id": "13230943_0",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "allocation_seconds": 75
+  },
+  "canary_job_ids": [
+    "13231104_0",
+    "13231104_1",
+    "13231104_2"
+  ],
+  "canary_jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/canary-jobset-r3.json",
+  "current_job_ids": [
+    "13231104_0",
+    "13231104_1",
+    "13231104_2"
+  ],
+  "current_jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/canary-jobset-r3.json",
+  "current_run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/canary-r3",
+  "formal_submitted_count": 3,
+  "formal_completed_count": 0,
+  "full_panel_submitted": false,
+  "observation_timestamp_utc": "2026-10-20T04:26:36.230652+00:00"
 }

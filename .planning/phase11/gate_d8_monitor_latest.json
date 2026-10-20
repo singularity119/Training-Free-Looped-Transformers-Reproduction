@@ -1,28 +1,52 @@
 {
   "gate": "D-8",
-  "checked_at_utc": "2026-10-20T04:12:46.950729+00:00",
+  "checked_at_utc": "2026-10-20T04:26:36.230652+00:00",
   "executor": "01a15760-371e-7e61-af51-d8375a503bdc",
-  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/debug-r3-jobset.json",
+  "jobset": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/canary-jobset-r3.json",
   "job_ids": [
-    "13230943_0"
+    "13231104_0",
+    "13231104_1",
+    "13231104_2"
   ],
   "scheduler": {
-    "13230943_0": {
-      "state": "PENDING",
+    "13231104_0": {
+      "state": "RUNNING",
       "exit_code": "0:0",
-      "allocation_seconds": 0,
-      "alloc_tres": ""
+      "allocation_seconds": 232,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231104_1": {
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "allocation_seconds": 232,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
+    },
+    "13231104_2": {
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "allocation_seconds": 232,
+      "alloc_tres": "billing=8,cpu=8,gres/gpu:a800=1,gres/gpu=1,mem=64G,node=1"
     }
   },
   "queue": [
     [
-      "13230943_0",
-      "PENDING",
-      "(MaxJobsPerAccount)"
+      "13231104_0",
+      "RUNNING",
+      "gpu1-39"
+    ],
+    [
+      "13231104_1",
+      "RUNNING",
+      "gpu1-11"
+    ],
+    [
+      "13231104_2",
+      "RUNNING",
+      "gpu1-25"
     ]
   ],
   "queue_state_counts": {
-    "PENDING": 1
+    "RUNNING": 3
   },
   "queue_retired_with_complete_accounting": false,
   "missing_job_ids": [],
@@ -33,25 +57,25 @@
   "target_count": 3,
   "all_success": false,
   "trigger_resume": false,
-  "allocation_gpuh": 0,
+  "allocation_gpuh": 0.19333333333333333,
   "progress": [
     {
       "cell_key": "native",
-      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/debug-r3/native",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/canary-r3/native",
       "done": 0,
       "target": 1,
       "summary_exists": false
     },
     {
       "cell_key": "current_t_k2_l05",
-      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/debug-r3/current_t_k2_l05",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/canary-r3/current_t_k2_l05",
       "done": 0,
       "target": 1,
       "summary_exists": false
     },
     {
       "cell_key": "fixed_t0_k3_l09",
-      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/debug-r3/fixed_t0_k3_l09",
+      "run_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/runs/phase11-gate-d8-20261020T033700Z/canary-r3/fixed_t0_k3_l09",
       "done": 0,
       "target": 1,
       "summary_exists": false
