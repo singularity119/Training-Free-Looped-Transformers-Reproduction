@@ -1,0 +1,42 @@
+{
+  "modelTrainingJobId": 4391394,
+  "modelTaskName": "expr_gq_q4_t1_r_20261021195819",
+  "jobName": "tj20261021195906-132b8cfc",
+  "jobStatus": "NEW",
+  "fissionJobId": null,
+  "jobViewUrl": "https://aispace.alibaba-inc.com/#/train/traintask/detail/4953520",
+  "globalParams": {
+    "modelTrainingTaskId": 4953520,
+    "modelTrainingJobId": 4391394
+  },
+  "gpu_type": "H20-8x-640G",
+  "quota_project": "h20_agi_large_16",
+  "total_cards": 16,
+  "formal_expected_records": 1344,
+  "source_commit": "0ad350b22e45b4519adf164a17eefc72fc359daf",
+  "replaces_failed_task": 4953507,
+  "cloud_root": "/jindofs_temp/users/557030/tflt/phase11/d9/full-repair-20261021T115819Z",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/full-repair-20261021T115819Z/",
+  "model_provenance": {
+    "mode": "USER_DESIGNATED_OSS_UNVERIFIED_REVISION",
+    "model_oss": "oss://sampool-bucket/deltalake/other_sample/users/270228/huggingface/Qwen/Qwen3-4B/",
+    "model_mount": "/jindofs_temp/users/270228/huggingface/Qwen/Qwen3-4B",
+    "actual_revision": "UNVERIFIED_OSS_COPY",
+    "actual_tokenizer_revision": "UNVERIFIED_OSS_COPY",
+    "recipe_reference_revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "source_comparison": "CANCELLED_BY_USER",
+    "authorization": "2026-10-21 user: 取消这个环节，直接做全量实验，快速推进"
+  },
+  "preflight_passed": false,
+  "capacity_status": "NOT_TESTED_USER_DIRECT_FULL",
+  "completed_records": null,
+  "monitor_id": "d9b",
+  "source_comparison": "CANCELLED_BY_USER",
+  "failed_previous_task": {
+    "taskPageId": 4953507,
+    "modelTrainingJobId": 4391381,
+    "status": "FAILED",
+    "completed_records": 0,
+    "cause": "optional CUDA_VISIBLE_DEVICES was absent"
+  }
+}
