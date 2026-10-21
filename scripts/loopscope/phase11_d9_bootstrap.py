@@ -140,6 +140,13 @@ def main():
     cmd += ["--platform-job-id", str(job_id)]
     run_step(cmd, deadline, env=env)
     if synthetic and int(os.environ["RANK"]) == 0:
+        for node in range(plan["total_gpus"] // plan["gpus_per_node"]):
+            complete = log_root / f"node-{node}" / "complete.json"
+            while not complete.exists():
+                failure = complete.with_name("failure.json")
+                if failure.exists():
+                    raise RuntimeError("preflight node failed: " + str(failure))
+                time.sleep(min(1, remaining(deadline)))
         run_step([sys.executable, str(root / "scripts/loopscope/check_phase11_d9_gpu.py"),
             "--plan", a.plan, "--model-dir", a.model_dir,
             "--output", str(log_root / "preflight-verified.json")], deadline, env=env)
