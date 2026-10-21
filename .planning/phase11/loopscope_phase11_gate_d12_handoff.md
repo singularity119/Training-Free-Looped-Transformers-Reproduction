@@ -13,3 +13,10 @@ planning直接读取用户注释请求（userMessage 01a15fe1-eb00-7c53-8a21-f77
 资源H20-8x-640G总16卡、quota h20_agi_large_16，双节点各8独立单卡worker，batch1/packing1。当前checkout /Users/singularity/Desktop/tflt_digai/tflt；只增加隔离D12 recipe/worker/launcher/tests及必要接入，保护其他dirty和既有科学核心。新资产统一users/557030/tflt/phase11/d12/fresh-root；模型只读，实际revision UNVERIFIED_OSS_COPY，不将历史HF revision写为当前验证结果。禁止HPC，不复活已取消的独立来源比较或独立容量准入；保留真实启动/设备/内存观测，未验证容量如实记录。
 
 沿D11交接的低风险工程修复范围，定向核对模板关闭thinking、greedy、whole-final S2、32768、H20设备识别、双节点1344分片并集及启动链路，然后提交。工程失败允许同科学fresh恢复缺失/无效项，保留失败回执，成功样本不覆盖。D10/D11及各自监控保持独立，不改不取消。D12真实受理后exact job绑定自身唯一full60min monitor，健康无变化静默，终态暂停并唤醒executor，按research-gate-orchestrator向planning投递GATE_D12_FINAL_AUDIT。规划1–3决定性证据验收；当前仅授权实现，不代表受理、运行或完成。
+
+## 真实受理记录
+
+- task4954247 / modelTrainingJob4392120，name expr_gq_q4_nt_r_20261022031602，backend tj20261022031741-560a3053；2026-10-22 03:17:41 China初受理NEW，尚不代表CUDA启动或完成。
+- runtime source 25f8337a336bfc65dfd8b85ef4b88992fc12f275；OSS root `oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d12/20261021T191602Z/`，九文件代码/配置/计划及真实receipt逐文件回读一致。
+- 独立monitor `d12-qwen3-thinking`（可见名D12 Qwen3关闭thinking全量）ACTIVE/full60min/exact executor；D10 d9b和D11 d11-instruct2507继续独立。machine receipt `.planning/phase11/gate_d12_submission_20261022.json`。
+- 10项定向验证通过；模型实际revision UNVERIFIED_OSS_COPY，runtime smoke尚未观察，长容量NOT_MEASURED。用户确认greedy/wholefinal，保留原32768与三组各448，非thinking单因素因果实验。

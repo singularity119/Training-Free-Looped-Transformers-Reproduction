@@ -1,0 +1,68 @@
+{
+  "modelTrainingJobId": 4392120,
+  "modelTaskName": "expr_gq_q4_nt_r_20261022031602",
+  "jobName": "tj20261022031741-560a3053",
+  "jobStatus": "NEW",
+  "fissionJobId": null,
+  "jobViewUrl": "https://aispace.alibaba-inc.com/#/train/traintask/detail/4954247",
+  "globalParams": {
+    "modelTrainingTaskId": 4954247,
+    "modelTrainingJobId": 4392120
+  },
+  "gate": "D-12",
+  "model": "Qwen/Qwen3-4B",
+  "model_provenance": {
+    "mode": "USER_DESIGNATED_OSS_UNVERIFIED_REVISION",
+    "model_oss": "oss://sampool-bucket/deltalake/other_sample/users/270228/huggingface/Qwen/Qwen3-4B/",
+    "model_mount": "/jindofs_temp/users/270228/huggingface/Qwen/Qwen3-4B",
+    "actual_revision": "UNVERIFIED_OSS_COPY",
+    "actual_tokenizer_revision": "UNVERIFIED_OSS_COPY",
+    "source_comparison": "NOT_REQUESTED_USER_DESIGNATED_OSS",
+    "authorization": "User2026-10-22: annotated4953520 repeat Qwen3-4B,thinking off;explicit reply greedy,whole generated text as final;32768 unchanged;16H20-8x640G,h20_agi_large_16",
+    "recipe_reference_revision": "1cfa9a7208912126459214e8b04321603b3df60c"
+  },
+  "gpu_type": "H20-8x-640G",
+  "quota_project": "h20_agi_large_16",
+  "total_cards": 16,
+  "max_new_tokens": 32768,
+  "scoring_region": "whole_generated_output_as_final",
+  "enable_thinking": false,
+  "cloud_root": "/jindofs_temp/users/557030/tflt/phase11/d12/20261021T191602Z",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d12/20261021T191602Z/",
+  "data_count": 448,
+  "cells": [
+    "native",
+    "current_t_k2_l05",
+    "fixed_t0_k3_l09"
+  ],
+  "source_commit": "25f8337a336bfc65dfd8b85ef4b88992fc12f275",
+  "comparison_baseline": {
+    "task_id": 4953520,
+    "modelTrainingJobId": 4391394,
+    "changes_explicitly_authorized": [
+      "enable_thinking=True->False",
+      "sampling->greedy",
+      "first-generated-close-final->whole-generated-final"
+    ],
+    "retained": [
+      "modelOSS",
+      "32768newtokens",
+      "three loop arms",
+      "448identities",
+      "optionorder",
+      "seeds",
+      "S2grammar",
+      "full denominator"
+    ],
+    "interpretation": "thinking and decoding both changed;not single-factor thinking-only causal estimate"
+  },
+  "formal_expected_records": 1344,
+  "do_sample": false,
+  "bundle_readback_equal": true,
+  "runtime_smoke_status": "NOT_YET_OBSERVED;bootstrap runs synthetic path first",
+  "long_sequence_capacity_status": "NOT_MEASURED",
+  "targeted_checks": "10 passed;native enable_thinkingFalse,greedy,whole-final S2,32768,16GPU union1344,rank0/8 barriers",
+  "scientific_confirmation": "User explicit reply greedy,whole generated text as final;32768 retained from annotated4953520;three loop arms unchanged",
+  "monitor_id": "d12-qwen3-thinking",
+  "monitor_status": "ACTIVE"
+}
