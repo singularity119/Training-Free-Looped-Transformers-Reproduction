@@ -1,0 +1,24 @@
+{
+  "modelTrainingJobId": 4391356,
+  "modelTaskName": "expr_q4_src_v1_b_20261021192650",
+  "jobName": "tj20261021192848-f7286235",
+  "jobStatus": "NEW",
+  "fissionJobId": null,
+  "jobViewUrl": "https://aispace.alibaba-inc.com/#/train/traintask/detail/4953480",
+  "globalParams": {
+    "modelTrainingTaskId": 4953480,
+    "modelTrainingJobId": 4391356
+  },
+  "gpu_type": "CPU-32",
+  "quota_project": "default",
+  "gpu_requested": 0,
+  "source_commit": "44c0748626b9f3138b25d0bdb940ecfab8177284",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/source-prepare-20261021T112650Z/",
+  "monitor_id": "d9b",
+  "monitor_status": "ACTIVE",
+  "monitor_minutes": 10,
+  "predecessor_failed_gpu_task": 4953416,
+  "source_scope": "CPU network/Jindo diagnosis and full fixed revision byte equality only; no model forward",
+  "formal_submitted": false,
+  "source_code_files_direct_readback_equal": 5
+}
