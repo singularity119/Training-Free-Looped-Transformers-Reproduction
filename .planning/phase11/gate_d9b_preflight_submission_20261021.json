@@ -1,0 +1,31 @@
+{
+  "gate": "D-9-B",
+  "executor": "01a15ddb-5ea0-7112-8468-62b463c996b5",
+  "source_commit": "b9688e1205997a3de4470fed2a9baad1f19ee976",
+  "quota_project": "h20_agi_large_16",
+  "total_cards": 16,
+  "gpu_type": "H20-8x-960G",
+  "task_page_id": 4953407,
+  "modelTrainingJobId": 4391283,
+  "gitPackageJobId": 21146825,
+  "job_name": "expr_gq_q4_t1_s_20261021175406",
+  "state": "TASK_CREATED_GIT_PACKAGE_RUNNING_NOT_CUDA_VERIFIED",
+  "source_identity_evidence": "platform exact-name task page plus main.log callback modelTrainingJobId",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/20261021T095406Z/",
+  "launcher_root": "launch/preflight-attempt1",
+  "client_exit": "outer subprocess TimeoutExpired after 180s; no automatic resubmission",
+  "client_timeout_effect": "local CLI terminated; backend task preserved; bootstrap receipt uploaded with directly read modelTrainingJobId",
+  "code_config_readback": "9 uploaded files directly equal on download",
+  "formal_submitted": false,
+  "formal_records_expected": 1344,
+  "gold_scored": false,
+  "monitor": {
+    "id": "d9b",
+    "status": "ACTIVE",
+    "interval_minutes": 10,
+    "target_thread": "01a15ddb-5ea0-7112-8468-62b463c996b5",
+    "terminal_route": "pause then confirmed self-wake; fallback planning relay"
+  },
+  "next_action": "real same-path preflight and capacity pass then direct 16-card formal; engineering failure fresh low-risk recovery only",
+  "timestamp_utc": "2026-10-21T10:45:52.852277+00:00"
+}
