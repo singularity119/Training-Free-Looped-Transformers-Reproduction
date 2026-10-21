@@ -1,0 +1,86 @@
+{
+  "modelTrainingJobId": 4392138,
+  "modelTaskName": "expr_gq_q4_nt_r_20261022033048",
+  "jobName": "tj20261022033145-0ec4ada6",
+  "jobStatus": "NEW",
+  "fissionJobId": null,
+  "jobViewUrl": "https://aispace.alibaba-inc.com/#/train/traintask/detail/4954265",
+  "globalParams": {
+    "modelTrainingTaskId": 4954265,
+    "modelTrainingJobId": 4392138
+  },
+  "gate": "D-12",
+  "model": "Qwen/Qwen3-4B",
+  "model_provenance": {
+    "mode": "USER_DESIGNATED_OSS_UNVERIFIED_REVISION",
+    "model_oss": "oss://sampool-bucket/deltalake/other_sample/users/270228/huggingface/Qwen/Qwen3-4B/",
+    "model_mount": "/jindofs_temp/users/270228/huggingface/Qwen/Qwen3-4B",
+    "actual_revision": "UNVERIFIED_OSS_COPY",
+    "actual_tokenizer_revision": "UNVERIFIED_OSS_COPY",
+    "source_comparison": "NOT_REQUESTED_USER_DESIGNATED_OSS",
+    "authorization": "User2026-10-22: annotated4953520 repeat Qwen3-4B,thinking off;explicit reply greedy,whole generated text as final;32768 unchanged;16H20-8x640G,h20_agi_large_16;latest user: quota exceeded,reduce total cards16->8,all science/quota unchanged",
+    "recipe_reference_revision": "1cfa9a7208912126459214e8b04321603b3df60c"
+  },
+  "gpu_type": "H20-8x-640G",
+  "quota_project": "h20_agi_large_16",
+  "total_cards": 8,
+  "max_new_tokens": 32768,
+  "scoring_region": "whole_generated_output_as_final",
+  "enable_thinking": false,
+  "cloud_root": "/jindofs_temp/users/557030/tflt/phase11/d12/repair8-20261021T193048Z",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d12/repair8-20261021T193048Z/",
+  "data_count": 448,
+  "cells": [
+    "native",
+    "current_t_k2_l05",
+    "fixed_t0_k3_l09"
+  ],
+  "source_commit": "cc2025c27dbfe32ecbf4f821fcea02848e6009d6",
+  "comparison_baseline": {
+    "task_id": 4953520,
+    "modelTrainingJobId": 4391394,
+    "changes_explicitly_authorized": [
+      "enable_thinking=True->False",
+      "sampling->greedy",
+      "first-generated-close-final->whole-generated-final"
+    ],
+    "retained": [
+      "modelOSS",
+      "32768newtokens",
+      "three loop arms",
+      "448identities",
+      "optionorder",
+      "seeds",
+      "S2grammar",
+      "full denominator"
+    ],
+    "interpretation": "thinking and decoding both changed;not single-factor thinking-only causal estimate"
+  },
+  "recovery_from": {
+    "task_id": 4954247,
+    "modelTrainingJobId": 4392120,
+    "fissionJobId": 21150146,
+    "observed_state": "FAILED",
+    "cause_source": "USER_REPORTED_QUOTA_EXCEEDED",
+    "successful_records_observed": 0,
+    "user_authorized_change": "16->8 total cards only"
+  },
+  "formal_expected_records": 1344,
+  "do_sample": false,
+  "bundle_readback_equal": true,
+  "scientific_config_equal_to_failed_attempt": true,
+  "runtime_smoke_status": "NOT_YET_OBSERVED;bootstrap runs synthetic path first",
+  "long_sequence_capacity_status": "NOT_MEASURED",
+  "targeted_checks": "11 passed;single8card/16card startup routing and1344union,wholefinal/native disabledthinking/greedy32768",
+  "monitor_id": "d12-qwen3-thinking",
+  "monitor_status": "ACTIVE",
+  "latest_platform_readback": {
+    "observed_at_utc": "2026-10-21T19:32:49.441906+00:00",
+    "task_id": 4954265,
+    "modelTrainingJobId": 4392138,
+    "jobStatus": "NEW",
+    "fissionJobId": null,
+    "trainingStartTime": null,
+    "source": "real callback-supplied openapi status POST HTTP200"
+  }
+}
