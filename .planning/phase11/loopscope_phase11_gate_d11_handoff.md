@@ -14,3 +14,10 @@ HOST=local
 Agility budget：只验证新模板/greedy/S2/设备识别/双节点分片1344并集和提交路径，复用此前正常启动逻辑；定向测试后真实提交，保留启动健康与整卡显存日志，不称未做预检或容量已PASS。独立运行root，成功样本不覆盖；同科学低风险工程错误可fresh恢复缺失/无效项，不停其他任务。科学不确定向planning报告集中确认，不能自行择优改参数。
 
 用户同时保留D10任务，D11不能取消/重用其root/score或替换掉其监控路由。一个Gate一个有效monitor，D11真实job后建自身full60min，D10唯一monitor继续独立；二者可同executor但按exact Gate/job分开，健康无变化静默。终态monitor暂停并唤醒本executor，分别GATE_D11_FINAL_AUDIT/GATE_D10_FINAL_AUDIT向planning投递确认。无双重监控同一job。规划只读1–3决定性证据验收；负结果可PASS，未经用户不增加后续实验。
+
+## 真实受理记录
+
+- task4954217 / modelTrainingJob4392090，name expr_gq_i4_g1_r_20261022025735，backend tj20261022025759-a35f5e85；2026-10-22 02:57:59受理NEW，尚不代表CUDA启动或完成。
+- runtime source 3bf5d241aa6732c13714bfce41537db2e9dbbb26；OSS root `oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d11/20261021T185735Z/`，代码包九文件及真实receipt逐文件回读一致。
+- 单独monitor `d11-instruct2507` ACTIVE/full60min/exact executor；D10 d9b继续独立。machine receipt `.planning/phase11/gate_d11_submission_20261022.json`。
+- 9项定向检查通过；runtime smoke尚未观察，8192长序列容量NOT_MEASURED。首请求create前benchmark缺失明确1008拒绝，证据独立保留；补平台现有benchmark字段后当前fresh受理，科学配置未变。

@@ -1,0 +1,47 @@
+{
+  "modelTrainingJobId": 4392090,
+  "modelTaskName": "expr_gq_i4_g1_r_20261022025735",
+  "jobName": "tj20261022025759-a35f5e85",
+  "jobStatus": "NEW",
+  "fissionJobId": null,
+  "jobViewUrl": "https://aispace.alibaba-inc.com/#/train/traintask/detail/4954217",
+  "globalParams": {
+    "modelTrainingTaskId": 4954217,
+    "modelTrainingJobId": 4392090
+  },
+  "gate": "D-11",
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "model_provenance": {
+    "mode": "USER_DESIGNATED_OSS_UNVERIFIED_REVISION",
+    "model_oss": "oss://sampool-bucket/deltalake/other_sample/users/270228/huggingface/Qwen/Qwen3-4B-Instruct-2507/",
+    "model_mount": "/jindofs_temp/users/270228/huggingface/Qwen/Qwen3-4B-Instruct-2507",
+    "actual_revision": "UNVERIFIED_OSS_COPY",
+    "actual_tokenizer_revision": "UNVERIFIED_OSS_COPY",
+    "source_comparison": "NOT_REQUESTED_USER_DESIGNATED_OSS",
+    "authorization": "User2026-10-22: Instruct2507,D4 greedy8192 whole-output S2,16A100-8x640G,a100_agi_large_32"
+  },
+  "gpu_type": "A100-8x-640G",
+  "quota_project": "a100_agi_large_32",
+  "total_cards": 16,
+  "max_new_tokens": 8192,
+  "scoring_region": "whole_generated_output",
+  "cloud_root": "/jindofs_temp/users/557030/tflt/phase11/d11/20261021T185735Z",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d11/20261021T185735Z/",
+  "data_count": 448,
+  "cells": [
+    "native",
+    "current_t_k2_l05",
+    "fixed_t0_k3_l09"
+  ],
+  "source_commit": "3bf5d241aa6732c13714bfce41537db2e9dbbb26",
+  "formal_expected_records": 1344,
+  "do_sample": false,
+  "bundle_readback_equal": true,
+  "runtime_smoke_status": "NOT_YET_OBSERVED;bootstrap runs synthetic path first",
+  "long_sequence_capacity_status": "NOT_MEASURED",
+  "scientific_confirmation": "D4 greedy8192 whole-output S2;three loop arms unchanged;Instruct native CoT",
+  "benchmark": "odps://sec_large_dev/tables/xinghe_llm_benchmark/ds=20231225",
+  "monitor_id": "d11-instruct2507",
+  "monitor_status": "ACTIVE",
+  "targeted_checks": "9 passed under bundled Python;16 worker union1344,rank0/8 barriers and native template/S2"
+}
