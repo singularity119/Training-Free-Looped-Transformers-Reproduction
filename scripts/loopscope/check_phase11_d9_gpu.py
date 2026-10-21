@@ -13,7 +13,7 @@ def run(plan_file, model_dir, output):
     from transformers import AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True, trust_remote_code=True)
     plan = read(plan_file)
-    require(plan["total_gpus"] == 1 and plan["packing"] == 1, "one-GPU synthetic preflight only")
+    require(plan["total_gpus"] in (1, 8) and plan["packing"] == 1, "one/eight-GPU synthetic preflight only")
     found, positive = [], 0
     for task in plan["tasks"]:
         for job in task["jobs"]:
@@ -29,7 +29,8 @@ def run(plan_file, model_dir, output):
                 validate_bundle(i, r, t, meta, pool, tokenizer)
                 positive += validate_generation_path(r, t)
             found.append(job["cell_key"])
-    require(sorted(found) == sorted(CELLS) and positive > 0, "preflight needs three cells and real S2 positive coverage")
+    require(sorted(found) == sorted(list(CELLS) * plan["total_gpus"]) and positive > 0,
+            "preflight needs all worker/cell paths and real S2 positive coverage")
     write_json_once(Path(output), {"status": "D9_SYNTHETIC_PATH_VERIFIED", "cells": found,
         "source_commit": plan["source_commit"], "S2_positive_count": positive, "target_gold_loaded": False,
         "capacity_representative": False,

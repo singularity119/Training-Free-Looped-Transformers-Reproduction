@@ -57,6 +57,7 @@ def main():
     for key in ("bundle", "plan", "model-dir", "admission", "launcher-output", "receipt-file"):
         p.add_argument("--" + key, required=True)
     p.add_argument("--timeout-seconds", type=int, required=True)
+    p.add_argument("--verify-model-source", action="store_true")
     a = p.parse_args()
     if a.timeout_seconds <= 0:
         raise ValueError("bootstrap total time limit must be positive")
@@ -72,6 +73,30 @@ def main():
         archive.extractall(root, filter="data")
     remaining(deadline)
     env = dict(os.environ, PYTHONPATH=str(root / "src"), PYTHONDONTWRITEBYTECODE="1")
+    plan = json.loads(Path(a.plan).read_text())
+    synthetic = all(job["synthetic"] for task in plan["tasks"] for job in task["jobs"])
+    log_root = Path(a.launcher_output)
+    log_root.mkdir(parents=True, exist_ok=True)
+    if a.verify_model_source:
+        if not synthetic:
+            raise ValueError("model source preparation is a preflight-only action")
+        admitted_file = log_root / "admission-source-verified.json"
+        if int(os.environ["RANK"]) == 0:
+            evidence = log_root / "model-source.json"
+            run_step([sys.executable, str(root / "scripts/loopscope/phase11_d9_model_source.py"),
+                "--model-dir", a.model_dir, "--output", str(evidence),
+                "--timeout-seconds", str(min(900, remaining(deadline)))], deadline, env=env)
+            source = json.loads(evidence.read_text())
+            if source["status"] != "PASS":
+                raise ValueError("mounted model differs or source comparison failed")
+            admitted = json.loads(Path(a.admission).read_text())
+            admitted["model_source_evidence"] = str(evidence)
+            with admitted_file.open("x") as handle:
+                json.dump(admitted, handle, indent=2)
+        # Source comparison may take more than the usual short receipt wait.
+        while not admitted_file.exists():
+            time.sleep(min(1, remaining(deadline)))
+        a.admission = str(admitted_file)
     admission = json.loads(Path(a.admission).read_text())
     bundle_info = json.loads((root / "bundle-info.json").read_text())
     if (not admission.get("model_source_evidence") or
@@ -85,15 +110,12 @@ def main():
                          ("torch", "triton", "nvidia", "cuda", "flash"))}
         constraints = root / "image-constraints.txt"
         constraints.write_text("".join(f"{k}=={v}\n" for k, v in sorted(protected.items())))
-        log_root = Path(a.launcher_output)
-        log_root.mkdir(parents=True, exist_ok=True)
         with (log_root / f"rank-{os.environ['RANK']}-install.log").open("x") as log:
             run_step([sys.executable, "-m", "pip", "install", "-r", str(root / "requirements.txt"),
                 "--constraint", str(constraints)], deadline, stdout=log, stderr=subprocess.STDOUT)
         for name, version in protected.items():
             if importlib.metadata.version(name) != version:
                 raise RuntimeError("image accelerator package changed: " + name)
-        plan = json.loads(Path(a.plan).read_text())
         pools = {job["pool"] for task in plan["tasks"] for job in task["jobs"]}
         if len(pools) != 1:
             raise ValueError("all D9 tasks must use the same frozen input pool")
@@ -104,7 +126,7 @@ def main():
         if int(os.environ["RANK"]) == 0 and not ready.exists():
             command = [sys.executable, str(root / "scripts/loopscope/prepare_phase11_d9_inputs.py"),
                        "--model-dir", a.model_dir, "--output-dir", str(pool_file.parent)]
-            if plan["total_gpus"] == 1:
+            if synthetic:
                 command.append("--synthetic")
             else:
                 config = json.loads((root / "configs/loopscope/phase11_d9_lingjing.json").read_text())
@@ -117,6 +139,26 @@ def main():
     cmd += ["--timeout-seconds", str(max(1, int(remaining(deadline))))]
     cmd += ["--platform-job-id", str(job_id)]
     run_step(cmd, deadline, env=env)
+    if synthetic and int(os.environ["RANK"]) == 0:
+        run_step([sys.executable, str(root / "scripts/loopscope/check_phase11_d9_gpu.py"),
+            "--plan", a.plan, "--model-dir", a.model_dir,
+            "--output", str(log_root / "preflight-verified.json")], deadline, env=env)
+        config = json.loads((root / "configs/loopscope/phase11_d9_lingjing.json").read_text())
+        formal_pool = Path(config["cloud_root"]) / "inputs/formal/thinking-pool.json"
+        if not (formal_pool.parent / "alignment.json").exists():
+            run_step([sys.executable, str(root / "scripts/loopscope/prepare_phase11_d9_inputs.py"),
+                "--model-dir", a.model_dir, "--output-dir", str(formal_pool.parent),
+                "--source-csv", config["data"]["source_csv_mount"]], deadline, env=env)
+        capacity_env = dict(env, CUDA_VISIBLE_DEVICES=os.environ["CUDA_VISIBLE_DEVICES"].split(",")[0])
+        run_step([sys.executable, str(root / "scripts/loopscope/phase11_d9_capacity.py"),
+            "--model-dir", a.model_dir, "--pool", str(formal_pool),
+            "--output", str(log_root / "capacity.json")], deadline, env=capacity_env)
+        with (log_root / "preflight-complete.json").open("x") as handle:
+            json.dump({"status": "PREFLIGHT_COMPLETE", "source_commit": bundle_info["source_commit"],
+                "platform_job_id": job_id, "elapsed_seconds": time.monotonic() - started,
+                "total_gpus": plan["total_gpus"], "formal_gold_scored": False,
+                "model_source_evidence": admission["model_source_evidence"],
+                "capacity_evidence": str(log_root / "capacity.json")}, handle, indent=2)
 
 
 if __name__ == "__main__":

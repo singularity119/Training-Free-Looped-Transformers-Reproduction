@@ -14,7 +14,7 @@ from tflt.loopscope.phase11_panel import require, write_json_once
 
 def make_plan(output_root, pool, source_commit, total_gpus=8, synthetic=False):
     require(total_gpus in (1, 8, 16), "D9 uses one preflight GPU or eight/sixteen formal GPUs")
-    require(synthetic == (total_gpus == 1), "one GPU is reserved for synthetic preflight")
+    require(synthetic or total_gpus != 1, "one GPU is reserved for synthetic preflight")
     root, cells = Path(output_root), selected_cells()
     tasks, jobs = [], []
     for rank in range(total_gpus):
@@ -31,7 +31,7 @@ def make_plan(output_root, pool, source_commit, total_gpus=8, synthetic=False):
             jobs.append(job)
         tasks.append({"rank": rank, "jobs": worker_jobs})
     return {"schema": "loopscope.phase11.d9.lingjing_plan.v1", "total_gpus": total_gpus,
-            "gpus_per_node": 1 if synthetic else 8, "packing": 1, "source_commit": source_commit,
+            "gpus_per_node": 1 if total_gpus == 1 else 8, "packing": 1, "source_commit": source_commit,
             "tasks": tasks, "registry": {"schema": "loopscope.phase11.d8.full_registry.v1", "jobs": jobs}}
 
 

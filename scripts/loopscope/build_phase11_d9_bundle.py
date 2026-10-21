@@ -17,6 +17,7 @@ SCRIPTS = (
     "phase11_d9_lingjing_worker.py", "prepare_phase11_d9_inputs.py",
     "analyze_phase11_d9.py", "analyze_phase11_d8.py", "phase11_d9_bootstrap.py",
     "check_phase11_d9_gpu.py", "check_phase11_d8_gpu.py",
+    "phase11_d9_model_source.py", "phase11_d9_capacity.py",
 )
 
 
@@ -56,7 +57,7 @@ def build(output):
     cloud = Path(config["cloud_root"])
     for stage in ("preflight", "formal"):
         plan = make_plan(cloud / "runs" / stage, cloud / "inputs" / stage / "thinking-pool.json",
-                         commit, 1 if stage == "preflight" else config["submission_candidate"]["train_node_num"], stage == "preflight")
+                         commit, config["submission_candidate"]["train_node_num"], stage == "preflight")
         (output / f"plan-{stage}.json").write_text(json.dumps(plan, indent=2)+"\n")
         (output / f"registry-{stage}.json").write_text(json.dumps(plan["registry"], indent=2)+"\n")
     candidate = config["submission_candidate"]

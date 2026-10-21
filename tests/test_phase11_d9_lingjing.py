@@ -46,6 +46,14 @@ class LingjingD9Tests(unittest.TestCase):
         self.assertEqual(len(plan["registry"]["jobs"]), 3)
         self.assertTrue(all(j["synthetic"] and j["engineering"] and j["indices"] == [0]
                             for j in plan["registry"]["jobs"]))
+        # Exercise the actual eight-card rank routing before formal deployment.
+        eight = make_plan("/cloud/smoke8", "/cloud/synthetic", "revision", 8, True)
+        self.assertEqual(eight["gpus_per_node"], 8)
+        self.assertEqual(len(eight["registry"]["jobs"]), 24)
+        self.assertTrue(all(j["synthetic"] and j["engineering"] and j["indices"] == [0]
+                            for j in eight["registry"]["jobs"]))
+        self.assertEqual(topology({"RANK": "7", "LOCAL_RANK": "7", "WORLD_SIZE": "8",
+                                   "LOCAL_WORLD_SIZE": "8"}, eight), (7, 7, 0))
 
     def test_allocation_records_platform_without_fake_slurm(self):
         self.assertEqual(allocation({"D9_PLATFORM_JOB_ID": "real-job-id"})["platform"], "lingjing")
