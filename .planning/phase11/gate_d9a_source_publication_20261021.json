@@ -1,0 +1,70 @@
+{
+  "source_url": "https://raw.githubusercontent.com/idavidrein/gpqa/56686c06f5e19865c153de0fdb11be3890014df7/dataset.zip",
+  "acquisition_url": "https://raw.githubusercontent.com/idavidrein/gpqa/56686c06f5e19865c153de0fdb11be3890014df7/dataset.zip",
+  "github_commit": "56686c06f5e19865c153de0fdb11be3890014df7",
+  "archive_member": "dataset/gpqa_main.csv",
+  "count": 448,
+  "columns": [
+    "Question",
+    "Correct Answer",
+    "Incorrect Answer 1",
+    "Incorrect Answer 2",
+    "Incorrect Answer 3"
+  ],
+  "row_order": "original archive member order",
+  "archive_bytes": 2348038,
+  "source_csv_bytes": 288097,
+  "local_projection_equal": true,
+  "public_distribution_password_used": true,
+  "network_note": "Per-command address override from live public HTTPS DNS response; normal TLS verification kept; no global DNS/VPN/proxy/trust changes",
+  "status": "SOURCE_CSV_PUBLISHED_READBACK_VERIFIED",
+  "published_at_utc": "2026-10-21T09:34:25.381444+00:00",
+  "source_oss": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/20261021T085801Z/inputs/source/sealed/gpqa-main-56686c06/gpqa_main.csv",
+  "source_mount": "/jindofs_temp/users/557030/tflt/phase11/d9/20261021T085801Z/inputs/source/sealed/gpqa-main-56686c06/gpqa_main.csv",
+  "object_scope": "source/sealed; isolated input builder only",
+  "contains_answer_roles": true,
+  "inference_workers_read_source": false,
+  "gold_free_pool_tokenized": false,
+  "scoring_gold_created": false,
+  "upload_exit": 0,
+  "readback_exit": 0,
+  "readback_bytes_equal": true,
+  "all_448_five_field_rows_equal_to_original_archive_in_order": true,
+  "public_password_verified_in_same_commit_readme": true,
+  "archive_download_method": "original fixed raw URL, command-scoped address from live HTTPS DNS; default TLS verification; no global config changes",
+  "local_source_cleanup": "COMPLETE_AFTER_CSV_AND_PUBLICATION_READBACK",
+  "publication_receipt_oss": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/20261021T085801Z/inputs/source/sealed/gpqa-main-56686c06/publication.json",
+  "publication_receipt_readback_equal": true,
+  "local_source_root_removed": "/var/folders/zj/t3g_yx4j701dcf0ls3d91q540000gn/T/loopscope-d9a-source-72e3axdg",
+  "local_source_root_exists": false,
+  "cleanup_time_utc": "2026-10-21T09:35:20.288608+00:00",
+  "source_answer_roles_read_for_authorized_projection": true,
+  "scoring_gold_read": false,
+  "inference_or_scoring_run": false,
+  "acl_changed": false,
+  "public_link_created": false,
+  "old_loopscope_oss_objects_uploaded": 0,
+  "preserved_failed_attempt_summaries": [
+    {
+      "stage": "github_fixed_repository_archive_bounded_long",
+      "exit": -15,
+      "stderr": "",
+      "bytes_received": 1957888
+    },
+    {
+      "stage": "fixed_author_download",
+      "exit": 28,
+      "stderr": "curl: (28) Failed to connect to raw.githubusercontent.com port 443 after 10003 ms: Timeout was reached\n"
+    },
+    {
+      "stage": "github_fixed_repository_archive",
+      "exit": 28,
+      "stderr": "curl: (28) Operation timed out after 45002 milliseconds with 258309 bytes received\n"
+    },
+    {
+      "stage": "github_fixed_contents_raw",
+      "exit": 56,
+      "stderr": "curl: (56) The requested URL returned error: 403\n"
+    }
+  ]
+}

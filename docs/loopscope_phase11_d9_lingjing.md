@@ -1,6 +1,6 @@
 # D-9 灵境代码准备与恢复入口
 
-当前仅完成 D-9-A 代码准备。用户 2026-10-21 随后通知 `h20_agi_large` 有8卡可用，
+当前 D-9-A 完成代码准备及一次性源数据发布。用户 2026-10-21 随后通知 `h20_agi_large` 有8卡可用，
 当前提交候选已改为总8卡、单节点；该通知不是本 Gate 的计算提交权限。
 不得轮询额度、提交 CPU/GPU 任务或建立额度监控。本文命令是后续独立 executor 的
 恢复 runbook，不授予执行权限。动态范围见 `.planning/phase11/loopscope_phase11_control.md`
@@ -38,6 +38,9 @@ GPQA 使用 `idavidrein/gpqa@56686c06f5e19865c153de0fdb11be3890014df7` 的
 用户随后授权本机一次性临时处理该小归档、只投影原五字段并按原序发布到 OSS，
 直接回读成功后删除本次临时题集。实际发布与清理证据见最新 D9A repair/publication 回执；
 不将源题、答案或归档放入 Git/运行包。后续云端实际读取仍须通过 Main=448、五字段及原构建器检查。
+本次448行、5字段 CSV 为288097字节，已发布并直接回读为原归档投影的完全相同行序；
+本地临时题集已清理。证据为 `.planning/phase11/gate_d9a_source_publication_20261021.json`，
+其中区分源答案角色的授权读取与尚未发生的推理/预测评分，tokenizer pool 尚未构建。
 `alignment.json` 明确标记 `SOURCE_CONTRACT_REUSED` 及 `hpc_artifact_readback_performed=false`，
 不声称已在此设备对旧 HPC pool 做逐题回读。已放弃的镜像路线曾返回 403 GatedRepo，
 不会向镜像发送 token 或以另一副本顶替。

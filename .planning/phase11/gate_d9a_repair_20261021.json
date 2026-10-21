@@ -1,0 +1,83 @@
+{
+  "event": "GATE_D9A_FINAL_AUDIT_REPAIR",
+  "executor": "01a15da2-67ed-73f3-90ec-a2f5fb90511e",
+  "planning": "01a15d9c-ee8b-7502-97b2-a40f732e00f5",
+  "branch": "loopscope",
+  "repair_cycle": 1,
+  "repair_source_commit": "23aebc2ab3288d0dc126990687083d41489845a5",
+  "supersedes_runtime_bundle_source": "d7d1543a1e1a094748a3de50a352cbde3839c6ec",
+  "latest_scope": "Repair the two accepted material findings, publish original448 five-field CSV to the user-designated tflt OSS root; D9A still submits no CPU/GPU jobs",
+  "fixes": {
+    "encrypted_author_archive": {
+      "implementation": "project_archive passes the public distribution password to ZipFile.read",
+      "source": "https://raw.githubusercontent.com/idavidrein/gpqa/56686c06f5e19865c153de0fdb11be3890014df7/README.md",
+      "fixed_readme_read_and_password_confirmed": true,
+      "test": "Artificial448-row encrypted ZIP created by system zip; encrypted bit checked, passwordless read fails, project_archive decrypts and returns exact original synthetic rows",
+      "actual_original_archive_decryption": true
+    },
+    "bootstrap_total_deadline": {
+      "implementation": "One monotonic deadline starts at bootstrap entry; receipt wait, extraction checks, pip, input preparation, shared-ready wait and launcher consume remaining time; subprocess steps own a process group and kill/reap it on timeout or failure",
+      "preflight_seconds": 1740,
+      "formal_seconds_independently_configurable": 86400,
+      "test": "A preparation child consumes part of a0.8-second shared budget, next sleeping child times out at the same deadline and is reaped; formal86400 is not clamped to1740"
+    },
+    "published_source_reuse": {
+      "implementation": "Bootstrap formal path passes config.data.source_csv_mount to the existing isolated builder; no archive network fetch on the normal submitted path",
+      "test": "Synthetic448-row --source-csv CLI test makes any archive fetch fatal and still builds the original pool/sealed outputs through existing producers"
+    }
+  },
+  "asset_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/",
+  "candidate_oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/20261021T085801Z/",
+  "candidate_mount_root": "/jindofs_temp/users/557030/tflt/phase11/d9/20261021T085801Z",
+  "source_publication": {
+    "status": "SOURCE_PUBLISHED_AND_LOCAL_SOURCE_CLEANED",
+    "receipt": ".planning/phase11/gate_d9a_source_publication_20261021.json",
+    "source_oss": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/20261021T085801Z/inputs/source/sealed/gpqa-main-56686c06/gpqa_main.csv",
+    "publication_receipt_oss": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/20261021T085801Z/inputs/source/sealed/gpqa-main-56686c06/publication.json",
+    "cleanup_receipt_oss": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/20261021T085801Z/inputs/source/sealed/gpqa-main-56686c06/cleanup.json",
+    "count": 448,
+    "fields": ["Question", "Correct Answer", "Incorrect Answer 1", "Incorrect Answer 2", "Incorrect Answer 3"],
+    "bytes": 288097,
+    "readback_bytes_equal": true,
+    "all_rows_equal_to_original_five_field_projection_in_original_order": true,
+    "publication_and_cleanup_receipts_directly_readback_equal": true,
+    "temporary_original_archive_and_csv_removed_after_verification": true,
+    "source_answer_roles_read_under_explicit_preparation_exception": true,
+    "pool_tokenized": false,
+    "scoring_gold_created_or_read": false,
+    "inference_workers_receive_source_or_gold": false,
+    "old_loopscope_root_uploads": 0,
+    "acl_changed": false,
+    "public_link_created": false
+  },
+  "bundle": {
+    "directory": ".planning/phase11/gate_d9a_code_bundle_20261021_repair1",
+    "runtime_tar": ".planning/phase11/gate_d9a_code_bundle_20261021_repair1/runtime.tar.gz",
+    "bytes": 788594,
+    "direct_committed_file_byte_comparisons": 139,
+    "affected_stdlib_only_cli_help_exit0": 2,
+    "formal_gpus": 8,
+    "asset_paths_use_tflt_root": true,
+    "external_model_source_under_users270228_unchanged": true,
+    "model_data_gold_or_planning_in_bundle": false,
+    "code_bundle_upload": false,
+    "preflight_and_formal_plans_updated_from_new_root_configuration": true
+  },
+  "verification_commands": [
+    "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_phase11_d9_bootstrap.py' -v",
+    "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_phase11_d9_inputs.py' -v",
+    "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/loopscope/build_phase11_d9_bundle.py --output-dir .planning/phase11/gate_d9a_code_bundle_20261021_repair1",
+    "git diff --check; git diff --cached --check"
+  ],
+  "targeted_test_results": {"bootstrap": 1, "inputs": 6, "all_passed": 7, "exit": 0, "full_historical_suite_repeated": false},
+  "network_recovery": "Raw-domain local DNS returned an unusable address; GitHub anonymous API was rate-limited and connector required reauthentication. Exact original raw URL succeeded with a command-only address from a live public HTTPS DNS answer, normal TLS kept. No global DNS/VPN/proxy/trust settings changed. Superseded slow codeload transfer cancelled after original archive succeeded; temporary attempts removed only after verified source publication.",
+  "protected_paths_or_old_d8_modified": false,
+  "compute": {"cpu_jobs_submitted": 0, "gpu_jobs_submitted": 0, "gpu_hours": 0, "monitor_created": false},
+  "runtime_admission_still_needed": [
+    "Planning acceptance and new independent exact D9B handoff",
+    "Required OSS Qwen3-4B/tokenizer revision: current small metadata is consistent but has no acquisition revision; shortest next evidence is original readable download provenance or authorized original fixed-revision asset comparison",
+    "Real scoped demand_id and legal current8H20 allocation; user has authorized legal Lingjing short preflight then direct full run",
+    "Real less-than30-minute same-path preflight plus representative32768 capacity evidence with about20percent headroom"
+  ],
+  "requested_decision": "PASS for repaired D9A code/source preparation; user continuation belongs to a new independent D9B, not this executor"
+}
