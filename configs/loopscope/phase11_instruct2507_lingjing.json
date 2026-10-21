@@ -34,15 +34,15 @@
   "packing": 1,
   "gpu_type": "A100-8x-640G",
   "quota_project": "a100_agi_large_32",
-  "cloud_root": "/jindofs_temp/users/557030/tflt/phase11/d11/20261021T185418Z",
-  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d11/20261021T185418Z/",
+  "cloud_root": "/jindofs_temp/users/557030/tflt/phase11/d11/20261021T185735Z",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d11/20261021T185735Z/",
   "submission_candidate": {
     "emp_id": "557030",
     "demand_id": "10923",
-    "job_name": "expr_gq_i4_g1_r_20261022025418",
+    "job_name": "expr_gq_i4_g1_r_20261022025735",
     "code_url": "git@gitlab.alibaba-inc.com:Yufeng_Intern/Big_Model_Intern.git hxt",
     "training_image_path": "reg.docker.alibaba-inc.com/algorithm/quake:torch-2.10-cuda128-cudnn9-rocky9-train-v2.0",
-    "entry_file": "/jindofs_temp/users/557030/tflt/phase11/d11/20261021T185418Z/start.py",
+    "entry_file": "/jindofs_temp/users/557030/tflt/phase11/d11/20261021T185735Z/start.py",
     "gpu_type": "A100-8x-640G",
     "train_node_num": 16,
     "train_node_shared_mem": 16,
@@ -50,12 +50,14 @@
     "quota_project": "a100_agi_large_32",
     "framework": "pytorch",
     "region": "zhangbei",
-    "training_inputs": "[\"/jindofs_temp:jindo:jindo-lake3:/other_sample\"]"
+    "training_inputs": "[\"/jindofs_temp:jindo:jindo-lake3:/other_sample\"]",
+    "benchmark": "odps://sec_large_dev/tables/xinghe_llm_benchmark/ds=20231225"
   },
   "aliases": {
     "gq": "original GPQA Main448",
     "g1": "native Instruct CoT template with D4 greedy8192",
     "r": "full raw tokens/text/lifecycle + whole-outputS2",
     "i4": "user-designated Qwen3-4B-Instruct-2507"
-  }
+  },
+  "submission_metadata_note": "A100 required platform benchmark field reused from existing accepted A100 templates;GPQA inputs/scoring remain independent."
 }

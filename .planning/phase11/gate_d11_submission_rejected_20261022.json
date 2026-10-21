@@ -1,0 +1,10 @@
+{
+  "status": "REJECTED_BEFORE_JOB_CREATION",
+  "errorCode": "1008",
+  "errorMessage": "训练使用A100，benchmark不能为空",
+  "task_id": null,
+  "modelTrainingJobId": null,
+  "source_commit": "2988c323b325754feb6fab1d648a5e853dfb1417",
+  "scientific_configuration_changed": false,
+  "next": "Add documented existing A100 benchmark metadata;fresh exact-name invocation"
+}
