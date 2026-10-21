@@ -1,0 +1,39 @@
+{
+  "gate": "D-9-B",
+  "event": "USER_FORBIDS_960G_SWITCH_TO_640G",
+  "executor": "01a15ddb-5ea0-7112-8468-62b463c996b5",
+  "old_attempt": {
+    "task_page_id": 4953407,
+    "modelTrainingJobId": 4391283,
+    "fissionJobId": 21146844,
+    "gpu_type": "H20-8x-960G",
+    "action": "stop exact own task",
+    "confirmed_terminal": "STOPPED",
+    "visual_evidence": "/Users/singularity/Desktop/资产/报告/phase11/gate-d9-lingjing-20261021/old-960g-stopped.png"
+  },
+  "new_attempt": {
+    "task_page_id": 4953416,
+    "modelTrainingJobId": 4391292,
+    "job_name": "expr_gq_q4_t1_s_20261021185159",
+    "quota_project": "h20_agi_large_16",
+    "gpu_type": "H20-8x-640G",
+    "total_cards": 16,
+    "source_commit": "5cf5faa8693db4650369b321ab8e04c04065f3e7",
+    "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d9/20261021T105159Z/",
+    "status": "ACCEPTED_NEW_NOT_CUDA_VERIFIED",
+    "files_uploaded_readback_equal": 9,
+    "receipt_uploaded": true,
+    "client_observer": "terminated after confirmed acceptance; backend preserved"
+  },
+  "same_monitor": {
+    "id": "d9b",
+    "status": "ACTIVE",
+    "minutes": 10,
+    "target": "01a15ddb-5ea0-7112-8468-62b463c996b5",
+    "resource": "640G only"
+  },
+  "formal_submitted": false,
+  "gold_scored": false,
+  "next_action": "same-path preflight/capacity pass -> 640G16H20 full1344",
+  "updated_utc": "2026-10-21T10:55:11.361535+00:00"
+}
