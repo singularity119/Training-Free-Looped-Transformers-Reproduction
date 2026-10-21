@@ -9,7 +9,7 @@ import tempfile
 from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts/loopscope"))
-from phase11_d9_lingjing import make_plan, topology, child_environment, launch
+from phase11_d9_lingjing import make_plan, topology, child_environment, launch, node_devices
 from phase11_d9_lingjing_worker import allocation, direct_full_waiver, metadata as actual_metadata
 from tflt.loopscope.phase11_d8 import CELLS, actual_seed
 import analyze_phase11_d9 as scorer
@@ -18,6 +18,20 @@ from tflt.loopscope.phase11_d8 import validate_job
 
 
 class LingjingD9Tests(unittest.TestCase):
+    def test_missing_cuda_mask_discovers_all_cards_and_rejects_partial_visibility(self):
+        inventory = "\n".join(f"GPU-test-{i}, NVIDIA H20" for i in range(8))
+        with patch("phase11_d9_lingjing.subprocess.check_output", side_effect=[inventory, "8\n"]):
+            visible, evidence = node_devices({}, 8)
+        self.assertEqual(visible, [f"GPU-test-{i}" for i in range(8)])
+        self.assertIsNone(evidence["cuda_visible_devices_environment"])
+        self.assertEqual(evidence["selection_source"], "container_gpu_inventory")
+        with patch("phase11_d9_lingjing.subprocess.check_output", side_effect=[inventory, "7\n"]):
+            with self.assertRaisesRegex(ValueError, "CUDA device count"):
+                node_devices({}, 8)
+        with patch("phase11_d9_lingjing.subprocess.check_output", return_value=inventory):
+            with self.assertRaisesRegex(ValueError, "distinct card"):
+                node_devices({"CUDA_VISIBLE_DEVICES": ""}, 8)
+
     def test_user_direct_full_is_explicit_and_keeps_actual_revision_unverified(self):
         provenance = {"mode": "USER_DESIGNATED_OSS_UNVERIFIED_REVISION", "model_mount": "/oss/model",
                       "actual_revision": "UNVERIFIED_OSS_COPY", "actual_tokenizer_revision": "UNVERIFIED_OSS_COPY"}
@@ -138,9 +152,10 @@ class LingjingD9Tests(unittest.TestCase):
             plan_file = root / "plan.json"
             plan_file.write_text(json.dumps(plan))
             for outer in (0, 8):
-                env = {"RANK": str(outer), "LOCAL_RANK": "0", "WORLD_SIZE": "16", "LOCAL_WORLD_SIZE": "8",
-                       "CUDA_VISIBLE_DEVICES": "0,1,2,3,4,5,6,7"}
-                with patch.dict(os.environ, env, clear=True), patch("phase11_d9_lingjing.subprocess.Popen", side_effect=popen):
+                env = {"RANK": str(outer), "LOCAL_RANK": "0", "WORLD_SIZE": "16", "LOCAL_WORLD_SIZE": "8"}
+                inventory = "\n".join(f"GPU-test-{i}, NVIDIA H20" for i in range(8))
+                with patch.dict(os.environ, env, clear=True), patch("phase11_d9_lingjing.subprocess.Popen", side_effect=popen), \
+                        patch("phase11_d9_lingjing.subprocess.check_output", side_effect=[inventory, "8\n"]):
                     launch(plan_file, "/model", "/admission", root / "launch", "real-job", 60)
             workers = [(c, k) for c, k in spawned if c[0] != "nvidia-smi"]
             self.assertEqual(len(workers), 16)

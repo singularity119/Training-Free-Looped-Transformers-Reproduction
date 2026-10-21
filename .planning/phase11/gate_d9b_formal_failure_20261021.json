@@ -1,0 +1,22 @@
+{
+  "taskPageId": 4953507,
+  "modelTrainingJobId": 4391381,
+  "fissionJobId": 21147248,
+  "status": "FAILED",
+  "started_china": "2026-10-21 19:50:45",
+  "ended_china": "2026-10-21 19:53:21",
+  "wall_seconds": 156,
+  "allocated_cards": 16,
+  "allocated_gpu_hours": 0.6933333333333334,
+  "failure_stage": "launcher_before_worker_spawn",
+  "exception_type": "KeyError",
+  "reason": "CUDA_VISIBLE_DEVICES absent in platform container; code incorrectly required the optional environment variable",
+  "input_alignment": "SOURCE_CONTRACT_REUSED; count448; gold not scored",
+  "worker_spawned": false,
+  "completed_records": 0,
+  "evidence": "/Users/singularity/Desktop/\u8d44\u4ea7/\u62a5\u544a/phase11/gate-d9-lingjing-20261021/formal-4953507-master-process0.log",
+  "repair": "Discover exposed NVIDIA H20 UUIDs when mask is absent, verify CUDA visible count8 per node; fail on partial/mismatched inventory; persist topology.json",
+  "same_scientific_scope": true,
+  "source_comparison": "CANCELLED_BY_USER",
+  "independent_preflight": "WAIVED_BY_USER"
+}

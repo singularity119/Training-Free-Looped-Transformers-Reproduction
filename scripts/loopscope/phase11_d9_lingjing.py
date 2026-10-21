@@ -58,13 +58,35 @@ def child_environment(env, visible, outer_rank, worker_rank):
     return result
 
 
+def node_devices(env, expected):
+    """Discover the container's allocation; an absent CUDA mask means all exposed GPUs."""
+    inventory = subprocess.check_output(["nvidia-smi", "--query-gpu=uuid,name",
+        "--format=csv,noheader"], text=True)
+    devices = [tuple(part.strip() for part in line.split(",", 1))
+               for line in inventory.splitlines() if line.strip()]
+    require(all(len(row) == 2 and row[0].startswith("GPU-") and "H20" in row[1]
+                for row in devices), "unexpected node GPU inventory: " + repr(devices))
+    raw_mask = env.get("CUDA_VISIBLE_DEVICES")
+    visible = [value.strip() for value in raw_mask.split(",")] if raw_mask is not None else [row[0] for row in devices]
+    require(len(visible) == expected and len(set(visible)) == expected and all(visible),
+            "leader must see every distinct card on its node")
+    # A short child verifies CUDA visibility without retaining CUDA contexts in the launcher.
+    cuda_count = int(subprocess.check_output([sys.executable, "-c",
+        "import torch; print(torch.cuda.device_count())"], env=dict(env), text=True).strip())
+    require(cuda_count == expected, "CUDA device count differs from requested node allocation")
+    if raw_mask is None:
+        require(len(devices) == expected, "unmasked container exposes a different node allocation")
+    return visible, {"cuda_visible_devices_environment": raw_mask,
+        "selection_source": "explicit_environment" if raw_mask is not None else "container_gpu_inventory",
+        "inventory": [{"uuid": uuid, "name": name} for uuid, name in devices],
+        "cuda_device_count": cuda_count, "worker_devices": visible}
+
+
 def launch(plan_file, model_dir, admission, output, platform_job_id, timeout_seconds):
     plan = json.loads(Path(plan_file).read_text())
     rank, local, node = topology(os.environ, plan)
     if local != 0:
         return
-    visible = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
-    require(len(visible) == plan["gpus_per_node"], "leader must see every card on its node")
     root = Path(output) / f"node-{node}"
     root.mkdir(parents=True, exist_ok=False)
     script = Path(__file__).with_name("phase11_d9_lingjing_worker.py")
@@ -72,6 +94,10 @@ def launch(plan_file, model_dir, admission, output, platform_job_id, timeout_sec
     sampler = None
     began = time.monotonic()
     try:
+        visible, discovery = node_devices(os.environ, plan["gpus_per_node"])
+        write_json_once(root / "topology.json", {"outer_rank": rank, "local_rank": local,
+            "node": node, "world_size": plan["total_gpus"], **discovery})
+        print(json.dumps({"event": "D9_NODE_GPU_ROUTING", "node": node, **discovery}), flush=True)
         memory_log = (root / "device-memory.csv").open("x")
         memory_err = (root / "device-memory.err").open("x")
         logs.extend((memory_log, memory_err))
