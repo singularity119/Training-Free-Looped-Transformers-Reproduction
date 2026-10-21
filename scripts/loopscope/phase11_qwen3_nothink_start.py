@@ -13,6 +13,7 @@ import tempfile
 import time
 
 FAILURE_ROOT = None
+NODE_COUNT = 2
 
 def remaining(deadline):
     seconds = deadline - time.monotonic()
@@ -25,9 +26,9 @@ def wait_file(path, deadline, description):
     wait_deadline = deadline
     while not path.exists():
         failures = [] if FAILURE_ROOT is None else [p for p in (
-            *[FAILURE_ROOT / f"launch/bootstrap-node-{n}-failure.json" for n in range(2)],
+            *[FAILURE_ROOT / f"launch/bootstrap-node-{n}-failure.json" for n in range(NODE_COUNT)],
             *[FAILURE_ROOT / f"launch/{stage}/node-{n}/failure.json"
-              for stage in ("synthetic", "formal-attempt1") for n in range(2)]) if p.exists()]
+              for stage in ("synthetic", "formal-attempt1") for n in range(NODE_COUNT)]) if p.exists()]
         if failures:
             raise RuntimeError("peer bootstrap failed: " + str(failures[0]))
         try:
@@ -59,7 +60,7 @@ def run_step(command, deadline, **kwargs):
 
 
 def main():
-    global FAILURE_ROOT
+    global FAILURE_ROOT, NODE_COUNT
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--root", required=True, type=Path)
     p.add_argument("--timeout-seconds", type=int, default=86400)
@@ -70,8 +71,10 @@ def main():
     if int(os.environ["LOCAL_RANK"]) != 0:
         return
     rank = int(os.environ["RANK"])
-    if rank not in (0, 8) or int(os.environ["WORLD_SIZE"]) != 16:
-        raise ValueError("Qwen3NonThinking requires two eight-card nodes, leaders 0/8")
+    size = int(os.environ["WORLD_SIZE"])
+    if size not in (8, 16) or rank not in range(0, size, 8):
+        raise ValueError("Qwen3NonThinking requires eight-card nodes with valid leaders")
+    NODE_COUNT = size // 8
     node = rank // 8
     cloud = a.root
     FAILURE_ROOT = cloud
@@ -100,6 +103,8 @@ def main():
         if importlib.metadata.version(name) != version:
             raise RuntimeError("image accelerator package changed: " + name)
     config = json.loads((cloud / "experiment.json").read_text())
+    if config["total_cards"] != size:
+        raise ValueError("platform card count differs from frozen submission")
     info = json.loads((work / "bundle-info.json").read_text())
     if config["source_commit"] != info["source_commit"]:
         raise ValueError("runtime/config source differs")
@@ -130,7 +135,7 @@ def main():
         launch("formal", log_root, deadline)
         wait_file(log_root / "formal-complete.json", deadline, "rank-zero closure and scoring")
         return
-    for peer in range(2):
+    for peer in range(NODE_COUNT):
         wait_file(cloud / f"launch/synthetic/node-{peer}/complete.json", smoke_deadline,
                   "synthetic node completion")
     smoke = json.loads((cloud / "plan-synthetic.json").read_text())
@@ -141,12 +146,12 @@ def main():
                 raise ValueError("synthetic three-arm worker path incomplete")
     with (log_root / "runtime-smoke.writing").open("x") as handle:
         json.dump({"status": "RUNTIME_SMOKE_COMPLETE", "source_commit": info["source_commit"],
-                   "elapsed_seconds": time.monotonic()-started, "workers": 16, "arms_per_worker": 3,
+                   "elapsed_seconds": time.monotonic()-started, "workers": size, "arms_per_worker": 3,
                    "long_sequence_capacity_status": "NOT_MEASURED", "target_gold_loaded": False}, handle, indent=2)
     (log_root / "runtime-smoke.writing").rename(log_root / "runtime-smoke.json")
     build("formal", False, deadline)
     launch("formal", log_root, deadline)
-    for peer in range(2):
+    for peer in range(NODE_COUNT):
         wait_file(log_root / f"node-{peer}/complete.json", deadline, "formal node completion")
     analyzer = scripts / "analyze_phase11_qwen3_nothink.py"
     closure, analysis = log_root / "closure", log_root / "analysis"

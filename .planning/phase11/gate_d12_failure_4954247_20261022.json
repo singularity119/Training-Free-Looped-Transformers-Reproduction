@@ -1,0 +1,26 @@
+{
+  "observed_at_utc": "2026-10-21T19:28:08.868892+00:00",
+  "task_id": 4954247,
+  "modelTrainingJobId": 4392120,
+  "platform_status": "FAILED",
+  "fissionJobId": 21150146,
+  "status_source": "exact callback-supplied openapi/autoModel/getTrainingJobInfo POST HTTP200",
+  "trainingStartTime": null,
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d12/20261021T191602Z/",
+  "oss_object_count": 10,
+  "formal_complete_record_objects": 0,
+  "launch_objects_observed": 0,
+  "monitor_id": "d12-qwen3-thinking",
+  "monitor_status": "PAUSED",
+  "failure_reason": "UNDETERMINED_PENDING_PLATFORM_STARTUP_LOG",
+  "log_page": "https://aispace.alibaba-inc.com/#/fission/log/21150146",
+  "recovery_state": "DIAGNOSING_NO_RESUBMISSION",
+  "gold_access": false,
+  "diagnostic_resolution": {
+    "cause_source": "USER_REPORTED",
+    "user_message": "搞错了，超额度了，改为8卡，其他不变",
+    "cause": "QUOTA_EXCEEDED",
+    "platform_failure_log_independently_read": false,
+    "recovery": "User authorized8H20,same quota/science,fresh root"
+  }
+}

@@ -13,15 +13,15 @@ import phase11_qwen3_nothink_start as start
 
 class StartTests(unittest.TestCase):
     def test_two_node_barriers_precede_gold_scoring(self):
-        for rank in (0, 8):
-            with self.subTest(rank=rank), tempfile.TemporaryDirectory() as directory:
+        for size, rank in ((8, 0), (16, 0), (16, 8)):
+            with self.subTest(size=size, rank=rank), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 def write(path, value):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.write_text(json.dumps(value))
                 write(root / 'receipt.json', {'modelTrainingJobId': 1})
                 write(root / 'experiment.json', {'source_commit': 'source', 'model_mount': '/model',
-                    'source_csv_mount': '/existing-author.csv', 'model_provenance': {}})
+                    'source_csv_mount': '/existing-author.csv', 'model_provenance': {}, 'total_cards': size})
                 with tarfile.open(root / 'runtime.tar.gz', 'w:gz') as archive:
                     data = json.dumps({'source_commit': 'source'}).encode()
                     item = tarfile.TarInfo('bundle-info.json')
@@ -38,7 +38,7 @@ class StartTests(unittest.TestCase):
                     barriers.append(description)
                     if description == 'both-node synthetic validation':
                         write(path, {'status': 'RUNTIME_SMOKE_COMPLETE'})
-                with patch.dict(start.os.environ, {'LOCAL_RANK': '0', 'RANK': str(rank), 'WORLD_SIZE': '16'}, clear=True), \
+                with patch.dict(start.os.environ, {'LOCAL_RANK': '0', 'RANK': str(rank), 'WORLD_SIZE': str(size)}, clear=True), \
                         patch.object(sys, 'argv', ['start', '--root', str(root)]), \
                         patch.object(start.importlib.metadata, 'distributions', return_value=[]), \
                         patch.object(start, 'run_step', side_effect=run), \
@@ -47,9 +47,9 @@ class StartTests(unittest.TestCase):
                 launch = [c for c in commands if 'phase11_qwen3_nothink_launch.py' in ' '.join(c)]
                 self.assertEqual(len(launch), 2)
                 if rank == 0:
-                    self.assertEqual(barriers.count('synthetic node completion'), 2)
-                    self.assertEqual(barriers.count('formal node completion'), 2)
-                    self.assertEqual(json.loads((root / 'launch/formal-attempt1/runtime-smoke.json').read_text())['workers'], 16)
+                    self.assertEqual(barriers.count('synthetic node completion'), size // 8)
+                    self.assertEqual(barriers.count('formal node completion'), size // 8)
+                    self.assertEqual(json.loads((root / 'launch/formal-attempt1/runtime-smoke.json').read_text())['workers'], size)
                     self.assertEqual(len([c for c in commands if '--gold' in c]), 1)
                 else:
                     self.assertIn('rank-zero closure and scoring', barriers)

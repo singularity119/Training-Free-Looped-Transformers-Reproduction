@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export the committed D12 code and explicit sixteen-worker plans; no upload/submit."""
+"""Export the committed D12 code and explicit resource-bound worker plans; no upload/submit."""
 import argparse
 import io
 import json
@@ -48,7 +48,7 @@ def build(output):
     items = {"experiment.json": config, "admission.json": admission, "bundle-info.json": info}
     for stage, synthetic in (("synthetic", True), ("formal", False)):
         plan = make_plan(cloud / "runs" / stage, cloud / "inputs" / stage / "nothink-pool.json",
-                         commit, 16, synthetic)
+                         commit, config["total_cards"], synthetic)
         items[f"plan-{stage}.json"] = plan
         if not synthetic:
             items["registry-formal.json"] = plan["registry"]
@@ -62,7 +62,7 @@ def build(output):
         (output / name).write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
     (output / "start.py").write_bytes(git("show", commit + ":scripts/loopscope/phase11_qwen3_nothink_start.py"))
     print(json.dumps({"status": "BUNDLE_READY", "output": str(output), "source_commit": commit,
-                      "expected_formal": 1344, "workers": 16, "cloud_root": str(cloud)}))
+                      "expected_formal": 1344, "workers": config["total_cards"], "cloud_root": str(cloud)}))
 
 
 if __name__ == "__main__":

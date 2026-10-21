@@ -12,6 +12,16 @@ from tflt.loopscope.phase11_qwen3_nothink import CELLS
 
 
 class LaunchTests(unittest.TestCase):
+    def test_eight_worker_full_coverage(self):
+        plan = launcher.make_plan("/fresh8/runs", "/fresh8/pool", "source", 8)
+        self.assertEqual(len(plan["tasks"]), 8)
+        jobs = plan["registry"]["jobs"]
+        self.assertEqual(len(jobs), 24)
+        self.assertTrue(all(len(j["indices"]) == 56 for j in jobs))
+        self.assertEqual({(j["cell_key"], i) for j in jobs for i in j["indices"]},
+                         {(key, i) for key in CELLS for i in range(448)})
+        self.assertEqual(launcher.topology({"RANK": "0", "LOCAL_RANK": "0", "WORLD_SIZE": "8"}, plan), (0, 0, 0))
+
     def test_sixteen_workers_cover_three_cells_and_unmasked_devices(self):
         plan = launcher.make_plan("/fresh/runs", "/fresh/pool", "source", 16)
         pairs = [(job["cell_key"], i) for job in plan["registry"]["jobs"] for i in job["indices"]]
