@@ -26,8 +26,9 @@ def git(*args):
 
 def build(output):
     print(git("status", "--short", "--branch").decode(), end="")
-    branch, commit, top = (git("rev-parse", opt).decode().strip()
-                           for opt in ("--abbrev-ref", "HEAD", "--show-toplevel"))
+    branch = git("rev-parse", "--abbrev-ref", "HEAD").decode().strip()
+    commit = git("rev-parse", "HEAD").decode().strip()
+    top = git("rev-parse", "--show-toplevel").decode().strip()
     if branch != "loopscope" or Path(top) != ROOT:
         raise ValueError("D9 export requires the dedicated loopscope clone")
     subprocess.run(["git", "-C", str(ROOT), "merge-base", "--is-ancestor",
