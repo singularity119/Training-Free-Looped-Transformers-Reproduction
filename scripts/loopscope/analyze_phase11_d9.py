@@ -6,7 +6,8 @@ import json
 import os
 from pathlib import Path
 
-from phase11_d8 import read, metadata, validate_bundle
+from phase11_d8 import read, validate_bundle
+from phase11_d9_lingjing_worker import metadata
 from analyze_phase11_d8 import lines, flattened
 from tflt.loopscope.phase11_d8 import CELLS, COUNT, validate_job, validate_pool
 from tflt.loopscope.phase11_d8_analysis import analyze
@@ -58,7 +59,7 @@ def run(args):
     tokenizer = AutoTokenizer.from_pretrained(args.model_dir, local_files_only=True, trust_remote_code=True)
     if args.registry:
         registry = read(args.registry)
-        data, _ = load_all(registry, tokenizer)
+        data, pool = load_all(registry, tokenizer)
         args.output_dir.mkdir(parents=True, exist_ok=False)
         pred = args.output_dir / "predictions.jsonl"
         with pred.open("x") as stream:
@@ -69,7 +70,8 @@ def run(args):
         write_json_once(args.output_dir / "closure.json", {"schema": "loopscope.phase11.d9.closure.v1",
             "status": "GOLD_UNREAD", "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "record_count": 1344, "prediction_closed": True, "target_gold_loaded": False,
-            "registry": registry, "predictions_path": str(pred)})
+            "registry": registry, "predictions_path": str(pred),
+            "model_provenance": pool.get("d9_model_provenance")})
         print(json.dumps({"status": "GOLD_UNREAD", "record_count": 1344}))
         return
     closure = read(args.closure)
@@ -87,7 +89,8 @@ def run(args):
     write_json_once(args.output_dir / "gold_read_receipt.json", {"timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "gold_path": str(args.gold), "source_closure": str(args.closure), "prior_prediction_closed": True, "n": 448})
     result = analyze(data, gold)
-    result.update(source_closure=str(args.closure), gold_read=True, gate="D-9")
+    result.update(source_closure=str(args.closure), gold_read=True, gate="D-9",
+                  model_provenance=pool.get("d9_model_provenance"))
     write_json_once(args.output_dir / "analysis.json", result)
     print(json.dumps({"status": result["status"], "record_count": 1344, "gold_read": True}))
 

@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts/loopscope"))
 from phase11_d9_lingjing import make_plan, topology, child_environment, launch
-from phase11_d9_lingjing_worker import allocation
+from phase11_d9_lingjing_worker import allocation, direct_full_waiver, metadata as actual_metadata
 from tflt.loopscope.phase11_d8 import CELLS, actual_seed
 import analyze_phase11_d9 as scorer
 from phase11_d8 import metadata
@@ -18,6 +18,24 @@ from tflt.loopscope.phase11_d8 import validate_job
 
 
 class LingjingD9Tests(unittest.TestCase):
+    def test_user_direct_full_is_explicit_and_keeps_actual_revision_unverified(self):
+        provenance = {"mode": "USER_DESIGNATED_OSS_UNVERIFIED_REVISION", "model_mount": "/oss/model",
+                      "actual_revision": "UNVERIFIED_OSS_COPY", "actual_tokenizer_revision": "UNVERIFIED_OSS_COPY"}
+        admission = {"direct_full_user_authorization": True, "model_provenance": provenance,
+                     "preflight_passed": False, "capacity": {"headroom_fraction": None}}
+        self.assertTrue(direct_full_waiver(admission, "/oss/model"))
+        self.assertFalse(direct_full_waiver(dict(admission, direct_full_user_authorization=False), "/oss/model"))
+        self.assertFalse(direct_full_waiver(admission, "/other/model"))
+        job = make_plan("/cloud/formal", "/cloud/pool", "source")["registry"]["jobs"][0]
+        cell = validate_job(job)
+        pool = {"think_open_id": 1, "think_close_id": 2, "d9_model_provenance": provenance}
+        meta = actual_metadata(job, cell, pool)
+        self.assertEqual(meta["revision"], "UNVERIFIED_OSS_COPY")
+        self.assertEqual(meta["cell"]["revision"], "UNVERIFIED_OSS_COPY")
+        self.assertNotEqual(meta["recipe_reference_revision"], "UNVERIFIED_OSS_COPY")
+        self.assertFalse(admission["preflight_passed"])
+        self.assertIsNone(admission["capacity"]["headroom_fraction"])
+
     def test_eight_workers_cover_original_three_cells_without_duplicates(self):
         plan = make_plan("/cloud/fresh", "/cloud/thinking-pool.json", "source-revision")
         jobs = plan["registry"]["jobs"]

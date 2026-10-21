@@ -136,6 +136,8 @@ def main():
                         help="Original D8 engineering fixture only; no dataset access or gold")
     parser.add_argument("--source-csv", type=Path,
                         help="Previously read-back-verified author source CSV on the private cloud mount")
+    parser.add_argument("--model-provenance-file", type=Path,
+                        help="Explicit current user-designated OSS model identity; recipe revision stays historical")
     args = parser.parse_args()
     from transformers import AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(str(args.model_dir), local_files_only=True, token=False)
@@ -146,6 +148,13 @@ def main():
         pool, gold, receipt = build_inputs(rows, tokenizer)
         receipt.update(acquisition="prepublished_private_csv" if args.source_csv else "fixed_author_archive",
                        source_csv=None if args.source_csv is None else str(args.source_csv))
+    if args.model_provenance_file:
+        provenance = json.loads(args.model_provenance_file.read_text())["model_provenance"]
+        require(provenance["mode"] == "USER_DESIGNATED_OSS_UNVERIFIED_REVISION" and
+                provenance["model_mount"] == str(args.model_dir), "user-designated model path differs")
+        pool.update(d9_model_provenance=provenance,
+                    model_revision_semantics="historical_recipe_reference_only; actual revision is UNVERIFIED_OSS_COPY")
+        receipt.update(model_provenance=provenance, actual_model_revision="UNVERIFIED_OSS_COPY")
     receipt.update(model_dir=str(args.model_dir))
     write_outputs(args.output_dir, pool, gold, receipt)
     print(json.dumps(receipt))

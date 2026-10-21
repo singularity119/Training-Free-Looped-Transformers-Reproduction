@@ -11,7 +11,7 @@ import sys
 import time
 import uuid
 
-from phase11_d8 import read, metadata, validate_bundle, seed_compute
+from phase11_d8 import read, metadata as recipe_metadata, validate_bundle, seed_compute
 from run_phase11_accuracy import acquire_row, ForwardTiming
 from tflt.loopscope.phase11_checkpoint import RecordStore
 from tflt.loopscope.phase11_panel import load_config, require, write_json_once
@@ -19,6 +19,30 @@ from tflt.loopscope.phase11_d8 import (
     MODEL, REVISION, SEED, MAX_LENGTH, MAX_NEW_TOKENS, SAMPLING,
     validate_job, validate_pool, actual_seed, answer_span,
 )
+
+
+def direct_full_waiver(admission, model_dir):
+    provenance = admission.get("model_provenance", {})
+    return (admission.get("direct_full_user_authorization") is True and
+            provenance.get("mode") == "USER_DESIGNATED_OSS_UNVERIFIED_REVISION" and
+            provenance.get("model_mount") == str(model_dir) and
+            provenance.get("actual_revision") == "UNVERIFIED_OSS_COPY" and
+            provenance.get("actual_tokenizer_revision") == "UNVERIFIED_OSS_COPY")
+
+
+def metadata(job, cell, pool):
+    meta = recipe_metadata(job, cell, pool)
+    provenance = pool.get("d9_model_provenance")
+    if provenance:
+        require(provenance.get("mode") == "USER_DESIGNATED_OSS_UNVERIFIED_REVISION",
+                "unknown D9 model provenance mode")
+        meta.update(revision=provenance["actual_revision"],
+                    tokenizer_revision=provenance["actual_tokenizer_revision"],
+                    recipe_reference_revision=REVISION, model_provenance=provenance)
+        meta["cell"] = dict(cell, revision=provenance["actual_revision"],
+                            tokenizer_revision=provenance["actual_tokenizer_revision"],
+                            recipe_reference_revision=REVISION)
+    return meta
 
 
 def allocation(environ):
@@ -60,22 +84,27 @@ def load_runtime(model_dir, cell):
 def run(job_file, model_dir, admission_file):
     alloc = allocation(os.environ)
     job, admission = read(job_file), read(admission_file)
+    waived = direct_full_waiver(admission, model_dir)
     bundle = read(Path(__file__).resolve().parents[2] / "bundle-info.json")
     require(job["source_commit"] == bundle["source_commit"], "job/bundle source differs")
-    require(admission["model_repo"] == MODEL and admission["model_revision"] == REVISION and
-            admission["tokenizer_revision"] == REVISION and admission["model_source_evidence"],
+    require(admission["model_repo"] == MODEL and (waived or
+            (admission["model_revision"] == REVISION and admission["tokenizer_revision"] == REVISION
+             and admission["model_source_evidence"])),
             "exact OSS model/tokenizer source evidence is required before loading")
     require(admission["source_commit"] == bundle["source_commit"], "admission source differs")
     require(admission["platform_preflight_route"], "planning must resolve the platform debug mapping")
-    require(job["engineering"] or admission.get("preflight_passed") is True,
+    require(job["engineering"] or admission.get("preflight_passed") is True or waived,
             "formal work requires a passed same-path preflight")
     cell = validate_job(job)
     pool = validate_pool(read(job["pool"]))
+    if waived:
+        require(pool.get("d9_model_provenance") == admission["model_provenance"],
+                "actual OSS identity differs between pool and admission")
     require(pool["engineering_synthetic"] == job["synthetic"], "input scope differs")
     require(job["synthetic"] or (admission.get("gpqa_alignment_receipt") and
             pool.get("d9_source_alignment", {}).get("canonical_source_reused") is True),
             "formal inputs must reuse the fixed author archive and frozen input builder")
-    if not job["engineering"]:
+    if not job["engineering"] and not waived:
         capacity = admission["capacity"]
         require(capacity["max_new_tokens"] == MAX_NEW_TOKENS and capacity["packing"] == 1 and
                 capacity["headroom_fraction"] >= .2 and capacity["evidence"],
@@ -95,6 +124,9 @@ def run(job_file, model_dir, admission_file):
     started, timing, index = time.monotonic(), None, None
     try:
         torch, model, tokenizer, adapter, eos_ids, env = load_runtime(model_dir, cell)
+        if waived:
+            env.update(model_revision="UNVERIFIED_OSS_COPY", tokenizer_revision="UNVERIFIED_OSS_COPY",
+                       recipe_reference_revision=REVISION, model_provenance=admission["model_provenance"])
         seed_compute(torch, SEED)
         write_json_once(attempt / "env.json", {**env, **alloc, "source_commit": bundle["source_commit"],
             "effective_sampling": SAMPLING, "target_gold_loaded": False})

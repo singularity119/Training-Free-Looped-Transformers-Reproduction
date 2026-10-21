@@ -99,9 +99,14 @@ def main():
         a.admission = str(admitted_file)
     admission = json.loads(Path(a.admission).read_text())
     bundle_info = json.loads((root / "bundle-info.json").read_text())
-    if (not admission.get("model_source_evidence") or
-            admission.get("model_revision") != "1cfa9a7208912126459214e8b04321603b3df60c" or
-            admission.get("source_commit") != bundle_info["source_commit"]):
+    direct_full = admission.get("direct_full_user_authorization") is True
+    provenance = admission.get("model_provenance", {})
+    user_oss = (direct_full and provenance.get("mode") == "USER_DESIGNATED_OSS_UNVERIFIED_REVISION"
+                and provenance.get("model_mount") == a.model_dir
+                and provenance.get("actual_revision") == "UNVERIFIED_OSS_COPY")
+    if (admission.get("source_commit") != bundle_info["source_commit"] or
+            (not user_oss and (not admission.get("model_source_evidence") or
+             admission.get("model_revision") != "1cfa9a7208912126459214e8b04321603b3df60c"))):
         raise ValueError("resolve exact model provenance and code admission before starting the bundle")
     # Only each node's leader installs dependencies; accelerator packages stay image-owned.
     if int(os.environ["LOCAL_RANK"]) == 0:
@@ -131,6 +136,8 @@ def main():
             else:
                 config = json.loads((root / "configs/loopscope/phase11_d9_lingjing.json").read_text())
                 command += ["--source-csv", config["data"]["source_csv_mount"]]
+                if user_oss:
+                    command += ["--model-provenance-file", a.admission]
             run_step(command, deadline, env=env)
         wait_file(ready, deadline, "shared input preparation")
     cmd = [sys.executable, str(root / "scripts/loopscope/phase11_d9_lingjing.py"), "launch"]
@@ -139,6 +146,28 @@ def main():
     cmd += ["--timeout-seconds", str(max(1, int(remaining(deadline))))]
     cmd += ["--platform-job-id", str(job_id)]
     run_step(cmd, deadline, env=env)
+    if not synthetic and int(os.environ["RANK"]) == 0 and admission.get("auto_analyze_after_full") is True:
+        for node in range(plan["total_gpus"] // plan["gpus_per_node"]):
+            complete = log_root / f"node-{node}" / "complete.json"
+            while not complete.exists():
+                if complete.with_name("failure.json").exists():
+                    raise RuntimeError("formal node failed: " + str(complete.with_name("failure.json")))
+                time.sleep(min(1, remaining(deadline)))
+        registry = Path(a.plan).with_name("registry-formal.json")
+        closure_root, analysis_root = log_root / "closure", log_root / "analysis"
+        analyzer = str(root / "scripts/loopscope/analyze_phase11_d9.py")
+        run_step([sys.executable, analyzer, "--registry", str(registry), "--model-dir", a.model_dir,
+            "--output-dir", str(closure_root)], deadline, env=env)
+        formal_pool = Path(plan["tasks"][0]["jobs"][0]["pool"])
+        run_step([sys.executable, analyzer, "--closure", str(closure_root / "closure.json"),
+            "--model-dir", a.model_dir, "--gold", str(formal_pool.parent / "sealed/gpqa_main-gold.jsonl"),
+            "--output-dir", str(analysis_root)], deadline, env=env)
+        with (log_root / "formal-complete.json").open("x") as handle:
+            json.dump({"status": "FORMAL_AND_ANALYSIS_COMPLETE", "record_count": 1344,
+                "platform_job_id": job_id, "source_commit": bundle_info["source_commit"],
+                "model_provenance": provenance, "closure": str(closure_root / "closure.json"),
+                "analysis": str(analysis_root / "analysis.json"),
+                "elapsed_seconds": time.monotonic()-started}, handle, indent=2)
     if synthetic and int(os.environ["RANK"]) == 0:
         for node in range(plan["total_gpus"] // plan["gpus_per_node"]):
             complete = log_root / f"node-{node}" / "complete.json"

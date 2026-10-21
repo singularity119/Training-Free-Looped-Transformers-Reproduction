@@ -3,7 +3,8 @@
 import argparse
 from pathlib import Path
 
-from phase11_d8 import read, metadata, validate_bundle
+from phase11_d8 import read, validate_bundle
+from phase11_d9_lingjing_worker import metadata
 from check_phase11_d8_gpu import validate_generation_path
 from tflt.loopscope.phase11_d8 import CELLS, validate_job, validate_pool
 from tflt.loopscope.phase11_panel import require, write_json_once
