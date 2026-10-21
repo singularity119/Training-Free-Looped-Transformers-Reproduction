@@ -5,6 +5,7 @@ import importlib.metadata
 import json
 import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
 import tarfile
@@ -12,18 +13,56 @@ import tempfile
 import time
 
 
+def remaining(deadline):
+    seconds = deadline - time.monotonic()
+    if seconds <= 0:
+        raise TimeoutError("D9 bootstrap total deadline exhausted")
+    return seconds
+
+
+def wait_file(path, deadline, description):
+    wait_deadline = min(deadline, time.monotonic() + 120)
+    while not path.exists():
+        try:
+            seconds = remaining(wait_deadline)
+        except TimeoutError as exc:
+            raise TimeoutError("bootstrap deadline waiting for " + description) from exc
+        time.sleep(min(1, seconds))
+    remaining(deadline)
+
+
+def run_step(command, deadline, **kwargs):
+    """One shared budget; a timed-out step loses its whole owned process group."""
+    remaining(deadline)
+    child = subprocess.Popen(command, start_new_session=True, **kwargs)
+    try:
+        code = child.wait(timeout=remaining(deadline))
+        if code:
+            raise subprocess.CalledProcessError(code, command)
+    except BaseException:
+        # Pip, input preparation and launcher descendants inherit this group.
+        # SIGKILL also bounds cleanup if a child ignores normal termination.
+        try:
+            os.killpg(child.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        child.wait()
+        raise
+    remaining(deadline)
+
+
 def main():
+    started = time.monotonic()
     p = argparse.ArgumentParser(description=__doc__)
     for key in ("bundle", "plan", "model-dir", "admission", "launcher-output", "receipt-file"):
         p.add_argument("--" + key, required=True)
     p.add_argument("--timeout-seconds", type=int, required=True)
     a = p.parse_args()
+    if a.timeout_seconds <= 0:
+        raise ValueError("bootstrap total time limit must be positive")
+    deadline = started + a.timeout_seconds
     receipt_path = Path(a.receipt_file)
-    deadline = time.monotonic() + 120
-    while not receipt_path.exists():
-        if time.monotonic() >= deadline:
-            raise TimeoutError("publish the real accepted training receipt to the declared shared path")
-        time.sleep(1)
+    wait_file(receipt_path, deadline, "real accepted training receipt")
     receipt = json.loads(receipt_path.read_text())
     job_id = receipt["modelTrainingJobId"]
     if not isinstance(job_id, int) or job_id <= 0:
@@ -31,6 +70,7 @@ def main():
     root = Path(tempfile.mkdtemp(prefix="loopscope-d9-"))
     with tarfile.open(a.bundle) as archive:
         archive.extractall(root, filter="data")
+    remaining(deadline)
     env = dict(os.environ, PYTHONPATH=str(root / "src"), PYTHONDONTWRITEBYTECODE="1")
     admission = json.loads(Path(a.admission).read_text())
     bundle_info = json.loads((root / "bundle-info.json").read_text())
@@ -48,8 +88,8 @@ def main():
         log_root = Path(a.launcher_output)
         log_root.mkdir(parents=True, exist_ok=True)
         with (log_root / f"rank-{os.environ['RANK']}-install.log").open("x") as log:
-            subprocess.run([sys.executable, "-m", "pip", "install", "-r", str(root / "requirements.txt"),
-                "--constraint", str(constraints)], stdout=log, stderr=subprocess.STDOUT, check=True)
+            run_step([sys.executable, "-m", "pip", "install", "-r", str(root / "requirements.txt"),
+                "--constraint", str(constraints)], deadline, stdout=log, stderr=subprocess.STDOUT)
         for name, version in protected.items():
             if importlib.metadata.version(name) != version:
                 raise RuntimeError("image accelerator package changed: " + name)
@@ -66,17 +106,17 @@ def main():
                        "--model-dir", a.model_dir, "--output-dir", str(pool_file.parent)]
             if plan["total_gpus"] == 1:
                 command.append("--synthetic")
-            subprocess.run(command, env=env, check=True)
-        deadline = time.monotonic() + 120
-        while not ready.exists():
-            if time.monotonic() >= deadline:
-                raise TimeoutError("node zero did not finish shared input preparation")
-            time.sleep(1)
+            else:
+                config = json.loads((root / "configs/loopscope/phase11_d9_lingjing.json").read_text())
+                command += ["--source-csv", config["data"]["source_csv_mount"]]
+            run_step(command, deadline, env=env)
+        wait_file(ready, deadline, "shared input preparation")
     cmd = [sys.executable, str(root / "scripts/loopscope/phase11_d9_lingjing.py"), "launch"]
-    for key in ("plan", "model_dir", "admission", "launcher_output", "timeout_seconds"):
+    for key in ("plan", "model_dir", "admission", "launcher_output"):
         cmd += ["--" + key.replace("_", "-"), str(getattr(a, key))]
+    cmd += ["--timeout-seconds", str(max(1, int(remaining(deadline))))]
     cmd += ["--platform-job-id", str(job_id)]
-    subprocess.run(cmd, env=env, check=True)
+    run_step(cmd, deadline, env=env)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,17 @@
 import csv
+from contextlib import redirect_stdout
 import importlib.util
 import io
 import json
 from pathlib import Path
 import random
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 import urllib.error
 import zipfile
 
@@ -50,6 +55,44 @@ def archive_fixture(count=448, member=d9.GPQA_ARCHIVE_MEMBER, columns=GPQA_COLUM
 
 
 class D9InputsTests(unittest.TestCase):
+    def test_prepublished_source_cli_does_not_download_archive_again(self):
+        payload, _ = archive_fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            csv_path = root / "source.csv"
+            with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+                csv_path.write_bytes(archive.read(d9.GPQA_ARCHIVE_MEMBER))
+            output = root / "prepared"
+            argv = [str(SCRIPT), "--model-dir", "/admitted-model", "--source-csv", str(csv_path),
+                    "--output-dir", str(output)]
+            tokenizer_factory = SimpleNamespace(from_pretrained=lambda *a, **k: Tokenizer())
+            with patch.dict(sys.modules, {"transformers": SimpleNamespace(AutoTokenizer=tokenizer_factory)}), \
+                 patch.object(sys, "argv", argv), \
+                 patch.object(d9, "fetch_author_rows", side_effect=AssertionError("unexpected archive fetch")), \
+                 redirect_stdout(io.StringIO()):
+                d9.main()
+            receipt = json.loads((output / "alignment.json").read_text())
+            self.assertEqual(receipt["acquisition"], "prepublished_private_csv")
+            self.assertEqual(receipt["count"], 448)
+
+    @unittest.skipUnless(shutil.which("zip"), "encrypted synthetic ZIP creation needs the system zip utility")
+    def test_public_distribution_password_opens_encrypted_synthetic_archive(self):
+        payload, expected = archive_fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with zipfile.ZipFile(io.BytesIO(payload)) as plain:
+                member = root / d9.GPQA_ARCHIVE_MEMBER
+                member.parent.mkdir()
+                member.write_bytes(plain.read(d9.GPQA_ARCHIVE_MEMBER))
+            encrypted = root / "synthetic.zip"
+            subprocess.run([shutil.which("zip"), "-q", "-P", d9.GPQA_ARCHIVE_PASSWORD.decode(),
+                            str(encrypted), d9.GPQA_ARCHIVE_MEMBER], cwd=root, check=True)
+            with zipfile.ZipFile(encrypted) as archive:
+                self.assertTrue(archive.getinfo(d9.GPQA_ARCHIVE_MEMBER).flag_bits & 1)
+                with self.assertRaises(RuntimeError):
+                    archive.read(d9.GPQA_ARCHIVE_MEMBER)
+            self.assertEqual(d9.project_archive(encrypted.read_bytes()), expected)
+
     def test_original_archive_projection_reuses_producer_and_sealed_gold(self):
         payload, raw = archive_fixture()
         projected = d9.project_archive(payload)

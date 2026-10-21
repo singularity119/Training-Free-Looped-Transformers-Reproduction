@@ -24,6 +24,8 @@ from tflt.loopscope.phase11_panel import require
 SOURCE = {"source_kind": "author_github_archive", "github_repo": GPQA_GITHUB_REPO,
     "github_commit": GPQA_GITHUB_COMMIT, "archive_member": GPQA_ARCHIVE_MEMBER,
     "revision": GPQA_GITHUB_COMMIT, "split": "main_csv", "format": "csv", "name": "gpqa_main"}
+# Public distribution password documented in the same fixed author's README.
+GPQA_ARCHIVE_PASSWORD = b"deserted-untie-orchid"
 
 
 class AuthorRedirect(urllib.request.HTTPRedirectHandler):
@@ -39,7 +41,12 @@ class AuthorRedirect(urllib.request.HTTPRedirectHandler):
 def project_archive(payload):
     """Read just the accepted member and five current construction fields."""
     with zipfile.ZipFile(io.BytesIO(payload)) as archive:
-        text = archive.read(GPQA_ARCHIVE_MEMBER).decode("utf-8-sig")
+        text = archive.read(GPQA_ARCHIVE_MEMBER, pwd=GPQA_ARCHIVE_PASSWORD).decode("utf-8-sig")
+    return project_csv(text)
+
+
+def project_csv(text):
+    """Project the same author fields from a previously published private CSV."""
     reader = csv.DictReader(io.StringIO(text, newline=""))
     require(reader.fieldnames is not None and set(GPQA_COLUMNS).issubset(reader.fieldnames),
             "GPQA author CSV lacks the five original construction columns")
@@ -127,11 +134,18 @@ def main():
                         help="Fresh cloud-only input root")
     parser.add_argument("--synthetic", action="store_true",
                         help="Original D8 engineering fixture only; no dataset access or gold")
+    parser.add_argument("--source-csv", type=Path,
+                        help="Previously read-back-verified author source CSV on the private cloud mount")
     args = parser.parse_args()
     from transformers import AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(str(args.model_dir), local_files_only=True, token=False)
-    pool, gold, receipt = (build_synthetic_inputs(tokenizer) if args.synthetic else
-                           build_inputs(fetch_author_rows(), tokenizer))
+    if args.synthetic:
+        pool, gold, receipt = build_synthetic_inputs(tokenizer)
+    else:
+        rows = project_csv(args.source_csv.read_text(encoding="utf-8-sig")) if args.source_csv else fetch_author_rows()
+        pool, gold, receipt = build_inputs(rows, tokenizer)
+        receipt.update(acquisition="prepublished_private_csv" if args.source_csv else "fixed_author_archive",
+                       source_csv=None if args.source_csv is None else str(args.source_csv))
     receipt.update(model_dir=str(args.model_dir))
     write_outputs(args.output_dir, pool, gold, receipt)
     print(json.dumps(receipt))
