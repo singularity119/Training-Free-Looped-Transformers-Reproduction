@@ -1,0 +1,29 @@
+[
+  {
+    "cell": "native",
+    "checks": {
+      "snapshot_index_difference": 0,
+      "snapshot_seed_difference": 0,
+      "snapshot_token_count_difference": 0,
+      "legacy_rejected_consistent_multiple": 254
+    }
+  },
+  {
+    "cell": "current_t_k2_l05",
+    "checks": {
+      "snapshot_index_difference": 0,
+      "snapshot_seed_difference": 0,
+      "snapshot_token_count_difference": 0,
+      "legacy_rejected_consistent_multiple": 117
+    }
+  },
+  {
+    "cell": "fixed_t0_k3_l09",
+    "checks": {
+      "snapshot_index_difference": 0,
+      "snapshot_seed_difference": 0,
+      "snapshot_token_count_difference": 0,
+      "legacy_rejected_consistent_multiple": 105
+    }
+  }
+]

@@ -1,0 +1,60 @@
+{
+  "harness_version": "0.4.11",
+  "adaptation": "Only literal answer is changed to Final answer:; case-sensitive first match, optional parentheses, no other changes",
+  "pattern": "Final answer: \\(?([ABCDEFGHIJ])\\)?",
+  "directory": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/harness0411-final-answer-sensitivity-20261018T065159747803Z",
+  "scope": "Supplementary sensitivity analysis: adapted literal Final answer:; extractor-only rescore of existing complete generations, no truncation or Question stop retrofitting; not paper recipe reproduction",
+  "cells": [
+    {
+      "cell": "native",
+      "n": 12032,
+      "correct": 8363,
+      "s2_correct": 8342,
+      "no_match": 37,
+      "multiple_matches": 459,
+      "conflicting_matches_first_used": 86,
+      "out_of_actual_range": 7,
+      "prediction_changes": 109,
+      "wrong_to_correct": 26,
+      "correct_to_wrong": 5,
+      "accuracy_percent": 69.50631648936171,
+      "identity_difference": 0,
+      "upstream_independent_parser_difference": 0,
+      "delta_native_pp": 0.0
+    },
+    {
+      "cell": "current_t_k2_l05",
+      "n": 12032,
+      "correct": 8282,
+      "s2_correct": 8273,
+      "no_match": 30,
+      "multiple_matches": 251,
+      "conflicting_matches_first_used": 47,
+      "out_of_actual_range": 8,
+      "prediction_changes": 79,
+      "wrong_to_correct": 12,
+      "correct_to_wrong": 3,
+      "accuracy_percent": 68.83311170212765,
+      "identity_difference": 0,
+      "upstream_independent_parser_difference": 0,
+      "delta_native_pp": -0.6732047872340425
+    },
+    {
+      "cell": "fixed_t0_k3_l09",
+      "n": 12032,
+      "correct": 8296,
+      "s2_correct": 8290,
+      "no_match": 37,
+      "multiple_matches": 256,
+      "conflicting_matches_first_used": 47,
+      "out_of_actual_range": 7,
+      "prediction_changes": 73,
+      "wrong_to_correct": 16,
+      "correct_to_wrong": 10,
+      "accuracy_percent": 68.94946808510639,
+      "identity_difference": 0,
+      "upstream_independent_parser_difference": 0,
+      "delta_native_pp": -0.5568484042553191
+    }
+  ]
+}

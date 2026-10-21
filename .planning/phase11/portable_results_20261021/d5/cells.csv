@@ -1,0 +1,43 @@
+family,version,repeat,cell_id,n,correct,primary_accuracy,primary_metric,delta_native_pp,delta_loop_pp,delta_native_minus_reference0_pp,delta_loop_minus_reference0_pp,reference0_runtime_seed,runtime_seed,reference0_seed_note,acc_correct,acc,S2_mode_counts,end_reason_counts
+p10-base-mmlu,reference0,0,q4-native,14042,10262,0.7308075772681955,acc,0.0,,0.0,,20260905,20260905,,,,,
+p10-base-mmlu,reference0,0,q4-w15-18-k2-loop,14042,10348,0.7369320609599772,acc,0.6124483691781798,0.0,0.0,0.0,20260905,20260905,,,,,
+p10-base-mmlu,reference0,0,q4-w15-18-k2-online-current-t-lambda0.9,14042,10365,0.7381427147130039,acc,0.7335137444808432,0.12106537530266344,0.0,0.0,20261002,20261002,,,,,
+p10-base-mmlu,repeat1,1,q4-native,14042,10264,0.7309500071214927,acc,0.0,,0.0,,20260905,20261014,,,,,
+p10-base-mmlu,repeat1,1,q4-w15-18-k2-loop,14042,10348,0.7369320609599772,acc,0.5982053838484547,0.0,-0.014242985329725122,0.0,20260905,20261014,,,,,
+p10-base-mmlu,repeat1,1,q4-w15-18-k2-online-current-t-lambda0.9,14042,10365,0.7381427147130039,acc,0.719270759151118,0.12106537530266344,-0.014242985329725122,0.0,20261002,20261014,,,,,
+p10-base-mmlu,repeat2,2,q4-native,14042,10264,0.7309500071214927,acc,0.0,,0.0,,20260905,20261015,,,,,
+p10-base-mmlu,repeat2,2,q4-w15-18-k2-loop,14042,10348,0.7369320609599772,acc,0.5982053838484547,0.0,-0.014242985329725122,0.0,20260905,20261015,,,,,
+p10-base-mmlu,repeat2,2,q4-w15-18-k2-online-current-t-lambda0.9,14042,10365,0.7381427147130039,acc,0.719270759151118,0.12106537530266344,-0.014242985329725122,0.0,20261002,20261015,,,,,
+p10-base-arc,reference0,0,q4-native,1172,745,0.6356655290102389,acc_norm,0.0,,0.0,,20261002,20261002,,693,0.591296928327645,,
+p10-base-arc,reference0,0,q4-w15-18-k2-loop,1172,754,0.643344709897611,acc_norm,0.7679180887372014,0.0,0.0,0.0,20261002,20261002,,701,0.5981228668941979,,
+p10-base-arc,reference0,0,q4-w15-18-k2-online-fixed-t0-lambda0.4,1172,754,0.643344709897611,acc_norm,0.7679180887372014,0.0,0.0,0.0,20261002,20261002,,700,0.5972696245733788,,
+p10-base-arc,repeat1,1,q4-native,1172,745,0.6356655290102389,acc_norm,0.0,,0.0,,20261002,20261014,,693,0.591296928327645,,
+p10-base-arc,repeat1,1,q4-w15-18-k2-loop,1172,754,0.643344709897611,acc_norm,0.7679180887372014,0.0,0.0,0.0,20261002,20261014,,701,0.5981228668941979,,
+p10-base-arc,repeat1,1,q4-w15-18-k2-online-fixed-t0-lambda0.4,1172,754,0.643344709897611,acc_norm,0.7679180887372014,0.0,0.0,0.0,20261002,20261014,,700,0.5972696245733788,,
+p10-base-arc,repeat2,2,q4-native,1172,745,0.6356655290102389,acc_norm,0.0,,0.0,,20261002,20261015,,693,0.591296928327645,,
+p10-base-arc,repeat2,2,q4-w15-18-k2-loop,1172,754,0.643344709897611,acc_norm,0.7679180887372014,0.0,0.0,0.0,20261002,20261015,,701,0.5981228668941979,,
+p10-base-arc,repeat2,2,q4-w15-18-k2-online-fixed-t0-lambda0.4,1172,754,0.643344709897611,acc_norm,0.7679180887372014,0.0,0.0,0.0,20261002,20261015,,700,0.5972696245733788,,
+p11-instruct-arc,reference0,0,arc_challenge-q4-native,1172,784,0.6689419795221843,acc_norm,0.0,,0.0,,20261008,20261008,,733,0.6254266211604096,,
+p11-instruct-arc,reference0,0,arc_challenge-q4-w15-18-k2-loop,1172,783,0.6680887372013652,acc_norm,-0.08532423208191127,0.0,0.0,0.0,20261008,20261008,,732,0.6245733788395904,,
+p11-instruct-arc,reference0,0,arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9,1172,787,0.6715017064846417,acc_norm,0.25597269624573377,0.3412969283276451,0.0,0.0,20261008,20261008,,731,0.6237201365187713,,
+p11-instruct-arc,repeat1,1,arc_challenge-q4-native,1172,784,0.6689419795221843,acc_norm,0.0,,0.0,,20261008,20261014,,733,0.6254266211604096,,
+p11-instruct-arc,repeat1,1,arc_challenge-q4-w15-18-k2-loop,1172,783,0.6680887372013652,acc_norm,-0.08532423208191127,0.0,0.0,0.0,20261008,20261014,,732,0.6245733788395904,,
+p11-instruct-arc,repeat1,1,arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9,1172,787,0.6715017064846417,acc_norm,0.25597269624573377,0.3412969283276451,0.0,0.0,20261008,20261014,,731,0.6237201365187713,,
+p11-instruct-arc,repeat2,2,arc_challenge-q4-native,1172,784,0.6689419795221843,acc_norm,0.0,,0.0,,20261008,20261015,,733,0.6254266211604096,,
+p11-instruct-arc,repeat2,2,arc_challenge-q4-w15-18-k2-loop,1172,783,0.6680887372013652,acc_norm,-0.08532423208191127,0.0,0.0,0.0,20261008,20261015,,732,0.6245733788395904,,
+p11-instruct-arc,repeat2,2,arc_challenge-q4-w15-18-k2-online-fixed-t0-lambda0.9,1172,787,0.6715017064846417,acc_norm,0.25597269624573377,0.3412969283276451,0.0,0.0,20261008,20261015,,731,0.6237201365187713,,
+p11-instruct-gpqa,reference0,0,gpqa_main-q4-native,448,225,0.5022321428571429,S2,0.0,,0.0,,20261008,20261008,,,,"{""conflicting_multiple"": 2, ""single"": 309, ""consistent_multiple"": 85, ""no_match"": 52}","{""eos"": 402, ""length_limit"": 46}"
+p11-instruct-gpqa,reference0,0,gpqa_main-q4-w15-18-k2-loop,448,226,0.5044642857142857,S2,0.22321428571428573,0.0,0.0,0.0,20261008,20261008,,,,"{""single"": 354, ""no_match"": 32, ""consistent_multiple"": 62}","{""eos"": 424, ""length_limit"": 24}"
+p11-instruct-gpqa,reference0,0,gpqa_main-q4-w15-18-k3-loop,448,215,0.4799107142857143,S2,-2.232142857142857,0.0,0.0,0.0,20261008,20261008,,,,"{""consistent_multiple"": 60, ""single"": 347, ""no_match"": 36, ""conflicting_multiple"": 5}","{""eos"": 428, ""length_limit"": 20}"
+p11-instruct-gpqa,reference0,0,gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5,448,244,0.5446428571428571,S2,4.241071428571429,4.017857142857143,0.0,0.0,20261008,20261008,,,,"{""single"": 350, ""consistent_multiple"": 75, ""conflicting_multiple"": 4, ""no_match"": 19}","{""eos"": 426, ""length_limit"": 22}"
+p11-instruct-gpqa,reference0,0,gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9,448,244,0.5446428571428571,S2,4.241071428571429,6.473214285714286,0.0,0.0,20261008,20261008,,,,"{""single"": 364, ""no_match"": 29, ""consistent_multiple"": 49, ""conflicting_multiple"": 6}","{""eos"": 428, ""length_limit"": 20}"
+p11-instruct-gpqa,repeat1,1,gpqa_main-q4-native,448,225,0.5022321428571429,S2,0.0,,0.0,,20261008,20261014,,,,"{""conflicting_multiple"": 2, ""single"": 309, ""consistent_multiple"": 85, ""no_match"": 52}","{""eos"": 402, ""length_limit"": 46}"
+p11-instruct-gpqa,repeat1,1,gpqa_main-q4-w15-18-k2-loop,448,226,0.5044642857142857,S2,0.22321428571428573,0.0,0.0,0.0,20261008,20261014,,,,"{""single"": 354, ""no_match"": 32, ""consistent_multiple"": 62}","{""eos"": 424, ""length_limit"": 24}"
+p11-instruct-gpqa,repeat1,1,gpqa_main-q4-w15-18-k3-loop,448,215,0.4799107142857143,S2,-2.232142857142857,0.0,0.0,0.0,20261008,20261014,,,,"{""consistent_multiple"": 60, ""single"": 347, ""no_match"": 36, ""conflicting_multiple"": 5}","{""eos"": 428, ""length_limit"": 20}"
+p11-instruct-gpqa,repeat1,1,gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5,448,244,0.5446428571428571,S2,4.241071428571429,4.017857142857143,0.0,0.0,20261008,20261014,,,,"{""single"": 350, ""consistent_multiple"": 75, ""conflicting_multiple"": 4, ""no_match"": 19}","{""eos"": 426, ""length_limit"": 22}"
+p11-instruct-gpqa,repeat1,1,gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9,448,244,0.5446428571428571,S2,4.241071428571429,6.473214285714286,0.0,0.0,20261008,20261014,,,,"{""single"": 364, ""no_match"": 29, ""consistent_multiple"": 49, ""conflicting_multiple"": 6}","{""eos"": 428, ""length_limit"": 20}"
+p11-instruct-gpqa,repeat2,2,gpqa_main-q4-native,448,225,0.5022321428571429,S2,0.0,,0.0,,20261008,20261015,,,,"{""conflicting_multiple"": 2, ""single"": 309, ""consistent_multiple"": 85, ""no_match"": 52}","{""eos"": 402, ""length_limit"": 46}"
+p11-instruct-gpqa,repeat2,2,gpqa_main-q4-w15-18-k2-loop,448,226,0.5044642857142857,S2,0.22321428571428573,0.0,0.0,0.0,20261008,20261015,,,,"{""single"": 354, ""no_match"": 32, ""consistent_multiple"": 62}","{""eos"": 424, ""length_limit"": 24}"
+p11-instruct-gpqa,repeat2,2,gpqa_main-q4-w15-18-k3-loop,448,215,0.4799107142857143,S2,-2.232142857142857,0.0,0.0,0.0,20261008,20261015,,,,"{""consistent_multiple"": 60, ""single"": 347, ""no_match"": 36, ""conflicting_multiple"": 5}","{""eos"": 428, ""length_limit"": 20}"
+p11-instruct-gpqa,repeat2,2,gpqa_main-q4-w15-18-k2-online-current-t-lambda0.5,448,244,0.5446428571428571,S2,4.241071428571429,4.017857142857143,0.0,0.0,20261008,20261015,,,,"{""single"": 350, ""consistent_multiple"": 75, ""conflicting_multiple"": 4, ""no_match"": 19}","{""eos"": 426, ""length_limit"": 22}"
+p11-instruct-gpqa,repeat2,2,gpqa_main-q4-w15-18-k3-online-fixed-t0-lambda0.9,448,244,0.5446428571428571,S2,4.241071428571429,6.473214285714286,0.0,0.0,20261008,20261015,,,,"{""single"": 364, ""no_match"": 29, ""consistent_multiple"": 49, ""conflicting_multiple"": 6}","{""eos"": 428, ""length_limit"": 20}"

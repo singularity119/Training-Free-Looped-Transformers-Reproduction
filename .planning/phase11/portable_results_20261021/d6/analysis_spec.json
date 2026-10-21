@@ -1,0 +1,18 @@
+{
+  "schema": "loopscope.phase11.d6.analysis_spec.v1",
+  "source_closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d6-20261015T033000Z/closure/closure.json",
+  "gold_read": false,
+  "record_count": 5376,
+  "cell_count": 12,
+  "primary_family_size": 4,
+  "auxiliary_family_size": 10,
+  "bootstrap_replicates": 10000,
+  "sign_flip_draws": 100000,
+  "statistical_seed": 20261008,
+  "primary": [
+    "prompt_interaction_k2",
+    "prompt_interaction_k3",
+    "full_minus_prefill_k2",
+    "full_minus_prefill_k3"
+  ]
+}

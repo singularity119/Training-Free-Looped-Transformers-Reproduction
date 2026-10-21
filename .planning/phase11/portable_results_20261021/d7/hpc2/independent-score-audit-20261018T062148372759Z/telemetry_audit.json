@@ -1,0 +1,41 @@
+[
+  {
+    "cell": "native",
+    "checks": {
+      "duplicate_telemetry": 0,
+      "telemetry_n": 12032,
+      "prompt_length_difference": 0,
+      "identity_difference": 0,
+      "generation_length_difference": 0,
+      "forward_count_difference": 0,
+      "eos_length_classification_difference": 0,
+      "telemetry_membership_difference": 0
+    }
+  },
+  {
+    "cell": "current_t_k2_l05",
+    "checks": {
+      "duplicate_telemetry": 0,
+      "telemetry_n": 12032,
+      "prompt_length_difference": 0,
+      "identity_difference": 0,
+      "generation_length_difference": 0,
+      "forward_count_difference": 0,
+      "eos_length_classification_difference": 0,
+      "telemetry_membership_difference": 0
+    }
+  },
+  {
+    "cell": "fixed_t0_k3_l09",
+    "checks": {
+      "duplicate_telemetry": 0,
+      "telemetry_n": 12032,
+      "prompt_length_difference": 0,
+      "identity_difference": 0,
+      "generation_length_difference": 0,
+      "forward_count_difference": 0,
+      "eos_length_classification_difference": 0,
+      "telemetry_membership_difference": 0
+    }
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "closure": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/closure-attempt1/closure.json",
+  "reference_binding": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d5-20261014T031414Z/plans/reference-binding-v2.json",
+  "record_count": 102796,
+  "cell_count": 28,
+  "prediction_closed": true,
+  "gold_read": false,
+  "main_holm_size": 20,
+  "secondary_holm_size": 10,
+  "replicates": 10000,
+  "numeric_comparison": {
+    "atol": 0.0001,
+    "rtol": 1e-05
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "harness_version": "0.4.11",
+  "pattern": "answer is \\(?([ABCDEFGHIJ])\\)?",
+  "directory": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/harness0411-rescore-20261018T064957320784Z",
+  "scope": "Extractor-only rescore of existing complete generations, no truncation or Question stop retrofitting; not paper recipe reproduction",
+  "cells": [
+    {
+      "cell": "native",
+      "n": 12032,
+      "correct": 469,
+      "s2_correct": 8342,
+      "no_match": 11001,
+      "multiple_matches": 421,
+      "conflicting_matches_first_used": 188,
+      "out_of_actual_range": 2,
+      "prediction_changes": 11109,
+      "wrong_to_correct": 37,
+      "correct_to_wrong": 7910,
+      "accuracy_percent": 3.897938829787234,
+      "identity_difference": 0,
+      "upstream_independent_parser_difference": 0,
+      "delta_native_pp": 0.0
+    },
+    {
+      "cell": "current_t_k2_l05",
+      "n": 12032,
+      "correct": 441,
+      "s2_correct": 8273,
+      "no_match": 11076,
+      "multiple_matches": 328,
+      "conflicting_matches_first_used": 136,
+      "out_of_actual_range": 2,
+      "prediction_changes": 11142,
+      "wrong_to_correct": 33,
+      "correct_to_wrong": 7865,
+      "accuracy_percent": 3.6652260638297873,
+      "identity_difference": 0,
+      "upstream_independent_parser_difference": 0,
+      "delta_native_pp": -0.2327127659574468
+    },
+    {
+      "cell": "fixed_t0_k3_l09",
+      "n": 12032,
+      "correct": 415,
+      "s2_correct": 8290,
+      "no_match": 11117,
+      "multiple_matches": 305,
+      "conflicting_matches_first_used": 103,
+      "out_of_actual_range": 1,
+      "prediction_changes": 11172,
+      "wrong_to_correct": 24,
+      "correct_to_wrong": 7899,
+      "accuracy_percent": 3.4491356382978724,
+      "identity_difference": 0,
+      "upstream_independent_parser_difference": 0,
+      "delta_native_pp": -0.4488031914893617
+    }
+  ]
+}

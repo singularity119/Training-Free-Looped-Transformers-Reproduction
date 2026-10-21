@@ -1,0 +1,32 @@
+{
+  "reviewed_count": 285,
+  "method": "Remote deterministic screening of all 285 failures, model review of terminal snippets for all records, selected gold option text checks. Conservative answer-choice adjudication; not full independent proof of every reasoning chain. Truncated records are left unresolved rather than recovered.",
+  "authorization": "User explicitly allowed necessary generation snippets in chat on 2026-10-18; no raw local files or Git commits.",
+  "counts": {
+    "native": {
+      "truncated_unresolved_not_recovered": 80,
+      "ended_without_correct_final_choice": 26,
+      "clear_final_gold_choice_format_failure": 6,
+      "clear_final_gold_choice_after_revision": 2,
+      "gold_letter_but_modified_option_content": 1,
+      "gold_letter_but_wrong_option_meaning": 1
+    },
+    "current_t_k2_l05": {
+      "ended_without_correct_final_choice": 35,
+      "truncated_unresolved_not_recovered": 43,
+      "clear_final_gold_choice_format_failure": 8,
+      "gold_letter_but_wrong_option_meaning": 1
+    },
+    "fixed_t0_k3_l09": {
+      "ended_without_correct_final_choice": 21,
+      "truncated_unresolved_not_recovered": 50,
+      "clear_final_gold_choice_format_failure": 10,
+      "gold_letter_but_modified_option_content": 1
+    }
+  },
+  "confirmed_clear_answer_count": 26,
+  "conditional_not_counted": 2,
+  "false_letter_matches_not_counted": 2,
+  "original_scores_unchanged": true,
+  "completed_utc": "2026-10-18T06:32:05.084216+00:00"
+}

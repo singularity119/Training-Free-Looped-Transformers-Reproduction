@@ -1,0 +1,102 @@
+{
+  "schema": "loopscope.phase11.d8.paired_format_diagnostic.v1",
+  "posthoc_descriptive": true,
+  "primary_scoring_unchanged": true,
+  "cells": {
+    "native": {
+      "S2_extractable": 368,
+      "correct_in_extractable": 183,
+      "conditional_accuracy_percent_descriptive": 49.72826086956522,
+      "unclosed_eos": 0,
+      "unclosed_length_limit": 0
+    },
+    "current_t_k2_l05": {
+      "S2_extractable": 308,
+      "correct_in_extractable": 164,
+      "conditional_accuracy_percent_descriptive": 53.246753246753244,
+      "unclosed_eos": 4,
+      "unclosed_length_limit": 1
+    },
+    "fixed_t0_k3_l09": {
+      "S2_extractable": 322,
+      "correct_in_extractable": 154,
+      "conditional_accuracy_percent_descriptive": 47.82608695652174,
+      "unclosed_eos": 4,
+      "unclosed_length_limit": 1
+    }
+  },
+  "contrasts": [
+    {
+      "treatment": "current_t_k2_l05",
+      "strata": {
+        "valid_to_invalid": {
+          "n": 86,
+          "native_correct": 34,
+          "treatment_correct": 0,
+          "wrong_to_right": 0,
+          "right_to_wrong": 34
+        },
+        "valid_to_valid": {
+          "n": 282,
+          "native_correct": 149,
+          "treatment_correct": 151,
+          "wrong_to_right": 24,
+          "right_to_wrong": 22
+        },
+        "invalid_to_invalid": {
+          "n": 54,
+          "native_correct": 0,
+          "treatment_correct": 0,
+          "wrong_to_right": 0,
+          "right_to_wrong": 0
+        },
+        "invalid_to_valid": {
+          "n": 26,
+          "native_correct": 0,
+          "treatment_correct": 13,
+          "wrong_to_right": 13,
+          "right_to_wrong": 0
+        }
+      },
+      "gains": 37,
+      "losses": 56,
+      "independent_exact_p": 0.06138589870445953
+    },
+    {
+      "treatment": "fixed_t0_k3_l09",
+      "strata": {
+        "valid_to_valid": {
+          "n": 287,
+          "native_correct": 146,
+          "treatment_correct": 133,
+          "wrong_to_right": 22,
+          "right_to_wrong": 35
+        },
+        "invalid_to_invalid": {
+          "n": 45,
+          "native_correct": 0,
+          "treatment_correct": 0,
+          "wrong_to_right": 0,
+          "right_to_wrong": 0
+        },
+        "invalid_to_valid": {
+          "n": 35,
+          "native_correct": 0,
+          "treatment_correct": 21,
+          "wrong_to_right": 21,
+          "right_to_wrong": 0
+        },
+        "valid_to_invalid": {
+          "n": 81,
+          "native_correct": 37,
+          "treatment_correct": 0,
+          "wrong_to_right": 0,
+          "right_to_wrong": 37
+        }
+      },
+      "gains": 43,
+      "losses": 72,
+      "independent_exact_p": 0.008735108684333213
+    }
+  ]
+}

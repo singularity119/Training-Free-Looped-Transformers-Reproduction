@@ -1,0 +1,139 @@
+{
+  "started_utc": "2026-10-18T06:22:31.030603+00:00",
+  "plan": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/staging/phase11-gate-d7-20261016T031135Z/plans/first/first-plan.json",
+  "gold_source": "/hpc2hdd/home/xhuang225/shared/hf_home/hub/datasets--TIGER-Lab--MMLU-Pro/snapshots/b189ec765aa7ed75c8acfea42df31fdae71f97be/data/test-00000-of-00001.parquet",
+  "global_checks": {
+    "answer_letter_index_differences": 0,
+    "source_row_identity_differences": 0,
+    "source_id_differences": 0,
+    "category_differences": 0,
+    "question_differences": 0,
+    "options_order_differences": 0,
+    "choice_labels_differences": 0,
+    "original_pool_row_differences": 0,
+    "sealed_gold_differences": 0,
+    "prompt_tokenization_differences": 0
+  },
+  "option_counts": {
+    "9": 801,
+    "10": 9981,
+    "7": 158,
+    "6": 93,
+    "8": 320,
+    "4": 606,
+    "5": 52,
+    "3": 21
+  },
+  "cells": [
+    {
+      "cell": "native",
+      "counts": {
+        "saved_prediction_index_differences": 0,
+        "legacy_raw_prediction_index_differences": 254,
+        "ok": 11916,
+        "consistent_multiple": 254,
+        "correct": 8342,
+        "n": 12032,
+        "canary_records": 4,
+        "no_match": 62,
+        "conflict": 47,
+        "out_of_range": 7
+      },
+      "prediction_difference_reasons": {},
+      "errors": {
+        "duplicate_identity": 0,
+        "duplicate_index_in_file": 0,
+        "canonical_identity": 0,
+        "cell_binding": 0,
+        "category": 0,
+        "labels": 0,
+        "decoded_text": 0,
+        "token_count": 0,
+        "prompt_token_prefix": 0,
+        "prompt_text_in_generated": 0,
+        "max_new_tokens": 0,
+        "file_membership_difference": 0,
+        "gold_identity_set_difference": 0
+      },
+      "end_reasons": {
+        "eos": 11893,
+        "length_limit": 139
+      },
+      "accuracy_percent": 69.33178191489361
+    },
+    {
+      "cell": "current_t_k2_l05",
+      "counts": {
+        "saved_prediction_index_differences": 0,
+        "legacy_raw_prediction_index_differences": 117,
+        "ok": 11945,
+        "consistent_multiple": 117,
+        "correct": 8273,
+        "n": 12032,
+        "canary_records": 4,
+        "no_match": 60,
+        "conflict": 19,
+        "out_of_range": 8
+      },
+      "prediction_difference_reasons": {},
+      "errors": {
+        "duplicate_identity": 0,
+        "duplicate_index_in_file": 0,
+        "canonical_identity": 0,
+        "cell_binding": 0,
+        "category": 0,
+        "labels": 0,
+        "decoded_text": 0,
+        "token_count": 0,
+        "prompt_token_prefix": 0,
+        "prompt_text_in_generated": 0,
+        "max_new_tokens": 0,
+        "file_membership_difference": 0,
+        "gold_identity_set_difference": 0
+      },
+      "end_reasons": {
+        "eos": 11974,
+        "length_limit": 58
+      },
+      "accuracy_percent": 68.75831117021276
+    },
+    {
+      "cell": "fixed_t0_k3_l09",
+      "counts": {
+        "saved_prediction_index_differences": 0,
+        "legacy_raw_prediction_index_differences": 105,
+        "ok": 11950,
+        "consistent_multiple": 105,
+        "correct": 8290,
+        "n": 12032,
+        "canary_records": 4,
+        "no_match": 62,
+        "out_of_range": 6,
+        "conflict": 14
+      },
+      "prediction_difference_reasons": {},
+      "errors": {
+        "duplicate_identity": 0,
+        "duplicate_index_in_file": 0,
+        "canonical_identity": 0,
+        "cell_binding": 0,
+        "category": 0,
+        "labels": 0,
+        "decoded_text": 0,
+        "token_count": 0,
+        "prompt_token_prefix": 0,
+        "prompt_text_in_generated": 0,
+        "max_new_tokens": 0,
+        "file_membership_difference": 0,
+        "gold_identity_set_difference": 0
+      },
+      "end_reasons": {
+        "eos": 11973,
+        "length_limit": 59
+      },
+      "accuracy_percent": 68.89960106382979
+    }
+  ],
+  "completed_utc": "2026-10-18T06:23:31.214327+00:00",
+  "audit_directory": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/independent-score-audit-20261018T062148372759Z"
+}

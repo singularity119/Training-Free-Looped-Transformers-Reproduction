@@ -1,0 +1,88 @@
+{
+  "directory": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/harness-prefix2048-sensitivity-20261018T065745132905Z",
+  "patterns": {
+    "original": "answer is \\(?([ABCDEFGHIJ])\\)?",
+    "adapted": "Final answer: \\(?([ABCDEFGHIJ])\\)?"
+  },
+  "scope": "CPU posthoc prefix2048 generated tokens; case-sensitive first regex match; no Question stop; not full paper reproduction",
+  "cells": [
+    {
+      "cell": "native",
+      "n": 12032,
+      "variants": {
+        "original": {
+          "correct": 215,
+          "no_match": 11629,
+          "conflicting_matches_first_used": 25,
+          "s2_wrong_to_correct": 41,
+          "s2_correct_to_wrong": 7493,
+          "out_of_actual_range": 2,
+          "accuracy_percent": 1.7869015957446808,
+          "delta_native_pp": 0.0
+        },
+        "adapted": {
+          "correct": 7677,
+          "no_match": 1418,
+          "conflicting_matches_first_used": 18,
+          "s2_wrong_to_correct": 13,
+          "s2_correct_to_wrong": 3,
+          "out_of_actual_range": 5,
+          "accuracy_percent": 63.80485372340426,
+          "delta_native_pp": 0.0
+        }
+      }
+    },
+    {
+      "cell": "current_t_k2_l05",
+      "n": 12032,
+      "variants": {
+        "original": {
+          "correct": 207,
+          "no_match": 11640,
+          "conflicting_matches_first_used": 30,
+          "s2_wrong_to_correct": 29,
+          "s2_correct_to_wrong": 7543,
+          "out_of_actual_range": 2,
+          "accuracy_percent": 1.7204122340425532,
+          "delta_native_pp": -0.06648936170212766
+        },
+        "adapted": {
+          "correct": 7728,
+          "no_match": 1259,
+          "conflicting_matches_first_used": 11,
+          "s2_wrong_to_correct": 10,
+          "s2_correct_to_wrong": 3,
+          "out_of_actual_range": 7,
+          "accuracy_percent": 64.22872340425532,
+          "delta_native_pp": 0.42386968085106386
+        }
+      }
+    },
+    {
+      "cell": "fixed_t0_k3_l09",
+      "n": 12032,
+      "variants": {
+        "original": {
+          "correct": 216,
+          "no_match": 11633,
+          "conflicting_matches_first_used": 18,
+          "s2_wrong_to_correct": 34,
+          "s2_correct_to_wrong": 7542,
+          "out_of_actual_range": 1,
+          "accuracy_percent": 1.7952127659574468,
+          "delta_native_pp": 0.008311170212765957
+        },
+        "adapted": {
+          "correct": 7730,
+          "no_match": 1257,
+          "conflicting_matches_first_used": 11,
+          "s2_wrong_to_correct": 9,
+          "s2_correct_to_wrong": 3,
+          "out_of_actual_range": 4,
+          "accuracy_percent": 64.24534574468085,
+          "delta_native_pp": 0.44049202127659576
+        }
+      }
+    }
+  ]
+}

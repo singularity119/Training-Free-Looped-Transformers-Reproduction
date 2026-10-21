@@ -1,0 +1,6 @@
+reference,treatment,n,delta_pp
+cot_native,direct_native,448,-16.071428571428573
+cot_loop_k2,direct_loop_k2,448,-12.053571428571429
+cot_loop_k3,direct_loop_k3,448,-11.383928571428571
+cot_current_k2_full,direct_current_k2_full,448,-16.517857142857142
+cot_fixed_k3_full,direct_fixed_k3_full,448,-18.303571428571427

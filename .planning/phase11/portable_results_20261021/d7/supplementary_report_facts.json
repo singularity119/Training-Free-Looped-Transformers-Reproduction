@@ -1,0 +1,75 @@
+{
+  "source_kind": "structured transcription of locally retained HPC2 audit reports; not a fresh remote fetch",
+  "independent_audit": {
+    "source_report": "gate-d7-independent-score-audit-20261018.md",
+    "remote_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/independent-score-audit-20261018T062148372759Z",
+    "records": 36096,
+    "cells": [
+      "native",
+      "current_t_k2_l05",
+      "fixed_t0_k3_l09"
+    ],
+    "correct": [
+      8342,
+      8273,
+      8290
+    ],
+    "prediction_mismatches": 0,
+    "gold_alignment_mismatches": 0,
+    "token_decode_mismatches": 0,
+    "no_match": [
+      62,
+      60,
+      62
+    ],
+    "conflict": [
+      47,
+      19,
+      14
+    ],
+    "out_of_range": [
+      7,
+      8,
+      6
+    ],
+    "length_limit": [
+      139,
+      58,
+      59
+    ]
+  },
+  "official_parser_sensitivity": {
+    "source_report": "gate-d7-official-mmlupro-rescore-20261018.md",
+    "remote_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/official-local-rescore-20261018T063726Z",
+    "official_commit": "f418b116db00b065c2aea046518d8fcf74d39872",
+    "n_per_cell": 12032,
+    "api_correct": [
+      8339,
+      8282,
+      8284
+    ],
+    "local_random_fallback_correct": [
+      8340,
+      8284,
+      8285
+    ],
+    "fallback_seed": 12345,
+    "boundary": "post-hoc parser sensitivity only, not official full-recipe reproduction; frozen S2 unchanged"
+  },
+  "failure_diagnosis": {
+    "source_report": "gate-d7-failure-diagnosis-20261018.md",
+    "remote_root": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/failure-diagnosis-20261018T062702Z",
+    "failures": [
+      116,
+      87,
+      82
+    ],
+    "conservatively_identified_correct_final_choices": [
+      8,
+      8,
+      10
+    ],
+    "boundary": "post-hoc failed-subset review, not a replacement score or proof of reasoning-chain correctness"
+  },
+  "live_aggregate_directory": "hpc2/; use direct machine aggregates as primary"
+}

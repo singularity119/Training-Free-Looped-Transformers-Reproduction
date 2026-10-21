@@ -1,0 +1,3 @@
+treatment,reference,n,delta_pp,wrong_to_right,right_to_wrong,mcnemar_exact_p,bootstrap,holm_family_size,holm_adjusted_p,holm_reject_alpha_0_05
+current_t_k2_l05,native,448,-4.241071428571429,37,56,0.06138589870445832,"{'replicates': 10000, 'seed': 20261018, 'method': 'paired_item_index_percentile', 'ci_level': 0.95, 'ci_low_pp': -8.705357142857142, 'ci_high_pp': -0.2232142857142857, 'nominal': True}",2,0.06138589870445832,False
+fixed_t0_k3_l09,native,448,-6.4732142857142865,43,72,0.008735108684333012,"{'replicates': 10000, 'seed': 20261018, 'method': 'paired_item_index_percentile', 'ci_level': 0.95, 'ci_low_pp': -11.160714285714286, 'ci_high_pp': -1.7857142857142856, 'nominal': True}",2,0.017470217368666024,True

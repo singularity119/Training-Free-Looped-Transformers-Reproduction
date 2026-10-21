@@ -1,0 +1,60 @@
+{
+  "official_commit": "f418b116db00b065c2aea046518d8fcf74d39872",
+  "official_file": "evaluate_from_local.py",
+  "scope": "rescore existing generations only; original prompts and generation unchanged",
+  "random_policy": "random.Random(12345) independently reset per cell; canonical_index ascending, one final scoring pass",
+  "directory": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/official-local-rescore-20261018T063726Z",
+  "cells": [
+    {
+      "cell": "native",
+      "n": 12032,
+      "level1": 1031,
+      "correct_without_random": 8339,
+      "prediction_changed_vs_s2": 234,
+      "s2_wrong_to_official_correct": 47,
+      "s2_correct_to_official_wrong": 50,
+      "parsed_out_of_actual_range": 4,
+      "random_hits": 1,
+      "correct_official_local": 8340,
+      "level3": 10972,
+      "level2": 25,
+      "no_match": 4,
+      "accuracy_percent": 69.31515957446808,
+      "delta_native_pp": 0.0
+    },
+    {
+      "cell": "current_t_k2_l05",
+      "n": 12032,
+      "level3": 11054,
+      "correct_without_random": 8282,
+      "prediction_changed_vs_s2": 199,
+      "s2_wrong_to_official_correct": 45,
+      "s2_correct_to_official_wrong": 36,
+      "parsed_out_of_actual_range": 8,
+      "random_hits": 2,
+      "correct_official_local": 8284,
+      "level1": 956,
+      "level2": 20,
+      "no_match": 2,
+      "accuracy_percent": 68.8497340425532,
+      "delta_native_pp": -0.4654255319148936
+    },
+    {
+      "cell": "fixed_t0_k3_l09",
+      "n": 12032,
+      "level3": 11094,
+      "correct_without_random": 8284,
+      "prediction_changed_vs_s2": 187,
+      "s2_wrong_to_official_correct": 38,
+      "s2_correct_to_official_wrong": 44,
+      "parsed_out_of_actual_range": 7,
+      "random_hits": 1,
+      "correct_official_local": 8285,
+      "level1": 915,
+      "no_match": 2,
+      "level2": 21,
+      "accuracy_percent": 68.85804521276596,
+      "delta_native_pp": -0.45711436170212766
+    }
+  ]
+}

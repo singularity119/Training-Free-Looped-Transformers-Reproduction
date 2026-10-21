@@ -1,0 +1,277 @@
+{
+  "snapshot_date": "2026-10-21 Asia/Shanghai",
+  "base_commit": "987fa85fc84d2d35ade54a2be3f0a782954ea441",
+  "remote_fetch_this_session": true,
+  "coverage": "ARC18; D4 GPQA S2 18; D5 repeat analysis; D6 12; D7 first3 interim plus report-derived audits; D8 final3",
+  "not_a_raw_archive": true,
+  "entries": [
+    {
+      "file": "d5/analysis.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d5-repeat-20261015/analysis.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 107570
+    },
+    {
+      "file": "d5/analysis_spec.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d5-repeat-20261015/analysis_spec.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 591
+    },
+    {
+      "file": "d5/cells.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d5-repeat-20261015/cells.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 8635
+    },
+    {
+      "file": "d5/contrasts.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d5-repeat-20261015/contrasts.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 26073
+    },
+    {
+      "file": "d5/reproduction.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d5-repeat-20261015/reproduction.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 6110
+    },
+    {
+      "file": "d6/analysis.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015/analysis.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 30499
+    },
+    {
+      "file": "d6/analysis_spec.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015/analysis_spec.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 576
+    },
+    {
+      "file": "d6/cells.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015/cells.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 3404
+    },
+    {
+      "file": "d6/primary_contrasts.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015/primary_contrasts.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 3075
+    },
+    {
+      "file": "d6/auxiliary_contrasts.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015/auxiliary_contrasts.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 5900
+    },
+    {
+      "file": "d6/cross_prompt_descriptive.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015/cross_prompt_descriptive.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 312
+    },
+    {
+      "file": "d6/length_contrasts.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015/length_contrasts.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 2502
+    },
+    {
+      "file": "d6/resource_summary.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d6-cot-decode-20261015/resource_summary.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 1260
+    },
+    {
+      "file": "d7/three_cells_aggregate.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d7-mmlupro-interim-20261018/three_cells_aggregate.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 2316
+    },
+    {
+      "file": "d8/analysis.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d8-gpqa-thinking-20261021/analysis.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 5685
+    },
+    {
+      "file": "d8/cells.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d8-gpqa-thinking-20261021/cells.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 1754
+    },
+    {
+      "file": "d8/contrasts.csv",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d8-gpqa-thinking-20261021/contrasts.csv",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 721
+    },
+    {
+      "file": "d8/diagnostic.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d8-gpqa-thinking-20261021/diagnostic.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 2683
+    },
+    {
+      "file": "d8/resources.json",
+      "source": "/Users/huangxutao/Desktop/Training-free looped transformer/LoopScope_Entropy-Aware Window Selection for Training-Free Looped Transformers/资产/报告/phase11/gate-d8-gpqa-thinking-20261021/resources.json",
+      "kind": "previously retrieved HPC2 aggregate; original raw remains on HPC2",
+      "bytes": 5399
+    },
+    {
+      "file": "arc/cells.csv",
+      "source": ".planning/phase11/gate_d_arc_full_analysis.json::cells",
+      "kind": "lossless aggregate table projection",
+      "bytes": 7298
+    },
+    {
+      "file": "arc/contrasts.csv",
+      "source": ".planning/phase11/gate_d_arc_full_analysis.json::contrasts",
+      "kind": "lossless aggregate table projection",
+      "bytes": 27137
+    },
+    {
+      "file": "d4/cells.csv",
+      "source": ".planning/phase11/gate_d4_final_analysis_20261013T141800Z.json::s2.cells",
+      "kind": "lossless aggregate table projection",
+      "bytes": 22304
+    },
+    {
+      "file": "d4/contrasts.csv",
+      "source": ".planning/phase11/gate_d4_final_analysis_20261013T141800Z.json::s2.contrasts",
+      "kind": "lossless aggregate table projection",
+      "bytes": 27124
+    },
+    {
+      "file": "d7/supplementary_report_facts.json",
+      "source": "three named local reports under ../资产/报告/phase11/",
+      "kind": "report-derived aggregate facts",
+      "bytes": 2173
+    },
+    {
+      "file": "d7/hpc2/failure-diagnosis-20261018T062702Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/failure-diagnosis-20261018T062702Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 3710
+    },
+    {
+      "file": "d7/hpc2/failure-diagnosis-20261018T062702Z/manual_adjudication_aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/failure-diagnosis-20261018T062702Z/manual_adjudication_aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 1470
+    },
+    {
+      "file": "d7/hpc2/harness-prefix2048-sensitivity-20261018T065745132905Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/harness-prefix2048-sensitivity-20261018T065745132905Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 2777
+    },
+    {
+      "file": "d7/hpc2/harness0411-final-answer-sensitivity-20261018T065159747803Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/harness0411-final-answer-sensitivity-20261018T065159747803Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 2148
+    },
+    {
+      "file": "d7/hpc2/harness0411-rescore-20261018T064957320784Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/harness0411-rescore-20261018T064957320784Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 1952
+    },
+    {
+      "file": "d7/hpc2/independent-score-audit-20261018T062148372759Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/independent-score-audit-20261018T062148372759Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 4152
+    },
+    {
+      "file": "d7/hpc2/independent-score-audit-20261018T062148372759Z/snapshot_and_legacy_audit.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/independent-score-audit-20261018T062148372759Z/snapshot_and_legacy_audit.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 685
+    },
+    {
+      "file": "d7/hpc2/independent-score-audit-20261018T062148372759Z/telemetry_audit.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/independent-score-audit-20261018T062148372759Z/telemetry_audit.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 1078
+    },
+    {
+      "file": "d7/hpc2/interim-20261017T173526Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-20261017T173526Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 2035
+    },
+    {
+      "file": "d7/hpc2/interim-k3-20261017T222743Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/interim-k3-20261017T222743Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 2316
+    },
+    {
+      "file": "d7/hpc2/official-local-rescore-20261018T063726Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/official-local-rescore-20261018T063726Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 2004
+    },
+    {
+      "file": "d7/hpc2/prefix4096-dual-sensitivity-20261018T070010090494Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/prefix4096-dual-sensitivity-20261018T070010090494Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 3092
+    },
+    {
+      "file": "d7/hpc2/prefix4096-dual-sensitivity-20261018T070010090494Z/combined_lengths.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/prefix4096-dual-sensitivity-20261018T070010090494Z/combined_lengths.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 3505
+    },
+    {
+      "file": "d7/hpc2/s2-prefix2048-sensitivity-20261018T065501983378Z/aggregate.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d7-20261016T031135Z/s2-prefix2048-sensitivity-20261018T065501983378Z/aggregate.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 2370
+    },
+    {
+      "file": "d4/analysis.json",
+      "source": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d4-final-20261013T141800Z/analysis/analysis.json",
+      "kind": "direct HPC2 aggregate retrieval",
+      "bytes": 395948
+    }
+  ],
+  "existing_authoritative_files": [
+    ".planning/phase11/gate_d_arc_full_analysis.json",
+    ".planning/phase11/gate_d4_final_analysis_20261013T141800Z.json",
+    ".planning/phase11/gate_d5_final_audit.json",
+    ".planning/phase11/gate_d6_analysis_aggregate.json",
+    ".planning/phase11/gate_d7_interim_evidence.json",
+    ".planning/phase11/gate_d7_k3_interim_aggregate.json",
+    ".planning/phase11/gate_d8_final_audit_20261021.json",
+    ".planning/phase11/gate_d8_completion_evidence_20261021.json"
+  ],
+  "remote_error_initial_attempt": "Connection closed by 10.120.18.63 port 22",
+  "remote_fetch_timestamp_utc": "2026-10-21T08:17:03.563169+00:00",
+  "remote_fetch_scope": "D7 fourteen supplementary aggregates retrieved directly; D4 analysis retrieved; D5/D6/D8 analysis compared exactly with HPC2 copies.",
+  "live_verified_aggregate_sources": {
+    "d4/analysis.json": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d4-final-20261013T141800Z/analysis/analysis.json",
+    "d5/analysis.json": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d5-20261014T031414Z/analysis-attempt2/analysis.json",
+    "d6/analysis.json": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d6-20261015T033000Z/analysis/analysis.json",
+    "d8/analysis.json": "/hpc2hdd/home/xhuang225/workspaces/training_free_looped_transformers_loopscope/artifacts/phase11-gate-d8-20261020T033700Z/analysis-20261021T0203/analysis.json"
+  },
+  "d7_live_observation": {
+    "timestamp_utc": "2026-10-21T08:17:03.563169+00:00",
+    "host": "mgmt-6",
+    "squeue_exit": 0,
+    "squeue_user": "xhuang225",
+    "squeue_rows": 0,
+    "bound_run_root_subdirectories": [
+      "logs",
+      "canary",
+      "first",
+      "debug"
+    ],
+    "scope": "no last formal directory observed in original D7 run root; not a search of all alternate run roots; no scheduler mutations"
+  },
+  "csv_storage_note": "LF line endings normalized for Git; parsed cell values unchanged."
+}
