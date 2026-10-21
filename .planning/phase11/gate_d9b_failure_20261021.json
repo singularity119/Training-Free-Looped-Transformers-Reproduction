@@ -1,0 +1,29 @@
+{
+  "task_page_id": 4953416,
+  "modelTrainingJobId": 4391292,
+  "fissionJobId": 21146913,
+  "gpu_type": "H20-8x-640G",
+  "total_cards": 16,
+  "state": "FAILED",
+  "platform_start_beijing": "2026-10-21 19:01:36",
+  "platform_end_beijing": "2026-10-21 19:18:19",
+  "allocated_seconds": 1003,
+  "allocated_gpu_hours_from_platform_elapsed": 4.457777777777777,
+  "failure_stage": "fixed_revision_source_compare_before_model_forward",
+  "source_report": {
+    "status": "FAIL",
+    "files": [],
+    "failed_file": "model-00001-of-00003.safetensors",
+    "endpoint": "https://hf-mirror.com",
+    "error_type": "TimeoutError",
+    "error": "whole-operation deadline exceeded",
+    "elapsed_seconds": 900.084
+  },
+  "cuda_inference_executed": false,
+  "capacity_test_executed": false,
+  "formal_submitted": false,
+  "monitor_id": "d9b",
+  "monitor_status": "PAUSED",
+  "root_cause_boundary": "Current evidence locates timeout in first shard access/comparison; old code lacks stage/bytes progress so connect versus stream versus local read remains unknown",
+  "authorized_recovery": "CPU-32 default quota, one concurrent task, <=3600s, staged transport/Jindo diagnosis and complete fixed revision byte comparison; then fresh640G CUDA preflight"
+}
