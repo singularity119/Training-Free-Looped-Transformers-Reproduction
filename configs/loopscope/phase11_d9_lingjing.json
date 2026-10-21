@@ -1,0 +1,48 @@
+{
+  "schema": "loopscope.phase11.d9.preparation.v1",
+  "execution_state": "USER_REPORTED_EIGHT_H20_READY_PENDING_D9A_ACCEPTANCE_AND_D9B_BINDING",
+  "executor_gate": "D-9-A",
+  "model": "Qwen/Qwen3-4B",
+  "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+  "model_oss": "oss://sampool-bucket/deltalake/other_sample/users/270228/huggingface/Qwen/Qwen3-4B/",
+  "model_mount": "/jindofs_temp/users/270228/huggingface/Qwen/Qwen3-4B",
+  "model_revision_evidence": null,
+  "data": {
+    "source_kind": "author_github_archive",
+    "github_repo": "idavidrein/gpqa",
+    "github_commit": "56686c06f5e19865c153de0fdb11be3890014df7",
+    "member": "dataset/gpqa_main.csv",
+    "count": 448,
+    "input_seed": 20261008,
+    "runtime_seed_rule": "20261018+canonical_index"
+  },
+  "cloud_root": "/jindofs_temp/users/557030/loopscope/p11d9-20261021T085801Z",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/loopscope/p11d9-20261021T085801Z/",
+  "submission_candidate": {
+    "emp_id": "557030",
+    "demand_id": null,
+    "job_name": "expr_gq_q4_t1_r_20261021165801",
+    "code_url": "git@gitlab.alibaba-inc.com:Yufeng_Intern/Big_Model_Intern.git hxt",
+    "training_image_path": "reg.docker.alibaba-inc.com/algorithm/quake:torch-2.10-cuda128-cudnn9-rocky9-train-v2.0",
+    "entry_file": "/jindofs_temp/users/557030/loopscope/p11d9-20261021T085801Z/start.py",
+    "gpu_type": "H20-8x-960G",
+    "train_node_num": 8,
+    "train_node_shared_mem": 16,
+    "train_node_disk_size": 128,
+    "quota_project": "h20_agi_large",
+    "framework": "pytorch",
+    "region": "zhangbei",
+    "training_inputs": "[\"/jindofs_temp:jindo:jindo-lake3:/other_sample\"]"
+  },
+  "aliases": {
+    "gq": "GPQA Main original author fixed archive, all 448",
+    "q4": "Qwen/Qwen3-4B@1cfa9a7208912126459214e8b04321603b3df60c",
+    "t1": "D8 native thinking template, zero-shot, original CoT and Final answer instruction",
+    "r": "complete raw token IDs/text, final-span S2 and lifecycle telemetry"
+  },
+  "packing": 1,
+  "gpus_per_node": 8,
+  "formal_record_count": 1344,
+  "platform_debug_mapping": null,
+  "runtime_status": "CODE_PREPARED_NOT_CUDA_VERIFIED"
+}

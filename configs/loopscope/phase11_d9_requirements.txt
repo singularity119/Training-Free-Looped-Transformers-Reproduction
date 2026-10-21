@@ -1,0 +1,4 @@
+# Keep accelerator packages in the selected image; bootstrap constrains them.
+# Versions below match the original D8 high-level producer dependencies.
+transformers==4.51.3
+lm-eval==0.4.11
