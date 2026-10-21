@@ -54,6 +54,10 @@ class LingjingD9Tests(unittest.TestCase):
                             for j in eight["registry"]["jobs"]))
         self.assertEqual(topology({"RANK": "7", "LOCAL_RANK": "7", "WORLD_SIZE": "8",
                                    "LOCAL_WORLD_SIZE": "8"}, eight), (7, 7, 0))
+        sixteen = make_plan("/cloud/smoke16", "/cloud/synthetic", "revision", 16, True)
+        self.assertEqual(len(sixteen["registry"]["jobs"]), 48)
+        self.assertEqual(topology({"RANK": "8", "LOCAL_RANK": "0", "WORLD_SIZE": "16",
+                                   "LOCAL_WORLD_SIZE": "8"}, sixteen), (8, 0, 1))
 
     def test_allocation_records_platform_without_fake_slurm(self):
         self.assertEqual(allocation({"D9_PLATFORM_JOB_ID": "real-job-id"})["platform"], "lingjing")

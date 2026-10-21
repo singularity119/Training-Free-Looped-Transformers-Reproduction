@@ -1,13 +1,13 @@
 # D-9 灵境代码准备与恢复入口
 
 2026-10-21 D9A已验收关闭；D9B已exact绑定并收到GO。当前授权为
-`h20_agi_large`总8 H20：同路径短预检通过后直接三组1344全量。
+`h20_agi_large_16`总16 H20（用户最新资源更新）：同路径短预检通过后直接三组1344全量。
 动态授权见 `.planning/phase11/loopscope_phase11_gate_d9b_handoff.md` 与control。
 D7/D8保持各自原边界。下文D9A准备记录仅描述已有资产，不覆盖D9B授权。
 
 D9B新增最小运行前检查：`phase11_d9_model_source.py` 在云端对指定OSS模型与
-固定revision公开文件完整流式字节比较（无digest）；预检以8张卡执行原synthetic三组，
-验证真实rank路由。随后 `phase11_d9_capacity.py` 只使用人工token：实测最长正式prompt
+固定revision公开文件完整流式字节比较（无digest）；预检以双节点16张卡执行原synthetic三组，
+验证真实rank0/rank8双leader路由。随后 `phase11_d9_capacity.py` 只使用人工token：实测最长正式prompt
 的prefill、物化到prompt+32768上尾的KV以及真实单token loop/decode，记录实际峰值及
 额外一份完整KV的保守上界，要求至少20%余量。人工KV不算正式生成结果，
 不能声称实测了32768步连续采样。上述检查与依赖准备共用bootstrap的1740秒截止时间；

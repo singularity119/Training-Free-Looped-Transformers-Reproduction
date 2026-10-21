@@ -28,10 +28,10 @@
     "training_image_path": "reg.docker.alibaba-inc.com/algorithm/quake:torch-2.10-cuda128-cudnn9-rocky9-train-v2.0",
     "entry_file": "/jindofs_temp/users/557030/tflt/phase11/d9/20261021T095406Z/start.py",
     "gpu_type": "H20-8x-960G",
-    "train_node_num": 8,
+    "train_node_num": 16,
     "train_node_shared_mem": 16,
     "train_node_disk_size": 128,
-    "quota_project": "h20_agi_large",
+    "quota_project": "h20_agi_large_16",
     "framework": "pytorch",
     "region": "zhangbei",
     "training_inputs": "[\"/jindofs_temp:jindo:jindo-lake3:/other_sample\"]"

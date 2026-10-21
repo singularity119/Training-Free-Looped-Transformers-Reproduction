@@ -13,7 +13,7 @@ def run(plan_file, model_dir, output):
     from transformers import AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True, trust_remote_code=True)
     plan = read(plan_file)
-    require(plan["total_gpus"] in (1, 8) and plan["packing"] == 1, "one/eight-GPU synthetic preflight only")
+    require(plan["total_gpus"] in (1, 8, 16) and plan["packing"] == 1, "synthetic preflight allocation differs")
     found, positive = [], 0
     for task in plan["tasks"]:
         for job in task["jobs"]:
