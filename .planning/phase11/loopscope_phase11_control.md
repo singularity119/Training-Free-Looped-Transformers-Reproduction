@@ -1,3 +1,31 @@
+## 2026-10-21 D8 规划验收 PASS（最新决定）
+
+GATE_D8_CURRENT_STATE=PASS_CLOSED
+GATE_D8_ACCEPTANCE=loopscope_phase11_gate_d8_acceptance.md
+GATE_D8_AUDITED_EXECUTOR=01a15760-371e-7e61-af51-d8375a503bdc
+GATE_D8_AUDITED_SOURCE_COMMIT=316e467d1a0129ff46509637dd1a90b4e941604e
+GATE_D8_AUDITED_EVIDENCE_COMMIT=6c161939aadd194a9a50fe70652172c8299b9b75
+1344/1344、10正式jobs完成，预测封存先于gold；轻量核对交付证据并独立复算exact p/净变化/成本。Native40.8482%，K2 36.6071%，K3 34.3750%；仅K3 Holm显著下降。PASS仅指执行及冻结评分交付。显存实际余量1.09%未达约20%要求，作为已完成运行偏差披露接受；不为此重跑，不允许将packing2视为未来安全准入依据。D8执行/调度/下载/重评分/监控权限关闭，monitor保持PAUSED；仅验收回执。D7授权不变，不进入下一Gate。下文D8旧授权均为历史。
+
+## 2026-10-20 用户批准D8替代executor并恢复
+
+GATE_D8_CURRENT_STATE=AUTHORIZED_RESUME_REPLACEMENT
+GATE_D8_CURRENT_EXECUTOR=01a15760-371e-7e61-af51-d8375a503bdc
+GATE_D8_CURRENT_EXECUTOR_HOST=local
+GATE_D8_REVOKED_EXECUTOR=01a14eeb-0aae-7733-a86e-62b55c8dde54
+GATE_D8_PLANNING_THREAD=01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f
+用户明确批准撤销旧D8 executor权限并建立替代线程。旧executor从本修订起不再拥有D8下载、远端写入、GPU/Slurm、评分及监控权限；其不可访问，未声称已通知或停止其进程。新executor唯一负责D8，gpt-6.1-sol/high，标题保持execute-LoopScope-GPQA-Thinking-第11阶段-Gate D-8。新executor必须先核对现存job/raw/下载/monitor，发现活跃旧D8行为先报告，不盲取消或重复提交。今日准入恢复证据见下；明确授权按原handoff补齐权重→真实debug→原1344采集→闭合评分。科学配方不变，D7不接管，Phase11共享最多8A800。所有下方旧executor/等待原线程路由措辞仅保留历史，以本条及更新handoff为准。
+
+## 2026-10-20 规划接回与提交准入恢复
+
+用户交接授权：Phase11 planning/验收接回 01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。D8原executor 01a14eeb-0aae-7733-a86e-62b55c8dde54 保留；此前交接的local是来源设备视角，本机读取未找到，其他设备当前不可用，实际host待确认，不重建executor。
+2026-10-20T11:26:42+08:00 直接SSH实测：hkuhpc-ai/root/xhuang225 GrpSubmit为空，squeue成功且为空；debug/debug 1A40 8CPU64G29min与emergency_gpu 1A800 8CPU64G1h的sbatch --test-only均exit0。仅准入测试，无真实job创建；此证据解除旧提交限制判断，不代表真实debug通过或模型权重完整。正式提交前executor仍核对exact资源及最高合法QoS。
+GATE_D8_CURRENT_STATE=ADMISSION_RESTORED_AWAIT_EXECUTOR_ROUTE_ACK
+GATE_D8_PLANNING_THREAD=01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f
+GATE_D8_PLANNING_HOST=local
+新路由确认后由同一executor恢复：补齐固定权重→source-r2/debug-plan-r2真实debug→原1344正式采集→完整raw/预测闭合后统一评分。确认前不恢复GPU。D7仍归原executor，当前线程快照为inactive；不迁移/启停其monitor。Phase11共享最多8A800，D8提交前核对D7在途任务，不能两边各自占8卡。D7三组独立审计与长度/parser敏感性作为交接证据接收，未在本次重跑；完整S2仍为主评分，D7五组未完成。
+下文2026-10-18 BLOCK及原planning记录保留为历史，由本条覆盖当前路由和准入状态。
+
 2026-10-18 D8 planning记录BLOCK：核对本地聚合原始命令/exit1/AssocGrpSubmitJobsLimit及GrpSubmit=0、CPU exit0/448输入容量、隧道CLOSED证据，未重新SSH或运行GPU。准备已完成，权重尚不完整，raw0/1344、GPUh0、未读取目标gold、无monitor。保持executor01a14eeb-0aae-7733-a86e-62b55c8dde54；外部恢复合法提交资格后由planning恢复同一executor，续缺失权重→source-r2/debug-plan-r2真实debug→1344采集。不是GPU验证PASS或科学负结果；D7不变。证据gate_d8_preparation_block.json、gate_d8_block_20261018.md；运行源码9f7ca50，交付11a7ba42。
 
 2026-10-18用户新增D8：本线程01a14da8-5e0b-7550-9874-5bd47416bc6f负责D8规划验收。GPQA Main448，Qwen/Qwen3-4B thinking，32768，官方采样固定seed，仅Native及K2 current_t .5/K3 fixed_t0 .9，共1344。D8绑定executor01a14eeb-0aae-7733-a86e-62b55c8dde54/local，gpt-6-luna/max；D7独立保持原授权/状态，不接管或迁移其监控。

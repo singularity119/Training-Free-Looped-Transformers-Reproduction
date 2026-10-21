@@ -1,13 +1,13 @@
 # Gate D-8 — GPQA 原版 Qwen3 thinking 三组迁移检验
 
 日期：2026-10-18。用户已明确授权独立执行；本Gate不是此前只读评分审计的继续。
-PLANNING_THREAD=01a14da8-5e0b-7550-9874-5bd47416bc6f
+PLANNING_THREAD=01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f
 PLANNING_HOST=local
-EXECUTOR_THREAD=01a14eeb-0aae-7733-a86e-62b55c8dde54
+EXECUTOR_THREAD=01a15760-371e-7e61-af51-d8375a503bdc
 EXECUTOR_HOST=local
 CANONICAL_TITLE=execute-LoopScope-GPQA-Thinking-第11阶段-Gate D-8
-MODEL=gpt-6-luna
-REASONING=max
+MODEL=gpt-6.1-sol
+REASONING=high
 
 按照 [$research-gate-orchestrator](/Users/huangxutao/.codex/skills/research-gate-orchestrator/SKILL.md) 的协作约定执行；实际读取该skill及references/protocol.md。唯一独立executor负责实现、定向验证、GPU调度、分析和终态交付；本planning负责验收。绑定与START前只可阅读，不提交GPU。用户授权执行线程与本planning就本Gate沟通及终态交付；不得绕过planning扩大实验。
 
@@ -42,3 +42,23 @@ D7既有监控保持原状态，不迁移、不唤醒。D8真实job存在后按�
 ## 2026-10-18 Temporary model-download proxy supplement
 
 Planning authorizes the bound D8 executor to use one temporary loopback-only SSH reverse proxy, remote 127.0.0.1:58018 to local 127.0.0.1:7897, solely to download Qwen/Qwen3-4B revision 1cfa9a7208912126459214e8b04321603b3df60c and its tokenizer. Use StrictHostKeyChecking=yes, UpdateHostKeys=no, ExitOnForwardFailure=yes. For this dedicated tunnel use isolated SSH configuration without inherited RemoteForward entries, retaining the verified host/port/user/identity/known_hosts checks; ordinary SSH still uses ClearAllForwardings=yes. Do not terminate unknown listeners on port conflict. Restrict proxy environment to the download process. Record ownership and close only this tunnel immediately after download completion or abandonment, verifying release. No persistent SSH/VPN/hosts/routes/proxy/trust changes, credential output, unrelated downloads, environment upgrades or D7 operations. This is a transport repair within the existing model-download authority.
+
+## 2026-10-20 规划接回及恢复条件
+
+用户授权planning接回01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local；旧planning为01a14da8-5e0b-7550-9874-5bd47416bc6f。原executor及科学合同、模型档位不变。原EXECUTOR_HOST=local为来源设备记录，本机不可访问，须核对实际host并确认新终态路由；未确认前保持执行暂停。今天11:26北京时间debug与emergency_gpu 1GPU的test-only均通过，GrpSubmit为空、队列为空，无真实提交。收到路由确认后由planning明确恢复同executor，沿原补权重、真实debug、1344采集、全量闭合后评分顺序执行；正式exact资源/QoS与Phase11共享8A800仍由executor提交前验证。D7保持原绑定，禁止重复调度或监控。
+
+## 2026-10-20 用户明确批准替代及恢复（覆盖旧线程路由等待）
+
+旧executor 01a14eeb-0aae-7733-a86e-62b55c8dde54 的D8执行权限撤销；唯一新executor 01a15760-371e-7e61-af51-d8375a503bdc/local，gpt-6.1-sol/high，planning仍01a11ab9-23cc-76d2-afd7-b5f9d9dc5e3f/local。用户授权本次替换、恢复及终态消息路由。先确认本绑定和消息路由，再按GO接续原source-r2/debug-plan-r2。先检查远端现存D8 job/raw/下载进程及monitor，成功记录不重跑；若旧执行仍活跃先向planning报告，不盲取消未知任务。原科学/统计/下载代理/资源边界不变；当前设备7897代理需实测。真实debug通过后才正式1344，Phase11与D7共享最多8A800。唯一executor-owned heartbeat仅真实job后建立，debug10min/full60min，健康无变化静默，terminal pause+self-wake及投递确认。旧不可访问线程未确认收到撤权，不能声称已经停止其进程。新executor可携带本次planning control/handoff授权配置提交，不纳入其他已有staged/unstaged修改；既有runtime source可原样复用，无需为了路由变化重跑CPU全套。
+
+## 2026-10-20 用户批准国内 HF 镜像下载
+
+用户经本planning明确授权可尝试国内Hugging Face镜像，仅下载固定 `Qwen/Qwen3-4B@1cfa9a7208912126459214e8b04321603b3df60c` 及相同tokenizer所需文件。先验证镜像可用及固定revision文件，不能退回main或更换权重；镜像endpoint只设置于下载子进程，不改变全局配置或升级依赖。公开模型不向镜像发送HF token或其他凭据。仅停止或切换自有下载进程，避免重复下载并保留断点，记录实际来源，结束或弃用代理后关闭自有临时隧道。此补充仅改变模型传输来源，不扩大科学、GPU、评分或D7权限。
+
+## 2026-10-20 planning 澄清 debug 排队监控启动
+
+planning明确允许真实debug job已存在且PENDING时即建立本Gate唯一10分钟heartbeat，不要求等RUNNING稳定一分钟。健康排队静默，不盲取消或重投；终态先暂停monitor并保留证据，再唤醒exact executor。`MaxJobsPerAccount`按现场排队事实处理，不视作历史`GrpSubmit=0`复发或Gate失败。正式仍只在真实debug通过后提交，并将同一monitor更新为60分钟。
+
+## 2026-10-20 用户直接授权提交D8全量
+
+用户向本executor明确要求“直接把d8全量也提交了吧”。真实debug已通过后，允许依据已有正式canary显存证据与保守完整KV预算直接提交其余1341条，不再以三条canary全部终态作为全量提交的前置条件。三组各自canonical344的成功/在途canary保留，剩余计划均排除该题；最终仍三组各448，共1344。全量与既有canary合计最多8A800，packing须保留实际容量余量，batch1与独立进程/RNG语义不变。原模型、输入、采样、方法、评分和gold屏障不变；既有低风险缺失/无效项恢复权限不变。只更新同一monitor覆盖全部exact D8 jobs并保持full60min，D7不接管。
