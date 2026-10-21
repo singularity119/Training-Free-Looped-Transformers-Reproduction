@@ -1,0 +1,43 @@
+{
+  "modelTrainingJobId": 4392075,
+  "modelTaskName": "expr_gq_t4_g1_r_20261022024046",
+  "jobName": "tj20261022024242-b23c0dc4",
+  "jobStatus": "NEW",
+  "fissionJobId": null,
+  "jobViewUrl": "https://aispace.alibaba-inc.com/#/train/traintask/detail/4954202",
+  "globalParams": {
+    "modelTrainingTaskId": 4954202,
+    "modelTrainingJobId": 4392075
+  },
+  "gpu_type": "H20-8x-640G",
+  "quota_project": "h20_agi_large",
+  "total_cards": 8,
+  "formal_expected_records": 1344,
+  "source_commit": "1fbcb92eadd6b1afd7eed2ff69a54a92c61807bb",
+  "max_new_tokens": 8192,
+  "do_sample": false,
+  "scoring_region": "whole_generated_output",
+  "gate": "D-10",
+  "cloud_root": "/jindofs_temp/users/557030/tflt/phase11/d10/20261021T184046Z",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d10/20261021T184046Z/",
+  "model_provenance": {
+    "mode": "USER_DESIGNATED_OSS_UNVERIFIED_REVISION",
+    "model_oss": "oss://sampool-bucket/deltalake/other_sample/users/270228/huggingface/Qwen/Qwen3-4B-Thinking-2507/",
+    "model_mount": "/jindofs_temp/users/270228/huggingface/Qwen/Qwen3-4B-Thinking-2507",
+    "actual_revision": "UNVERIFIED_OSS_COPY",
+    "actual_tokenizer_revision": "UNVERIFIED_OSS_COPY",
+    "source_comparison": "NOT_REQUESTED_USER_DESIGNATED_OSS",
+    "authorization": "User2026-10-22: Thinking2507, D4 greedy8192 whole-output S2,8H20-8x640G,h20_agi_large"
+  },
+  "data_count": 448,
+  "cells": [
+    "native",
+    "current_t_k2_l05",
+    "fixed_t0_k3_l09"
+  ],
+  "runtime_smoke_status": "NOT_YET_OBSERVED; bootstrap runs synthetic path first",
+  "long_sequence_capacity_status": "NOT_MEASURED",
+  "monitor_id": "d9b",
+  "bundle_readback_equal": true,
+  "scientific_confirmation": "User explicitly chose D4 greedy and whole-output S2;8192;3arms unchanged"
+}
