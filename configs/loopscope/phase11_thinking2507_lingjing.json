@@ -1,0 +1,61 @@
+{
+  "schema": "loopscope.phase11.d10.experiment.v1",
+  "gate": "D-10",
+  "model": "Qwen/Qwen3-4B-Thinking-2507",
+  "model_mount": "/jindofs_temp/users/270228/huggingface/Qwen/Qwen3-4B-Thinking-2507",
+  "model_provenance": {
+    "mode": "USER_DESIGNATED_OSS_UNVERIFIED_REVISION",
+    "model_oss": "oss://sampool-bucket/deltalake/other_sample/users/270228/huggingface/Qwen/Qwen3-4B-Thinking-2507/",
+    "model_mount": "/jindofs_temp/users/270228/huggingface/Qwen/Qwen3-4B-Thinking-2507",
+    "actual_revision": "UNVERIFIED_OSS_COPY",
+    "actual_tokenizer_revision": "UNVERIFIED_OSS_COPY",
+    "source_comparison": "NOT_REQUESTED_USER_DESIGNATED_OSS",
+    "authorization": "User2026-10-22: Thinking2507, D4 greedy8192 whole-output S2,8H20-8x640G,h20_agi_large"
+  },
+  "source_csv_mount": "/jindofs_temp/users/557030/tflt/phase11/d9/20261021T085801Z/inputs/source/sealed/gpqa-main-56686c06/gpqa_main.csv",
+  "data_count": 448,
+  "input_seed": 20261008,
+  "runtime_seed_rule": "20261018+canonical_index",
+  "cells": [
+    "native",
+    "current_t_k2_l05",
+    "fixed_t0_k3_l09"
+  ],
+  "max_new_tokens": 8192,
+  "native_context": 262144,
+  "generation": {
+    "do_sample": false,
+    "num_beams": 1,
+    "repetition_penalty": 1.0
+  },
+  "primary_parser": "D4-whole-output-GPQA-S2-v1",
+  "scoring_region": "whole_generated_output",
+  "total_cards": 8,
+  "packing": 1,
+  "gpu_type": "H20-8x-640G",
+  "quota_project": "h20_agi_large",
+  "cloud_root": "/jindofs_temp/users/557030/tflt/phase11/d10/20261021T184046Z",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d10/20261021T184046Z/",
+  "submission_candidate": {
+    "emp_id": "557030",
+    "demand_id": "10923",
+    "job_name": "expr_gq_t4_g1_r_20261022024046",
+    "code_url": "git@gitlab.alibaba-inc.com:Yufeng_Intern/Big_Model_Intern.git hxt",
+    "training_image_path": "reg.docker.alibaba-inc.com/algorithm/quake:torch-2.10-cuda128-cudnn9-rocky9-train-v2.0",
+    "entry_file": "/jindofs_temp/users/557030/tflt/phase11/d10/20261021T184046Z/start.py",
+    "gpu_type": "H20-8x-640G",
+    "train_node_num": 8,
+    "train_node_shared_mem": 16,
+    "train_node_disk_size": 128,
+    "quota_project": "h20_agi_large",
+    "framework": "pytorch",
+    "region": "zhangbei",
+    "training_inputs": "[\"/jindofs_temp:jindo:jindo-lake3:/other_sample\"]"
+  },
+  "aliases": {
+    "gq": "original GPQA Main448",
+    "t4": "user-designated Qwen3-4B-Thinking-2507",
+    "g1": "native thinking chat template with D4 greedy8192",
+    "r": "full raw tokens/text/lifecycle + whole-outputS2"
+  }
+}
