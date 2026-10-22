@@ -1,0 +1,18 @@
+{
+  "event": "GATE_D11_FINAL_AUDIT",
+  "result": "AUDIT_REQUESTED",
+  "gate": "D-11",
+  "executor": "01a15ddb-5ea0-7112-8468-62b463c996b5/local",
+  "planning": "01a15d9c-ee8b-7502-97b2-a40f732e00f5/local",
+  "source_commit": "3bf5d241aa6732c13714bfce41537db2e9dbbb26",
+  "task_id": 4954217,
+  "modelTrainingJobId": 4392090,
+  "fissionJobId": 21150028,
+  "state": "COMPLETED_AND_EXECUTOR_VERIFIED",
+  "evidence_path": ".planning/phase11/gate_d11_completion_evidence_20261022.json",
+  "report_dir": "/Users/singularity/Desktop/tflt_digai/资产/报告/phase11/gate-d11-instruct2507-20261022",
+  "report_archive": "/Users/singularity/Desktop/tflt_digai/资产/报告/phase11/gate-d11-instruct2507-20261022.zip",
+  "monitor_lifecycle": "DELETED_AFTER_CONFIRMED_PAUSE",
+  "decision_requested": "Independent planning acceptance; no significant scientific benefit is not engineering failure",
+  "no_new_experiment": true
+}
