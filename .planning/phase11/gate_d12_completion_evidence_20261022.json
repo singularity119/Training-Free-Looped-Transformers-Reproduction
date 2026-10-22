@@ -1,0 +1,355 @@
+{
+  "schema": "loopscope.phase11.d12.completion_evidence.v1",
+  "gate": "D-12",
+  "state": "EXECUTOR_VERIFIED_AUDIT_REQUESTED",
+  "task_id": 4954265,
+  "modelTrainingJobId": 4392138,
+  "fissionJobId": 21150214,
+  "source_commit": "cc2025c27dbfe32ecbf4f821fcea02848e6009d6",
+  "observed_at_utc": "2026-10-22T01:54:47.494893+00:00",
+  "platform_status": "COMPLETED",
+  "platform_start_china": "2026-10-22 03:40:46",
+  "platform_end_china": "2026-10-22 09:12:23",
+  "oss_root": "oss://sampool-bucket/deltalake/other_sample/users/557030/tflt/phase11/d12/repair8-20261021T193048Z/",
+  "configuration": {
+    "model": "Qwen/Qwen3-4B",
+    "revision": "UNVERIFIED_OSS_COPY",
+    "enable_thinking": false,
+    "max_new_tokens": 32768,
+    "max_length": 40960,
+    "generation": {
+      "do_sample": false,
+      "num_beams": 1,
+      "repetition_penalty": 1.0
+    },
+    "parser": "D12-nonthinking-whole-final-GPQA-S2-v1",
+    "scoring_region": "whole_generated_output_as_final",
+    "total_cards": 8,
+    "gpu_type": "H20-8x-640G",
+    "quota": "h20_agi_large_16",
+    "cells": {
+      "native": {
+        "model": "Qwen/Qwen3-4B",
+        "revision": "UNVERIFIED_OSS_COPY",
+        "tokenizer_revision": "UNVERIFIED_OSS_COPY",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "cell_id": "qwen3_nothink-gpqa-native",
+        "arm": "Native",
+        "window": null,
+        "boundaries": null,
+        "k": null,
+        "direction_policy": null,
+        "strength": 0.0,
+        "intervention_mode": null,
+        "cell_key": "native",
+        "prompt_mode": "cot",
+        "damping_scope": "none"
+      },
+      "current_t_k2_l05": {
+        "model": "Qwen/Qwen3-4B",
+        "revision": "UNVERIFIED_OSS_COPY",
+        "tokenizer_revision": "UNVERIFIED_OSS_COPY",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 2,
+        "cell_id": "qwen3_nothink-gpqa-current_t_k2_l05",
+        "arm": "Online",
+        "direction_policy": "current_t",
+        "strength": 0.5,
+        "intervention_mode": "spectral",
+        "cell_key": "current_t_k2_l05",
+        "prompt_mode": "cot",
+        "damping_scope": "full"
+      },
+      "fixed_t0_k3_l09": {
+        "model": "Qwen/Qwen3-4B",
+        "revision": "UNVERIFIED_OSS_COPY",
+        "tokenizer_revision": "UNVERIFIED_OSS_COPY",
+        "dtype": "bfloat16",
+        "batch_size": 1,
+        "strategy": "damped_euler",
+        "iteration_mode": "block",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "cache_strategy": "first",
+        "decode_mode": "full",
+        "rank": 1,
+        "direction_fit_scope": "own_prefill_prompt",
+        "decode_direction_source": "frozen_prefill_bank",
+        "phase": 11,
+        "dataset": "gpqa_main",
+        "window": [
+          15,
+          18
+        ],
+        "boundaries": [
+          15,
+          19
+        ],
+        "k": 3,
+        "cell_id": "qwen3_nothink-gpqa-fixed_t0_k3_l09",
+        "arm": "Online",
+        "direction_policy": "fixed_t0",
+        "strength": 0.9,
+        "intervention_mode": "spectral",
+        "cell_key": "fixed_t0_k3_l09",
+        "prompt_mode": "cot",
+        "damping_scope": "full"
+      }
+    }
+  },
+  "verification": {
+    "expected_formal_complete_objects": 1344,
+    "actual_formal_complete_objects": 1344,
+    "object_membership_exact": true,
+    "registry_equal_to_closure": true,
+    "coverage_each_cell_unique_0_to447": true,
+    "summary_metadata_all24_verified": true,
+    "no_per_item_raw_gold_read": true,
+    "closure_before_gold_read": true,
+    "closure_utc": "2026-10-22T01:11:02.943332+00:00",
+    "gold_read_utc": "2026-10-22T01:11:42.492839+00:00",
+    "aggregate_denominators_and_accuracy_verified": true,
+    "all24_full_cell_recipe_bindings_verified": true,
+    "frozen_parser_greedy_nonthinking_wholefinal_source_reviewed": true,
+    "source_runtime_and_protected_files_unchanged_from_run": true
+  },
+  "cells": [
+    {
+      "cell": "native",
+      "n": 448,
+      "correct": 106,
+      "accuracy_percent": 23.660714285714285,
+      "EOS_count": 422,
+      "length_limit_count": 26,
+      "unclosed_thinking_count": 0,
+      "empty_final_count": 0,
+      "anomalous_thinking_count": 0,
+      "S2_no_match": 183,
+      "S2_conflict": 0,
+      "S2_consistent_multiple": 0,
+      "S2_mode_counts": {
+        "no_match": 183,
+        "single": 265
+      },
+      "question_wall_seconds": 38402.84241232183,
+      "prefill_seconds": 19.887887443542482,
+      "decode_seconds": 37939.61230060766,
+      "peak_allocated_bytes": 13581675008,
+      "peak_reserved_bytes": 44304433152,
+      "generated_token_count": {
+        "mean": 2561.2633928571427,
+        "median": 650.5,
+        "p90": 1455.2,
+        "min": 112,
+        "max": 32768
+      },
+      "thinking_token_count": {
+        "mean": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "min": 0,
+        "max": 0
+      },
+      "final_token_count": {
+        "mean": 2560.3214285714284,
+        "median": 649.5,
+        "p90": 1454.2,
+        "min": 111,
+        "max": 32768
+      },
+      "delta_native_pp": 0.0
+    },
+    {
+      "cell": "current_t_k2_l05",
+      "n": 448,
+      "correct": 95,
+      "accuracy_percent": 21.205357142857142,
+      "EOS_count": 440,
+      "length_limit_count": 8,
+      "unclosed_thinking_count": 0,
+      "empty_final_count": 0,
+      "anomalous_thinking_count": 0,
+      "S2_no_match": 220,
+      "S2_conflict": 0,
+      "S2_consistent_multiple": 0,
+      "S2_mode_counts": {
+        "no_match": 220,
+        "single": 228
+      },
+      "question_wall_seconds": 26388.392852792982,
+      "prefill_seconds": 36.72686936950684,
+      "decode_seconds": 26068.628136579508,
+      "peak_allocated_bytes": 13573691904,
+      "peak_reserved_bytes": 44304433152,
+      "generated_token_count": {
+        "mean": 1606.84375,
+        "median": 676.0,
+        "p90": 1440.7,
+        "min": 132,
+        "max": 32768
+      },
+      "thinking_token_count": {
+        "mean": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "min": 0,
+        "max": 0
+      },
+      "final_token_count": {
+        "mean": 1605.861607142857,
+        "median": 675.0,
+        "p90": 1439.7,
+        "min": 131,
+        "max": 32768
+      },
+      "delta_native_pp": -2.455357142857143
+    },
+    {
+      "cell": "fixed_t0_k3_l09",
+      "n": 448,
+      "correct": 87,
+      "accuracy_percent": 19.419642857142858,
+      "EOS_count": 428,
+      "length_limit_count": 20,
+      "unclosed_thinking_count": 0,
+      "empty_final_count": 0,
+      "anomalous_thinking_count": 0,
+      "S2_no_match": 225,
+      "S2_conflict": 0,
+      "S2_consistent_multiple": 0,
+      "S2_mode_counts": {
+        "no_match": 225,
+        "single": 223
+      },
+      "question_wall_seconds": 49874.67176560173,
+      "prefill_seconds": 27.91847206878662,
+      "decode_seconds": 49420.48938181689,
+      "peak_allocated_bytes": 19122780160,
+      "peak_reserved_bytes": 45082476544,
+      "generated_token_count": {
+        "mean": 2362.270089285714,
+        "median": 683.5,
+        "p90": 1438.2000000000005,
+        "min": 125,
+        "max": 32768
+      },
+      "thinking_token_count": {
+        "mean": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "min": 0,
+        "max": 0
+      },
+      "final_token_count": {
+        "mean": 2361.3147321428573,
+        "median": 682.5,
+        "p90": 1437.2000000000005,
+        "min": 124,
+        "max": 32768
+      },
+      "delta_native_pp": -4.241071428571429
+    }
+  ],
+  "contrasts": [
+    {
+      "treatment": "current_t_k2_l05",
+      "reference": "native",
+      "n": 448,
+      "delta_pp": -2.455357142857143,
+      "wrong_to_right": 41,
+      "right_to_wrong": 52,
+      "mcnemar_exact_p": 0.29973169689702867,
+      "bootstrap": {
+        "replicates": 10000,
+        "seed": 20261018,
+        "method": "paired_item_index_percentile",
+        "ci_level": 0.95,
+        "ci_low_pp": -6.696428571428571,
+        "ci_high_pp": 1.7857142857142856,
+        "nominal": true
+      },
+      "holm_family_size": 2,
+      "holm_adjusted_p": 0.29973169689702867,
+      "holm_reject_alpha_0_05": false
+    },
+    {
+      "treatment": "fixed_t0_k3_l09",
+      "reference": "native",
+      "n": 448,
+      "delta_pp": -4.241071428571429,
+      "wrong_to_right": 38,
+      "right_to_wrong": 57,
+      "mcnemar_exact_p": 0.06421280662712595,
+      "bootstrap": {
+        "replicates": 10000,
+        "seed": 20261018,
+        "method": "paired_item_index_percentile",
+        "ci_level": 0.95,
+        "ci_low_pp": -8.482142857142858,
+        "ci_high_pp": 0.0,
+        "nominal": true
+      },
+      "holm_family_size": 2,
+      "holm_adjusted_p": 0.1284256132542519,
+      "holm_reject_alpha_0_05": false
+    }
+  ],
+  "closure_timestamp_utc": "2026-10-22T01:11:02.943332+00:00",
+  "gold_read_timestamp_utc": "2026-10-22T01:11:42.492839+00:00",
+  "monitor": {
+    "id": "d12-qwen3-thinking",
+    "lifecycle": "PAUSED_CONFIRMED_THEN_DELETED",
+    "executor_resume": "planning once-only relay after heartbeat completed"
+  },
+  "prior_attempt": {
+    "task_id": 4954247,
+    "modelTrainingJobId": 4392120,
+    "fissionJobId": 21150146,
+    "state": "FAILED",
+    "quota_cause": "USER_REPORTED_NOT_PLATFORM_LOG_INDEPENDENTLY_VERIFIED",
+    "observed_launch_objects": 0,
+    "observed_completed_records": 0
+  },
+  "local_report_dir": "/Users/singularity/Desktop/tflt_digai/资产/报告/phase11/gate-d12-qwen3-nothink-20261022",
+  "no_new_inference_or_rescoring": true,
+  "limitations": [
+    "No per-item output/gold retrieved or rescored during this verification;high no-match types are unclassified",
+    "S2 no-match is a format-contract failure;not proof of absent/incorrect answer content",
+    "Same GPQA items previously used to select loop settings;exploratory",
+    "Compared with4953520,thinking/decoding/final-region handling changed jointly",
+    "Actual OSS model/tokenizer revision remains UNVERIFIED_OSS_COPY",
+    "No independent preflight/capacity/source-comparison PASS claimed"
+  ]
+}

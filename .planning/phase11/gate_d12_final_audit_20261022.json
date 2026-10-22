@@ -1,0 +1,18 @@
+{
+  "event": "GATE_D12_FINAL_AUDIT",
+  "result": "AUDIT_REQUESTED",
+  "gate": "D-12",
+  "executor": "01a15ddb-5ea0-7112-8468-62b463c996b5/local",
+  "planning": "01a15d9c-ee8b-7502-97b2-a40f732e00f5/local",
+  "source_commit": "cc2025c27dbfe32ecbf4f821fcea02848e6009d6",
+  "task_id": 4954265,
+  "modelTrainingJobId": 4392138,
+  "fissionJobId": 21150214,
+  "state": "COMPLETED_AND_EXECUTOR_VERIFIED",
+  "evidence_path": ".planning/phase11/gate_d12_completion_evidence_20261022.json",
+  "report_dir": "/Users/singularity/Desktop/tflt_digai/资产/报告/phase11/gate-d12-qwen3-nothink-20261022",
+  "report_archive": "/Users/singularity/Desktop/tflt_digai/资产/报告/phase11/gate-d12-qwen3-nothink-20261022.zip",
+  "monitor_lifecycle": "DELETED_AFTER_CONFIRMED_PAUSE",
+  "decision_requested": "Independent planning acceptance;negative scientific result is not engineering failure",
+  "no_new_experiment": true
+}
